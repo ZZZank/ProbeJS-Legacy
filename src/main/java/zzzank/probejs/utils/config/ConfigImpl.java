@@ -2,13 +2,13 @@ package zzzank.probejs.utils.config;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.google.gson.JsonObject;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.config.serde.ConfigImplSerde;
+import zzzank.probejs.utils.config.io.ConfigIO;
+import zzzank.probejs.utils.config.io.JsonConfigIO;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,15 +22,19 @@ import java.util.Map;
 public class ConfigImpl {
 
     public final String defaultNamespace;
-    public final ConfigImplSerde serde;
-    private final Table<String, String, ConfigEntry<?>> all;
+    public final ConfigIO io;
     public final Path path;
 
-    public ConfigImpl(Path path, String defaultNamespace) {
+    private final Table<String, String, ConfigEntry<?>> all = HashBasedTable.create();
+
+    public ConfigImpl(Path path, ConfigIO io, String defaultNamespace) {
         this.path = path;
-        this.serde = new ConfigImplSerde(this);
-        all = HashBasedTable.create();
+        this.io = io;
         this.defaultNamespace = defaultNamespace;
+    }
+
+    public ConfigImpl(Path path, String defaultNamespace) {
+        this(path, new JsonConfigIO(), defaultNamespace);
     }
 
     public Map.Entry<String, String> ensureNamespace(String name) {
@@ -52,17 +56,16 @@ public class ConfigImpl {
         if (!Files.exists(path)) {
             return;
         }
-        try (val reader = Files.newBufferedReader(path)) {
-            val object = ProbeJS.GSON.fromJson(reader, JsonObject.class);
-            serde.fromJson(object);
+        try {
+            io.read(this, path);
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error happened when reading configs from file", e);
         }
     }
 
     public void save() {
-        try (val writer = Files.newBufferedWriter(path)) {
-            ProbeJS.GSON_WRITER.toJson(serde.toJson(), writer);
+        try {
+            io.save(this, path);
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error happened when writing configs to file", e);
         }

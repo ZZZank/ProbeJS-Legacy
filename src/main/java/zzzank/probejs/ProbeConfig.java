@@ -3,8 +3,7 @@ package zzzank.probejs;
 import zzzank.probejs.features.forge_scan.BuiltinScanners;
 import zzzank.probejs.utils.config.ConfigEntry;
 import zzzank.probejs.utils.config.ConfigImpl;
-import zzzank.probejs.utils.config.serde.ConfigImplSerde;
-import zzzank.probejs.utils.config.serde.PatternSerde;
+import zzzank.probejs.utils.config.io.JsonConfigIO;
 
 import java.util.regex.Pattern;
 
@@ -29,8 +28,8 @@ public interface ProbeConfig {
             
             comments and default values are provided, but not modifiable, changes to them will not be kept
             for changing certain config value, change sub-entry whose key is '%s'""",
-            ConfigImplSerde.COMMENTS_KEY, ConfigImplSerde.VALUE_KEY, ConfigImplSerde.DEFAULT_VALUE_KEY,
-            ConfigImplSerde.VALUE_KEY
+            JsonConfigIO.COMMENTS_KEY, JsonConfigIO.VALUE_KEY, JsonConfigIO.DEFAULT_VALUE_KEY,
+            JsonConfigIO.VALUE_KEY
         ))
         .build();
     ConfigEntry<Boolean> enabled = INSTANCE.define("enabled")
