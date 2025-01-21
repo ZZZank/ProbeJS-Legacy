@@ -4,6 +4,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.config.report.ConfigReport;
 import zzzank.probejs.utils.config.report.NoError;
+import zzzank.probejs.utils.config.report.NullValueError;
 import zzzank.probejs.utils.config.report.WrappedException;
 
 import java.util.Objects;
@@ -46,6 +47,9 @@ public abstract class BindingBase<T> implements ConfigBinding<T> {
     abstract protected void setImpl(T value);
 
     public ConfigReport validate(T value) {
+        if (value == null) {
+            return new NullValueError(name);
+        }
         return NoError.INSTANCE;
     }
 }
