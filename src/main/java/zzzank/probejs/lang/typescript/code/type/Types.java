@@ -4,6 +4,7 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.type.js.*;
 import zzzank.probejs.lang.typescript.code.type.ts.*;
@@ -180,7 +181,7 @@ public interface Types {
     static JSTypeOfType typeOf(BaseType classType) {
         if (classType instanceof TSClassType cType
             && Optional.ofNullable(cType.classPath.toClazz(ClassRegistry.REGISTRY))
-            .map(c -> c.attribute.isInterface)
+            .map(Clazz::isInterface)
             .orElse(false)
         ) {
             classType = staticType(cType.classPath);

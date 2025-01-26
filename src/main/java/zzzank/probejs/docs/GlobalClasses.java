@@ -35,7 +35,7 @@ public class GlobalClasses implements ProbeJSPlugin {
             val path = clazz.classPath;
             val typeOf = Types.typeOf(clazz.classPath);
             //original
-            paths.member(clazz.original.getName(), typeOf);
+            paths.member(clazz.getOriginal().getName(), typeOf);
             //probejs style import
             paths.member(path.getTSPath(), typeOf);
         }

@@ -42,7 +42,7 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
             .filter(t -> t != Types.ANY)
             .collect(Collectors.toList());
         ClassDecl decl;
-        if (clazz.attribute.isInterface) {
+        if (clazz.isInterface()) {
             decl = new InterfaceDecl(
                 clazz.classPath.getName(),
                 superClass == Types.ANY ? null : superClass,

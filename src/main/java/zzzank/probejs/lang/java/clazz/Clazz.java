@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 
 public class Clazz extends TypeVariableHolder {
 
-    @HideFromJS
-    public final Class<?> original;
     public final ClassPath classPath;
     public final List<ConstructorInfo> constructors;
     public final List<FieldInfo> fields;
@@ -30,8 +28,7 @@ public class Clazz extends TypeVariableHolder {
     public Clazz(Class<?> clazz, MemberCollector collector) {
         super(clazz.getTypeParameters(), clazz.getAnnotations());
 
-        this.original = clazz;
-        this.classPath = ClassPath.fromJava(original);
+        this.classPath = ClassPath.fromJava(clazz);
 
         collector.accept(clazz);
         this.constructors = collector.constructors().collect(Collectors.toList());
@@ -44,6 +41,10 @@ public class Clazz extends TypeVariableHolder {
 
         this.interfaces = CollectUtils.mapToList(clazz.getAnnotatedInterfaces(), TypeAdapter::getTypeDescription);
         this.attribute = new ClassAttribute(clazz);
+    }
+
+    public boolean isInterface() {
+        return attribute.type == ClassType.INTERFACE;
     }
 
     @Override
@@ -62,6 +63,10 @@ public class Clazz extends TypeVariableHolder {
         return Objects.equals(classPath, clazz.classPath);
     }
 
+    public Class<?> getOriginal() {
+        return attribute.raw;
+    }
+
     public enum ClassType {
         INTERFACE,
         ENUM,
@@ -72,8 +77,8 @@ public class Clazz extends TypeVariableHolder {
     public static class ClassAttribute {
 
         public final ClassType type;
-        public final boolean isAbstract;
-        public final boolean isInterface;
+        public final int modifiers;
+        @HideFromJS
         public final Class<?> raw;
 
         public ClassAttribute(Class<?> clazz) {
@@ -87,10 +92,12 @@ public class Clazz extends TypeVariableHolder {
                 this.type = ClassType.CLASS;
             }
 
-            int modifiers = clazz.getModifiers();
-            this.isAbstract = Modifier.isAbstract(modifiers);
-            this.isInterface = type == ClassType.INTERFACE;
+            modifiers = clazz.getModifiers();
             this.raw = clazz;
+        }
+
+        public boolean isAbstract() {
+            return Modifier.isAbstract(modifiers);
         }
     }
 }

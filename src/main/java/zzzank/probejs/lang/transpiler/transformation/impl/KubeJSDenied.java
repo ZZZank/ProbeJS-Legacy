@@ -17,7 +17,7 @@ public class KubeJSDenied implements ClassTransformer {
 
     @Override
     public void transform(Clazz clazz, ClassDecl classDecl) {
-        if (!manager.isClassAllowed(clazz.original.getName())) {
+        if (!manager.isClassAllowed(clazz.getOriginal().getName())) {
             classDecl.addComment(
                 "This class is not allowed By KubeJS!",
                 "You should not load the class, or KubeJS will throw an error.",

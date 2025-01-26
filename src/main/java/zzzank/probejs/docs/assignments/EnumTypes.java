@@ -29,7 +29,7 @@ public class EnumTypes implements ProbeJSPlugin {
                 continue;
             }
             try {
-                val types = Arrays.stream(recordedClass.original.getEnumConstants())
+                val types = Arrays.stream(recordedClass.getOriginal().getEnumConstants())
                     .map(EnumTypes::getEnumName)
                     .filter(Objects::nonNull)
                     .map(s -> s.toLowerCase(Locale.ROOT))

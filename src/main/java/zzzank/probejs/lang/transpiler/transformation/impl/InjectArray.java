@@ -22,7 +22,7 @@ public class InjectArray implements ClassTransformer {
 
     @Override
     public void transform(Clazz clazz, ClassDecl classDecl) {
-        if (isDirectlyImplementing(clazz.original, Iterable.class)) {
+        if (isDirectlyImplementing(clazz.getOriginal(), Iterable.class)) {
             val iterType = classDecl.methods.stream()
                 .filter(m -> m.name.equals("iterator"))
                 .filter(m -> m.returnType instanceof TSParamType)
@@ -37,7 +37,7 @@ public class InjectArray implements ClassTransformer {
         }
 
         // AbstractCollection is not a List, and AbstractList is not directly implementing Iterable
-        if (isDirectlyImplementing(clazz.original, List.class)) {
+        if (isDirectlyImplementing(clazz.getOriginal(), List.class)) {
             BaseType iterType = classDecl.methods.stream()
                 .filter(m -> m.name.equals("iterator") && m.params.isEmpty())
                 .filter(m -> m.returnType instanceof TSParamType)
@@ -51,7 +51,7 @@ public class InjectArray implements ClassTransformer {
         }
 
 
-        if (isDirectlyImplementing(clazz.original, Map.class)) {
+        if (isDirectlyImplementing(clazz.getOriginal(), Map.class)) {
             BaseType valueType = classDecl.methods.stream()
                 .filter(m -> m.name.equals("get") && m.params.size() == 1)
                 .map(m -> m.returnType)

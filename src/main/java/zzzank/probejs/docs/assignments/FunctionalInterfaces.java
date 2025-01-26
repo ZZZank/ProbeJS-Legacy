@@ -13,7 +13,7 @@ public class FunctionalInterfaces implements ProbeJSPlugin {
         val converter = scriptDump.transpiler.typeConverter;
 
         for (val recorded : scriptDump.recordedClasses) {
-            if (!recorded.attribute.isInterface) {
+            if (!recorded.isInterface()) {
                 continue;
             }
 
@@ -37,7 +37,7 @@ public class FunctionalInterfaces implements ProbeJSPlugin {
             for (val param : abstractM.params) {
                 type.param(param.name, converter.convertType(param.type), false, param.varArgs);
             }
-            scriptDump.assignType(recorded.original, type.build());
+            scriptDump.assignType(recorded.getOriginal(), type.build());
         }
     }
 }

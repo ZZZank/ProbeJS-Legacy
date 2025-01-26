@@ -21,7 +21,7 @@ public class InjectHybrid implements ClassTransformer {
 
     @Override
     public void transform(Clazz clazz, ClassDecl classDecl) {
-        if (!clazz.attribute.isInterface) {
+        if (!clazz.isInterface()) {
             return;
         }
         val count = new MutableInt(0);
