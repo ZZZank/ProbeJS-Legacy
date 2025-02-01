@@ -113,4 +113,9 @@ public interface ProbeConfig {
         .comment("""
             automatically rename `arg123`-like names into some more human readable names""")
         .build();
+    ConfigEntry<Boolean> simulateOldTyping = INSTANCE.define("Simulate Old Typing")
+        .setDefault(true)
+        .comment("""
+            Generate `Internal` namespace to simulate old typing structure before ProbeJS Legacy 4""")
+        .build();
 }

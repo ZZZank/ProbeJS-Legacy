@@ -65,7 +65,8 @@ public final class ProbeBuiltinDocs implements ProbeJSPlugin {
         //misc
         new GlobalClasses(),
         new ParamFix(),
-        new Snippets()
+        new Snippets(),
+        new SimulateOldTyping()
     );
 
     private void forEach(Consumer<ProbeJSPlugin> consumer) {
