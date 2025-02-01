@@ -34,6 +34,7 @@ public class NameUtils {
     public static final Pattern MATCH_IMPORT = Pattern.compile("^import \\{(.+)} from (.+)");
     public static final Pattern MATCH_CONST_REQUIRE = Pattern.compile("^const \\{(.+)} = require\\((.+)\\)");
     public static final Pattern MATCH_ANY_REQUIRE = Pattern.compile("^.+ \\{(.+)} = require\\((.+)\\)");
+    public static final Pattern MATCH_LINE_BREAK = Pattern.compile("\n");
 
     public static String[] extractAlphabets(String input) {
         return input.split("[^a-zA-Z]+");

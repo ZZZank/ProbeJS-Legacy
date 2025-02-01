@@ -1,11 +1,12 @@
 package zzzank.probejs.utils.config;
 
-import com.google.common.collect.ImmutableList;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.binding.ConfigBinding;
+import zzzank.probejs.utils.config.prop.ConfigProperties;
+import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.report.ConfigReport;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 
@@ -22,13 +23,7 @@ public class ConfigEntry<T> {
 
     public final ConfigSerde<T> serde;
     public final ConfigBinding<T> binding;
-    /*
-    public Class<T> type;
-    public T defaultValue;
-    public T value;
-     */
-
-    public final ImmutableList<String> comments;
+    public final ConfigProperties properties;
 
     public ConfigEntry(
         ConfigImpl source,
@@ -36,14 +31,14 @@ public class ConfigEntry<T> {
         String name,
         ConfigSerde<T> serde,
         ConfigBinding<T> binding,
-        List<String> comments
+        ConfigProperties properties
     ) {
         this.source = Asser.tNotNull(source, "source");
         this.name = Asser.tNotNull(name, "name");
         this.serde = Asser.tNotNull(serde, "serde");
         this.binding = Asser.tNotNull(binding, "defaultValue");
         this.namespace = Asser.tNotNull(namespace, "namespace");
-        this.comments = ImmutableList.copyOf(Asser.tNotNullAll(comments, "comments"));
+        this.properties = Asser.tNotNull(properties, "properties");
     }
 
     /**
@@ -77,5 +72,13 @@ public class ConfigEntry<T> {
     @NotNull
     public T getDefault() {
         return binding.getDefault();
+    }
+
+    public <T_> T_ getProp(ConfigProperty<T_> property) {
+        return properties.getOrDefault(property);
+    }
+
+    public List<String> getComments() {
+        return getProp(ConfigProperty.COMMENTS);
     }
 }

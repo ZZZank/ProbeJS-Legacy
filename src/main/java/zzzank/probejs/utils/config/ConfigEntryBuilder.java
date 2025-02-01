@@ -4,14 +4,18 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
+import zzzank.probejs.utils.NameUtils;
 import zzzank.probejs.utils.config.binding.ConfigBinding;
 import zzzank.probejs.utils.config.binding.DefaultBinding;
 import zzzank.probejs.utils.config.binding.RangedBinding;
 import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
+import zzzank.probejs.utils.config.prop.ConfigProperties;
+import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.serde.ConfigSerdes;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author ZZZank
@@ -28,6 +32,7 @@ public class ConfigEntryBuilder<T> {
     public List<String> comments;
     public ConfigBinding<T> binding;
     public ConfigSerde<T> serde;
+    private final ConfigProperties properties = new ConfigProperties();
 
     protected ConfigEntryBuilder(@NotNull ConfigImpl config, @NotNull String namespace, @NotNull String name) {
         this.root = config;
@@ -78,18 +83,27 @@ public class ConfigEntryBuilder<T> {
         return this;
     }
 
-    public ConfigEntryBuilder<T> comment(String... comments) {
-        if (this.comments == null) {
-            this.comments = new ArrayList<>();
-        }
-        for (val comment : comments) {
-            this.comments.addAll(Arrays.asList(comment.split("\n")));
-        }
+    public <T_> ConfigEntryBuilder<T> setProperty(ConfigProperty<T_> property, @NotNull T_ value) {
+        properties.put(property, value);
         return this;
     }
 
     public ConfigEntryBuilder<T> setComments(List<String> comments) {
-        this.comments = Objects.requireNonNull(comments);
+        return setProperty(ConfigProperty.COMMENTS, comments);
+    }
+
+    public ConfigEntryBuilder<T> comment(String... comments) {
+        this.properties.merge(
+            ConfigProperty.COMMENTS,
+            Arrays.stream(comments)
+                .map(NameUtils.MATCH_LINE_BREAK::split)
+                .flatMap(Arrays::stream)
+                .collect(Collectors.toList()),
+            (a, b) -> {
+                a.addAll(b);
+                return a;
+            }
+        );
         return this;
     }
 
@@ -101,7 +115,7 @@ public class ConfigEntryBuilder<T> {
             serde = ConfigSerdes.get(binding.getDefault());
         }
         return this.root.register(
-            new ConfigEntry<>(this.root, namespace, name, serde, binding, comments)
+            new ConfigEntry<>(this.root, namespace, name, serde, binding, properties)
         );
     }
 }
