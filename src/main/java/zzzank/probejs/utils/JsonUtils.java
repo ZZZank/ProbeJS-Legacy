@@ -117,15 +117,15 @@ public class JsonUtils {
     }
 
     public static <T extends JsonElement> T deepCopy(T elem) {
-        if (elem instanceof JsonObject o) {
+        if (elem.isJsonObject()) {
             val result = new JsonObject();
-            for (val entry : o.entrySet()) {
+            for (val entry : elem.getAsJsonObject().entrySet()) {
                 result.add(entry.getKey(), deepCopy(entry.getValue()));
             }
             return (T) result;
-        } else if (elem instanceof JsonArray a) {
+        } else if (elem.isJsonArray()) {
             val result = new JsonArray();
-            for (val element : a) {
+            for (val element : elem.getAsJsonArray()) {
                 result.add(deepCopy(element));
             }
             return (T) result;
@@ -135,7 +135,7 @@ public class JsonUtils {
 
     public static JsonElement mergeJsonRecursively(JsonElement first, JsonElement second) {
         if (first instanceof JsonObject firstObject && second instanceof JsonObject secondObject) {
-            var result = deepCopy(firstObject);
+            val result = deepCopy(firstObject);
             for (val entry : secondObject.entrySet()) {
                 val key = entry.getKey();
                 val value = entry.getValue();
@@ -167,6 +167,7 @@ public class JsonUtils {
             }
             return result;
         }
+
         return second;
     }
 

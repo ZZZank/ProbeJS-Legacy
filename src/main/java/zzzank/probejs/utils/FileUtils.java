@@ -1,8 +1,8 @@
 package zzzank.probejs.utils;
 
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonWriter;
 import dev.latvian.kubejs.KubeJSPaths;
+import lombok.val;
 import zzzank.probejs.ProbeJS;
 
 import javax.annotation.Nullable;
@@ -28,17 +28,21 @@ public class FileUtils {
     }
 
     public static void writeMergedConfig(Path path, JsonObject config) throws IOException {
-        JsonObject read = Files.exists(path)
-            ? ProbeJS.GSON.fromJson(Files.newBufferedReader(path), JsonObject.class)
-            : new JsonObject();
+        JsonObject read = null;
+        if (Files.exists(path)) {
+            read = ProbeJS.GSON.fromJson(Files.newBufferedReader(path), JsonObject.class);
+        }
         if (read == null) {
             read = new JsonObject();
         }
-        JsonObject original = (JsonObject) JsonUtils.mergeJsonRecursively(read, config);
-        JsonWriter jsonWriter = ProbeJS.GSON_WRITER.newJsonWriter(Files.newBufferedWriter(path));
-        jsonWriter.setIndent("    ");
-        ProbeJS.GSON_WRITER.toJson(original, JsonObject.class, jsonWriter);
-        jsonWriter.close();
+        try (val writer = ProbeJS.GSON_WRITER.newJsonWriter(Files.newBufferedWriter(path))) {
+            writer.setIndent("    ");
+            ProbeJS.GSON_WRITER.toJson(
+                JsonUtils.mergeJsonRecursively(read, config),
+                JsonObject.class,
+                writer
+            );
+        }
     }
 
     @Nullable

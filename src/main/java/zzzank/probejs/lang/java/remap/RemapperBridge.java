@@ -13,15 +13,9 @@ import java.util.Objects;
  */
 @UtilityClass
 public class RemapperBridge {
-    private ClazzNamesRemapper INSTANCE;
-
-    static {
-        if (RhizoState.REMAPPER) {
-            INSTANCE = new RhizoClazzRemapper();
-        } else {
-            INSTANCE = new RhinoDefault();
-        }
-    }
+    private ClazzNamesRemapper INSTANCE = RhizoState.REMAPPER
+        ? new RhizoClazzRemapper()
+        : new RhinoDefault();
 
     public void set(ClazzNamesRemapper remapper) {
         INSTANCE = Objects.requireNonNull(remapper);
@@ -33,10 +27,6 @@ public class RemapperBridge {
 
     public void reset() {
         set(new JavaDefault());
-    }
-
-    public void resetRhino() {
-        set(new RhinoDefault());
     }
 
     public String remapClass(Class<?> from) {

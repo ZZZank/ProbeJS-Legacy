@@ -34,7 +34,7 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
     public ClassDecl transpile(Clazz clazz) {
         val variableTypes = new ArrayList<TSVariableType>(clazz.variableTypes.size());
         for (val variableType : clazz.variableTypes) {
-            variableTypes.add((TSVariableType) converter.convertType(variableType));
+            variableTypes.add((TSVariableType) converter.convertTypeBuiltin(variableType));
         }
         val superClass = clazz.superClass == null ? null : converter.convertTypeBuiltin(clazz.superClass);
         val interfaces = clazz.interfaces.stream()

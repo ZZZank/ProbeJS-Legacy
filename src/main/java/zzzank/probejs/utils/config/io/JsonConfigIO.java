@@ -47,10 +47,11 @@ public class JsonConfigIO implements ConfigIO {
 
             o.add(DEFAULT_VALUE_KEY, entry.serde.toJson(Cast.to(entry.getDefault())));
             o.add(VALUE_KEY, entry.serde.toJson(Cast.to(entry.get())));
-            switch (entry.comments.size()) {
+            val comments = entry.getComments();
+            switch (comments.size()) {
                 case 0 -> {}
-                case 1 -> o.add(COMMENTS_KEY, new JsonPrimitive(entry.comments.get(0)));
-                default -> o.add(COMMENTS_KEY, JsonUtils.parseObject(entry.comments));
+                case 1 -> o.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
+                default -> o.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
             }
 
             object.add(config.stripNamespace(entry.namespace, entry.name), o);
