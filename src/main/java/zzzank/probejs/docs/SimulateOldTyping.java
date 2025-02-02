@@ -42,19 +42,21 @@ public class SimulateOldTyping implements ProbeJSPlugin {
             val variables = clazz.variableTypes.stream()
                 .map(typeConverter::convertType)
                 .collect(Collectors.toList());
-            val typeVariables = Types.join(", ", variables).contextShield(BaseType.FormatType.VARIABLE);
+            val typeVariables = Types.join(", ", variables);
 
             namespace.addCode(Types.format(
-                "export type %s<%s> = %s;",
+                "export type %s<%s> = %s<%s>;",
                 Types.primitive(getUniqueName(name, recorded)),
-                typeVariables,
-                Types.type(clazz.classPath).contextShield(BaseType.FormatType.RETURN)
+                typeVariables.contextShield(BaseType.FormatType.VARIABLE),
+                Types.type(clazz.classPath).contextShield(BaseType.FormatType.RETURN),
+                typeVariables.contextShield(BaseType.FormatType.RETURN)
             ));
             namespace.addCode(Types.format(
-                "export type %s<%s> = %s;",
+                "export type %s<%s> = %s<%s>;",
                 Types.primitive(getUniqueName(name + "_", recorded)),
-                typeVariables,
-                Types.type(clazz.classPath).contextShield(BaseType.FormatType.INPUT)
+                typeVariables.contextShield(BaseType.FormatType.VARIABLE),
+                Types.type(clazz.classPath).contextShield(BaseType.FormatType.INPUT),
+                typeVariables.contextShield(BaseType.FormatType.RETURN)
             ));
         }
 
