@@ -57,6 +57,8 @@ public class SimulateOldTyping implements ProbeJSPlugin {
                 Types.type(clazz.classPath).contextShield(BaseType.FormatType.INPUT)
             ));
         }
+
+        scriptDump.addGlobal("simulated_internal", namespace);
     }
 
     private static String getUniqueName(String name, Set<String> recorded) {
