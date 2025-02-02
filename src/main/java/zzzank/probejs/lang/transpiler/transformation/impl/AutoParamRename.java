@@ -24,7 +24,9 @@ import java.util.regex.Pattern;
  */
 public class AutoParamRename implements ClassTransformer {
 
-    public static final Pattern ARG_N = Pattern.compile("^arg(\\d+)$");
+    public static final Pattern MATCH_ARG_N = Pattern.compile("^arg(\\d+)$");
+    public static final Pattern MATCH_FIELD = Pattern.compile("^field_[0-9]+_[a-zA-Z]+_?$");
+    public static final Pattern MATCH_METHOD = Pattern.compile("^func_[0-9]+_[a-zA-Z]+_?$");
 
     @Override
     public void transformMethod(Clazz clazz, MethodInfo methodInfo, MethodDecl methodDecl) {
@@ -47,7 +49,7 @@ public class AutoParamRename implements ClassTransformer {
     }
 
     public static void autoRename(ParamDecl param, TypeDescriptor typeDesc, int index) {
-        if (ARG_N.matcher(param.name).matches()) {
+        if (MATCH_ARG_N.matcher(param.name).matches()) {
             val autoName = autoParamName(typeDesc, index);
             if (autoName != null) {
                 param.name = autoName;
