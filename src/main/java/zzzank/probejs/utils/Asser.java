@@ -27,4 +27,13 @@ public interface Asser {
         }
         return collection;
     }
+
+    static <T> T[] tNotNullAll(T[] collection, String name) {
+        tNotNull(collection, name);
+        val elementName = "element in " + name;
+        for (val o : collection) {
+            tNotNull(o, elementName);
+        }
+        return collection;
+    }
 }

@@ -77,18 +77,18 @@ public class TypeAdapter {
             }
         } else if (in instanceof ArrayType arrayType) {
             return new ArrayType(
-                in.getAnnotations(),
+                in.annotations,
                 consolidateType(arrayType.component, symbol, replacement)
             );
         } else if (in instanceof ParamType paramType) {
             return new ParamType(
-                in.getAnnotations(),
+                in.annotations,
                 consolidateType(paramType.base, symbol, replacement),
                 CollectUtils.mapToList(paramType.params, t -> consolidateType(t, symbol, replacement))
             );
         } else if (in instanceof WildType wildType) {
             return new WildType(
-                in.getAnnotations(),
+                in.annotations,
                 wildType.bound == null ? null : consolidateType(wildType.bound, symbol, replacement)
             );
         }
