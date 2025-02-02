@@ -58,7 +58,7 @@ public class ConfigEntryBuilder<T> {
         return casted;
     }
 
-    private <T_> ConfigEntryBuilder<T_> setDefault(ConfigBinding<T_> binding) {
+    public <T_> ConfigEntryBuilder<T_> setDefault(ConfigBinding<T_> binding) {
         return setDefault(binding.clazzFromDefaultValue(), binding);
     }
 

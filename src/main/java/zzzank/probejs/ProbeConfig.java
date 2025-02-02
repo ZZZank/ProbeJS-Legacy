@@ -39,16 +39,16 @@ public interface ProbeConfig {
             note that `require()` function in script are always available""")
         .build();
     ConfigEntry<Boolean> interactive = INSTANCE.define("interactive")
-        .setDefault(false)
+        .readOnly(false)
         .comment("""
             use with ProbeJS VSCode Extension.
-            Currently broken due to many breaking changes from KubeJS/ProbeJS from higher version""")
+            Disabled due to many breaking changes from KubeJS/ProbeJS from higher version""")
         .build();
     ConfigEntry<Integer> interactivePort = INSTANCE.define("interactivePort")
-        .setDefault(7796)
+        .readOnly(7796)
         .comment("""
             use with ProbeJS VSCode Extension.
-            Currently broken due to many breaking changes from KubeJS/ProbeJS from higher version""")
+            Disabled due to many breaking changes from KubeJS/ProbeJS from higher version""")
         .build();
     ConfigEntry<Long> modHash = INSTANCE.define("modHash")
         .setDefault(-1L)
