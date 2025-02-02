@@ -22,7 +22,7 @@ public class JsonConfigIO implements ConfigIO {
     public static final String COMMENTS_KEY = "$comment";
 
     @Override
-    public void read(ConfigImpl config, Reader reader) throws IOException {
+    public void read(ConfigImpl config, Reader reader) {
         val json = ProbeJS.GSON.fromJson(reader, JsonObject.class);
         for (val entry : json.entrySet()) {
             val namespaced = config.ensureNamespace(entry.getKey());
@@ -40,7 +40,7 @@ public class JsonConfigIO implements ConfigIO {
     }
 
     @Override
-    public void save(ConfigImpl config, Writer writer) throws IOException {
+    public void save(ConfigImpl config, Writer writer) {
         val object = new JsonObject();
         for (val entry : config.entries()) {
             val o = new JsonObject();
@@ -56,6 +56,6 @@ public class JsonConfigIO implements ConfigIO {
 
             object.add(config.stripNamespace(entry.namespace, entry.name), o);
         }
-        ProbeJS.GSON.toJson(object, writer);
+        ProbeJS.GSON_WRITER.toJson(object, writer);
     }
 }
