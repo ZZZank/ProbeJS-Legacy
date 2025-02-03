@@ -7,6 +7,7 @@ import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.Asser;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,26 +16,37 @@ import java.util.List;
  * Represents a type declaration. Standalone members are always exported.
  */
 public class TypeDecl extends CommentableCode {
-    public boolean exportDecl = true;
+    public boolean exportDecl;
 
     public final String symbol;
     @NotNull
-    public List<BaseType> symbolVariables = Collections.emptyList();
+    public List<BaseType> symbolVariables;
 
     @NotNull
     public BaseType type;
     @NotNull
-    public BaseType.FormatType typeFormat = BaseType.FormatType.INPUT;
+    public BaseType.FormatType typeFormat;
 
     public TypeDecl(String symbol, @NotNull BaseType type) {
-        this.symbol = symbol;
-        this.type = type;
+        this(symbol, Collections.emptyList(), type);
     }
 
     public TypeDecl(String symbol, @NotNull List<BaseType> symbolVariables, @NotNull BaseType type) {
+        this(true, symbol, symbolVariables, type, BaseType.FormatType.INPUT);
+    }
+
+    public TypeDecl(
+        boolean exportDecl,
+        String symbol,
+        @NotNull List<BaseType> symbolVariables,
+        @NotNull BaseType type,
+        @NotNull BaseType.FormatType typeFormat
+    ) {
+        this.exportDecl = exportDecl;
         this.symbol = symbol;
-        this.symbolVariables = symbolVariables;
-        this.type = type;
+        this.symbolVariables = Asser.tNotNull(symbolVariables, "symbolVariables");
+        this.type = Asser.tNotNull(type, "type");
+        this.typeFormat = Asser.tNotNull(typeFormat, "typeFormat");
     }
 
     public TypeDecl setExport(boolean exportDecl) {
@@ -62,5 +74,43 @@ public class TypeDecl extends CommentableCode {
             .append(type.line(declaration, typeFormat))
             .append(";");
         return Collections.singletonList(builder.toString());
+    }
+
+    public static class Builder {
+        private final String symbol;
+        private final BaseType type;
+        private boolean exportDecl = true;
+        private List<BaseType> symbolVariables = Collections.emptyList();
+        private BaseType.FormatType typeFormat = BaseType.FormatType.INPUT;
+
+        public Builder(String symbol, @NotNull BaseType type) {
+            this.symbol = symbol;
+            this.type = type;
+        }
+
+        public Builder exportDecl(boolean exportDecl) {
+            this.exportDecl = exportDecl;
+            return this;
+        }
+
+        public Builder symbolVariables(@NotNull List<BaseType> symbolVariables) {
+            this.symbolVariables = symbolVariables;
+            return this;
+        }
+
+        public Builder typeFormat(@NotNull BaseType.FormatType typeFormat) {
+            this.typeFormat = typeFormat;
+            return this;
+        }
+
+        public TypeDecl build() {
+            return new TypeDecl(this.exportDecl, this.symbol, this.symbolVariables, this.type, this.typeFormat);
+        }
+
+        public String toString() {
+            return "TypeDecl.TypeDeclBuilder(exportDecl=" + this.exportDecl + ", symbol=" + this.symbol
+                + ", symbolVariables=" + this.symbolVariables + ", type=" + this.type + ", typeFormat="
+                + this.typeFormat + ")";
+        }
     }
 }
