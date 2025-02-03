@@ -1,10 +1,10 @@
 package zzzank.probejs.lang.java.base;
 
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.utils.Asser;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 
 public class AnnotationHolder {
 
-    @Nonnull
+    @NotNull
     public final Annotation[] annotations;
 
-    public AnnotationHolder(@Nonnull Annotation @Nonnull [] annotations) {
+    public AnnotationHolder(@NotNull Annotation @NotNull [] annotations) {
         this.annotations = Asser.tNotNullAll(annotations, "annotations");
     }
 
