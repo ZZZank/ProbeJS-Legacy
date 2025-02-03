@@ -17,7 +17,7 @@ public final class Reference {
      * @return the string representing the actual import statement from this import info,
      * in 'import { ... } from ...' format
      */
-    public String getImport() {
+    public String getImportStatement() {
         val original = info.path.getName();
 
         final Function<ImportType, String> nameMapper = original.equals(deduped)

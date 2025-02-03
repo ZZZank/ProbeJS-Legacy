@@ -200,16 +200,13 @@ public class ScriptDump {
             // declare global {
             //     type Type_ = ExportedType
             // }
-            String globalSymbol = classPath.getName() + "_";
-            String exportedSymbol = ImportType.TYPE.fmt(classPath.getName());
+            val globalSymbol = classPath.getName() + "_";
+            val exportedSymbol = ImportType.TYPE.fmt(classPath.getName());
+
             BaseType exportedType = Types.type(classPath);
             BaseType thisType = Types.type(classPath);
 
             if (!classDecl.variableTypes.isEmpty()) {
-                val suffix = Types.join(", ", "<", ">", classDecl.variableTypes)
-                    .line(output.declaration, BaseType.FormatType.RETURN);
-                globalSymbol += suffix;
-                exportedSymbol += suffix;
                 thisType = Types.parameterized(thisType, classDecl.variableTypes);
                 exportedType = Types.parameterized(exportedType, classDecl.variableTypes);
             }
@@ -228,11 +225,11 @@ public class ScriptDump {
                 }
             }
 
-            val typeConvertible = new TypeDecl(exportedSymbol, Types.or(allTypes));
+            val typeConvertible = new TypeDecl(exportedSymbol, classDecl.variableTypes, Types.or(allTypes));
             typeConvertible.addComment("""
                 Class-specific type exported by ProbeJS, use global `{Type}_` types for convenience unless there's a naming conflict.""");
             val typeGlobal = new Wrapped.Global();
-            typeGlobal.addCode(new TypeDecl(globalSymbol, exportedType));
+            typeGlobal.addCode(new TypeDecl(globalSymbol, classDecl.variableTypes, exportedType));
             typeGlobal.addComment("""
                 Global type exported for convenience, use class-specific types if there's a naming conflict.""");
             output.addCode(typeConvertible);

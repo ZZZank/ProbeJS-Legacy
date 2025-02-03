@@ -20,7 +20,7 @@ public class TSClassType extends BaseType {
         return ImportInfos.of(switch (type) {
             case RETURN -> ImportInfo.ofOriginal(classPath);
             case INPUT -> ImportInfo.ofType(classPath);
-            default -> ImportInfo.of(classPath);
+            default -> ImportInfo.ofDefault(classPath);
         });
     }
 

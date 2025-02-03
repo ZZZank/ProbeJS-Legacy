@@ -1,6 +1,7 @@
 package zzzank.probejs.lang.typescript.code.type;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -11,10 +12,7 @@ import zzzank.probejs.lang.typescript.code.type.ts.*;
 import zzzank.probejs.lang.typescript.code.type.utility.*;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -117,12 +115,12 @@ public interface Types {
     }
 
     static JSJoinedType join(
-        CharSequence delimiter,
-        CharSequence prefix,
-        CharSequence suffix,
-        Collection<? extends BaseType> types
+        @NotNull CharSequence delimiter,
+        @NotNull CharSequence prefix,
+        @NotNull CharSequence suffix,
+        @NotNull Collection<? extends BaseType> types
     ) {
-        return new JSJoinedType.Custom(types, delimiter, prefix, suffix);
+        return new JSJoinedType.Custom(Objects.requireNonNull(types), delimiter, prefix, suffix);
     }
 
     static TSParamType parameterized(BaseType base, BaseType... params) {

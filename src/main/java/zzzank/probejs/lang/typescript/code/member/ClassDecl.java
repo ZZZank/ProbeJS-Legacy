@@ -9,9 +9,11 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.CollectUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -178,14 +180,15 @@ public class ClassDecl extends CommentableCode {
         }
 
         public Builder typeVariables(String... symbols) {
-            for (String symbol : symbols) {
-                typeVariables(Types.generic(symbol));
-            }
-            return this;
+            return typeVariables(CollectUtils.mapToList(symbols, Types::generic));
         }
 
         public Builder typeVariables(TSVariableType... variableTypes) {
-            this.variableTypes.addAll(Arrays.asList(variableTypes));
+            return typeVariables(Arrays.asList(variableTypes));
+        }
+
+        public Builder typeVariables(Collection<? extends TSVariableType> variableTypes) {
+            this.variableTypes.addAll(variableTypes);
             return this;
         }
 

@@ -20,7 +20,7 @@ public class TypeDecl extends CommentableCode {
 
     public final String symbol;
     @NotNull
-    public List<BaseType> symbolVariables;
+    public List<? extends BaseType> symbolVariables;
 
     @NotNull
     public BaseType type;
@@ -31,14 +31,14 @@ public class TypeDecl extends CommentableCode {
         this(symbol, Collections.emptyList(), type);
     }
 
-    public TypeDecl(String symbol, @NotNull List<BaseType> symbolVariables, @NotNull BaseType type) {
+    public TypeDecl(String symbol, @NotNull List<? extends BaseType> symbolVariables, @NotNull BaseType type) {
         this(true, symbol, symbolVariables, type, BaseType.FormatType.INPUT);
     }
 
     public TypeDecl(
         boolean exportDecl,
         String symbol,
-        @NotNull List<BaseType> symbolVariables,
+        @NotNull List<? extends BaseType> symbolVariables,
         @NotNull BaseType type,
         @NotNull BaseType.FormatType typeFormat
     ) {
@@ -80,7 +80,7 @@ public class TypeDecl extends CommentableCode {
         private final String symbol;
         private final BaseType type;
         private boolean exportDecl = true;
-        private List<BaseType> symbolVariables = Collections.emptyList();
+        private List<? extends BaseType> symbolVariables = Collections.emptyList();
         private BaseType.FormatType typeFormat = BaseType.FormatType.INPUT;
 
         public Builder(String symbol, @NotNull BaseType type) {
@@ -93,7 +93,7 @@ public class TypeDecl extends CommentableCode {
             return this;
         }
 
-        public Builder symbolVariables(@NotNull List<BaseType> symbolVariables) {
+        public Builder symbolVariables(@NotNull List<? extends BaseType> symbolVariables) {
             this.symbolVariables = symbolVariables;
             return this;
         }

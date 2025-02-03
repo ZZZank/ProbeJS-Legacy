@@ -23,7 +23,7 @@ public class TypeScriptFile {
         this.codes = new ArrayList<>();
 
         if (self != null) {
-            declaration.addImport(ImportInfo.of(self));
+            declaration.addImport(ImportInfo.ofDefault(self));
         }
         this.path = self;
     }
@@ -62,7 +62,7 @@ public class TypeScriptFile {
             if (value.info.path.equals(path)) {
                 continue;
             }
-            writer.write(value.getImport() + "\n");
+            writer.write(value.getImportStatement() + "\n");
             written = true;
         }
         if (!written) {

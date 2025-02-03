@@ -16,17 +16,20 @@ public final class ImportInfo {
     public final ClassPath path;
     public int imports;
 
-    private ImportInfo(ClassPath path, ImportType type, ImportType... rest) {
+    private ImportInfo(ClassPath path) {
         this.path = path;
         this.imports = 0;
-        addType(type);
-        for (val importType : rest) {
-            addType(importType);
-        }
     }
 
     public ImportInfo addType(@NotNull ImportType type) {
         imports |= 1 << type.ordinal;
+        return this;
+    }
+
+    public ImportInfo addTypes(@NotNull ImportType... types) {
+        for (val type : types) {
+            addType(type);
+        }
         return this;
     }
 
@@ -35,12 +38,16 @@ public final class ImportInfo {
         return this;
     }
 
-    public static ImportInfo of(ClassPath path, ImportType type, ImportType... rest) {
-        return new ImportInfo(Objects.requireNonNull(path), type, rest);
+    public static ImportInfo of(ClassPath path, ImportType type) {
+        return new ImportInfo(Objects.requireNonNull(path)).addType(type);
     }
 
-    public static ImportInfo of(ClassPath path) {
-        return of(path, ImportType.TYPE, ImportType.ORIGINAL);
+    public static ImportInfo of(ClassPath path, ImportType... types) {
+        return new ImportInfo(Objects.requireNonNull(path)).addTypes(types);
+    }
+
+    public static ImportInfo ofDefault(ClassPath path) {
+        return new ImportInfo(path).addType(ImportType.ORIGINAL).addType(ImportType.TYPE);
     }
 
     public static ImportInfo ofType(ClassPath path) {
