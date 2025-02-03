@@ -14,6 +14,7 @@ import zzzank.probejs.lang.typescript.code.type.ts.TSClassType;
 import zzzank.probejs.lang.typescript.code.type.utility.TSUtilityType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -29,6 +30,8 @@ public class GlobalClasses implements ProbeJSPlugin {
     @Override
     public void addGlobals(ScriptDump scriptDump) {
         val converter = scriptDump.transpiler.typeConverter;
+
+        val T = Types.generic("T");
 
         val paths = Types.object();
         for (val clazz : ClassRegistry.REGISTRY.foundClasses.values()) {
@@ -50,14 +53,13 @@ public class GlobalClasses implements ProbeJSPlugin {
             new TypeDecl(CLASS_PATH.content, Types.STRING.and(Types.primitive("keyof GlobalClasses"))),
             new TypeDecl(JAVA_CLASS_PATH.content, TSUtilityType.exclude(CLASS_PATH, classPathTemplate)),
             new TypeDecl(TS_CLASS_PATH.content, TSUtilityType.extract(CLASS_PATH, classPathTemplate)),
-            new TypeDecl("AttachJClass<T>",
-                Types.and(
-                    Types.generic("T"),
-                    J_CLASS.withParams(TSUtilityType.instanceType(Types.generic("T")))
-                )
+            new TypeDecl("AttachJClass",
+                Collections.singletonList(T),
+                T.and(J_CLASS.withParams(TSUtilityType.instanceType(T)))
             ).setExport(false),
             new TypeDecl(
-                "LoadClass<T>",
+                "LoadClass",
+                Collections.singletonList(T),
                 Types.format(
                     "T extends %s ? AttachJClass<%s[T]> : %s",
                     CLASS_PATH,
