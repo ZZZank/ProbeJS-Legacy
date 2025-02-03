@@ -1,6 +1,7 @@
 package zzzank.probejs.lang.typescript.code.type;
 
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.type.js.JSJoinedType;
@@ -64,6 +65,16 @@ public abstract class BaseType extends Code {
     }
 
     public TSParamType withParams(Collection<? extends BaseType> params) {
+        return Types.parameterized(this, params);
+    }
+
+    /**
+     * @return the type itself if {@code params} is empty, otherwise a new {@link TSParamType}
+     */
+    public BaseType withPossibleParams(@NotNull Collection<? extends BaseType> params) {
+        if (params.isEmpty()) {
+            return this;
+        }
         return Types.parameterized(this, params);
     }
 

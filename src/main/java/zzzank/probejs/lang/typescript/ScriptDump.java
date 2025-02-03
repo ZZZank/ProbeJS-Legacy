@@ -203,18 +203,14 @@ public class ScriptDump {
             val globalSymbol = classPath.getName() + "_";
             val exportedSymbol = ImportType.TYPE.fmt(classPath.getName());
 
-            BaseType exportedType = Types.type(classPath);
-            BaseType thisType = Types.type(classPath);
+            val exportedType = Types.type(classPath)
+                .withPossibleParams(classDecl.variableTypes)
+                .contextShield(BaseType.FormatType.INPUT);
+            val thisType = Types.type(classPath)
+                .withPossibleParams(classDecl.variableTypes)
+                .contextShield(BaseType.FormatType.RETURN);
 
-            if (!classDecl.variableTypes.isEmpty()) {
-                thisType = Types.parameterized(thisType, classDecl.variableTypes);
-                exportedType = Types.parameterized(exportedType, classDecl.variableTypes);
-            }
-
-            exportedType = Types.contextShield(exportedType, BaseType.FormatType.INPUT);
-            thisType = Types.contextShield(thisType, BaseType.FormatType.RETURN);
-
-            List<BaseType> allTypes = new ArrayList<>();
+            val allTypes = new ArrayList<BaseType>();
             allTypes.add(thisType);
             for (val typeDecl : convertibles.get(classPath)) {
                 if (typeDecl.symbol != null) {
