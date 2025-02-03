@@ -4,14 +4,15 @@ import lombok.val;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
+import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.CollectUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author ZZZank
@@ -40,25 +41,17 @@ public class SimulateOldTyping implements ProbeJSPlugin {
                 continue;
             }
 
-            val variables = clazz.variableTypes.stream()
-                .map(typeConverter::convertType)
-                .collect(Collectors.toList());
-            val typeVariables = Types.join(", ", variables);
-
-            namespace.addCode(Types.format(
-                "export type %s<%s> = %s<%s>;",
-                Types.primitive(getUniqueName(name, recorded)),
-                typeVariables.contextShield(BaseType.FormatType.VARIABLE),
-                Types.type(clazz.classPath).contextShield(BaseType.FormatType.RETURN),
-                typeVariables.contextShield(BaseType.FormatType.RETURN)
-            ));
-            namespace.addCode(Types.format(
-                "export type %s<%s> = %s<%s>;",
-                Types.primitive(getUniqueName(name + "_", recorded)),
-                typeVariables.contextShield(BaseType.FormatType.VARIABLE),
-                Types.type(clazz.classPath).contextShield(BaseType.FormatType.INPUT),
-                typeVariables.contextShield(BaseType.FormatType.RETURN)
-            ));
+            val variables = CollectUtils.mapToList(clazz.variableTypes, typeConverter::convertType);
+            namespace.addCode(Statements
+                .type(getUniqueName(name, recorded), Types.type(clazz.classPath).withParams(variables))
+                .symbolVariables(variables)
+                .typeFormat(BaseType.FormatType.RETURN)
+                .build());
+            namespace.addCode(Statements
+                .type(getUniqueName(name +"_", recorded), Types.type(clazz.classPath).withParams(variables))
+                .symbolVariables(variables)
+                .typeFormat(BaseType.FormatType.INPUT)
+                .build());
         }
 
         scriptDump.addGlobal("simulated_internal", namespace);
