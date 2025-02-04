@@ -250,4 +250,12 @@ public interface Types {
     static WithFormatType withComment(BaseType type, String comment) {
         return format("%s /* %s */", type, Types.primitive(comment));
     }
+
+    static WithFormatType ternary(TSVariableType condition, BaseType ifTrue, BaseType ifFalse) {
+        return ternary(Collections.singleton(condition), ifTrue, ifFalse);
+    }
+
+    static WithFormatType ternary(Collection<? extends TSVariableType> condition, BaseType ifTrue, BaseType ifFalse) {
+        return format("%s ? %s : %s", and(condition), ifTrue, ifFalse);
+    }
 }

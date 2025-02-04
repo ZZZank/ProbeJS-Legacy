@@ -53,17 +53,16 @@ public class GlobalClasses implements ProbeJSPlugin {
             new TypeDecl(CLASS_PATH.content, Types.STRING.and(Types.primitive("keyof GlobalClasses"))),
             new TypeDecl(JAVA_CLASS_PATH.content, TSUtilityType.exclude(CLASS_PATH, classPathTemplate)),
             new TypeDecl(TS_CLASS_PATH.content, TSUtilityType.extract(CLASS_PATH, classPathTemplate)),
-            new TypeDecl("AttachJClass",
-                Collections.singletonList(T),
-                T.and(J_CLASS.withParams(TSUtilityType.instanceType(T)))
-            ).setExport(false),
+            Statements.type("AttachJClass", T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
+                .symbolVariables(Collections.singletonList(T))
+                .exportDecl(false)
+                .build(),
             new TypeDecl(
                 "LoadClass",
                 Collections.singletonList(T),
-                Types.format(
-                    "T extends %s ? AttachJClass<%s[T]> : %s",
-                    CLASS_PATH,
-                    GLOBAL_CLASSES,
+                Types.ternary(
+                    Types.generic("T", CLASS_PATH),
+                    Types.format("AttachJClass<%s[T]>", CLASS_PATH),
                     Types.NEVER
                 )
             )
