@@ -1,3 +1,16 @@
+# ProbeJS Legacy 4.5.0 -> 4.6.0
+
+Simulated `Internal`
+
+- ProbeJS Legacy will now generate a `Internal` namespace, allowing ProbeJS Legacy 3 users to migrate to ProbeJS Legacy 4
+more easily
+- also, instead of having to import a precise type to actually use it in your jsdoc, for example `$ItemStackJS`, you can
+now use `Internal` namespace to access it, for example `Internal.ItemStackJS`
+- two unused config entries are disabled
+- Fixed a strange type generic bug
+
+---
+
 # ProbeJS Legacy 4.4.2 -> 4.5.0
 
 Auto Param Renaming
