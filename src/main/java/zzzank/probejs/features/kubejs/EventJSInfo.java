@@ -6,6 +6,7 @@ import dev.latvian.kubejs.script.ScriptType;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.Mutable;
@@ -38,7 +39,7 @@ public final class EventJSInfo implements Comparable<EventJSInfo> {
     @Nullable
     public static EventJSInfo fromJson(String id, JsonObject json) {
         //class
-        val clazz = ReflectUtils.classOrNull(json.get("class").getAsString());
+        val clazz = ReflectUtils.classOrNull(json.get("class").getAsString(), ProbeJS.LOGGER);
         if (clazz == null || !EventJS.class.isAssignableFrom(clazz)) {
             return null;
         }

@@ -1,5 +1,8 @@
 package zzzank.probejs.utils;
 
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,30 +35,30 @@ public interface ReflectUtils {
         }
     }
 
-    static Class<?> classOrNull(String name) {
-        return classOrNull(name, false);
-    }
-
-    static Class<?> classOrNull(String name, ClassLoader loader, boolean initialize, boolean printError) {
+    static Class<?> classOrNull(String name, ClassLoader loader, boolean initialize, @Nullable Logger errorReporter) {
         try {
             return Class.forName(name, initialize, loader);
         } catch (Throwable e) {
-            if (printError) {
-                e.printStackTrace();
+            if (errorReporter != null) {
+                errorReporter.error("error loading class", e);
             }
         }
         return null;
     }
 
-    static Class<?> classOrNull(String name, boolean initialize, boolean printError) {
-        return classOrNull(name, ReflectUtils.class.getClassLoader(), initialize, printError);
+    static Class<?> classOrNull(String name, boolean initialize, @Nullable Logger errorReporter) {
+        return classOrNull(name, ReflectUtils.class.getClassLoader(), initialize, errorReporter);
     }
 
-    static Class<?> classOrNull(String name, boolean printError) {
-        return classOrNull(name, false, printError);
+    static Class<?> classOrNull(String name, @Nullable Logger errorReporter) {
+        return classOrNull(name, false, errorReporter);
+    }
+
+    static Class<?> classOrNull(String name) {
+        return classOrNull(name, null);
     }
 
     static boolean classExist(String name) {
-        return classOrNull(name, false, false) != null;
+        return classOrNull(name, false, null) != null;
     }
 }
