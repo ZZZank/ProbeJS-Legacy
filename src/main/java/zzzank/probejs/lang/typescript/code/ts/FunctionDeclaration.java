@@ -9,19 +9,16 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FunctionDeclaration extends CommentableCode {
     public String name;
-    public final List<TSVariableType> variableTypes;
+    public final List<? extends BaseType> variableTypes;
     public final List<ParamDecl> params;
     public BaseType returnType;
 
-    public FunctionDeclaration(String name, List<TSVariableType> variableTypes, List<ParamDecl> params, BaseType returnType) {
+    public FunctionDeclaration(String name, List<? extends BaseType> variableTypes, List<ParamDecl> params, BaseType returnType) {
         this.name = name;
         this.variableTypes = variableTypes;
         this.params = params;

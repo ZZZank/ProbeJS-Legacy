@@ -19,13 +19,9 @@ public class Method extends Converter<MethodInfo, MethodDecl> {
 
     @Override
     public MethodDecl transpile(MethodInfo input) {
-        val variableTypes = new ArrayList<TSVariableType>();
-        for (val variableType : input.variableTypes) {
-            variableTypes.add((TSVariableType) converter.convertType(variableType));
-        }
         val decl = new MethodDecl(
             input.name,
-            variableTypes,
+            CollectUtils.mapToList(input.variableTypes, converter::convertType),
             CollectUtils.mapToList(input.params, this.param::transpile),
             converter.convertType(input.returnType)
         );

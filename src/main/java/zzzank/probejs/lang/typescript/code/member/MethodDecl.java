@@ -7,25 +7,23 @@ import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.ts.FunctionDeclaration;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MethodDecl extends CommentableCode {
     public String name;
     public boolean isAbstract = false;
     public boolean isStatic = false;
     public boolean isInterface = false;
-    public List<TSVariableType> variableTypes;
+    public List<? extends BaseType> variableTypes;
     public List<ParamDecl> params;
     public BaseType returnType;
     public String content = null;
 
-    public MethodDecl(String name, List<TSVariableType> variableTypes, List<ParamDecl> params, BaseType returnType) {
+    public MethodDecl(String name, List<? extends BaseType> variableTypes, List<ParamDecl> params, BaseType returnType) {
         this.name = name;
         this.variableTypes = new ArrayList<>(variableTypes);
         this.params = new ArrayList<>(params);

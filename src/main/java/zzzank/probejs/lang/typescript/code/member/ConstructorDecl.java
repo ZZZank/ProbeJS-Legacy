@@ -5,21 +5,17 @@ import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.CollectUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ConstructorDecl extends CommentableCode {
-    public final List<TSVariableType> variableTypes;
+    public final List<? extends BaseType> variableTypes;
     public final List<ParamDecl> params;
     public String content = null;
 
-    public ConstructorDecl(List<TSVariableType> variableTypes, List<ParamDecl> params) {
+    public ConstructorDecl(List<? extends BaseType> variableTypes, List<ParamDecl> params) {
         this.variableTypes = variableTypes;
         this.params = params;
     }
@@ -35,11 +31,10 @@ public class ConstructorDecl extends CommentableCode {
     public List<String> formatRaw(Declaration declaration) {
         // Format head - constructor<T>
         String head = "constructor";
+
         if (!variableTypes.isEmpty()) {
-            val variables = variableTypes.stream()
-                .map(type -> type.line(declaration, BaseType.FormatType.VARIABLE))
-                .collect(Collectors.joining(", "));
-            head = String.format("%s<%s>", head, variables);
+            head += Types.join(", ", "<", ">", variableTypes)
+                .line(declaration, BaseType.FormatType.VARIABLE);
         }
 
         // Format body - (a: type, ...)
@@ -54,18 +49,19 @@ public class ConstructorDecl extends CommentableCode {
     }
 
     public static class Builder {
-        public final List<TSVariableType> variableTypes = new ArrayList<>();
+        public final List<BaseType> variableTypes = new ArrayList<>();
         public final List<ParamDecl> params = new ArrayList<>();
 
         public Builder typeVariables(String... symbols) {
-            for (String symbol : symbols) {
-                typeVariables(Types.generic(symbol));
-            }
-            return this;
+            return typeVariables(CollectUtils.mapToList(symbols, Types::generic));
         }
 
-        public Builder typeVariables(TSVariableType... variableTypes) {
-            this.variableTypes.addAll(Arrays.asList(variableTypes));
+        public Builder typeVariables(BaseType... variableTypes) {
+            return typeVariables(Arrays.asList(variableTypes));
+        }
+
+        public Builder typeVariables(Collection<? extends BaseType> variableTypes) {
+            this.variableTypes.addAll(variableTypes);
             return this;
         }
 
