@@ -16,20 +16,20 @@ import java.util.*;
  */
 public class AutoSplitPackagedWriter extends AbstractWriter {
 
-    protected Map<String, List<TypeScriptFile>> packaged = new HashMap<>();
+    protected Map<String, List<TypeScriptFile>> packaged = Collections.singletonMap(null, new ArrayList<>());
 
     public final int minPackageCount;
     public final int maxPackageCount;
     public final int splitThreshold;
 
-    public final String fallbackFileNamePrefix;
+    public final String fallbackFileName;
     protected int accepted = 0;
 
     public AutoSplitPackagedWriter(
         int minPackageCount,
         int maxPackageCount,
         int splitThreshold,
-        String fallbackFileNamePrefix
+        String fallbackFileName
     ) {
         if (minPackageCount <= 0) {
             throw new IllegalArgumentException(
@@ -45,32 +45,27 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
                 "'splitThreshold' must be a positive number, but got " + splitThreshold);
         }
         this.minPackageCount = minPackageCount;
-        this.fallbackFileNamePrefix = fallbackFileNamePrefix;
+        this.fallbackFileName = fallbackFileName;
         this.maxPackageCount = maxPackageCount;
         this.splitThreshold = splitThreshold;
     }
 
     @Override
     public void accept(@NotNull TypeScriptFile file) {
-        val cPath = file.path;
-        val fileName = cPath.getParts().size() > minPackageCount
-            ? String.join(".", cPath.getParts().subList(0, minPackageCount))
-            : fallbackFileNamePrefix;
-        packaged.computeIfAbsent(fileName, k -> new ArrayList<>())
-            .add(file);
+        packaged.get(null).add(file);
         accepted += 1;
     }
 
     @Override
     protected void preWriting() {
-        packaged = trySpread(packaged);
+        packaged = trySpread(packaged, minPackageCount);
     }
 
-    protected Map<String, List<TypeScriptFile>> trySpread(Map<String, List<TypeScriptFile>> map) {
-        if (shouldSpread(map)) {
+    protected Map<String, List<TypeScriptFile>> trySpread(Map<String, List<TypeScriptFile>> map, int packageCount) {
+        if (shouldSpread(map) && packageCount <= maxPackageCount) {
             val spread = new HashMap<String, List<TypeScriptFile>>();
-            for (val entry : packaged.entrySet()) {
-                spread.putAll(spreadEntry(entry, minPackageCount + 1));
+            for (val entry : map.entrySet()) {
+                spread.putAll(spreadEntry(entry, packageCount));
             }
             return spread;
         }
@@ -91,30 +86,36 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
         int packageCount
     ) {
         val files = entry.getValue();
+
         if (files.size() < splitThreshold
             || packageCount > maxPackageCount
-            || fallbackFileNamePrefix.equals(entry.getKey())
+            || fallbackFileName.equals(entry.getKey())
         ) {
             return Collections.singletonMap(entry.getKey(), files);
         }
 
         val spread = new HashMap<String, List<TypeScriptFile>>();
         for (val file : files) {
-            val path = file.path;
-            val fileName = path.getParts().size() > packageCount
-                ? String.join(".", path.getParts().subList(0, packageCount))
-                : fallbackFileNamePrefix;
+            val parts = file.path.getParts();
+            val fileName = String.join(".", parts.subList(0, Integer.min(packageCount, parts.size() - 1)));
             spread.computeIfAbsent(fileName, CollectUtils.keyIgnoredNewArrayList())
                 .add(file);
         }
 
-        return trySpread(spread);
+        ProbeJS.LOGGER.info(
+            "file collection with key {} and {} files spread into {} entries",
+            entry.getKey(),
+            files.size(),
+            spread.size()
+        );
+
+        return trySpread(spread, packageCount + 1);
     }
 
     @Override
     protected void postWriting() {
         accepted = 0;
-        packaged.clear();
+        packaged = Collections.singletonMap(null, new ArrayList<>());
     }
 
     @Override
