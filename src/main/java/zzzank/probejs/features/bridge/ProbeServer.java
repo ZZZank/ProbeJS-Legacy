@@ -67,7 +67,7 @@ public class ProbeServer extends WebSocketServer {
             } catch (Throwable throwable) {
                 response.addProperty("error", throwable.getMessage());
             }
-            ProbeJS.LOGGER.info(response);
+            ProbeJS.LOGGER.info(response.toString());
             conn.send(ProbeJS.GSON.toJson(response));
         });
     }

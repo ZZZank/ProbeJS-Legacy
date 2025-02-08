@@ -59,7 +59,7 @@ public class ConfigEntry<T> {
     public ConfigReport setNoSave(T value) {
         val report = binding.set(value);
         if (report.hasError()) {
-            ProbeJS.LOGGER.error(report.asException());
+            ProbeJS.LOGGER.error("error when trying to set value for config entry '{}'", name, report.asException());
         }
         return report;
     }

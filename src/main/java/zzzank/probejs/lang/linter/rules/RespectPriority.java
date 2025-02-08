@@ -70,9 +70,9 @@ public class RespectPriority extends Rule {
                 Path dependency = pair.getSecond();
                 ScriptFile dependencyFile = files.get(dependency);
                 if (dependencyFile == null) {
-                    ProbeJS.LOGGER.info(path);
-                    ProbeJS.LOGGER.info(dependency);
-                    ProbeJS.LOGGER.info(files);
+                    ProbeJS.LOGGER.info(String.valueOf(path));
+                    ProbeJS.LOGGER.info(String.valueOf(dependency));
+                    ProbeJS.LOGGER.info(files.toString());
                     warnings.add(new LintingWarning(
                             path, LintingWarning.Level.WARNING,
                             line, 0,
@@ -83,9 +83,12 @@ public class RespectPriority extends Rule {
 
                 if (scriptFile.compareTo(dependencyFile)) {
                     warnings.add(new LintingWarning(
-                            path, LintingWarning.Level.ERROR,
-                            line, 0,
-                        String.format("Required %s before it loads!", basePath.relativize(dependency))));
+                        path,
+                        LintingWarning.Level.ERROR,
+                        line,
+                        0,
+                        String.format("Required %s before it loads!", basePath.relativize(dependency))
+                    ));
                 }
             }
         }
@@ -98,7 +101,9 @@ public class RespectPriority extends Rule {
 
         public boolean compareTo(ScriptFile o2) {
             int priority = -Integer.compare(this.priority, o2.priority);
-            if (priority == 0) priority = this.path.compareTo(o2.path);
+            if (priority == 0) {
+                priority = this.path.compareTo(o2.path);
+            }
             return priority < 0;
         }
     }
