@@ -252,10 +252,9 @@ public interface Types {
     }
 
     static WithFormatType ternary(TSVariableType condition, BaseType ifTrue, BaseType ifFalse) {
-        return ternary(Collections.singleton(condition), ifTrue, ifFalse);
-    }
-
-    static WithFormatType ternary(Collection<? extends TSVariableType> condition, BaseType ifTrue, BaseType ifFalse) {
-        return format("%s ? %s : %s", and(condition), ifTrue, ifFalse);
+        if (condition.extend == null) {
+            throw new IllegalArgumentException("no 'extends' in provided variable type");
+        }
+        return format("%s ? %s : %s", condition, ifTrue, ifFalse);
     }
 }
