@@ -40,7 +40,7 @@ public interface ReflectUtils {
             return Class.forName(name, initialize, loader);
         } catch (Throwable e) {
             if (errorReporter != null) {
-                errorReporter.error("error loading class", e);
+                errorReporter.error("error loading class with name '{}': {}", name , e.getLocalizedMessage());
             }
         }
         return null;
