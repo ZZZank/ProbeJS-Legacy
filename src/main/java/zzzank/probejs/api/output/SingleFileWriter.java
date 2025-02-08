@@ -29,7 +29,7 @@ public class SingleFileWriter extends AbstractWriter {
     }
 
     @Override
-    protected void clearAcceptedFiles() {
+    protected void postWriting() {
         files.clear();
     }
 

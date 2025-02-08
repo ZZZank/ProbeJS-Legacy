@@ -53,6 +53,12 @@ public interface CollectUtils {
         return l;
     }
 
+    Function<?, ArrayList<?>> KEY_IGNORED_NEW_ARRAY_LIST = k -> new ArrayList<>();
+
+    static <K, T> Function<K, ArrayList<T>> keyIgnoredNewArrayList() {
+        return Cast.to(KEY_IGNORED_NEW_ARRAY_LIST);
+    }
+
     static int calcMapExpectedSize(int elementCount) {
         return calcMapExpectedSize(elementCount, 0.75F);
     }

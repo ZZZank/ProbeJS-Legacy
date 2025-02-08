@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.FileUtils;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.ProbePaths;
-import zzzank.probejs.api.output.PackagedWriter;
+import zzzank.probejs.api.output.AutoSplitPackagedWriter;
 import zzzank.probejs.api.output.PerFileWriter;
 import zzzank.probejs.api.output.TSFileWriter;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -88,7 +88,7 @@ public class ScriptDump {
     private final Predicate<Clazz> accept;
     private final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
 
-    public final TSFileWriter classesWriter = new PackagedWriter(2, SIMPLE_PACKAGE);
+    public final TSFileWriter classesWriter = new AutoSplitPackagedWriter(2, Integer.MAX_VALUE, 200, SIMPLE_PACKAGE);
     public final TSFileWriter globalWriter = new PerFileWriter().setWithIndex(false).setWriteAsModule(false);
 
     public ScriptDump(ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {

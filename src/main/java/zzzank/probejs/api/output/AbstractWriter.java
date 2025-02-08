@@ -51,17 +51,21 @@ public abstract class AbstractWriter implements TSFileWriter {
     @Override
     public final void write(Path base) throws IOException {
         try {
+            preWriting();
             writeClasses(base);
             if (withIndex) {
                 writeIndex(base);
             }
         } finally {
             written = 0;
-            clearAcceptedFiles();
+            postWriting();
         }
     }
 
-    protected abstract void clearAcceptedFiles();
+    protected void preWriting() {
+    }
+
+    protected abstract void postWriting();
 
     protected abstract void writeClasses(Path base) throws IOException;
 

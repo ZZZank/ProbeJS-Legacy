@@ -28,7 +28,7 @@ public class PerFileWriter extends AbstractWriter {
     }
 
     @Override
-    protected void clearAcceptedFiles() {
+    protected void postWriting() {
         files.clear();
     }
 
