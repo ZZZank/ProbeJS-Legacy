@@ -1,3 +1,13 @@
+# ProbeJS Legacy 4.6.0 -> 4.6.1
+
+Fix `java(...)`
+
+- Fixed `java(...)` broken in 4.6.0
+- ProbeJS Legacy will now print a bit more error message when some classloading fails
+- `xxx.d.ts` file with too many modules in it will now be split into smaller files for better performance
+
+---
+
 # ProbeJS Legacy 4.5.0 -> 4.6.0
 
 Simulated `Internal`
