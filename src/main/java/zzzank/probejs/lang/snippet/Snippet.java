@@ -9,16 +9,13 @@ import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.snippet.parts.*;
 import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.GameUtils;
 import zzzank.probejs.utils.JsonUtils;
-import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Snippet {
 

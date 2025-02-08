@@ -38,20 +38,20 @@ public class SimulateOldTyping implements ProbeJSPlugin {
                     Types.type(clazz.classPath).contextShield(BaseType.FormatType.RETURN)
                 ));
                 namespace.addCode(new TypeDecl(getUniqueName(name + "_", recorded), Types.type(clazz.classPath)));
-                continue;
+            } else {
+                val variables = CollectUtils.mapToList(clazz.variableTypes, typeConverter::convertType);
+                val variableType = Types.type(clazz.classPath).withParams(variables);
+                namespace.addCode(Statements
+                    .type(getUniqueName(name, recorded), variableType)
+                    .symbolVariables(variables)
+                    .typeFormat(BaseType.FormatType.RETURN)
+                    .build());
+                namespace.addCode(Statements
+                    .type(getUniqueName(name + "_", recorded), variableType)
+                    .symbolVariables(variables)
+                    .typeFormat(BaseType.FormatType.INPUT)
+                    .build());
             }
-
-            val variables = CollectUtils.mapToList(clazz.variableTypes, typeConverter::convertType);
-            namespace.addCode(Statements
-                .type(getUniqueName(name, recorded), Types.type(clazz.classPath).withParams(variables))
-                .symbolVariables(variables)
-                .typeFormat(BaseType.FormatType.RETURN)
-                .build());
-            namespace.addCode(Statements
-                .type(getUniqueName(name +"_", recorded), Types.type(clazz.classPath).withParams(variables))
-                .symbolVariables(variables)
-                .typeFormat(BaseType.FormatType.INPUT)
-                .build());
         }
 
         scriptDump.addGlobal("simulated_internal", namespace);

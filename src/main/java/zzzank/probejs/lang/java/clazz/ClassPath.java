@@ -58,6 +58,10 @@ public final class ClassPath implements Comparable<ClassPath> {
         return Collections.unmodifiableList(Arrays.asList(this.parts));
     }
 
+    public int getPartsCount() {
+        return parts.length;
+    }
+
     public String getName() {
         return parts[parts.length - 1];
     }

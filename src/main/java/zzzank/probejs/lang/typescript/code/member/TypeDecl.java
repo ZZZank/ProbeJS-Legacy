@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents a type declaration. Standalone members are always exported.
+ * Represents a type declaration.
  */
 public class TypeDecl extends CommentableCode {
     public boolean exportDecl;

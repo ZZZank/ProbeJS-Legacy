@@ -31,7 +31,7 @@ public class GlobalClasses implements ProbeJSPlugin {
     public void addGlobals(ScriptDump scriptDump) {
         val converter = scriptDump.transpiler.typeConverter;
 
-        val T = Types.generic("T");
+        val T = Types.generic("T", CLASS_PATH);
 
         val paths = Types.object();
         for (val clazz : ClassRegistry.REGISTRY.foundClasses.values()) {
@@ -61,8 +61,8 @@ public class GlobalClasses implements ProbeJSPlugin {
                 "LoadClass",
                 Collections.singletonList(T),
                 Types.ternary(
-                    Types.generic("T", CLASS_PATH),
-                    Types.format("AttachJClass<%s[T]>", CLASS_PATH),
+                    T,
+                    Types.format("AttachJClass<%s[T]>", GLOBAL_CLASSES),
                     Types.NEVER
                 )
             )
