@@ -1,7 +1,7 @@
 package zzzank.probejs.utils;
 
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -50,7 +50,7 @@ public interface ReflectUtils {
         return classOrNull(name, ReflectUtils.class.getClassLoader(), initialize, errorReporter);
     }
 
-    static Class<?> classOrNull(String name, @Nullable Logger errorReporter) {
+    static Class<?> classOrNull(String name, Logger errorReporter) {
         return classOrNull(name, false, errorReporter);
     }
 

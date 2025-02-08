@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import me.shedaniel.architectury.platform.forge.EventBuses;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import zzzank.probejs.utils.JsonUtils;
 
 import java.nio.file.Path;
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 @Mod(ProbeJS.MOD_ID)
 public class ProbeJS {
     public static final String MOD_ID = "probejs";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     public static final Gson GSON = new GsonBuilder()
         .serializeSpecialFloatingPointValues()
         .setLenient()
