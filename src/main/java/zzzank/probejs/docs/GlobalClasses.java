@@ -61,7 +61,8 @@ public class GlobalClasses implements ProbeJSPlugin {
                 "LoadClass",
                 Collections.singletonList(T),
                 Types.ternary(
-                    T,
+                    T.symbol,
+                    T.extend,
                     Types.format("AttachJClass<%s[T]>", GLOBAL_CLASSES),
                     Types.NEVER
                 )

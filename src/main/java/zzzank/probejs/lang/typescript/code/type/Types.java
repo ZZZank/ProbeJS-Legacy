@@ -11,6 +11,7 @@ import zzzank.probejs.lang.typescript.code.type.js.*;
 import zzzank.probejs.lang.typescript.code.type.ts.*;
 import zzzank.probejs.lang.typescript.code.type.utility.*;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.Asser;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -251,10 +252,13 @@ public interface Types {
         return format("%s /* %s */", type, Types.primitive(comment));
     }
 
-    static WithFormatType ternary(TSVariableType condition, BaseType ifTrue, BaseType ifFalse) {
-        if (condition.extend == null) {
-            throw new IllegalArgumentException("no 'extends' in provided variable type");
-        }
-        return format("%s ? %s : %s", condition, ifTrue, ifFalse);
+    static WithFormatType ternary(String symbol, BaseType extend, BaseType ifTrue, BaseType ifFalse) {
+        return format(
+            "%s extends %s ? %s : %s",
+            Types.primitive(symbol),
+            extend.contextShield(BaseType.FormatType.VARIABLE),
+            Asser.tNotNull(ifTrue, "ifTrue"),
+            Asser.tNotNull(ifFalse, "ifFalse")
+        );
     }
 }
