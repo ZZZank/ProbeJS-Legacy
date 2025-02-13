@@ -1,3 +1,13 @@
+# ProbeJS Legacy 4.6.1 -> 4.6.2
+
+Fix again & Mod Scanner
+
+- Fixed problems when there are too many classes in a single package.
+- a new config entry `Mods with forced Full Scanning`, where you can force ProbeJS Legacy to perform full scan on
+certain mods by adding its modid.
+
+---
+
 # ProbeJS Legacy 4.6.0 -> 4.6.1
 
 Fix `java(...)`
