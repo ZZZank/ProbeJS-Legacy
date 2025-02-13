@@ -67,9 +67,11 @@ class ModJarClassScanner {
             val reader = new ClassReader(resource);
             val visitor = new ProbeClassVisitor();
             reader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-            for (val annotation : visitor.visibleAnnotations) {
-                if (DESC_MIXIN.equals(annotation.desc)) {
-                    return false;
+            if (visitor.visibleAnnotations != null) {
+                for (val annotation : visitor.visibleAnnotations) {
+                    if (DESC_MIXIN.equals(annotation.desc)) {
+                        return false;
+                    }
                 }
             }
         } catch (IOException e) {
