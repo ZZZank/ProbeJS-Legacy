@@ -3,7 +3,7 @@ package zzzank.probejs;
 import com.google.gson.JsonObject;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.features.forge_scan.ForgeModScanner;
+import zzzank.probejs.features.forge_scan.ClassScanner;
 import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
@@ -42,7 +42,8 @@ public class ProbeDump {
     private void onModChange() throws IOException {
         // Decompile stuffs - here we scan mod classes even if we don't decompile
         // So we have all classes without needing to decompile
-        ClassRegistry.REGISTRY.fromClasses(new ForgeModScanner().scanAll());
+        ClassRegistry.REGISTRY.fromClasses(ClassScanner.scanForge());
+        ClassRegistry.REGISTRY.fromClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
 
         report(ProbeText.pjs("dump.cleaning"));
         for (ScriptDump scriptDump : scriptDumps) {

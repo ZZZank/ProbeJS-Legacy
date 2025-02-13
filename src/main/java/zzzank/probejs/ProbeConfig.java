@@ -1,10 +1,12 @@
 package zzzank.probejs;
 
 import zzzank.probejs.features.forge_scan.BuiltinScanners;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.ConfigEntry;
 import zzzank.probejs.utils.config.ConfigImpl;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -95,6 +97,11 @@ public interface ProbeConfig {
             NONE -> no class scanner
             EVENTS (default) -> scan all forge event subclasses
             FULL -> scan all classes recorded by ForgeModLoader""")
+        .build();
+    ConfigEntry<List<String>> fullScanMods = INSTANCE.define("Mods with forced Full Scanning")
+        .setDefault(CollectUtils.ofList("minecraft", "kubejs", "forge"))
+        .comment("""
+            mods described here will have ALL their classes scanned""")
         .build();
     ConfigEntry<Boolean> dumpCustomRecipeGenerator = INSTANCE.define("dumpCustomRecipeGenerator")
         .setDefault(false)
