@@ -103,11 +103,16 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
         }
 
         ProbeJS.LOGGER.info(
-            "file collection with key {} and {} files spread into {} entries",
-            entry.getKey(),
+            "{} TS files with common key {} spread into {} entries",
             files.size(),
+            entry.getKey(),
             spread.size()
         );
+
+        if (spread.size() == 1 && Objects.equals(entry.getKey(), spread.keySet().iterator().next())) {
+            // cannot be spread further
+            return spread;
+        }
 
         return trySpread(spread, packageCount + 1);
     }
