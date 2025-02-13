@@ -99,7 +99,7 @@ public interface ProbeConfig {
             FULL -> scan all classes recorded by ForgeModLoader""")
         .build();
     ConfigEntry<List<String>> fullScanMods = INSTANCE.define("Mods with forced Full Scanning")
-        .setDefault(CollectUtils.ofList("minecraft", "kubejs", "forge"))
+        .setDefault(CollectUtils.ofList("minecraft"))
         .comment("""
             mods described here will have ALL their classes scanned""")
         .build();
