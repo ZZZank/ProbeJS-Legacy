@@ -30,7 +30,7 @@ class ModJarClassScanner {
         try (val jarFile = new ZipFile(file)) {
             val modClassesScanner = new ModJarClassScanner(jarFile);
             val scanned = modClassesScanner.scanClasses();
-            ProbeJS.LOGGER.debug("scanned file '{}', contained class count: {}", file.getName(), scanned.size());
+            ProbeJS.LOGGER.info("scanned file '{}', contained class count: {}", file.getName(), scanned.size());
             return scanned;
         } catch (Exception e) {
             ProbeJS.LOGGER.error("error when scanning file '{}'", file.getName(), e);

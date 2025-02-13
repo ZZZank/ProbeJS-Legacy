@@ -110,7 +110,11 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
         );
 
         if (spread.size() == 1 && Objects.equals(entry.getKey(), spread.keySet().iterator().next())) {
-            // cannot be spread further
+            ProbeJS.LOGGER.info(
+                "{} TS files with common key {} can't be spread further, skipping spreading",
+                files.size(),
+                entry.getKey()
+            );
             return spread;
         }
 
