@@ -166,17 +166,26 @@ public class ProbeDump {
     }
 
     private void appendGitIgnore() throws IOException {
-        boolean shouldAppend;
+        val toAppends = CollectUtils.ofList(".probe/*", "!.probe/probe-settings.json");
+        val toRemoves = CollectUtils.ofList(".probe");
 
-        try (var reader = Files.newBufferedReader(ProbePaths.GIT_IGNORE)) {
-            shouldAppend = reader.lines().noneMatch(s -> s.equals(".probe"));
-        } catch (IOException ignore) {
-            shouldAppend = true;
+        ArrayList<String> lines;
+        try (val reader = Files.newBufferedReader(ProbePaths.GIT_IGNORE)) {
+            lines = reader.lines().collect(Collectors.toCollection(ArrayList::new));
+        } catch (IOException ignored) {
+            lines = new ArrayList<>();
         }
 
-        try (var writer = Files.newBufferedWriter(ProbePaths.GIT_IGNORE, StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
-            if (shouldAppend) {
-                writer.write("\n.probe\n");
+        lines.removeIf(toRemoves::contains);
+        toAppends.removeIf(lines::contains);
+        lines.addAll(toAppends);
+
+        try (val writer = Files.newBufferedWriter(
+            ProbePaths.GIT_IGNORE, StandardOpenOption.APPEND, StandardOpenOption.CREATE)
+        ) {
+            for (val line : lines) {
+                writer.write(line);
+                writer.write('\n');
             }
         }
     }
