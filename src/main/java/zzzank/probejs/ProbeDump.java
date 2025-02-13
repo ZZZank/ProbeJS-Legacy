@@ -181,9 +181,7 @@ public class ProbeDump {
         toAppends.removeIf(lines::contains);
         lines.addAll(toAppends);
 
-        try (val writer = Files.newBufferedWriter(
-            ProbePaths.GIT_IGNORE, StandardOpenOption.APPEND, StandardOpenOption.CREATE)
-        ) {
+        try (val writer = Files.newBufferedWriter(ProbePaths.GIT_IGNORE)) {
             for (val line : lines) {
                 writer.write(line);
                 writer.write('\n');
