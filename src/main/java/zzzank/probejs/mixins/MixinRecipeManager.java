@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import zzzank.probejs.GlobalStates;
+import zzzank.probejs.ProbeConfig;
 
 import java.util.Map;
 
@@ -24,6 +25,9 @@ public abstract class MixinRecipeManager {
         ProfilerFiller profiler,
         CallbackInfo ci
     ) {
+        if (!ProbeConfig.enabled.get()) {
+            return;
+        }
         for (val resourceLocation : map.keySet()) {
             if (!resourceLocation.getPath().startsWith("kjs_")) {
                 GlobalStates.RECIPE_IDS.add(resourceLocation.toString());

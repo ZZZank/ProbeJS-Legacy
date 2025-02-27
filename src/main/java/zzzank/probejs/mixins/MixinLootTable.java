@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import zzzank.probejs.GlobalStates;
+import zzzank.probejs.ProbeConfig;
 
 import java.util.Map;
 
@@ -23,6 +24,9 @@ public abstract class MixinLootTable {
         ProfilerFiller profiler,
         CallbackInfo ci
     ) {
+        if (!ProbeConfig.enabled.get()) {
+            return;
+        }
         for (val resourceLocation : object.keySet()) {
             GlobalStates.LOOT_TABLES.add(resourceLocation.toString());
         }
