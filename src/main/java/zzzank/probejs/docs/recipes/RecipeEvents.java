@@ -7,9 +7,9 @@ import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.transpiler.transformation.impl.InjectBeans;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -83,7 +83,7 @@ public class RecipeEvents implements ProbeJSPlugin {
             }
         }
         for (val code : recipeEvent.bodyCode) {
-            if (code instanceof InjectBeans.BeanDecl beanDecl && beanDecl.name.equals("recipes")) {
+            if (code instanceof BeanDecl.Getter beanDecl && beanDecl.name.equals("recipes")) {
                 beanDecl.type = DOCUMENTED;
                 break;
             }
