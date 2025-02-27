@@ -2,17 +2,19 @@ package zzzank.probejs.docs;
 
 import lombok.val;
 import zzzank.probejs.ProbeConfig;
+import zzzank.probejs.lang.java.ClassRegistry;
+import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.ScriptDump;
+import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
-import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
-import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.refer.ImportInfo;
+import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author ZZZank
@@ -24,46 +26,49 @@ public class SimulateOldTyping implements ProbeJSPlugin {
         if (!ProbeConfig.simulateOldTyping.get()) {
             return;
         }
-        val typeConverter = scriptDump.transpiler.typeConverter;
-
-        val namespace = new Wrapped.Namespace("Internal");
-
-        val recorded = new HashSet<String>(scriptDump.recordedClasses.size());
-        for (val clazz : scriptDump.recordedClasses) {
-            val name = clazz.classPath.getJavaName();
-
-            if (clazz.variableTypes.isEmpty()) {
-                namespace.addCode(new TypeDecl(
-                    getUniqueName(name, recorded),
-                    Types.type(clazz.classPath).contextShield(BaseType.FormatType.RETURN)
-                ));
-                namespace.addCode(new TypeDecl(getUniqueName(name + "_", recorded), Types.type(clazz.classPath)));
-            } else {
-                val variables = CollectUtils.mapToList(clazz.variableTypes, typeConverter::convertType);
-                val variableType = Types.type(clazz.classPath).withParams(variables);
-                namespace.addCode(Statements
-                    .type(getUniqueName(name, recorded), variableType)
-                    .symbolVariables(variables)
-                    .typeFormat(BaseType.FormatType.RETURN)
-                    .build());
-                namespace.addCode(Statements
-                    .type(getUniqueName(name + "_", recorded), variableType)
-                    .symbolVariables(variables)
-                    .typeFormat(BaseType.FormatType.INPUT)
-                    .build());
-            }
-        }
-
-        scriptDump.addGlobal("simulated_internal", namespace);
+        scriptDump.addGlobal("simulated_internal", new DocImpl(scriptDump));
     }
 
-    private static String getUniqueName(String name, Set<String> recorded) {
-        var counter = 0;
-        while (recorded.contains(name)) {
-            name = name + counter;
-            counter++;
+    public static class DocImpl extends Code {
+        private final ScriptDump scriptDump;
+
+        public DocImpl(ScriptDump scriptDump) {
+            this.scriptDump = scriptDump;
         }
-        recorded.add(name);
-        return name;
+
+        @Override
+        public ImportInfos getImportInfos() {
+            return ImportInfos.of(scriptDump.recordedClasses.stream().map(c -> c.classPath).map(ImportInfo::ofDefault));
+        }
+
+        @Override
+        public List<String> format(Declaration declaration) {
+            val namespace = new Wrapped.Namespace("Internal");
+
+            for (val reference : declaration.references.values()) {
+                val name = reference.deduped;
+                if (!name.startsWith("$")) {
+                    continue;
+                }
+
+                val path = reference.info.path;
+                val clazz = path.toClazz(ClassRegistry.REGISTRY);
+                if (clazz == null) {
+                    continue;
+                }
+
+                val typeName = name.substring(1);
+                if (clazz.variableTypes.isEmpty()) {
+                    namespace.addCode(new TypeDecl(typeName, Types.type(path)));
+                } else {
+                    val variables = CollectUtils.mapToList(
+                        clazz.variableTypes,
+                        scriptDump.transpiler.typeConverter::convertType
+                    );
+                    namespace.addCode(new TypeDecl(typeName, variables, Types.type(path).withParams(variables)));
+                }
+            }
+            return namespace.format(declaration);
+        }
     }
 }
