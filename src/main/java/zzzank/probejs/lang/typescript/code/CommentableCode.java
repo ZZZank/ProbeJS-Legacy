@@ -5,15 +5,35 @@ import zzzank.probejs.lang.typescript.Declaration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class CommentableCode extends Code {
     public final List<String> comments = new ArrayList<>();
 
+    /**
+     * @return a mutable view of {@link #comments}, with blank lines at the front/back removed
+     */
+    public List<String> getTrimmedComments() {
+        int begin = 0;
+        int end = comments.size();
+        while (begin < end && comments.get(begin).trim().isEmpty()) {
+            begin++;
+        }
+        while (end > begin && comments.get(end - 1).trim().isEmpty()) {
+            end--;
+        }
+        return comments.subList(begin, end);
+    }
+
     public List<String> formatComments() {
-        List<String> formatted = new ArrayList<>();
+        val trimmed = getTrimmedComments();
+        if (trimmed.size() == 1) {
+            return Collections.singletonList("/** " + trimmed.get(0) + " */");
+        }
+        List<String> formatted = new ArrayList<>(trimmed.size() + 2);
         formatted.add("/**");
-        for (val comment : comments) {
+        for (val comment : trimmed) {
             formatted.add(" * " + comment);
         }
         formatted.add(" */");
@@ -26,8 +46,11 @@ public abstract class CommentableCode extends Code {
         if (comments.isEmpty()) {
             return formatRaw(declaration);
         }
-        List<String> result = new ArrayList<>(formatComments());
-        result.addAll(formatRaw(declaration));
+        val formattedRaw = formatRaw(declaration);
+        val formattedComments = formatComments();
+        val result = new ArrayList<String>(formattedComments.size() + formattedRaw.size());
+        result.addAll(formattedComments);
+        result.addAll(formattedRaw);
         return result;
     }
 
