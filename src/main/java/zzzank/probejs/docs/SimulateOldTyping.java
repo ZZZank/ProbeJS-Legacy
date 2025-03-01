@@ -23,9 +23,6 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        if (!ProbeConfig.simulateOldTyping.get()) {
-            return;
-        }
         scriptDump.addGlobal("simulated_internal", new DocImpl(scriptDump));
     }
 

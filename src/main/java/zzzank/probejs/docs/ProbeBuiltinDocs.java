@@ -1,9 +1,9 @@
 package zzzank.probejs.docs;
 
-import com.google.common.collect.ImmutableList;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.Lazy;
+import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.docs.assignments.*;
 import zzzank.probejs.docs.bindings.Bindings;
@@ -21,6 +21,7 @@ import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.GameUtils;
 
 import java.util.*;
@@ -28,7 +29,7 @@ import java.util.function.Consumer;
 
 /**
  * Delegate calls to a set of internal ProbeJSPlugin to separate different
- * features
+ * features, so docs can be added stateless
  */
 public final class ProbeBuiltinDocs implements ProbeJSPlugin {
     private static final Lazy<ProbeBuiltinDocs> INSTANCE = Lazy.of(ProbeBuiltinDocs::new);
@@ -37,44 +38,52 @@ public final class ProbeBuiltinDocs implements ProbeJSPlugin {
         return INSTANCE.get();
     }
 
-    private ProbeBuiltinDocs() {}
+    private final ProbeJSPlugin[] builtinDocs;
 
-    // So docs can be added stateless
-    public final List<ProbeJSPlugin> BUILTIN_DOCS = ImmutableList.of(
-        //type
-        new RegistryTypes(),
-        new SpecialTypes(),
-        new Primitives(),
-        new JavaPrimitives(),
-        new RecipeTypes(),
-        new WorldTypes(),
-        new EnumTypes(),
-        new KubeWrappers(),
-        new FunctionalInterfaces(),
-        new TypeRedirecting(),
-        //binding
-        new Bindings(),
-        new LoadClassFn(),
-        //event
-        new KubeEvents(),
-//      new TagEvents(),
-        new RecipeEvents(),
-        new BuiltinRecipeDocs(),
-//      new       RegistryEvents(,
-        new ForgeEvents(),
-        //misc
-        new GlobalClasses(),
-        new ParamFix(),
-        new Snippets(),
-        new SimulateOldTyping()
-    );
+    private ProbeBuiltinDocs() {
+        val docs = CollectUtils.ofList(
+            //type
+            new RegistryTypes(),
+            new SpecialTypes(),
+            new Primitives(),
+            new JavaPrimitives(),
+            new RecipeTypes(),
+            new WorldTypes(),
+            new EnumTypes(),
+            new KubeWrappers(),
+            new FunctionalInterfaces(),
+            new TypeRedirecting(),
+            //binding
+            new Bindings(),
+            new LoadClassFn(),
+            //event
+            new KubeEvents(),
+    //      new TagEvents(),
+            new RecipeEvents(),
+            new BuiltinRecipeDocs(),
+    //      new       RegistryEvents(),
+            new ForgeEvents(),
+            //misc
+            new GlobalClasses(),
+            new ParamFix(),
+            new Snippets()
+        );
+        if (ProbeConfig.simulateOldTyping.get()) {
+            docs.add(new SimulateOldTyping());
+        }
+        builtinDocs = docs.toArray(new ProbeJSPlugin[0]);
+    }
+
+    public List<ProbeJSPlugin> getBuiltinDocs() {
+        return Collections.unmodifiableList(Arrays.asList(builtinDocs));
+    }
 
     private void forEach(Consumer<ProbeJSPlugin> consumer) {
-        for (val builtinDoc : BUILTIN_DOCS) {
+        for (val builtinDoc : builtinDocs) {
             try {
                 consumer.accept(builtinDoc);
             } catch (Throwable t) {
-                ProbeJS.LOGGER.error("Error when applying builtin doc: {}", builtinDoc.getClass());
+                ProbeJS.LOGGER.error("Error when applying builtin doc: {}", builtinDoc.getClass().getName());
                 GameUtils.logThrowable(t);
                 ProbeJS.LOGGER.error("If you found any problem in generated docs, please report to ProbeJS's github!");
             }
