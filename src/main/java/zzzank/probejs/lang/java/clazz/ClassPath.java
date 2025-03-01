@@ -27,6 +27,8 @@ public final class ClassPath implements Comparable<ClassPath> {
     public static final Pattern SPLIT = Pattern.compile("\\.");
 
     private final String[] parts;
+    private int hash;
+    private boolean hashCached = false;
 
     public static @NotNull ClassPath fromRaw(final String className) {
         if (className == null || className.isEmpty()) {
@@ -148,6 +150,10 @@ public final class ClassPath implements Comparable<ClassPath> {
     }
 
     public int hashCode() {
-        return Arrays.hashCode(this.parts);
+        if (!hashCached) {
+            hashCached = true;
+            hash = Arrays.hashCode(this.parts);
+        }
+        return hash;
     }
 }
