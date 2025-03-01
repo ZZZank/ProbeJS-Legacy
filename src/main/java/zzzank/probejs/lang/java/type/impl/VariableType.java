@@ -35,7 +35,7 @@ public class VariableType extends TypeDescriptor {
     }
 
     public VariableType(TypeVariable<?> typeVariable, boolean checkBounds) {
-        super(new Annotation[0]);
+        super(typeVariable.getAnnotations());
         this.symbol = typeVariable.getName();
         this.descriptors = checkBounds
             ? Arrays.stream(typeVariable.getAnnotatedBounds())

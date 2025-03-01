@@ -19,7 +19,7 @@ public class ArrayType extends TypeDescriptor {
     }
 
     public ArrayType(GenericArrayType arrayType) {
-        super(new Annotation[]{});
+        super(NO_ANNOTATION);
         this.component = TypeAdapter.getTypeDescription(arrayType.getGenericComponentType());
     }
 

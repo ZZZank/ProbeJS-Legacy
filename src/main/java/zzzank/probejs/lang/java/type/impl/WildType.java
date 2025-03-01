@@ -25,7 +25,7 @@ public class WildType extends TypeDescriptor {
     }
 
     public WildType(java.lang.reflect.WildcardType wildcardType) {
-        super(new Annotation[]{});
+        super(NO_ANNOTATION);
         if (wildcardType.getLowerBounds().length != 0) {
             bound = TypeAdapter.getTypeDescription(wildcardType.getLowerBounds()[0]);
         } else if (!wildcardType.getUpperBounds()[0].equals(Object.class)) {

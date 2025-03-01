@@ -1,6 +1,7 @@
 package zzzank.probejs.lang.java.type;
 
 import org.jetbrains.annotations.Contract;
+import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.type.impl.*;
 import zzzank.probejs.utils.CollectUtils;
 
@@ -61,7 +62,7 @@ public class TypeAdapter {
                 return new ClassType(clazz);
             }
             return new ParamType(
-                new Annotation[]{},
+                AnnotationHolder.NO_ANNOTATION,
                 new ClassType(clazz),
                 Collections.nCopies(interfaces.length, new ClassType(Object.class))
             );

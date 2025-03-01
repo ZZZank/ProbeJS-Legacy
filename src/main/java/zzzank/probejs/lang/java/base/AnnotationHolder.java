@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class AnnotationHolder {
 
+    public static final Annotation[] NO_ANNOTATION = new Annotation[0];
+
     @NotNull
     public final Annotation[] annotations;
 

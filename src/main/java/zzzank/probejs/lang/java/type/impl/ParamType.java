@@ -24,7 +24,7 @@ public class ParamType extends TypeDescriptor {
     }
 
     public ParamType(ParameterizedType parameterizedType) {
-        super(new Annotation[]{});
+        super(NO_ANNOTATION);
         this.base = TypeAdapter.getTypeDescription(parameterizedType.getRawType(), false);
         this.params = CollectUtils.mapToList(
             parameterizedType.getActualTypeArguments(),
