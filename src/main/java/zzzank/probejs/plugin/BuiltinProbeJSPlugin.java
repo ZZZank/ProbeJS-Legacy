@@ -49,6 +49,7 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     @Override
     public void denyTypes(Transpiler transpiler) {
         transpiler.reject(Object.class);
+        transpiler.reject(Void.class);
 
         transpiler.reject(Character.TYPE);
         transpiler.reject(Void.TYPE);
