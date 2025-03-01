@@ -38,11 +38,17 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
         @Override
         public ImportInfos getImportInfos() {
-            return ImportInfos.of(scriptDump.recordedClasses.stream().map(c -> c.classPath).map(ImportInfo::ofDefault));
+            val transpiler = scriptDump.transpiler;
+            return ImportInfos.of(
+                scriptDump.recordedClasses.stream()
+                    .filter(c -> !transpiler.isRejected(c))
+                    .map(c -> c.classPath)
+                    .map(ImportInfo::ofDefault));
         }
 
         @Override
         public List<String> format(Declaration declaration) {
+            val transpiler = scriptDump.transpiler;
             val namespace = new Wrapped.Namespace("Internal");
 
             for (val reference : declaration.references.values()) {
@@ -53,7 +59,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
                 val path = reference.info.path;
                 val clazz = path.toClazz(ClassRegistry.REGISTRY);
-                if (clazz == null) {
+                if (clazz == null || transpiler.isRejected(clazz)) {
                     continue;
                 }
 
@@ -63,7 +69,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
                 } else {
                     val variables = CollectUtils.mapToList(
                         clazz.variableTypes,
-                        scriptDump.transpiler.typeConverter::convertType
+                        transpiler.typeConverter::convertType
                     );
                     namespace.addCode(new TypeDecl(typeName, variables, Types.type(path).withParams(variables)));
                 }

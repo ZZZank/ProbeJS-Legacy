@@ -43,7 +43,7 @@ public class Transpiler {
         Map<ClassPath, TypeScriptFile> result = new HashMap<>();
 
         for (val clazz : clazzes) {
-            if (rejectedClasses.contains(clazz.classPath) || clazz.hasAnnotation(HideFromJS.class)) {
+            if (isRejected(clazz)) {
                 continue;
             }
 
@@ -55,5 +55,9 @@ public class Transpiler {
         }
 
         return result;
+    }
+
+    public boolean isRejected(Clazz clazz) {
+        return rejectedClasses.contains(clazz.classPath) || clazz.hasAnnotation(HideFromJS.class);
     }
 }
