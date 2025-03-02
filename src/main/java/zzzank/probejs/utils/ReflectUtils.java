@@ -1,5 +1,6 @@
 package zzzank.probejs.utils;
 
+import lombok.val;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +12,8 @@ import java.lang.reflect.Method;
  * @author ZZZank
  */
 public interface ReflectUtils {
+    String CLASS_SUFFIX = ".class";
+
     static Constructor<?>[] constructorsSafe(Class<?> c) {
         try {
             return c.getConstructors();
@@ -59,6 +62,7 @@ public interface ReflectUtils {
     }
 
     static boolean classExist(String name) {
-        return classOrNull(name, false, null) != null;
+        val resource = ReflectUtils.class.getClassLoader().getResource(name.replace('.', '/') + CLASS_SUFFIX);
+        return resource != null;
     }
 }
