@@ -111,7 +111,7 @@ dependencies {
     // modCompileOnly "mezz.jei:jei-1.16.5:${jei_version}:api"
     // at runtime, use the full JEI jar
     // modRuntimeOnly "mezz.jei:jei-1.16.5:${jei_version}"
-    modApi("curse.maven:rhizo-1003287:5997857")
+    modApi("curse.maven:rhizo-1003287:6250771")
     modApi("dev.latvian.mods:kubejs-forge:${kubejs_version}") {
         exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])
     }

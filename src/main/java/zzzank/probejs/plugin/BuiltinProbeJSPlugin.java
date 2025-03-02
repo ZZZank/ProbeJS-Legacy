@@ -6,6 +6,7 @@ import dev.latvian.kubejs.script.ScriptType;
 import dev.latvian.kubejs.util.ClassFilter;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.events.*;
+import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -66,6 +67,9 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     public void registerClassTransformer(ClassTransformerRegistration registration) {
         if (ProbeConfig.autoParamRename.get()) {
             registration.register(new AutoParamRename());
+        }
+        if (RhizoState.RETURNS_SELF_ANNOTATION) {
+            registration.register(new RhizoReturnsSelf());
         }
         registration.register(
             new KubeJSDenied(registration.scriptDump.manager),
