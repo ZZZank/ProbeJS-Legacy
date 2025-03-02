@@ -22,30 +22,31 @@ public class InjectBeans implements ClassTransformer {
             if (method.isStatic) {
                 continue;
             }
-            if (method.name.startsWith("set") && method.params.size() == 1) {
-                if (method.name.length() == 3) {
+            val name = method.name;
+            if (name.startsWith("set") && method.params.size() == 1) {
+                if (name.length() == 3) {
                     continue;
                 }
-                val beanName = NameUtils.firstLower(method.name.substring(3));
+                val beanName = NameUtils.firstLower(name.substring(3));
                 if (names.contains(beanName)) {
                     continue;
                 }
                 classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.params.get(0).type));
             } else if (method.params.isEmpty()) {
-                if (method.name.startsWith("get")) {
-                    if (method.name.length() == 3) {
+                if (name.startsWith("get")) {
+                    if (name.length() == 3) {
                         continue;
                     }
-                    val beanName = NameUtils.firstLower(method.name.substring(3));
+                    val beanName = NameUtils.firstLower(name.substring(3));
                     if (names.contains(beanName)) {
                         continue;
                     }
                     classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.returnType));
-                } else if (method.name.startsWith("is")) {
-                    if (method.name.length() == 2) {
+                } else if (name.startsWith("is")) {
+                    if (name.length() == 2) {
                         continue;
                     }
-                    val beanName = NameUtils.firstLower(method.name.substring(2));
+                    val beanName = NameUtils.firstLower(name.substring(2));
                     if (names.contains(beanName)) {
                         continue;
                     }

@@ -27,9 +27,8 @@ public class AnnotationHolder {
 
     @SuppressWarnings("unchecked")
     public <T extends Annotation> List<T> getAnnotations(Class<T> type) {
-        return Arrays.stream(annotations)
+        return (List<T>) Arrays.stream(annotations)
             .filter(type::isInstance)
-            .map(a -> (T) a)
             .collect(Collectors.toList());
     }
 

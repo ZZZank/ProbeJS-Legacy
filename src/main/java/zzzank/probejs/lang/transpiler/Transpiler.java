@@ -8,6 +8,7 @@ import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.plugin.ProbeJSPlugins;
+import zzzank.probejs.utils.Asser;
 
 import java.util.*;
 
@@ -20,8 +21,12 @@ public class Transpiler {
     private final ScriptDump scriptDump;
 
     public Transpiler(ScriptDump scriptDump) {
-        this.scriptDump = scriptDump;
-        this.typeConverter = new TypeConverter();
+        this(scriptDump, new TypeConverter());
+    }
+
+    public Transpiler(ScriptDump scriptDump, TypeConverter typeConverter) {
+        this.scriptDump = Asser.tNotNull(scriptDump, "scriptDump");
+        this.typeConverter = Asser.tNotNull(typeConverter, "typeConverter");
     }
 
     public void reject(Class<?> clazz) {

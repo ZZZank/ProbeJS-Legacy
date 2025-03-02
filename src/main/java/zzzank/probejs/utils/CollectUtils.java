@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -20,6 +21,10 @@ public interface CollectUtils {
         val list = new ArrayList<T>(elements.length);
         Collections.addAll(list, elements);
         return list;
+    }
+
+    static <T> List<T> ofList(Stream<T> stream) {
+        return stream.collect(Collectors.toCollection(ArrayList::new));
     }
 
     static <K, V> AbstractMap.SimpleImmutableEntry<K, V> ofEntry(K key, V value) {
