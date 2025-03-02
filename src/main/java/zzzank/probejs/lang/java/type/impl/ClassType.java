@@ -29,6 +29,11 @@ public class ClassType extends TypeDescriptor {
     }
 
     @Override
+    public Class<?> asClass() {
+        return clazz;
+    }
+
+    @Override
     public Stream<TypeDescriptor> stream() {
         return Stream.of(this);
     }

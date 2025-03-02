@@ -22,6 +22,13 @@ public abstract class TypeDescriptor extends AnnotationHolder implements ClassPr
     public abstract Stream<TypeDescriptor> stream();
 
     /**
+     * Return the class representation of this type
+     */
+    public Class<?> asClass() {
+        return Object.class;
+    }
+
+    /**
      * Gets the class paths required to use the type.
      */
     public Collection<ClassPath> getClassPaths() {

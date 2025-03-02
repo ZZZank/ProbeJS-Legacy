@@ -15,20 +15,24 @@ public class ParamType extends TypeDescriptor {
     public final List<TypeDescriptor> params;
 
     public ParamType(AnnotatedParameterizedType annotatedType) {
-        super(annotatedType.getAnnotations());
-        this.base = TypeAdapter.getTypeDescription(((ParameterizedType) annotatedType.getType()).getRawType(), false);
-        this.params = CollectUtils.mapToList(
-            annotatedType.getAnnotatedActualTypeArguments(),
-            t -> TypeAdapter.getTypeDescription(t, false)
+        this(
+            annotatedType.getAnnotations(),
+            TypeAdapter.getTypeDescription(((ParameterizedType) annotatedType.getType()).getRawType(), false),
+            CollectUtils.mapToList(
+                annotatedType.getAnnotatedActualTypeArguments(),
+                t -> TypeAdapter.getTypeDescription(t, false)
+            )
         );
     }
 
     public ParamType(ParameterizedType parameterizedType) {
-        super(NO_ANNOTATION);
-        this.base = TypeAdapter.getTypeDescription(parameterizedType.getRawType(), false);
-        this.params = CollectUtils.mapToList(
-            parameterizedType.getActualTypeArguments(),
-            t -> TypeAdapter.getTypeDescription(t, false)
+        this(
+            NO_ANNOTATION,
+            TypeAdapter.getTypeDescription(parameterizedType.getRawType(), false),
+            CollectUtils.mapToList(
+                parameterizedType.getActualTypeArguments(),
+                t -> TypeAdapter.getTypeDescription(t, false)
+            )
         );
     }
 
@@ -36,6 +40,11 @@ public class ParamType extends TypeDescriptor {
         super(annotations);
         this.base = base;
         this.params = params;
+    }
+
+    @Override
+    public Class<?> asClass() {
+        return base.asClass();
     }
 
     @Override
