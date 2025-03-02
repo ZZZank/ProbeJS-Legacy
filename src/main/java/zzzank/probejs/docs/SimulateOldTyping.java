@@ -1,13 +1,13 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
+import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
@@ -62,13 +62,17 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
                 val typeName = name.substring(1);
                 if (clazz.variableTypes.isEmpty()) {
-                    namespace.addCode(new TypeDecl(typeName, Types.type(path)));
+                    val type = Types.type(path);
+                    namespace.addCode(new TypeDecl(typeName, type).setTypeFormat(BaseType.FormatType.RETURN));
+                    namespace.addCode(new TypeDecl(typeName + "_", type));
                 } else {
                     val variables = CollectUtils.mapToList(
                         clazz.variableTypes,
                         transpiler.typeConverter::convertType
                     );
-                    namespace.addCode(new TypeDecl(typeName, variables, Types.type(path).withParams(variables)));
+                    val type = Types.type(path).withParams(variables);
+                    namespace.addCode(new TypeDecl(typeName, variables, type).setTypeFormat(BaseType.FormatType.RETURN));
+                    namespace.addCode(new TypeDecl(typeName + "_", variables, type));
                 }
             }
             return namespace.format(declaration);

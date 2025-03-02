@@ -49,6 +49,11 @@ public class TypeDecl extends CommentableCode {
         this.typeFormat = Asser.tNotNull(typeFormat, "typeFormat");
     }
 
+    public TypeDecl setTypeFormat(@NotNull BaseType.FormatType typeFormat) {
+        this.typeFormat = typeFormat;
+        return this;
+    }
+
     @Override
     public ImportInfos getImportInfos() {
         return type.getImportInfos(BaseType.FormatType.INPUT);
