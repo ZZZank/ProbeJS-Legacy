@@ -1,6 +1,5 @@
 package zzzank.probejs.utils;
 
-import lombok.val;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +61,6 @@ public interface ReflectUtils {
     }
 
     static boolean classExist(String name) {
-        val resource = ReflectUtils.class.getClassLoader().getResource(name.replace('.', '/') + CLASS_SUFFIX);
-        return resource != null;
+        return classOrNull(name) != null;
     }
 }
