@@ -213,9 +213,9 @@ public class ScriptDump {
             val allTypes = new ArrayList<BaseType>();
             allTypes.add(thisType);
             for (val typeDecl : convertibles.get(classPath)) {
-                if (typeDecl.symbol != null) {
+                if (typeDecl.name != null) {
                     output.addCode(typeDecl);
-                    allTypes.add(Types.primitive(typeDecl.symbol));
+                    allTypes.add(Types.primitive(typeDecl.name));
                 } else {
                     allTypes.add(typeDecl.type);
                 }

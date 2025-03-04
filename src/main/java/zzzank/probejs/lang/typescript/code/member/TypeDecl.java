@@ -18,7 +18,7 @@ import java.util.List;
 public class TypeDecl extends CommentableCode {
     public boolean exportDecl;
 
-    public final String symbol;
+    public String name;
     @NotNull
     public List<? extends BaseType> symbolVariables;
 
@@ -27,23 +27,23 @@ public class TypeDecl extends CommentableCode {
     @NotNull
     public BaseType.FormatType typeFormat;
 
-    public TypeDecl(String symbol, @NotNull BaseType type) {
-        this(symbol, Collections.emptyList(), type);
+    public TypeDecl(String name, @NotNull BaseType type) {
+        this(name, Collections.emptyList(), type);
     }
 
-    public TypeDecl(String symbol, @NotNull List<? extends BaseType> symbolVariables, @NotNull BaseType type) {
-        this(true, symbol, symbolVariables, type, BaseType.FormatType.INPUT);
+    public TypeDecl(String name, @NotNull List<? extends BaseType> symbolVariables, @NotNull BaseType type) {
+        this(true, name, symbolVariables, type, BaseType.FormatType.INPUT);
     }
 
     public TypeDecl(
         boolean exportDecl,
-        String symbol,
+        String name,
         @NotNull List<? extends BaseType> symbolVariables,
         @NotNull BaseType type,
         @NotNull BaseType.FormatType typeFormat
     ) {
         this.exportDecl = exportDecl;
-        this.symbol = symbol;
+        this.name = name;
         this.symbolVariables = Asser.tNotNull(symbolVariables, "symbolVariables");
         this.type = Asser.tNotNull(type, "type");
         this.typeFormat = Asser.tNotNull(typeFormat, "typeFormat");
@@ -65,7 +65,7 @@ public class TypeDecl extends CommentableCode {
         if (exportDecl) {
             builder.append("export ");
         }
-        builder.append("type ").append(symbol);
+        builder.append("type ").append(name);
         if (!symbolVariables.isEmpty()) {
             builder.append(Types.join(", ", "<", ">", symbolVariables)
                 .line(declaration, BaseType.FormatType.VARIABLE));
