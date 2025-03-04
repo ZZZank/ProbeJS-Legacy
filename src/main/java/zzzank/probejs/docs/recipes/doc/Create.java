@@ -28,7 +28,6 @@ class Create extends RecipeDocProvider {
     private static final TSArrayType INGR_FLUID_N = INGR_FLUID.asArray();
 
     private static final TSClassType PROCESSING = classType("dev.latvian.kubejs.create.ProcessingRecipeJS");
-    private static final JSPrimitiveType ASSEMBLY_CAPABLE_RECIPE = Types.primitive("CreateAssemblyCapableRecipeJS");
     private static final TSClassType SEQUENCED_ASSEMBLY = classType("dev.latvian.kubejs.create.SequencedAssemblyRecipeJS");
 
     @Override
@@ -53,31 +52,31 @@ class Create extends RecipeDocProvider {
             recipeFn()
                 .output(STACK)
                 .input(INGR)
-                .returnType(ASSEMBLY_CAPABLE_RECIPE)
+                .returnType(PROCESSING)
         );
         add("deploying",
             recipeFn()
                 .output(STACK)
                 .input(INGR)
-                .returnType(ASSEMBLY_CAPABLE_RECIPE)
+                .returnType(PROCESSING)
         );
         add(
             "cutting",
-            recipeFn().output(STACK).input(INGR).returnType(ASSEMBLY_CAPABLE_RECIPE)
+            recipeFn().output(STACK).input(INGR).returnType(PROCESSING)
         );
         add(
             "filling",
             recipeFn()
                 .output(STACK)
                 .param("input", Types.tuple().member("fluid", FLUID).member("base", INGR).build())
-                .returnType(ASSEMBLY_CAPABLE_RECIPE)
+                .returnType(PROCESSING)
         );
         add(
             "sequenced_assembly",
             recipeFn()
                 .output(STACK_N)
                 .input(INGR)
-                .param("sequence", ASSEMBLY_CAPABLE_RECIPE.asArray())
+                .param("sequence", PROCESSING.asArray())
                 .returnType(SEQUENCED_ASSEMBLY)
         );
         add("splashing", recipeFn()
@@ -110,19 +109,5 @@ class Create extends RecipeDocProvider {
     @Override
     public boolean shouldEnable() {
         return Platform.isModLoaded("kubejs_create") && super.shouldEnable();
-    }
-
-    @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        if (!shouldEnable()) {
-            return;
-        }
-        val file = globalClasses.get(ClassPath.fromJava(RecipeEventJS.class));
-        if (file == null) {
-            return;
-        }
-        file.addCode(
-            new TypeDecl(ASSEMBLY_CAPABLE_RECIPE.content, PROCESSING)
-        );
     }
 }
