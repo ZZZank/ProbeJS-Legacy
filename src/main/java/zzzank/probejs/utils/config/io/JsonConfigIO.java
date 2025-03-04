@@ -9,7 +9,6 @@ import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.ConfigEntry;
 import zzzank.probejs.utils.config.ConfigImpl;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
@@ -30,7 +29,7 @@ public class JsonConfigIO implements ConfigIO {
             val name = namespaced.getValue();
 
             val reference = (ConfigEntry<Object>) config.get(namespace, name);
-            if (reference == null) {
+            if (reference == null || reference.readOnly()) {
                 continue;
             }
 

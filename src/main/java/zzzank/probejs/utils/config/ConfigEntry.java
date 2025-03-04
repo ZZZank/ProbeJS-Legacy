@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.binding.ConfigBinding;
+import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.report.ConfigReport;
@@ -80,5 +81,9 @@ public class ConfigEntry<T> {
 
     public List<String> getComments() {
         return getProp(ConfigProperty.COMMENTS);
+    }
+
+    public boolean readOnly() {
+        return this.binding instanceof ReadOnlyBinding<?>;
     }
 }
