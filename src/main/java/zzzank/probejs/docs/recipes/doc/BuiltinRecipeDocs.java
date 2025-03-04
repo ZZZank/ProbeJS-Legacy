@@ -19,6 +19,8 @@ import java.util.function.Supplier;
  */
 public class BuiltinRecipeDocs implements ProbeJSPlugin {
 
+    public static boolean ENABLED = true;
+
     public static final List<Supplier<ProbeJSPlugin>> ALL = new ArrayList<>(Arrays.asList(
         ArsNouveau::new,
         ArtisanWorktables::new,
@@ -37,6 +39,9 @@ public class BuiltinRecipeDocs implements ProbeJSPlugin {
 
     @Override
     public void addPredefinedRecipeDoc(ScriptDump scriptDump, Map<ResourceLocation, JSLambdaType> predefined) {
+        if (!ENABLED) {
+            return;
+        }
         for (val supplier : ALL) {
             supplier.get().addPredefinedRecipeDoc(scriptDump, predefined);
         }
@@ -44,6 +49,9 @@ public class BuiltinRecipeDocs implements ProbeJSPlugin {
 
     @Override
     public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
+        if (!ENABLED) {
+            return;
+        }
         for (val supplier : ALL) {
             supplier.get().modifyClasses(scriptDump, globalClasses);
         }
