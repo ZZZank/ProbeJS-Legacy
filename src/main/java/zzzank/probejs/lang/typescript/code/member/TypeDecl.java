@@ -56,7 +56,7 @@ public class TypeDecl extends CommentableCode {
 
     @Override
     public ImportInfos getImportInfos() {
-        return type.getImportInfos(BaseType.FormatType.INPUT);
+        return type.getImportInfos(typeFormat);
     }
 
     @Override
