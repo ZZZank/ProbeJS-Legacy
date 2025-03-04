@@ -1,6 +1,7 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
+import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.ScriptDump;
@@ -23,7 +24,9 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        scriptDump.addGlobal("simulated_internal", new DocImpl(scriptDump));
+        if (ProbeConfig.simulateOldTyping.get()) {
+            scriptDump.addGlobal("simulated_internal", new DocImpl(scriptDump));
+        }
     }
 
     public static class DocImpl extends Code {

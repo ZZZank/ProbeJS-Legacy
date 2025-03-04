@@ -32,16 +32,11 @@ import java.util.function.Consumer;
  * features, so docs can be added stateless
  */
 public final class ProbeBuiltinDocs implements ProbeJSPlugin {
-    private static final Lazy<ProbeBuiltinDocs> INSTANCE = Lazy.of(ProbeBuiltinDocs::new);
-
-    public static ProbeBuiltinDocs get() {
-        return INSTANCE.get();
-    }
 
     private final ProbeJSPlugin[] builtinDocs;
 
-    private ProbeBuiltinDocs() {
-        val docs = CollectUtils.ofList(
+    public ProbeBuiltinDocs() {
+        builtinDocs = new ProbeJSPlugin[]{
             //type
             new RegistryTypes(),
             new SpecialTypes(),
@@ -61,17 +56,13 @@ public final class ProbeBuiltinDocs implements ProbeJSPlugin {
     //      new TagEvents(),
             new RecipeEvents(),
             new BuiltinRecipeDocs(),
-    //      new       RegistryEvents(),
             new ForgeEvents(),
             //misc
             new GlobalClasses(),
             new ParamFix(),
-            new Snippets()
-        );
-        if (ProbeConfig.simulateOldTyping.get()) {
-            docs.add(new SimulateOldTyping());
-        }
-        builtinDocs = docs.toArray(new ProbeJSPlugin[0]);
+            new Snippets(),
+            new SimulateOldTyping()
+        };
     }
 
     public List<ProbeJSPlugin> getBuiltinDocs() {

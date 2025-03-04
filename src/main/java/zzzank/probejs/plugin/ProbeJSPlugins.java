@@ -22,7 +22,7 @@ public class ProbeJSPlugins {
 
     private static final List<ProbeJSPlugin> ALL = CollectUtils.ofList(
         new BuiltinProbeJSPlugin(),
-        ProbeBuiltinDocs.get()
+        new ProbeBuiltinDocs()
     );
 
     public static void register(@NotNull ProbeJSPlugin @NotNull ... plugins) {
