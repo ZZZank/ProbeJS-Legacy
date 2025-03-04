@@ -1,3 +1,18 @@
+# ProbeJS Legacy 4.6.3 -> 4.7.0
+
+`@ReturnsSelf` support & better comment formatting
+
+- add Rhizo ReturnsSelf annotation support
+- better comment formatting
+    - blank lines at the front/back will now be ignored
+    - comments will be formatted as one line if there's only one valid line
+- rejected classes will not be included in simulated `Internal`
+- fixed SimulateOldTyping cannot to toggle on/off unless the game is restarted
+- fix create sequenced assembly recipe doc
+- skip reading read-only configs
+
+---
+
 # ProbeJS Legacy 4.6.1 -> 4.6.3
 
 Fix again & Mod Scanner
