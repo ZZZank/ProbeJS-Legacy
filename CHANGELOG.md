@@ -1,3 +1,12 @@
+# ProbeJS Legacy 4.7.0 -> 4.7.1
+
+fix type declaration
+
+- fix type declaration having broken imports, this is especially significant in simulated `Internal`
+- fix param of `recipeEvent.custom(...)`
+
+---
+
 # ProbeJS Legacy 4.6.3 -> 4.7.0
 
 `@ReturnsSelf` support & better comment formatting
