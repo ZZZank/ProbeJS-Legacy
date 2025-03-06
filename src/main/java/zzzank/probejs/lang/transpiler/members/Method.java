@@ -21,7 +21,7 @@ public class Method extends Converter<MethodInfo, MethodDecl> {
     public MethodDecl transpile(MethodInfo input) {
         val decl = new MethodDecl(
             input.name,
-            CollectUtils.mapToList(input.variableTypes, converter::convertType),
+            CollectUtils.mapToList(input.variableTypes, converter::convertVariableType),
             CollectUtils.mapToList(input.params, this.param::transpile),
             converter.convertType(input.returnType)
         );

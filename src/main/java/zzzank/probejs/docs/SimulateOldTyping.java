@@ -10,6 +10,7 @@ import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.CollectUtils;
 
@@ -42,7 +43,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
             } else {
                 val variables = CollectUtils.mapToList(
                     clazz.variableTypes,
-                    transpiler.typeConverter::convertType
+                    transpiler.typeConverter::convertVariableType
                 );
                 namespace.addCode(new NameInferredTypeDecl(variables, path).setTypeFormat(BaseType.FormatType.RETURN));
                 namespace.addCode(new NameInferredTypeDecl(variables, path));
@@ -60,7 +61,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
             this.path = path;
         }
 
-        public NameInferredTypeDecl(@NotNull List<? extends BaseType> symbolVariables, @NotNull ClassPath path) {
+        public NameInferredTypeDecl(@NotNull List<TSVariableType> symbolVariables, @NotNull ClassPath path) {
             super("", symbolVariables, Types.type(path).withParams(symbolVariables));
             this.path = path;
         }
