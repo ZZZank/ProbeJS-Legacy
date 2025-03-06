@@ -164,7 +164,11 @@ public class ClassRegistry {
                 val classPath = new ClassPath(parts);
                 if (!this.foundClasses.containsKey(classPath)) {
                     try {
-                        val c = Class.forName(classPath.getJavaPath(), false, ClassRegistry.class.getClassLoader());
+                        val c = Class.forName(
+                            classPath.getJavaPath(),
+                            false,
+                            ClassRegistry.class.getClassLoader()
+                        );
                         if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
                             fromClass(c);
                         }
@@ -172,14 +176,14 @@ public class ClassRegistry {
                         ProbeJS.LOGGER.error(
                             "Error when loading class '{}' from cache file: {}",
                             className,
-                            ex.getMessage()
+                            ex.toString()
                         );
                     }
                 }
                 lastPath = classPath;
             }
         } catch (IOException ex) {
-            ProbeJS.LOGGER.error("Error when loading classes from cache file", ex);
+            ProbeJS.LOGGER.error("Error when loading classes from cache file: {}", ex.toString());
         }
     }
 }

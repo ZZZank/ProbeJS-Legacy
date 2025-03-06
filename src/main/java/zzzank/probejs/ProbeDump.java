@@ -104,7 +104,7 @@ public class ProbeDump {
 
         ClassRegistry.REGISTRY.walkClass();
         ClassRegistry.REGISTRY.writeTo(CLASS_CACHE);
-        report(ProbeText.pjs("dump.class_discovered", ClassRegistry.REGISTRY.foundClasses.keySet().size()));
+        report(ProbeText.pjs("dump.class_discovered", ClassRegistry.REGISTRY.foundClasses.size()));
 
         // Spawn a thread for each dump
         val threads = CollectUtils.mapToList(

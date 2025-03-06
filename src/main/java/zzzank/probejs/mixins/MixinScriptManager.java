@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import zzzank.probejs.GlobalStates;
-import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 
@@ -31,7 +30,7 @@ public abstract class MixinScriptManager {
         if (args.length > 0) {
             val name = args[0].toString();
             if (name.startsWith(ClassPath.TS_PATH_PREFIX)) {
-                args[0] = RemapperBridge.unmapClass(ClassPath.fromTS(name).getJavaPath());
+                args[0] = ClassPath.fromTS(name).getJavaPath();
             }
         }
         return args;

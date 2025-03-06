@@ -86,13 +86,17 @@ public final class ClassPath implements Comparable<ClassPath> {
         return getConcatenated(".");
     }
 
-    public String getJavaPath() {
+    public String getJavaStylePath() {
         val copy = CollectUtils.ofList(parts);
         val last = parts[parts.length - 1];
         if (last.startsWith("$")) {
             copy.set(parts.length - 1, last.substring(1));
         }
         return String.join(".", copy);
+    }
+
+    public String getJavaPath() {
+        return RemapperBridge.unmapClass(getJavaStylePath());
     }
 
     public String getTSPath() {

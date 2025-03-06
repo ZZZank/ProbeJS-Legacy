@@ -24,7 +24,7 @@ public class Require extends BaseFunction {
         try {
             return new RequireWrapper(path, manager.loadJavaClass(scope, new String[]{name}));
         } catch (Exception ignored) {
-            manager.type.console.warn(String.format("Class '%s' not loaded", path.getJavaPath()));
+            manager.type.console.warn(String.format("Class '%s' not loaded", path.getJavaStylePath()));
             return new RequireWrapper(path, Undefined.instance);
         }
     }
@@ -41,7 +41,7 @@ public class Require extends BaseFunction {
 
         @Override
         public String getClassName() {
-            return path.getJavaPath();
+            return path.getJavaStylePath();
         }
 
         @Override

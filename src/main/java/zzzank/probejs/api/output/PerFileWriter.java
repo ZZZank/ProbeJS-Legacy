@@ -24,7 +24,7 @@ public class PerFileWriter extends AbstractWriter {
     }
 
     private String filePathOf(ClassPath path) {
-        return path.getJavaPath() + suffix;
+        return path.getJavaStylePath() + suffix;
     }
 
     @Override
