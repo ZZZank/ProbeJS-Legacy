@@ -50,8 +50,8 @@ public abstract class AbstractWriter implements TSFileWriter {
 
     @Override
     public final void write(Path base) throws IOException {
+        preWriting();
         try {
-            preWriting();
             writeClasses(base);
             if (withIndex) {
                 writeIndex(base);

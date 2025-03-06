@@ -18,6 +18,7 @@ public class InjectBeans implements ClassTransformer {
         for (val method : classDecl.methods) {
             names.add(method.name);
         }
+
         for (val method : classDecl.methods) {
             if (method.isStatic) {
                 continue;

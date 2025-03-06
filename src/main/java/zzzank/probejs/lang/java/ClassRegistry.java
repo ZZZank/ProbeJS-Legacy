@@ -44,8 +44,9 @@ public class ClassRegistry {
     }
 
     /**
-     * @param c the class to be added class registry
-     * @return {@code true} if the class was not added to class registry before, {}
+     * @param c the class to be added to class registry
+     * @return the {@link Clazz} object corresponds to the provided parameter {@code c}, or {@code null} if the class
+     * fail to pass {@link #classPrefilter(Class)} or exceptions happen
      */
     public Clazz fromClass(Class<?> c) {
         if (!classPrefilter(c)) {

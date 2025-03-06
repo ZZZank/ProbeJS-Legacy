@@ -10,6 +10,7 @@ import dev.latvian.kubejs.script.ScriptType;
 import dev.latvian.kubejs.server.ServerScriptManager;
 import dev.latvian.kubejs.util.UtilsJS;
 import lombok.val;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.FileUtils;
 import zzzank.probejs.ProbeJS;
@@ -56,7 +57,8 @@ public class ScriptDump {
             KubeJSPaths.SERVER_SCRIPTS,
             clazz -> clazz.getAnnotations(OnlyIn.class)
                 .stream()
-                .noneMatch(annotation -> annotation.value().isClient())
+                .map(OnlyIn::value)
+                .noneMatch(Dist::isClient)
         );
     };
 
@@ -66,7 +68,8 @@ public class ScriptDump {
         KubeJSPaths.CLIENT_SCRIPTS,
         clazz -> clazz.getAnnotations(OnlyIn.class)
             .stream()
-            .noneMatch(annotation -> annotation.value().isDedicatedServer())
+            .map(OnlyIn::value)
+            .noneMatch(Dist::isDedicatedServer)
     );
 
     public static final Supplier<ScriptDump> STARTUP_DUMP = () -> new ScriptDump(
@@ -109,7 +112,7 @@ public class ScriptDump {
     }
 
     public Set<Class<?>> retrieveClasses() {
-        Set<Class<?>> classes = new HashSet<>();
+        Set<Class<?>> classes = CollectUtils.identityHashSet();
         ProbeJSPlugins.forEachPlugin(plugin -> classes.addAll(plugin.provideJavaClass(this)));
         return classes;
     }
