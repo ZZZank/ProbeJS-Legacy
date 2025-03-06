@@ -157,15 +157,14 @@ public class ClassRegistry {
             for (val className : (Iterable<String>) reader.lines()::iterator) {
                 val parts = className.split("\\.");
                 for (int i = 0; i < parts.length; i++) {
-                    if (parts[i].isEmpty()) {
-                        parts[i] = lastPath.getPart(i);
-                    } else {
+                    if (!parts[i].isEmpty()) {
                         break;
                     }
+                    parts[i] = lastPath.getPart(i);
                 }
                 val classPath = new ClassPath(parts);
                 try {
-                    val c= Class.forName(classPath.getJavaPath());
+                    val c= ReflectUtils.classOrNull(classPath.getJavaPath());
                     if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
                         fromClass(c);
                     }
