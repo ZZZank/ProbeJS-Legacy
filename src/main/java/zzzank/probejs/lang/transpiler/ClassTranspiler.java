@@ -10,9 +10,8 @@ import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
+import zzzank.probejs.utils.CollectUtils;
 
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
@@ -32,10 +31,8 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
     @Override
     public ClassDecl transpile(Clazz clazz) {
-        val variableTypes = new ArrayList<TSVariableType>(clazz.variableTypes.size());
-        for (val variableType : clazz.variableTypes) {
-            variableTypes.add((TSVariableType) converter.convertTypeBuiltin(variableType));
-        }
+
+        val variableTypes = CollectUtils.mapToList(clazz.variableTypes, converter::convertVariableType);
         val superClass = clazz.superClass == null ? null : converter.convertTypeBuiltin(clazz.superClass);
         val interfaces = clazz.interfaces.stream()
             .map(converter::convertType)

@@ -5,17 +5,18 @@ import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.util.*;
 
 public class ConstructorDecl extends CommentableCode {
-    public final List<? extends BaseType> variableTypes;
+    public final List<TSVariableType> variableTypes;
     public final List<ParamDecl> params;
     public String content = null;
 
-    public ConstructorDecl(List<? extends BaseType> variableTypes, List<ParamDecl> params) {
+    public ConstructorDecl(List<TSVariableType> variableTypes, List<ParamDecl> params) {
         this.variableTypes = variableTypes;
         this.params = params;
     }
@@ -49,18 +50,18 @@ public class ConstructorDecl extends CommentableCode {
     }
 
     public static class Builder {
-        public final List<BaseType> variableTypes = new ArrayList<>();
+        public final List<TSVariableType> variableTypes = new ArrayList<>();
         public final List<ParamDecl> params = new ArrayList<>();
 
         public Builder typeVariables(String... symbols) {
             return typeVariables(CollectUtils.mapToList(symbols, Types::generic));
         }
 
-        public Builder typeVariables(BaseType... variableTypes) {
+        public Builder typeVariables(TSVariableType... variableTypes) {
             return typeVariables(Arrays.asList(variableTypes));
         }
 
-        public Builder typeVariables(Collection<? extends BaseType> variableTypes) {
+        public Builder typeVariables(Collection<TSVariableType> variableTypes) {
             this.variableTypes.addAll(variableTypes);
             return this;
         }

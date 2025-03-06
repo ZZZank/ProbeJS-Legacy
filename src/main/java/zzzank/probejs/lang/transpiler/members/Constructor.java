@@ -16,7 +16,7 @@ public class Constructor extends Converter<ConstructorInfo, ConstructorDecl> {
     @Override
     public ConstructorDecl transpile(ConstructorInfo input) {
         return new ConstructorDecl(
-            CollectUtils.mapToList(input.variableTypes, converter::convertType),
+            CollectUtils.mapToList(input.variableTypes, converter::convertVariableType),
             CollectUtils.mapToList(input.params, param::transpile)
         );
     }

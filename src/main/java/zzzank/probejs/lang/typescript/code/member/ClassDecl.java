@@ -11,10 +11,7 @@ import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -33,6 +30,8 @@ public class ClassDecl extends CommentableCode {
     public final List<FieldDecl> fields = new ArrayList<>();
     public final List<ConstructorDecl> constructors = new ArrayList<>();
     public final List<MethodDecl> methods = new ArrayList<>();
+//    public final Map<String, BeanDecl.Getter> getters = new TreeMap<>();
+//    public final MultiMap<String, BeanDecl.Setter> setters = new TreeMultiMap<>();
 
     /**
      * Reserved field to inject custom code body
