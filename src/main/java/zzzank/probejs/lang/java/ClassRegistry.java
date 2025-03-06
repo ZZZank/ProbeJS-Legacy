@@ -153,6 +153,9 @@ public class ClassRegistry {
     }
 
     public void loadFrom(Path path) {
+        if (!Files.exists(path)) {
+            return;
+        }
         var lastPath = new ClassPath(new String[0]);
         try (val reader = Files.newBufferedReader(path)) {
             for (val className : (Iterable<String>) reader.lines()::iterator) {
@@ -165,15 +168,21 @@ public class ClassRegistry {
                 }
                 val classPath = new ClassPath(parts);
                 try {
-                    val c= ReflectUtils.classOrNull(classPath.getJavaPath());
+                    val c = Class.forName(classPath.getJavaPath(), false, ClassRegistry.class.getClassLoader());
                     if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
                         fromClass(c);
                     }
-                } catch (Throwable ignored) {
+                } catch (Throwable ex) {
+                    ProbeJS.LOGGER.error(
+                        "Error when loading class '{}' from cache file: {}",
+                        className,
+                        ex.getMessage()
+                    );
                 }
                 lastPath = classPath;
             }
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
+            ProbeJS.LOGGER.error("Error when loading classes from cache file", ex);
         }
     }
 }
