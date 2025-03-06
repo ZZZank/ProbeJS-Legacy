@@ -167,6 +167,9 @@ public class ClassRegistry {
                     parts[i] = lastPath.getPart(i);
                 }
                 val classPath = new ClassPath(parts);
+                if (this.foundClasses.containsKey(classPath)) {
+                    continue;
+                }
                 try {
                     val c = Class.forName(classPath.getJavaPath(), false, ClassRegistry.class.getClassLoader());
                     if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
