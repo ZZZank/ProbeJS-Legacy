@@ -197,4 +197,12 @@ public interface CollectUtils {
     static <T> Iterable<T> enumToIterable(Enumeration<T> enumeration) {
         return () -> enumToItr(enumeration);
     }
+
+    static <E> Set<E> identityHashSet() {
+        return Collections.newSetFromMap(new IdentityHashMap<>());
+    }
+
+    static <E> Set<E> identityHashSet(int expectedMaxSize) {
+        return Collections.newSetFromMap(new IdentityHashMap<>(expectedMaxSize));
+    }
 }

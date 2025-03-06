@@ -8,6 +8,7 @@ import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 import zzzank.probejs.lang.java.clazz.MemberCollector;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.ReflectUtils;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @HideFromJS
 public class ClassRegistry {
@@ -29,36 +31,45 @@ public class ClassRegistry {
 
     public void fromClazz(Collection<Clazz> classes) {
         for (val c : classes) {
-            if (!foundClasses.containsKey(c.classPath)) {
-                foundClasses.put(c.classPath, c);
-            }
+            foundClasses.putIfAbsent(c.classPath, c);
         }
     }
 
-    public void fromClasses(Collection<Class<?>> classes) {
-        for (val c : classes) {
-            fromClass(c);
-        }
+    public List<Clazz> fromClasses(Collection<Class<?>> classes) {
+        return classes
+            .stream()
+            .map(this::fromClass)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
-    public void fromClass(Class<?> c) {
-        if (!ReflectUtils.classExist(c.getName()) || c.isSynthetic() || c.isAnonymousClass() || c.isPrimitive()) {
+    /**
+     * @param c the class to be added class registry
+     * @return {@code true} if the class was not added to class registry before, {}
+     */
+    public Clazz fromClass(Class<?> c) {
+        if (!classPrefilter(c)) {
             // We test if the class actually exists from forName
             // I think some runtime class can have non-existing Class<?> object due to .getSuperClass
             // or .getInterfaces
-            return;
+            return null;
         }
         try {
-            if (!foundClasses.containsKey(ClassPath.fromJava(c))) {
-                val clazz = new Clazz(c, collector);
-                foundClasses.put(clazz.classPath, clazz);
-            }
+            return foundClasses.computeIfAbsent(
+                ClassPath.fromJava(c),
+                k -> new Clazz(c, collector)
+            );
         } catch (Throwable ignored) {
+            return null;
         }
     }
 
+    public boolean classPrefilter(Class<?> c) {
+        return ReflectUtils.classExist(c.getName()) && !c.isSynthetic() && !c.isAnonymousClass() && !c.isPrimitive();
+    }
+
     private Set<Class<?>> retrieveClass(Clazz clazz) {
-        Set<Class<?>> classes = new HashSet<>();
+        Set<Class<?>> classes = CollectUtils.identityHashSet();
 
         for (val constructor : clazz.constructors) {
             for (val param : constructor.params) {
@@ -98,29 +109,23 @@ public class ClassRegistry {
     }
 
     public void walkClass() {
-        Set<Clazz> currentClasses = new HashSet<>(foundClasses.values());
+        var classesToWalk = new HashSet<>(foundClasses.values());
 
-        int lastClassCount = 0;
-        while (foundClasses.size() != lastClassCount) {
-            lastClassCount = foundClasses.size();
+        while (!classesToWalk.isEmpty()) {
+            ProbeJS.LOGGER.debug("walking {} newly discovered classes", classesToWalk.size());
+            val collected = classesToWalk
+                .stream()
+                .map(this::retrieveClass)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(CollectUtils::identityHashSet));
+            classesToWalk = new HashSet<>();
 
-            Set<Class<?>> fetchedClass = new HashSet<>(256);
-            ProbeJS.LOGGER.debug("walking {} newly discovered classes", currentClasses.size());
-            for (val currentClass : currentClasses) {
-                fetchedClass.addAll(retrieveClass(currentClass));
-            }
-            currentClasses.clear();
-
-            for (val c : fetchedClass) {
-                if (foundClasses.containsKey(ClassPath.fromJava(c))) {
+            for (val c : collected) {
+                val clazz = fromClass(c);
+                if (clazz == null || foundClasses.containsKey(clazz.classPath)) {
                     continue;
                 }
-                try {
-                    val clazz = new Clazz(c, collector);
-                    foundClasses.put(clazz.classPath, clazz);
-                    currentClasses.add(clazz);
-                } catch (Throwable ignored) {
-                }
+                classesToWalk.add(clazz);
             }
         }
     }
