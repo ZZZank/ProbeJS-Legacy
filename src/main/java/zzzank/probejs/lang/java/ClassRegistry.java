@@ -110,24 +110,19 @@ public class ClassRegistry {
     }
 
     public void walkClass() {
-        var classesToWalk = new HashSet<>(foundClasses.values());
+        var classesToWalk = foundClasses.values();
 
         while (!classesToWalk.isEmpty()) {
             ProbeJS.LOGGER.debug("walking {} newly discovered classes", classesToWalk.size());
-            val collected = classesToWalk
+            classesToWalk = classesToWalk
                 .stream()
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(CollectUtils::identityHashSet));
-            classesToWalk = new HashSet<>();
-
-            for (val c : collected) {
-                val clazz = fromClass(c);
-                if (clazz == null || foundClasses.containsKey(clazz.classPath)) {
-                    continue;
-                }
-                classesToWalk.add(clazz);
-            }
+                .collect(Collectors.toCollection(CollectUtils::identityHashSet))
+                .stream()
+                .map(this::fromClass) // class adding happens here
+                .filter(c -> c != null && !foundClasses.containsKey(c.classPath))
+                .collect(Collectors.toSet());
         }
     }
 
@@ -139,7 +134,7 @@ public class ClassRegistry {
         val classPaths = new ArrayList<>(foundClasses.keySet());
         Collections.sort(classPaths);
 
-        var lastPath = new ClassPath(new String[0]);
+        var lastPath = ClassPath.EMPTY;
         try (val writer = Files.newBufferedWriter(path)) {
             for (val classPath : classPaths) {
                 val commonPartsCount = classPath.getCommonPartsCount(lastPath);
@@ -156,7 +151,7 @@ public class ClassRegistry {
         if (!Files.exists(path)) {
             return;
         }
-        var lastPath = new ClassPath(new String[0]);
+        var lastPath = ClassPath.EMPTY;
         try (val reader = Files.newBufferedReader(path)) {
             for (val className : (Iterable<String>) reader.lines()::iterator) {
                 val parts = className.split("\\.");
@@ -167,20 +162,19 @@ public class ClassRegistry {
                     parts[i] = lastPath.getPart(i);
                 }
                 val classPath = new ClassPath(parts);
-                if (this.foundClasses.containsKey(classPath)) {
-                    continue;
-                }
-                try {
-                    val c = Class.forName(classPath.getJavaPath(), false, ClassRegistry.class.getClassLoader());
-                    if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
-                        fromClass(c);
+                if (!this.foundClasses.containsKey(classPath)) {
+                    try {
+                        val c = Class.forName(classPath.getJavaPath(), false, ClassRegistry.class.getClassLoader());
+                        if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
+                            fromClass(c);
+                        }
+                    } catch (Throwable ex) {
+                        ProbeJS.LOGGER.error(
+                            "Error when loading class '{}' from cache file: {}",
+                            className,
+                            ex.getMessage()
+                        );
                     }
-                } catch (Throwable ex) {
-                    ProbeJS.LOGGER.error(
-                        "Error when loading class '{}' from cache file: {}",
-                        className,
-                        ex.getMessage()
-                    );
                 }
                 lastPath = classPath;
             }

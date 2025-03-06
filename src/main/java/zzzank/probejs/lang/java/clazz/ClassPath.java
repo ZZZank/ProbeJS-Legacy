@@ -2,15 +2,15 @@ package zzzank.probejs.lang.java.clazz;
 
 import dev.latvian.kubejs.util.UtilsJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.ClassRegistry;
+import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.utils.CollectUtils;
 
+import javax.annotation.concurrent.Immutable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -19,9 +19,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-@RequiredArgsConstructor
 @ToString
+@Immutable
 public final class ClassPath implements Comparable<ClassPath> {
+    public static final ClassPath EMPTY = new ClassPath(new String[0]);
 
     public static final String TS_PATH_PREFIX = "packages/";
     public static final Pattern SPLIT = Pattern.compile("\\.");
@@ -29,6 +30,10 @@ public final class ClassPath implements Comparable<ClassPath> {
     private final String[] parts;
     private int hash;
     private boolean hashCached = false;
+
+    public ClassPath(String[] parts) {
+        this.parts = parts;
+    }
 
     public static @NotNull ClassPath fromRaw(final String className) {
         if (className == null || className.isEmpty()) {
@@ -48,8 +53,8 @@ public final class ClassPath implements Comparable<ClassPath> {
         if (!typeScriptPath.startsWith(TS_PATH_PREFIX)) {
             throw new IllegalArgumentException(String.format("path '%s' is not ProbeJS TS path", typeScriptPath));
         }
-        val names = typeScriptPath.substring(TS_PATH_PREFIX.length()).split("/");
-        return new ClassPath(names);
+        val name = typeScriptPath.substring(TS_PATH_PREFIX.length());
+        return new ClassPath(name.split("/"));
     }
 
     public String getPart(final int index) {
