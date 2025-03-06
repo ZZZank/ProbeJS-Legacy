@@ -6,6 +6,7 @@ import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.Asser;
 
@@ -20,7 +21,7 @@ public class TypeDecl extends CommentableCode {
 
     public String name;
     @NotNull
-    public List<? extends BaseType> symbolVariables;
+    public List<TSVariableType> symbolVariables;
 
     @NotNull
     public BaseType type;
@@ -31,14 +32,14 @@ public class TypeDecl extends CommentableCode {
         this(name, Collections.emptyList(), type);
     }
 
-    public TypeDecl(String name, @NotNull List<? extends BaseType> symbolVariables, @NotNull BaseType type) {
+    public TypeDecl(String name, @NotNull List<TSVariableType> symbolVariables, @NotNull BaseType type) {
         this(true, name, symbolVariables, type, BaseType.FormatType.INPUT);
     }
 
     public TypeDecl(
         boolean exportDecl,
         String name,
-        @NotNull List<? extends BaseType> symbolVariables,
+        @NotNull List<TSVariableType> symbolVariables,
         @NotNull BaseType type,
         @NotNull BaseType.FormatType typeFormat
     ) {
@@ -56,7 +57,9 @@ public class TypeDecl extends CommentableCode {
 
     @Override
     public ImportInfos getImportInfos() {
-        return type.getImportInfos(typeFormat);
+        return ImportInfos
+            .of(type.getImportInfos())
+            .fromCodes(symbolVariables, BaseType.FormatType.VARIABLE);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class TypeDecl extends CommentableCode {
         private final String symbol;
         private final BaseType type;
         private boolean exportDecl = true;
-        private List<? extends BaseType> symbolVariables = Collections.emptyList();
+        private List<TSVariableType> symbolVariables = Collections.emptyList();
         private BaseType.FormatType typeFormat = BaseType.FormatType.INPUT;
 
         public Builder(String symbol, @NotNull BaseType type) {
@@ -93,7 +96,7 @@ public class TypeDecl extends CommentableCode {
             return this;
         }
 
-        public Builder symbolVariables(@NotNull List<? extends BaseType> symbolVariables) {
+        public Builder symbolVariables(@NotNull List<TSVariableType> symbolVariables) {
             this.symbolVariables = symbolVariables;
             return this;
         }
