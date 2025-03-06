@@ -18,7 +18,9 @@ public class AnnotationHolder {
     public final Annotation[] annotations;
 
     public AnnotationHolder(@NotNull Annotation @NotNull [] annotations) {
-        this.annotations = Asser.tNotNullAll(annotations, "annotations");
+        this.annotations = annotations.length == 0
+            ? NO_ANNOTATION // skip element nullability testing if empty
+            : Asser.tNotNullAll(annotations, "annotations");
     }
 
     public boolean hasAnnotation(Class<? extends Annotation> annotation) {

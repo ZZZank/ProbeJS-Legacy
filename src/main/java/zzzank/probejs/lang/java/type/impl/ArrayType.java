@@ -12,17 +12,15 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 public class ArrayType extends TypeDescriptor {
-    public TypeDescriptor component;
+    public final TypeDescriptor component;
     private Class<?> asClass;
 
     public ArrayType(AnnotatedArrayType arrayType) {
-        super(arrayType.getAnnotations());
-        this.component = TypeAdapter.getTypeDescription(arrayType.getAnnotatedGenericComponentType());
+        this(arrayType.getAnnotations(), TypeAdapter.getTypeDescription(arrayType.getAnnotatedGenericComponentType()));
     }
 
     public ArrayType(GenericArrayType arrayType) {
-        super(NO_ANNOTATION);
-        this.component = TypeAdapter.getTypeDescription(arrayType.getGenericComponentType());
+        this(NO_ANNOTATION, TypeAdapter.getTypeDescription(arrayType.getGenericComponentType()));
     }
 
     public ArrayType(Annotation[] annotations, TypeDescriptor arrayType) {

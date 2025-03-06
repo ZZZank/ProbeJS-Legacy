@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class ParamType extends TypeDescriptor {
-    public TypeDescriptor base;
+    public final TypeDescriptor base;
     public final List<TypeDescriptor> params;
 
     public ParamType(AnnotatedParameterizedType annotatedType) {
@@ -40,6 +40,10 @@ public class ParamType extends TypeDescriptor {
         super(annotations);
         this.base = base;
         this.params = params;
+    }
+
+    public ParamType(TypeDescriptor base, List<TypeDescriptor> params) {
+        this(base.annotations, base, params);
     }
 
     @Override

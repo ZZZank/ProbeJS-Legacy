@@ -1,11 +1,9 @@
 package zzzank.probejs.lang.java.type;
 
 import org.jetbrains.annotations.Contract;
-import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.type.impl.*;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.Collections;
 
@@ -31,12 +29,11 @@ public class TypeAdapter {
             final var interfaces = clazz.getTypeParameters();
             if (recursive && interfaces.length != 0) {
                 return new ParamType(
-                    type.getAnnotations(),
                     new ClassType(clazz),
                     Collections.nCopies(interfaces.length, new ClassType(Object.class))
                 );
             }
-            return new ClassType(type);
+            return new ClassType(clazz);
         }
         throw new RuntimeException("Unknown type to be resolved");
     }
@@ -62,7 +59,6 @@ public class TypeAdapter {
                 return new ClassType(clazz);
             }
             return new ParamType(
-                AnnotationHolder.NO_ANNOTATION,
                 new ClassType(clazz),
                 Collections.nCopies(interfaces.length, new ClassType(Object.class))
             );
