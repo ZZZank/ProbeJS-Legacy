@@ -8,6 +8,7 @@ import zzzank.probejs.utils.Asser;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AnnotationHolder {
@@ -42,5 +43,9 @@ public class AnnotationHolder {
             }
         }
         return null;
+    }
+
+    public <T extends Annotation> Optional<T> getAnnotationOptional(Class<T> type) {
+        return Optional.ofNullable(getAnnotation(type));
     }
 }

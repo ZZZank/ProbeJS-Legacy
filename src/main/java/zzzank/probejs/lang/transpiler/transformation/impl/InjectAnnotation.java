@@ -3,6 +3,7 @@ package zzzank.probejs.lang.transpiler.transformation.impl;
 import dev.latvian.mods.rhino.annotations.typing.JSInfo;
 import dev.latvian.mods.rhino.annotations.typing.JSParams;
 import lombok.val;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.clazz.Clazz;
@@ -30,17 +31,16 @@ public class InjectAnnotation implements ClassTransformer {
         applyInfo(methodInfo, decl);
         applyDeprecated(methodInfo, decl);
         applyJSParams(methodInfo, decl.params);
+        applySideOnly(methodInfo, decl);
 
         if (RhizoState.INFO_ANNOTATION) {
             val paramLines = methodInfo.params.stream()
                 .filter(p -> p.hasAnnotation(JSInfo.class))
                 .map(p -> String.format("@param %s - %s", p.name, p.getAnnotation(JSInfo.class).value()))
-                .collect(Collectors.toList());
-            if (!paramLines.isEmpty()) {
+                .toArray(String[]::new);
+            if (paramLines.length != 0) {
                 decl.linebreak();
-                for (String line : paramLines) {
-                    decl.addComment(line);
-                }
+                decl.addComment(paramLines);
             }
         }
     }
@@ -49,6 +49,7 @@ public class InjectAnnotation implements ClassTransformer {
     public void transformField(Clazz clazz, FieldInfo fieldInfo, FieldDecl decl) {
         applyInfo(fieldInfo, decl);
         applyDeprecated(fieldInfo, decl);
+        applySideOnly(fieldInfo, decl);
     }
 
     @Override
@@ -56,6 +57,7 @@ public class InjectAnnotation implements ClassTransformer {
         applyInfo(constructorInfo, decl);
         applyDeprecated(constructorInfo, decl);
         applyJSParams(constructorInfo, decl.params);
+        applySideOnly(constructorInfo, decl);
     }
 
     public void applyDeprecated(AnnotationHolder info, CommentableCode decl) {
@@ -92,6 +94,21 @@ public class InjectAnnotation implements ClassTransformer {
             if (jsParam != null && !jsParam.rename().isEmpty()) {
                 declIterator.next().name = jsParam.rename();
             }
+        }
+    }
+
+    public void applySideOnly(AnnotationHolder target, CommentableCode decl) {
+        val dist = target.getAnnotationOptional(OnlyIn.class)
+            .map(OnlyIn::value)
+            .orElse(null);
+        if (dist == null) {
+            return;
+        }
+        decl.linebreak();
+        if (dist.isClient()) {
+            decl.addComment("Client only, do not use in server scripts");
+        } else if (dist.isDedicatedServer()) {
+            decl.addComment("Server only, do not use in client scripts");
         }
     }
 }
