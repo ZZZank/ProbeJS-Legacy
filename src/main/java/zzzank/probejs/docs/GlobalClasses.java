@@ -35,7 +35,7 @@ public class GlobalClasses implements ProbeJSPlugin {
         val TRaw = Types.generic("T");
 
         val paths = Types.object();
-        for (val clazz : ClassRegistry.REGISTRY.foundClasses.values()) {
+        for (val clazz : scriptDump.recordedClasses) {
             val path = clazz.classPath;
             val typeOf = Types.typeOf(clazz.classPath);
             //original
