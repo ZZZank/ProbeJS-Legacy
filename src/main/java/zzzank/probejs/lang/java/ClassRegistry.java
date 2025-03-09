@@ -50,6 +50,7 @@ public class ClassRegistry {
      */
     public Clazz fromClass(Class<?> c) {
         if (!classPrefilter(c)) {
+            ProbeJS.LOGGER.debug("class '{}' did not pass class prefilter", c.getName());
             // We test if the class actually exists from forName
             // I think some runtime class can have non-existing Class<?> object due to .getSuperClass
             // or .getInterfaces
@@ -110,18 +111,20 @@ public class ClassRegistry {
     }
 
     public void walkClass() {
-        var classesToWalk = foundClasses.values();
+        Collection<Clazz> toWalk = new HashSet<>(foundClasses.values());
+        val walked = new HashSet<>(this.foundClasses.values());
 
-        while (!classesToWalk.isEmpty()) {
-            ProbeJS.LOGGER.debug("walking {} newly discovered classes", classesToWalk.size());
-            classesToWalk = classesToWalk
+        while (!toWalk.isEmpty()) {
+            ProbeJS.LOGGER.info("walking {} newly discovered classes", toWalk.size());
+
+            toWalk = toWalk
                 .stream()
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(CollectUtils::identityHashSet))
-                .stream()
+                .filter(new HashSet<>()::add)
                 .map(this::fromClass) // class adding happens here
-                .filter(c -> c != null && !foundClasses.containsKey(c.classPath))
+                .filter(Objects::nonNull)
+                .filter(walked::add)
                 .collect(Collectors.toSet());
         }
     }
