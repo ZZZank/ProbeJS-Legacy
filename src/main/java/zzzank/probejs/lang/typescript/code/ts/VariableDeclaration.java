@@ -12,15 +12,21 @@ public class VariableDeclaration extends CommentableCode {
 
     public String symbol;
     public BaseType type;
+    public BaseType.FormatType typeFormat = BaseType.FormatType.RETURN;
 
     public VariableDeclaration(String symbol, BaseType type) {
         this.symbol = symbol;
         this.type = type;
     }
 
+    public VariableDeclaration setTypeFormat(BaseType.FormatType typeFormat) {
+        this.typeFormat = typeFormat;
+        return this;
+    }
+
     @Override
     public ImportInfos getImportInfos() {
-        return type.getImportInfos();
+        return type.getImportInfos(typeFormat);
     }
 
     @Override

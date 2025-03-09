@@ -58,7 +58,7 @@ public class TypeDecl extends CommentableCode {
     @Override
     public ImportInfos getImportInfos() {
         return ImportInfos
-            .of(type.getImportInfos())
+            .of(type.getImportInfos(typeFormat))
             .fromCodes(symbolVariables, BaseType.FormatType.VARIABLE);
     }
 

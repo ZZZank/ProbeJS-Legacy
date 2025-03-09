@@ -19,6 +19,7 @@ import java.util.*;
 
 public abstract class BaseType extends Code {
     @Override
+    @Deprecated
     public final ImportInfos getImportInfos() {
         return getImportInfos(FormatType.RETURN);
     }
