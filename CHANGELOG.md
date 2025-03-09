@@ -1,3 +1,18 @@
+# ProbeJS Legacy 4.7.1 -> 4.7.2
+
+fixing & info++
+
+- fix type inferring in `java(...)`
+- rewrite ClassRegistry class walking to skip invalid class
+- classes that are server-only will not show up in `java(...)` for client scripts, the same apply to server scripts
+- fix ImportInfos providing for TypeDecl
+- fix loading vanilla classes from cache
+- add error message when there are exceptions in class cache loading
+- fix `@JSParams` handling
+- add info for `@OnlyIn` side only marker
+
+---
+
 # ProbeJS Legacy 4.7.0 -> 4.7.1
 
 fix type declaration
