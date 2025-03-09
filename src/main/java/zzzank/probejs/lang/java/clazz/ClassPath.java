@@ -160,8 +160,8 @@ public final class ClassPath implements Comparable<ClassPath> {
 
     public int hashCode() {
         if (!hashCached) {
-            hashCached = true;
             hash = Arrays.hashCode(this.parts);
+            hashCached = true;
         }
         return hash;
     }

@@ -17,9 +17,11 @@ import java.util.stream.Collectors;
 public class Clazz extends TypeVariableHolder {
 
     public final ClassPath classPath;
+
     public final List<ConstructorInfo> constructors;
     public final List<FieldInfo> fields;
     public final List<MethodInfo> methods;
+
     @Nullable
     public final TypeDescriptor superClass;
     public final List<TypeDescriptor> interfaces;
@@ -54,13 +56,7 @@ public class Clazz extends TypeVariableHolder {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Clazz clazz = (Clazz) o;
-        return Objects.equals(classPath, clazz.classPath);
+        return o instanceof Clazz clazz && classPath.equals(clazz.classPath);
     }
 
     public Class<?> getOriginal() {
