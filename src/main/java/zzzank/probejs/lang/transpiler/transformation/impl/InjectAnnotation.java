@@ -1,6 +1,7 @@
 package zzzank.probejs.lang.transpiler.transformation.impl;
 
 import dev.latvian.mods.rhino.annotations.typing.JSInfo;
+import dev.latvian.mods.rhino.annotations.typing.JSParams;
 import lombok.val;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.java.base.AnnotationHolder;
@@ -10,11 +11,10 @@ import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
-import zzzank.probejs.lang.typescript.code.member.ClassDecl;
-import zzzank.probejs.lang.typescript.code.member.ConstructorDecl;
-import zzzank.probejs.lang.typescript.code.member.FieldDecl;
-import zzzank.probejs.lang.typescript.code.member.MethodDecl;
+import zzzank.probejs.lang.typescript.code.member.*;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class InjectAnnotation implements ClassTransformer {
@@ -29,6 +29,7 @@ public class InjectAnnotation implements ClassTransformer {
     public void transformMethod(Clazz clazz, MethodInfo methodInfo, MethodDecl decl) {
         applyInfo(methodInfo, decl);
         applyDeprecated(methodInfo, decl);
+        applyJSParams(methodInfo, decl.params);
 
         if (RhizoState.INFO_ANNOTATION) {
             val paramLines = methodInfo.params.stream()
@@ -54,6 +55,7 @@ public class InjectAnnotation implements ClassTransformer {
     public void transformConstructor(Clazz clazz, ConstructorInfo constructorInfo, ConstructorDecl decl) {
         applyInfo(constructorInfo, decl);
         applyDeprecated(constructorInfo, decl);
+        applyJSParams(constructorInfo, decl.params);
     }
 
     public void applyDeprecated(AnnotationHolder info, CommentableCode decl) {
@@ -70,6 +72,26 @@ public class InjectAnnotation implements ClassTransformer {
         val infoAnnotation = info.getAnnotation(JSInfo.class);
         if (infoAnnotation != null) {
             decl.addComment(infoAnnotation.value());
+        }
+    }
+
+    public void applyJSParams(AnnotationHolder parent, Collection<ParamDecl> params) {
+        if (!RhizoState.INFO_ANNOTATION) {
+            return;
+        }
+        val jsParams = parent.getAnnotation(JSParams.class);
+        if (jsParams == null || jsParams.params().length == 0) {
+            return;
+        }
+
+        val jsParamIterator = Arrays.asList(jsParams.params()).iterator();
+        val declIterator = params.iterator();
+
+        while (jsParamIterator.hasNext() && declIterator.hasNext()) {
+            val jsParam = jsParamIterator.next();
+            if (jsParam != null && !jsParam.rename().isEmpty()) {
+                declIterator.next().name = jsParam.rename();
+            }
         }
     }
 }

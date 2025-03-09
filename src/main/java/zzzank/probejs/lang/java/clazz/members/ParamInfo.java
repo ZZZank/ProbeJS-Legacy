@@ -1,7 +1,5 @@
 package zzzank.probejs.lang.java.clazz.members;
 
-import dev.latvian.mods.rhino.annotations.typing.JSParam;
-import lombok.val;
 import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
@@ -18,12 +16,5 @@ public class ParamInfo extends AnnotationHolder {
         this.name = parameter.getName();
         this.type = TypeAdapter.getTypeDescription(parameter.getAnnotatedType());
         this.varArgs = parameter.isVarArgs();
-
-        val paramAnno = this.getAnnotation(JSParam.class);
-        if (paramAnno != null) {
-            if (!paramAnno.rename().isEmpty()) {
-                this.name = paramAnno.rename();
-            }
-        }
     }
 }
