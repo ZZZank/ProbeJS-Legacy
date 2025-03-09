@@ -10,6 +10,7 @@ import java.util.Objects;
 /**
  * @author ZZZank
  */
+@SuppressWarnings("unused")
 public final class ProbeText {
 
     public static ProbeText of(@NotNull MutableComponent raw) {

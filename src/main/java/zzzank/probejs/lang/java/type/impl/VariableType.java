@@ -25,13 +25,7 @@ public class VariableType extends TypeDescriptor {
     }
 
     public VariableType(AnnotatedTypeVariable typeVariable, boolean checkBounds) {
-        super(typeVariable.getAnnotations());
-        this.symbol = ((TypeVariable<?>) typeVariable.getType()).getName();
-        this.descriptors = checkBounds ? Arrays.stream(typeVariable.getAnnotatedBounds())
-                // Filter out unannotated Object here
-                .filter(bound -> !bound.getType().equals(Object.class))
-                .map(TypeAdapter::getTypeDescription)
-                .collect(Collectors.toList()) : new ArrayList<>();
+        this((TypeVariable<?>) typeVariable.getType(), checkBounds);
     }
 
     public VariableType(TypeVariable<?> typeVariable, boolean checkBounds) {
@@ -39,7 +33,7 @@ public class VariableType extends TypeDescriptor {
         this.symbol = typeVariable.getName();
         this.descriptors = checkBounds
             ? Arrays.stream(typeVariable.getAnnotatedBounds())
-                .filter(bound -> !bound.getType().equals(Object.class))// Filter out unannotated Object here
+                .filter(bound -> Object.class != bound.getType())
                 .map(TypeAdapter::getTypeDescription)
                 .collect(Collectors.toList())
             : new ArrayList<>();

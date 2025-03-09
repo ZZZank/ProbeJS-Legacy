@@ -47,6 +47,11 @@ public class ArrayType extends TypeDescriptor {
     }
 
     @Override
+    public Collection<Class<?>> getClasses() {
+        return component.getClasses();
+    }
+
+    @Override
     public int hashCode() {
         return component.hashCode() * 31;
     }

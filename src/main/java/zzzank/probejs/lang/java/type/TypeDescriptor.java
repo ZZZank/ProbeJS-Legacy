@@ -3,6 +3,7 @@ package zzzank.probejs.lang.java.type;
 import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.base.ClassProvider;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -32,13 +33,19 @@ public abstract class TypeDescriptor extends AnnotationHolder implements ClassPr
      * Gets the class paths required to use the type.
      */
     public Collection<ClassPath> getClassPaths() {
-        return stream().flatMap(t -> t.getClassPaths().stream()).collect(Collectors.toSet());
+        return stream()
+            .map(TypeDescriptor::getClassPaths)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
     }
 
     /**
      * Gets the classes involved in the type.
      */
     public Collection<Class<?>> getClasses() {
-        return stream().flatMap(t -> t.getClasses().stream()).collect(Collectors.toSet());
+        return stream()
+            .map(TypeDescriptor::getClasses)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toCollection(CollectUtils::identityHashSet));
     }
 }
