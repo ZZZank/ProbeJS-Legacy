@@ -32,6 +32,7 @@ public class GlobalClasses implements ProbeJSPlugin {
         val converter = scriptDump.transpiler.typeConverter;
 
         val T = Types.generic("T", CLASS_PATH);
+        val TRaw = Types.generic("T");
 
         val paths = Types.object();
         for (val clazz : ClassRegistry.REGISTRY.foundClasses.values()) {
@@ -46,15 +47,14 @@ public class GlobalClasses implements ProbeJSPlugin {
         val classPathTemplate = Types.primitive(String.format("`%s${string}`", ClassPath.TS_PATH_PREFIX));
         scriptDump.addGlobal(
             "load_class",
-            new TypeDecl(
-                GLOBAL_CLASSES.content,
-                paths.build().contextShield(BaseType.FormatType.RETURN)
-            ),
+            Statements.type(GLOBAL_CLASSES.content, paths.build())
+                .typeFormat(BaseType.FormatType.RETURN)
+                .build(),
             new TypeDecl(CLASS_PATH.content, Types.STRING.and(Types.primitive("keyof GlobalClasses"))),
             new TypeDecl(JAVA_CLASS_PATH.content, TSUtilityType.exclude(CLASS_PATH, classPathTemplate)),
             new TypeDecl(TS_CLASS_PATH.content, TSUtilityType.extract(CLASS_PATH, classPathTemplate)),
-            Statements.type("AttachJClass", T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
-                .symbolVariables(Collections.singletonList(T))
+            Statements.type("AttachJClass", TRaw.and(J_CLASS.withParams(TSUtilityType.instanceType(TRaw))))
+                .symbolVariables(Collections.singletonList(TRaw))
                 .exportDecl(false)
                 .build(),
             new TypeDecl(
