@@ -1,8 +1,6 @@
 package zzzank.probejs.lang.java.remap;
 
 import lombok.experimental.UtilityClass;
-import zzzank.probejs.features.rhizo.RhizoClazzRemapper;
-import zzzank.probejs.features.rhizo.RhizoState;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -13,9 +11,11 @@ import java.util.Objects;
  */
 @UtilityClass
 public class RemapperBridge {
-    private ClazzNamesRemapper INSTANCE = RhizoState.REMAPPER
-        ? new RhizoClazzRemapper()
-        : new RhinoDefault();
+    private ClazzNamesRemapper INSTANCE;
+
+    static {
+        reset();
+    }
 
     public void set(ClazzNamesRemapper remapper) {
         INSTANCE = Objects.requireNonNull(remapper);

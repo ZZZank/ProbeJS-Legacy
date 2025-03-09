@@ -7,6 +7,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import zzzank.probejs.features.rhizo.RhizoClazzRemapper;
+import zzzank.probejs.features.rhizo.RhizoState;
+import zzzank.probejs.lang.java.remap.RemapperBridge;
+import zzzank.probejs.lang.java.remap.RhinoDefault;
 import zzzank.probejs.utils.JsonUtils;
 
 import java.nio.file.Path;
@@ -28,6 +32,12 @@ public class ProbeJS {
 
     public ProbeJS() {
         EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+
+        RemapperBridge.set(
+            RhizoState.REMAPPER
+                ? new RhizoClazzRemapper()
+                : new RhinoDefault()
+        );
 
         ProbeConfig.refresh();
     }
