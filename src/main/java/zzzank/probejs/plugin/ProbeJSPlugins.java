@@ -31,6 +31,10 @@ public class ProbeJSPlugins {
         }
     }
 
+    public static void remove(Class<? extends ProbeJSPlugin> pluginType) {
+        ALL.removeIf(pluginType::isInstance);
+    }
+
     @Contract(pure = true)
     public static @NotNull @UnmodifiableView List<ProbeJSPlugin> getAll() {
         return Collections.unmodifiableList(ALL);
