@@ -16,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @HideFromJS
@@ -121,7 +122,7 @@ public class ClassRegistry {
                 .stream()
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
-                .filter(new HashSet<>()::add)
+                .filter(new HashSet<>()::add) // deduplicate
                 .map(this::fromClass) // class adding happens here
                 .filter(Objects::nonNull)
                 .filter(walked::add)

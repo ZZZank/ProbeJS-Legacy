@@ -66,18 +66,20 @@ public final class ParamDecl {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (ParamDecl) obj;
-        return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.type, that.type) &&
-                this.varArg == that.varArg &&
-                this.optional == that.optional;
+    public boolean equals(Object object) {
+        return object instanceof ParamDecl paramDecl
+            && varArg == paramDecl.varArg
+            && optional == paramDecl.optional
+            && Objects.equals(name, paramDecl.name)
+            && Objects.equals(type, paramDecl.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, varArg, optional);
+        int result = Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(type);
+        result = 31 * result + Boolean.hashCode(varArg);
+        result = 31 * result + Boolean.hashCode(optional);
+        return result;
     }
 }
