@@ -1,3 +1,21 @@
+# ProbeJS Legacy 4.7.2 -> 4.8.0
+
+Better Beaning
+
+- Beaning (setter and getter) generation is rewritten
+    - fixed setter being identified as getter
+    - fixed some generated getter being invalid and not actually present
+    - fields can now be converted to getter and setter automatically, toggle via `Field As Beaning` config
+- Rhizo 3.6.5 support
+    - Rhizo 3.6.5 removed explicit class wrapping, and added `ClassWrapper`, ProbeJS Legacy adapts to both
+- Type assignment improvement
+    - many invalid or redundant type assignment docs are removed
+    - added type assignment doc for RandomIntGenerator and MaterialJS
+    - `$Class` type will not be automatically converted to `JClass` now
+- and some internal changes
+
+---
+
 # ProbeJS Legacy 4.7.1 -> 4.7.2
 
 fixing & info++
