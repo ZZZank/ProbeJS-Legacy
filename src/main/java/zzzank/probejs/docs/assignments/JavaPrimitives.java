@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import zzzank.probejs.docs.GlobalClasses;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -103,5 +104,6 @@ public class JavaPrimitives implements ProbeJSPlugin {
             .member("y2", Primitives.DOUBLE)
             .member("z2", Primitives.DOUBLE)
             .build());
+        scriptDump.assignType(Class.class, GlobalClasses.J_CLASS);
     }
 }
