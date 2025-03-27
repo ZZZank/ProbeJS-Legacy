@@ -22,13 +22,13 @@ public final class SimpleClassRedirect implements TypeRedirect {
     private final Function<ClassType, BaseType> mapper;
 
     public SimpleClassRedirect(Class<?> target, Function<ClassType, BaseType> mapper) {
-        targets = ImmutableSet.of(target);
+        this.targets = ImmutableSet.of(target);
         this.mapper = Objects.requireNonNull(mapper);
     }
 
     public SimpleClassRedirect(Collection<Class<?>> targets, Function<ClassType, BaseType> mapper) {
         this.targets = ImmutableSet.copyOf(targets);
-        this.mapper = mapper;
+        this.mapper = Objects.requireNonNull(mapper);
     }
 
     @Override

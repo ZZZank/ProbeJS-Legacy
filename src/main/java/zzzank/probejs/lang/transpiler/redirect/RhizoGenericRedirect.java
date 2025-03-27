@@ -2,7 +2,6 @@ package zzzank.probejs.lang.transpiler.redirect;
 
 import dev.latvian.mods.rhino.annotations.typing.Generics;
 import lombok.val;
-import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.ParamType;
 import zzzank.probejs.lang.transpiler.TypeConverter;
@@ -17,8 +16,7 @@ public class RhizoGenericRedirect implements TypeRedirect {
 
     @Override
     public boolean test(TypeDescriptor typeDescriptor, TypeConverter converter) {
-        return RhizoState.GENERIC_ANNOTATION
-            && typeDescriptor instanceof ParamType
+        return typeDescriptor instanceof ParamType
             && typeDescriptor.hasAnnotation(Generics.class);
     }
 

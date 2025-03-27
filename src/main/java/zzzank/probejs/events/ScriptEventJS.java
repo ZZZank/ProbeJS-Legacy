@@ -5,6 +5,7 @@ import dev.latvian.kubejs.script.ScriptType;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.utils.ClassWrapperPJS;
 
 public class ScriptEventJS extends EventJS {
     public final ScriptDump scriptDump;
@@ -17,11 +18,11 @@ public class ScriptEventJS extends EventJS {
         return scriptDump.scriptType;
     }
 
-    public Class<Types> getTypes() {
-        return Types.class;
+    public ClassWrapperPJS<Types> getTypes() {
+        return new ClassWrapperPJS<>(Types.class);
     }
 
-    public Class<Statements> getStatements() {
-        return Statements.class;
+    public ClassWrapperPJS<Statements> getStatements() {
+        return new ClassWrapperPJS<>(Statements.class);
     }
 }

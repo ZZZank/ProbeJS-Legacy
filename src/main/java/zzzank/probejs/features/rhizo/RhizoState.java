@@ -19,4 +19,5 @@ public interface RhizoState {
     boolean GENERIC_ANNOTATION = classExist("dev.latvian.mods.rhino.annotations.typing.Generics");
     boolean INFO_ANNOTATION = classExist("dev.latvian.mods.rhino.annotations.typing.JSInfo");
     boolean RETURNS_SELF_ANNOTATION = classExist("dev.latvian.mods.rhino.annotations.typing.ReturnsSelf");
+    boolean CLASS_WRAPPER = classExist("dev.latvian.mods.rhino.util.ClassWrapper");
 }
