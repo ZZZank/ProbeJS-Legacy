@@ -75,7 +75,7 @@ repositories {
 
 configurations {
     shade
-    implementation.extendsFrom shade
+    implementation.extendsFrom(shade)
 }
 
 dependencies {
@@ -111,7 +111,8 @@ dependencies {
     // modCompileOnly "mezz.jei:jei-1.16.5:${jei_version}:api"
     // at runtime, use the full JEI jar
     // modRuntimeOnly "mezz.jei:jei-1.16.5:${jei_version}"
-    modApi("curse.maven:rhizo-1003287:6250771")
+
+    modApi("curse.maven:rhizo-1003287:$rhizo_cf_id")
     modApi("dev.latvian.mods:kubejs-forge:${kubejs_version}") {
         exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])
     }
