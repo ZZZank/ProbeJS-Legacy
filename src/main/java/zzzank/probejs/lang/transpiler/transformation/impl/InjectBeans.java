@@ -38,10 +38,7 @@ public class InjectBeans implements ClassTransformer {
             if (method.params.size() == 1) {
                 val beanName = extractBeanName(name, "set");
                 if (beanName != null) {
-                    classDecl.ensureSetters().add(
-                        beanName,
-                        new BeanDecl.Setter(name, method.params.get(0).type)
-                    );
+                    classDecl.bodyCode.add(new BeanDecl.Setter(name, method.params.get(0).type));
                 }
             } else if (method.params.isEmpty()) {
                 var beanName = extractBeanName(name, "get");
@@ -49,7 +46,7 @@ public class InjectBeans implements ClassTransformer {
                     beanName = extractBeanName(name, "is");
                 }
                 if (beanName != null && !excludedGetterNames.contains(beanName)) {
-                    classDecl.ensureGetters().put(beanName, new BeanDecl.Getter(beanName, method.returnType));
+                    classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.returnType));
                     excludedGetterNames.add(beanName);
                 }
             }
@@ -75,14 +72,14 @@ public class InjectBeans implements ClassTransformer {
             if (!excludedGetterNames.contains(field.name)) {
                 val getter = new BeanDecl.Getter(field.name, field.type);
                 getter.comments.addAll(field.comments);
-                clazzDecl.ensureGetters().put(getter.name, getter);
+                clazzDecl.bodyCode.add(getter);
                 excludedGetterNames.add(field.name);
             }
 
             if (!field.isFinal) {
                 val setter = new BeanDecl.Setter(field.name, field.type);
                 setter.comments.addAll(field.comments);
-                clazzDecl.ensureSetters().add(setter.name, setter);
+                clazzDecl.bodyCode.add(setter);
             }
         }
         clazzDecl.fields.clear();

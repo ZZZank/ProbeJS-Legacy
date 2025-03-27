@@ -10,8 +10,6 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.collect.MultiMap;
-import zzzank.probejs.utils.collect.TreeMultiMap;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -32,8 +30,6 @@ public class ClassDecl extends CommentableCode {
     public final List<FieldDecl> fields = new ArrayList<>();
     public final List<ConstructorDecl> constructors = new ArrayList<>();
     public final List<MethodDecl> methods = new ArrayList<>();
-    public Map<String, BeanDecl.Getter> getters = null;
-    public MultiMap<String, BeanDecl.Setter> setters = null;
 
     /**
      * Reserved field to inject custom code body
@@ -65,20 +61,6 @@ public class ClassDecl extends CommentableCode {
             infos.addAll(superClass.getImportInfos(BaseType.FormatType.RETURN));
         }
         return infos;
-    }
-
-    public Map<String, BeanDecl.Getter> ensureGetters() {
-        if (getters == null) {
-            getters = new TreeMap<>();
-        }
-        return getters;
-    }
-
-    public MultiMap<String, BeanDecl.Setter> ensureSetters() {
-        if (setters == null) {
-            setters = new TreeMultiMap<>();
-        }
-        return setters;
     }
 
     @Override
