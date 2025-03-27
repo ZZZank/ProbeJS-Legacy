@@ -1,5 +1,7 @@
 package zzzank.probejs.docs.assignments;
 
+import dev.latvian.kubejs.block.MaterialJS;
+import dev.latvian.kubejs.block.MaterialListJS;
 import dev.latvian.kubejs.fluid.FluidStackJS;
 import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
@@ -12,12 +14,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+
+import java.util.Locale;
 
 /**
  * @author ZZZank
@@ -73,13 +78,21 @@ public class KubeWrappers implements ProbeJSPlugin {
         scriptDump.assignType(FluidStackJS.class, "FluidWithAmount", Types.object()
             .member("fluid", Types.primitive("Special.Fluid"))
             .member("amount", true, Primitives.INTEGER)
-            .member("nbt", true, Types.or(Primitives.CHAR_SEQUENCE, Types.primitive("{}")))
+            .member("nbt", true, Types.or(Primitives.CHAR_SEQUENCE, Types.EMPTY_OBJECT))
             .build());
+
+        scriptDump.assignType(MaterialJS.class, Types.or(MaterialListJS.INSTANCE.map.keySet()
+            .stream()
+            .map(s -> s.toLowerCase(Locale.ROOT))
+            .map(Types::literal)
+            .toArray(BaseType[]::new))
+        );
 
         //unwrap
         scriptDump.assignType(Component.class, Types.type(Text.class));
         scriptDump.assignType(MutableComponent.class, Types.type(Text.class));
         scriptDump.assignType(Ingredient.class, Types.type(IngredientJS.class));
         scriptDump.assignType(ItemStack.class, Types.type(ItemStackJS.class));
+        scriptDump.assignType(ItemLike.class, Types.type(Item.class));
     }
 }

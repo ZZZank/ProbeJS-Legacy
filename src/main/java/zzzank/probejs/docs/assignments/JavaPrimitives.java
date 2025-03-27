@@ -14,15 +14,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import zzzank.probejs.docs.GlobalClasses;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.code.type.js.JSTupleType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
 import java.time.Duration;
@@ -31,21 +28,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class JavaPrimitives implements ProbeJSPlugin {
-
-    private static JSTupleType xyzOf(BaseType baseType) {
-        return Types.tuple()
-            .member("x", baseType)
-            .member("y", baseType)
-            .member("z", baseType)
-            .build();
-    }
-
-    private static JSTupleType minMaxOf(BaseType baseType) {
-        return Types.tuple()
-            .member("min", baseType)
-            .member("max", baseType)
-            .build();
-    }
 
     @Override
     public void assignType(ScriptDump scriptDump) {
@@ -89,13 +71,12 @@ public class JavaPrimitives implements ProbeJSPlugin {
         scriptDump.assignType(Tag.class, Types.BOOLEAN);
         scriptDump.assignType(Tag.class, Types.OBJECT);
         scriptDump.assignType(Tag.class, Types.ANY.asArray());
-        scriptDump.assignType(BlockPos.class, xyzOf(Primitives.INTEGER));
+        scriptDump.assignType(BlockPos.class, AssignmentHelper.xyzOf(Primitives.INTEGER));
         scriptDump.assignType(BlockPos.class, Types.type(BlockContainerJS.class));
-        scriptDump.assignType(Vec3.class, xyzOf(Primitives.DOUBLE));
-        scriptDump.assignType(Vec3i.class, xyzOf(Primitives.INTEGER));
-        scriptDump.assignType(MobCategory.class, Types.STRING);
+        scriptDump.assignType(Vec3.class, AssignmentHelper.xyzOf(Primitives.DOUBLE));
+        scriptDump.assignType(Vec3i.class, AssignmentHelper.xyzOf(Primitives.INTEGER));
         scriptDump.assignType(AABB.class, Types.EMPTY_ARRAY);
-        scriptDump.assignType(AABB.class, xyzOf(Primitives.DOUBLE));
+        scriptDump.assignType(AABB.class, AssignmentHelper.xyzOf(Primitives.DOUBLE));
         scriptDump.assignType(AABB.class, Types.tuple()
             .member("x1", Primitives.DOUBLE)
             .member("y1", Primitives.DOUBLE)

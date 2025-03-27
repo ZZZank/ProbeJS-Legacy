@@ -1,13 +1,10 @@
 package zzzank.probejs.docs.assignments;
 
-
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.recipe.filter.RecipeFilter;
 import dev.latvian.kubejs.recipe.ingredientaction.IngredientActionFilter;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.ItemLike;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
@@ -18,8 +15,6 @@ import java.util.Set;
 public class RecipeTypes implements ProbeJSPlugin {
     @Override
     public void assignType(ScriptDump scriptDump) {
-
-        scriptDump.assignType(ItemLike.class, Types.type(Item.class));
 
 //        scriptDump.assignType(ItemPredicate.class, Types.type(Item.class));
 //        scriptDump.assignType(ItemPredicate.class, Types.literal("*"));
