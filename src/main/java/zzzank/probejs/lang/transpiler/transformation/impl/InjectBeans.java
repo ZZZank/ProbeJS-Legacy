@@ -16,19 +16,22 @@ import java.util.Set;
 public class InjectBeans implements ClassTransformer {
     @Override
     public void transform(Clazz clazz, ClassDecl classDecl) {
-        val excludedGetterNames = new HashSet<String>();
+        val usedNames = new HashSet<String>();
         for (val method : classDecl.methods) {
-            excludedGetterNames.add(method.name);
+            usedNames.add(method.name);
         }
 
         if (ProbeConfig.fieldAsBean.get()) {
-            fromField(classDecl, excludedGetterNames);
+            fromField(classDecl, usedNames);
+        }
+        for (val field : classDecl.fields) {
+            usedNames.add(field.name);
         }
 
-        fromMethod(classDecl, excludedGetterNames);
+        fromMethod(classDecl, usedNames);
     }
 
-    private void fromMethod(ClassDecl classDecl, Set<String> excludedGetterNames) {
+    private void fromMethod(ClassDecl classDecl, Set<String> usedNames) {
         for (val method : classDecl.methods) {
             if (method.isStatic) {
                 continue;
@@ -37,7 +40,7 @@ public class InjectBeans implements ClassTransformer {
             val name = method.name;
             if (method.params.size() == 1) {
                 val beanName = extractBeanName(name, "set");
-                if (beanName != null) {
+                if (beanName != null && !usedNames.contains(beanName)) {
                     classDecl.bodyCode.add(new BeanDecl.Setter(name, method.params.get(0).type));
                 }
             } else if (method.params.isEmpty()) {
@@ -45,9 +48,9 @@ public class InjectBeans implements ClassTransformer {
                 if (beanName == null) {
                     beanName = extractBeanName(name, "is");
                 }
-                if (beanName != null && !excludedGetterNames.contains(beanName)) {
+                if (beanName != null && !usedNames.contains(beanName)) {
                     classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.returnType));
-                    excludedGetterNames.add(beanName);
+                    usedNames.add(beanName);
                 }
             }
         }
@@ -61,7 +64,7 @@ public class InjectBeans implements ClassTransformer {
         return NameUtils.firstLower(beanName);
     }
 
-    private void fromField(ClassDecl clazzDecl, Set<String> excludedGetterNames) {
+    private void fromField(ClassDecl clazzDecl, Set<String> excludedNames) {
         val keptFields = new ArrayList<FieldDecl>();
         for (val field : clazzDecl.fields) {
             if (field.isStatic) {
@@ -69,11 +72,10 @@ public class InjectBeans implements ClassTransformer {
                 continue;
             }
 
-            if (!excludedGetterNames.contains(field.name)) {
+            if (!excludedNames.contains(field.name)) {
                 val getter = new BeanDecl.Getter(field.name, field.type);
                 getter.comments.addAll(field.comments);
                 clazzDecl.bodyCode.add(getter);
-                excludedGetterNames.add(field.name);
             }
 
             if (!field.isFinal) {
@@ -81,6 +83,8 @@ public class InjectBeans implements ClassTransformer {
                 setter.comments.addAll(field.comments);
                 clazzDecl.bodyCode.add(setter);
             }
+
+            excludedNames.add(field.name);
         }
         clazzDecl.fields.clear();
         clazzDecl.fields.addAll(keptFields);
