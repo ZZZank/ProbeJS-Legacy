@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,10 +59,9 @@ public interface CollectUtils {
         return l;
     }
 
-    Function<?, ArrayList<?>> KEY_IGNORED_NEW_ARRAY_LIST = k -> new ArrayList<>();
-
-    static <K, T> Function<K, ArrayList<T>> keyIgnoredNewArrayList() {
-        return Cast.to(KEY_IGNORED_NEW_ARRAY_LIST);
+    static <I, O> Function<I, O> ignoreInput(Supplier<O> supplier) {
+        Asser.tNotNull(supplier, "supplier");
+        return input -> supplier.get();
     }
 
     static int calcMapExpectedSize(int elementCount) {

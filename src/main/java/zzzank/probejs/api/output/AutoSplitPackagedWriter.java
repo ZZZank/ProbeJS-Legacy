@@ -94,11 +94,12 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
             return Collections.singletonMap(entry.getKey(), files);
         }
 
+        val mapper = CollectUtils.<String, List<TypeScriptFile>>ignoreInput(ArrayList::new);
         val spread = new HashMap<String, List<TypeScriptFile>>();
         for (val file : files) {
             val parts = file.path.getParts();
             val fileName = String.join(".", parts.subList(0, Integer.min(packageCount, parts.size() - 1)));
-            spread.computeIfAbsent(fileName, CollectUtils.keyIgnoredNewArrayList())
+            spread.computeIfAbsent(fileName, mapper)
                 .add(file);
         }
 

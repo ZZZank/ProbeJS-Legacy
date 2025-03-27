@@ -21,8 +21,8 @@ public class ClassRedirect implements TypeRedirect {
 
     private final Set<Class<?>> convertibles;
 
-    public ClassRedirect(Set<Class<?>> convertibles) {
-        this.convertibles = convertibles;
+    public ClassRedirect(Set<Class<?>> targets) {
+        this.convertibles = targets;
     }
 
     @Override
@@ -35,20 +35,20 @@ public class ClassRedirect implements TypeRedirect {
 
     @Override
     public BaseType apply(TypeDescriptor typeDescriptor, TypeConverter converter) {
-        val converted = converter.convertTypeExcluding(typeDescriptor, this);
-        if (!(converted instanceof TSParamType paramType)) {
-            return converted;
+        val type = converter.convertTypeExcluding(typeDescriptor, this);
+        if (!(type instanceof TSParamType paramType)) {
+            return type;
         }
         val param = paramType.params.get(0);
         if (param instanceof JSPrimitiveType || param instanceof TSVariableType) {
-            return converted;
+            return type;
         }
-        val andTypeOf = Types.and(converted, Types.typeOf(param));
+        val withTypeOf = Types.and(type, Types.typeOf(param));
         val selector = (Function<BaseType.FormatType, BaseType>)
-            formatType -> formatType == BaseType.FormatType.RETURN ? andTypeOf : converted;
+            formatType -> formatType == BaseType.FormatType.RETURN ? withTypeOf : type;
         return Types.custom(
             (declaration, formatType) -> selector.apply(formatType).line(declaration, formatType),
-            (type) -> selector.apply(type).getImportInfos(type)
+            (formatType) -> selector.apply(formatType).getImportInfos(formatType)
         );
     }
 }
