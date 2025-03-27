@@ -5,7 +5,6 @@ import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
-import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.utils.NameUtils;
 
 import java.util.HashSet;
@@ -23,37 +22,34 @@ public class InjectBeans implements ClassTransformer {
             if (method.isStatic) {
                 continue;
             }
+
             val name = method.name;
-            if (name.startsWith("set") && method.params.size() == 1) {
-                if (name.length() == 3) {
-                    continue;
+            if (method.params.size() == 1) {
+                val beanName = extractBeanName(name, "set");
+                if (beanName != null) {
+                    classDecl.ensureSetters().add(
+                        beanName,
+                        new BeanDecl.Setter(name, method.params.get(0).type)
+                    );
                 }
-                val beanName = NameUtils.firstLower(name.substring(3));
-                if (names.contains(beanName)) {
-                    continue;
-                }
-                classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.params.get(0).type));
             } else if (method.params.isEmpty()) {
-                if (name.startsWith("get")) {
-                    if (name.length() == 3) {
-                        continue;
-                    }
-                    val beanName = NameUtils.firstLower(name.substring(3));
-                    if (names.contains(beanName)) {
-                        continue;
-                    }
-                    classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.returnType));
-                } else if (name.startsWith("is")) {
-                    if (name.length() == 2) {
-                        continue;
-                    }
-                    val beanName = NameUtils.firstLower(name.substring(2));
-                    if (names.contains(beanName)) {
-                        continue;
-                    }
-                    classDecl.bodyCode.add(new BeanDecl.Getter(beanName, Types.BOOLEAN));
+                var beanName = extractBeanName(name, "get");
+                if (beanName == null) {
+                    beanName = extractBeanName(name, "is");
+                }
+                if (beanName != null && !names.contains(beanName)) {
+                    classDecl.ensureGetters().put(beanName, new BeanDecl.Getter(beanName, method.returnType));
+                    names.add(beanName);
                 }
             }
         }
+    }
+
+    private String extractBeanName(String name, String prefix) {
+        if (name.length() <= prefix.length() || !name.startsWith(prefix)) {
+            return null;
+        }
+        val beanName = name.substring(prefix.length());
+        return NameUtils.firstLower(beanName);
     }
 }
