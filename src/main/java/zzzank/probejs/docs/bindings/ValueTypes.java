@@ -17,35 +17,38 @@ import java.util.*;
  */
 public class ValueTypes {
 
-    private static final Map<Class<?>, ValueTypeConverter> FORMATTERS =
-        new LinkedHashMap<>();
-    private static final Set<Class<?>> PRIMITIVES = new HashSet<>();
+    private static final Map<Class<?>, ValueTypeConverter> FORMATTERS = new LinkedHashMap<>();
+    private static final Set<Class<?>> PRIMITIVES = new HashSet<>(Arrays.asList(
+        String.class,
+        Character.class, Character.TYPE,
+        Long.class, Long.TYPE,
+        Integer.class, Integer.TYPE,
+        Short.class, Short.TYPE,
+        Byte.class, Byte.TYPE,
+        Double.class, Double.TYPE,
+        Float.class, Float.TYPE,
+        Boolean.class, Boolean.TYPE
+    ));
+
+    public static final BaseType BARE_BONE_MAP = Types.object().literalMember("[key: string]", Types.ANY).build();
+    public static final BaseType BARE_BONE_LIST = Types.object().literalMember("[index: number]", Types.ANY).build();
 
     static {
-        PRIMITIVES.addAll(Arrays.asList(
-            String.class,
-            Character.class, Character.TYPE,
-            Long.class, Long.TYPE,
-            Integer.class, Integer.TYPE,
-            Short.class, Short.TYPE,
-            Byte.class, Byte.TYPE,
-            Double.class, Double.TYPE,
-            Float.class, Float.TYPE,
-            Boolean.class, Boolean.TYPE
-        ));
-        for (val t : PRIMITIVES) {
-            FORMATTERS.put(t, ValueTypes::convertPrimitive);
-        }
         //shortcut
         FORMATTERS.put(NativeArray.class, ValueTypes::convertList);
         FORMATTERS.put(NativeObject.class, ValueTypes::convertScriptableObject);
         FORMATTERS.put(NativeFunction.class, ValueTypes::formatFunction);
-        //general
-        FORMATTERS.put(Map.class, ValueTypes::convertMap);
-        FORMATTERS.put(List.class, ValueTypes::convertList);
+        //js
         FORMATTERS.put(BaseFunction.class, ValueTypes::formatFunction);
         FORMATTERS.put(ArrowFunction.class, ValueTypes::formatFunction);
         FORMATTERS.put(Scriptable.class, ValueTypes::convertScriptableObject);
+        //general
+        FORMATTERS.put(Map.class, ValueTypes::convertMap);
+        FORMATTERS.put(List.class, ValueTypes::convertList);
+        //primitives
+        for (val t : PRIMITIVES) {
+            FORMATTERS.put(t, ValueTypes::convertPrimitive);
+        }
     }
 
     @Nullable
@@ -84,9 +87,11 @@ public class ValueTypes {
         return converter.convertType(obj.getClass());
     }
 
-    public static JSObjectType convertMap(Object obj, TypeConverter converter, int limit) {
-        if (!(obj instanceof Map<?, ?> map) || limitConsumed(limit)) {
+    public static BaseType convertMap(Object obj, TypeConverter converter, int limit) {
+        if (!(obj instanceof Map<?, ?> map)) {
             return null;
+        } else if (limitConsumed(limit)) {
+            return BARE_BONE_MAP;
         }
         val builder = Types.object();
         for (val entry : map.entrySet()) {
@@ -98,8 +103,10 @@ public class ValueTypes {
     }
 
     public static BaseType convertList(Object obj, TypeConverter converter, int limit) {
-        if (!(obj instanceof List<?> list) || limitConsumed(limit)) {
+        if (!(obj instanceof List<?> list)) {
             return null;
+        } else if (limitConsumed(limit)) {
+            return Types.ANY.asArray();
         }
 
         val nextLimit = consumeLimit(limit);
@@ -112,8 +119,10 @@ public class ValueTypes {
     }
 
     public static BaseType convertScriptableObject(Object obj, TypeConverter converter, int limit) {
-        if (!(obj instanceof ScriptableObject scriptable) || limitConsumed(limit)) {
+        if (!(obj instanceof ScriptableObject scriptable)) {
             return null;// if not Scriptable, why call this
+        } else if (limitConsumed(limit)) {
+            return Types.OBJECT;
         }
         val nextLimit = consumeLimit(limit);
         val builder = Types.object();
@@ -145,7 +154,7 @@ public class ValueTypes {
     }
 
     public static BaseType formatFunction(Object obj, TypeConverter converter, int limit) {
-        if (!(obj instanceof BaseFunction fn) || limitConsumed(limit)) {
+        if (!(obj instanceof BaseFunction fn)) {
             return null;
         }
         val builder = Types.lambda().returnType(Types.ANY);
@@ -161,7 +170,7 @@ public class ValueTypes {
     }
 
     private static boolean limitConsumed(int limit) {
-        return limit == 0;
+        return limit <= 0;
     }
 
     interface ValueTypeConverter {
@@ -170,8 +179,6 @@ public class ValueTypes {
         default BaseType convertOrDefault(Object object, TypeConverter converter, int depth) {
             if (object == null) {
                 return Types.NULL;
-            } else if (limitConsumed(depth)) {
-                return converter.convertType(object.getClass());
             }
             val converted = this.convert(object, converter, depth);
             return converted == null ? converter.convertType(object.getClass()) : converted;
