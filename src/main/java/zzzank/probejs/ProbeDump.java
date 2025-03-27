@@ -114,9 +114,9 @@ public class ProbeDump {
                     dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
                     try {
                         dump.dump();
-                        report(ProbeText.pjs("dump.dump_finished", dump.manager.type.name).green());
+                        report(ProbeText.pjs("dump.dump_finished", dump.manager.type).green());
                     } catch (Throwable e) {
-                        report(ProbeText.pjs("dump.dump_error", dump.manager.type.name).red());
+                        report(ProbeText.pjs("dump.dump_error", dump.manager.type).red());
                         throw new RuntimeException(e);
                     }
                 },

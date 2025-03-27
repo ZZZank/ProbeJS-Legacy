@@ -21,7 +21,7 @@ public class InjectBeans implements ClassTransformer {
             usedNames.add(method.name);
         }
 
-        if (ProbeConfig.fieldAsBean.get()) {
+        if (ProbeConfig.fieldAsBeaning.get()) {
             fromField(classDecl, usedNames);
         }
         for (val field : classDecl.fields) {
