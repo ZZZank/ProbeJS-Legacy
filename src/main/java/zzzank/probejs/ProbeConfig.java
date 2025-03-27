@@ -125,4 +125,9 @@ public interface ProbeConfig {
         .comment("""
             Generate `Internal` namespace to simulate old typing structure before ProbeJS Legacy 4""")
         .build();
+    ConfigEntry<Boolean> fieldAsBean = INSTANCE.define("Field As Bean")
+        .setDefault(true)
+        .comment("""
+            Convert field to getter/setter if possible, this might help beaning generation be more accurate""")
+        .build();
 }
