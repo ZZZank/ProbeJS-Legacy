@@ -1,3 +1,12 @@
+# ProbeJS Legacy 4.8.0 -> 4.8.1
+
+fix hidden setters
+
+- fixed getters hiding setters with the same name
+- hide some stub methods in Rhizo and KesseractJS
+
+---
+
 # ProbeJS Legacy 4.7.2 -> 4.8.0
 
 Better Beaning
