@@ -39,6 +39,7 @@ public class ClazzMemberCollector implements MemberCollector {
             .peek(m -> names.add(RemapperBridge.remapMethod(clazz, m)))
             .filter(ClazzMemberCollector::notHideFromJS)
             .filter(m -> !m.isSynthetic() && !hasIdenticalParentMethod(m, clazz))
+            .filter(m -> !m.getName().startsWith("jvmdowngrader$")) // remove JVMDG stub
             .sorted(Comparator.comparing(Method::getName))
             .map(method -> new MethodInfo(
                 clazz,
