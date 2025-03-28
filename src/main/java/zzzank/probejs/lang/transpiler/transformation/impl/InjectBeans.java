@@ -50,7 +50,6 @@ public class InjectBeans implements ClassTransformer {
                 }
                 if (beanName != null && !usedNames.contains(beanName)) {
                     classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.returnType));
-                    usedNames.add(beanName);
                 }
             }
         }
