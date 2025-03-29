@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 @SuppressWarnings("unused")
 public final class ProbeText {
+    private static final Object[] EMPTY_ARGS = new Object[0];
 
     public static ProbeText of(@NotNull MutableComponent raw) {
         return new ProbeText(Objects.requireNonNull(raw));
@@ -27,6 +28,10 @@ public final class ProbeText {
 
     public static ProbeText pjs(String key, Object... args) {
         return translatable("probejs." + key, args);
+    }
+
+    public static ProbeText pjs(String key) {
+        return pjs(key, EMPTY_ARGS);
     }
 
     private MutableComponent raw;

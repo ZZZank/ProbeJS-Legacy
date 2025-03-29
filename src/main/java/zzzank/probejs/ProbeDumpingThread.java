@@ -54,7 +54,10 @@ public class ProbeDumpingThread extends Thread {
             );
         }
 
+        ProbeConfig.refresh();
+        messageSender.accept(ProbeText.pjs("config_refreshed"));
         RegistryInfos.refresh();
+
         val probeDump = new ProbeDump(messageSender);
         probeDump.addScript(ScriptDump.CLIENT_DUMP.get());
         probeDump.addScript(ScriptDump.SERVER_DUMP.get());
