@@ -32,3 +32,4 @@ bin/
 
 run/
 .compiler_output/
+logs/

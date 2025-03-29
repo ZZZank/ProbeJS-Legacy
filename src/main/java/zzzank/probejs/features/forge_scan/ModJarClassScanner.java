@@ -24,7 +24,6 @@ import java.util.zip.ZipFile;
 class ModJarClassScanner {
 
     public static final String DESC_MIXIN = Type.getDescriptor(Mixin.class);
-    public static final String CLASS_SUFFIX = ".class";
 
     public static Set<Class<?>> scanFile(File file) {
         try (val jarFile = new ZipFile(file)) {
@@ -84,9 +83,9 @@ class ModJarClassScanner {
         return file.stream()
             .filter(e -> !e.isDirectory())
             .map(ZipEntry::getName)
-            .filter(name -> name.endsWith(CLASS_SUFFIX))
+            .filter(name -> name.endsWith(ReflectUtils.CLASS_SUFFIX))
             .filter(this::presentAndNotMixin)
-            .map(name -> name.substring(0, name.length() - CLASS_SUFFIX.length()).replace("/", "."))
+            .map(name -> name.substring(0, name.length() - ReflectUtils.CLASS_SUFFIX.length()).replace("/", "."))
             .map(ReflectUtils::classOrNull)
             .filter(Objects::nonNull)
             .filter(c -> Modifier.isPublic(c.getModifiers()) || !ProbeConfig.publicClassOnly.get())
