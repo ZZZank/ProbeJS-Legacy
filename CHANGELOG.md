@@ -1,3 +1,13 @@
+# ProbeJS Legacy 4.8.1 -> 4.8.2
+
+fix setter name
+
+- fixed setters generated from methods having wrong name
+- config will be automatically refreshed on each dump request
+- ProbeJS will now warn users when using `require` with `isolatedScopes` disabled
+
+---
+
 # ProbeJS Legacy 4.8.0 -> 4.8.1
 
 fix hidden setters
