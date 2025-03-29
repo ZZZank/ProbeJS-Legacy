@@ -37,16 +37,15 @@ public class InjectBeans implements ClassTransformer {
                 continue;
             }
 
-            val name = method.name;
             if (method.params.size() == 1) {
-                val beanName = extractBeanName(name, "set");
+                val beanName = extractBeanName(method.name, "set");
                 if (beanName != null && !usedNames.contains(beanName)) {
-                    classDecl.bodyCode.add(new BeanDecl.Setter(name, method.params.get(0).type));
+                    classDecl.bodyCode.add(new BeanDecl.Setter(beanName, method.params.get(0).type));
                 }
             } else if (method.params.isEmpty()) {
-                var beanName = extractBeanName(name, "get");
+                var beanName = extractBeanName(method.name, "get");
                 if (beanName == null) {
-                    beanName = extractBeanName(name, "is");
+                    beanName = extractBeanName(method.name, "is");
                 }
                 if (beanName != null && !usedNames.contains(beanName)) {
                     classDecl.bodyCode.add(new BeanDecl.Getter(beanName, method.returnType));
