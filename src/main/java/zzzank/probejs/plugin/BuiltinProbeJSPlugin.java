@@ -75,7 +75,7 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
             new KubeJSDenied(registration.scriptDump.manager),
             new InjectAnnotation(),
             new InjectArray(),
-            new InjectBeans(),
+            new InjectBeans(ProbeConfig.fieldAsBeaning.get()),
             new InjectSpecialType()
         );
     }

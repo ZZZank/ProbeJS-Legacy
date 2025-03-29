@@ -14,6 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class InjectBeans implements ClassTransformer {
+    public final boolean convertFields;
+
+    public InjectBeans(boolean convertFields) {
+        this.convertFields = convertFields;
+    }
+
     @Override
     public void transform(Clazz clazz, ClassDecl classDecl) {
         val usedNames = new HashSet<String>();
@@ -21,7 +27,7 @@ public class InjectBeans implements ClassTransformer {
             usedNames.add(method.name);
         }
 
-        if (ProbeConfig.fieldAsBeaning.get()) {
+        if (convertFields) {
             fromField(classDecl, usedNames);
         }
         for (val field : classDecl.fields) {
