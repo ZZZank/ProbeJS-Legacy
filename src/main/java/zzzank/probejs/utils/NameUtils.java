@@ -110,25 +110,23 @@ public class NameUtils {
             throw new IllegalArgumentException("Invalid start or end index");
         }
 
-        String prefix = str.substring(0, start);
-        String region = str.substring(start, end);
-        String suffix = str.substring(end);
+        val prefix = str.substring(0, start);
+        val region = str.substring(start, end);
+        val suffix = str.substring(end);
 
-        String replacedRegion = region.replace(oldText, newText);
+        val replacedRegion = region.replace(oldText, newText);
 
         return prefix + replacedRegion + suffix;
     }
 
-    public static String cutOffStartEnds(String str, List<Integer[]> pairs) {
-        StringBuilder result = new StringBuilder(str);
+    public static String cutOffStartEnds(String str, List<int[]> startEnds) {
+        val result = new StringBuilder(str);
 
         // Iterate over the pairs in reverse order
-        for (int i = pairs.size() - 1; i >= 0; i--) {
-            int start = pairs.get(i)[0];
-            int end = pairs.get(i)[1] + 1;
-
+        for (int i = startEnds.size() - 1; i >= 0; i--) {
+            val startEnd = startEnds.get(i);
             // Cut off the substring from start to end (exclusive)
-            result.delete(start, end);
+            result.delete(startEnd[0], startEnd[1]);
         }
 
         return result.toString();

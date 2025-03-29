@@ -38,32 +38,29 @@ public class ScriptTransformer {
     public void processRequire() {
         String joined = String.join("\n", lines);
         val root = PARSER.get().parse(joined, "probejs_parse.js", 0);
-        List<Integer[]> cuts = new ArrayList<>();
+        List<int[]> cuts = new ArrayList<>();
 
         for (val statement : root.getStatements()) {
             // declaring
             if (!(statement instanceof VariableDeclaration declaration)) {
                 continue;
             }
-            val variables = declaration.getVariables();
-            for (val variable : variables) {
+            for (val variable : declaration.getVariables()) {
                 // used require()
-                if (
-                    !(variable.getInitializer() instanceof FunctionCall call)
-                        || !(call.getTarget() instanceof Name name)
-                        || !name.getIdentifier().equals("require")
+                if (variable.getInitializer() instanceof FunctionCall call
+                    && call.getTarget() instanceof Name name
+                    && name.getIdentifier().equals("require")
+                    && !call.getArguments().isEmpty()
+                    && call.getArguments().get(0) instanceof StringLiteral literal
                 ) {
-                    continue;
-                }
-                val loaded = call.getArguments().get(0);
-                if (!(loaded instanceof StringLiteral literal)) {
-                    //well, that should not happen, `require()` is no supposed to be used for handling non-string object
-                    continue;
-                }
-                requireCounts++;
-                // is java package, transform if it's const
-                if (literal.getValue().startsWith(ClassPath.TS_PATH_PREFIX)) {
-                    if (declaration.isConst()) {
+                    requireCounts++;
+                    if (!literal.getValue().startsWith(ClassPath.TS_PATH_PREFIX)) {
+                        // not java package, likely to be cross file imports, cut it
+                        cuts.add(new int[]{
+                            statement.getPosition(), statement.getPosition() + statement.getLength()
+                        });
+                    } else if (declaration.isConst()) {
+                        // is class path used by require, transform if it's const
                         joined = NameUtils.replaceRegion(
                             joined,
                             statement.getPosition(),
@@ -72,11 +69,6 @@ public class ScriptTransformer {
                             PLACEHOLDER
                         );
                     }
-                } else {
-                    // not java package, cut it
-                    cuts.add(new Integer[]{
-                        statement.getPosition(), statement.getPosition() + statement.getLength()
-                    });
                 }
             }
         }
@@ -91,12 +83,12 @@ public class ScriptTransformer {
     // scans for the export function/let/var/const
     public void processExport() {
         for (int i = 0; i < lines.size(); i++) {
-            String tLine = lines.get(i).trim();
-            if (!tLine.startsWith("export ")) {
+            String trimmed = lines.get(i).trim();
+            if (!trimmed.startsWith("export ")) {
                 continue;
             }
-            tLine = tLine.substring(7).trim();
-            val parts = tLine.split(" ", 2);
+            trimmed = trimmed.substring("export ".length()).trim();
+            val parts = trimmed.split(" ", 2);
 
             val identifier = switch (parts[0]) {
                 case "function" -> parts[1].split("\\(")[0];
@@ -108,7 +100,7 @@ public class ScriptTransformer {
             }
 
             exportedSymbols.add(identifier);
-            lines.set(i, tLine);
+            lines.set(i, trimmed);
         }
     }
 
