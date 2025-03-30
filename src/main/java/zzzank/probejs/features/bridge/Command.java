@@ -11,6 +11,5 @@ public abstract class Command {
     public abstract JsonElement handle(JsonObject payload);
 
     public record Payload(String id, String command, JsonObject payload) {
-
     }
 }

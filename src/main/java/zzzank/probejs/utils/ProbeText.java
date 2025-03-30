@@ -19,11 +19,11 @@ public final class ProbeText {
     }
 
     public static ProbeText literal(String literal) {
-        return of(new TextComponent(literal));
+        return of(Component.literal(literal));
     }
 
     public static ProbeText translatable(String key, Object... args) {
-        return of(new TranslatableComponent(key, args));
+        return of(Component.translatable(key, args));
     }
 
     public static ProbeText pjs(String key, Object... args) {
@@ -51,7 +51,7 @@ public final class ProbeText {
     }
 
     public ProbeText append(String literal) {
-        return append(new TextComponent(literal));
+        return append(Component.literal(literal));
     }
 
     public ProbeText append(ProbeText component) {
@@ -99,15 +99,15 @@ public final class ProbeText {
     }
 
     public ProbeText underlined(Boolean underlined) {
-        return setStyle(getStyle().setUnderlined(underlined));
+        return setStyle(getStyle().withUnderlined(underlined));
     }
 
     public ProbeText strikethrough(Boolean strikethrough) {
-        return setStyle(getStyle().setStrikethrough(strikethrough));
+        return setStyle(getStyle().withStrikethrough(strikethrough));
     }
 
     public ProbeText obfuscated(Boolean obfuscated) {
-        return setStyle(getStyle().setObfuscated(obfuscated));
+        return setStyle(getStyle().withObfuscated(obfuscated));
     }
 
     public ProbeText black() {

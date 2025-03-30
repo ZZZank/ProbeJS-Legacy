@@ -31,20 +31,18 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static net.minecraft.Util.NIL_UUID;
-
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class GameEvents {
     private static final int MOD_LIMIT = 200;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void playerJoined(ClientPlayerNetworkEvent.LoggedInEvent event) {
+    public static void playerJoined(ClientPlayerNetworkEvent.LoggingIn event) {
         val player = event.getPlayer();
-        if (player == null || !ProbeConfig.enabled.get()) {
+        if (!ProbeConfig.enabled.get()) {
             return;
         }
 
-        val sendMsg = (Consumer<ProbeText>) msg -> player.sendMessage(msg.unwrap(), NIL_UUID);
+        val sendMsg = (Consumer<ProbeText>) msg -> player.sendSystemMessage(msg.unwrap());
         RegistryInfos.refresh();
 
         if (ProbeConfig.modHash.get() == -1) {
@@ -108,7 +106,7 @@ public class GameEvents {
         val pjsEnabled = (Predicate<CommandSourceStack>)
             (source) -> ProbeConfig.enabled.get();
         val sendMsg = (BiConsumer<CommandContext<CommandSourceStack>, ProbeText>)
-            (context, text) -> context.getSource().sendSuccess(text.unwrap(), true);
+            (context, text) -> context.getSource().sendSuccess(text::unwrap, true);
 
         event.getDispatcher().register(
             Commands.literal("probejs")

@@ -3,8 +3,9 @@ package zzzank.probejs.features.interop;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import lombok.val;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import zzzank.probejs.features.bridge.Command;
 
 public class ReloadCommand extends Command {
@@ -31,6 +32,7 @@ public class ReloadCommand extends Command {
     }
 
     public static void runCommand(MinecraftServer server, String command) {
-        server.getCommands().performCommand(server.createCommandSourceStack(), command);
+        val commands = server.getCommands();
+        commands.performPrefixedCommand(server.createCommandSourceStack(), command);
     }
 }

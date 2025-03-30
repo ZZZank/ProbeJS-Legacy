@@ -1,10 +1,11 @@
 package zzzank.probejs.docs.assignments;
 
 import lombok.val;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -33,7 +34,9 @@ public class RegistryTypes implements ProbeJSPlugin {
     public static final String OF_TYPE_DECL = "T extends { %s: infer U } ? U : never";
 
     public static final String SPECIAL_TAG_OF = SpecialTypes.dot("TagOf");
+    public static final BaseType TYPE_SPECIAL_TAG_OF = Types.primitive(SPECIAL_TAG_OF);
     public static final String SPECIAL_LITERAL_OF = SpecialTypes.dot("LiteralOf");
+    public static final BaseType TYPE_SPECIAL_LITERAL_OF = Types.primitive(SPECIAL_LITERAL_OF);
 
     @Override
     public void assignType(ScriptDump scriptDump) {
@@ -50,17 +53,13 @@ public class RegistryTypes implements ProbeJSPlugin {
         }
 
         // ResourceKey<T> to Special.LiteralOf<T>
-        scriptDump.assignType(
-            ResourceKey.class,
-            Types.primitive(SPECIAL_LITERAL_OF).withParams("T")
-        );
-        //Registries (why?)
-        scriptDump.assignType(Registry.class, Types.or(registryNames.toArray(new BaseType[0])));
-        assignRegistryType(scriptDump, ResourceKey.class, SPECIAL_LITERAL_OF, "T");
-        //TagKey<T> to Special.TagOf<T>
-//        scriptDump.assignType(Tag.class, Types.parameterized(Types.primitive("Special.TagOf"), Types.generic("T")));
-        assignRegistryType(scriptDump, Tag.class, SPECIAL_TAG_OF, "T");
-
+        scriptDump.assignType(ResourceKey.class, TYPE_SPECIAL_LITERAL_OF.withParams("T"));
+        // Also holder
+        scriptDump.assignType(Holder.class, TYPE_SPECIAL_LITERAL_OF.withParams("T"));
+        // Registries (why?)
+        scriptDump.assignType(Registry.class, Types.or(registryNames.toArray(BaseType[]::new)));
+        // TagKey<T> to Special.TagOf<T>
+        scriptDump.assignType(TagKey.class, TYPE_SPECIAL_TAG_OF.withParams("T"));
     }
 
     private static void assignRegistryType(ScriptDump scriptDump, Class<?> type, String literalType, String symbol) {

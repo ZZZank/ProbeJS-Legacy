@@ -1,6 +1,6 @@
 package zzzank.probejs.docs;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import zzzank.probejs.GlobalStates;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.snippet.parts.Variable;
@@ -39,7 +39,7 @@ public class Snippets implements ProbeJSPlugin {
             .literal("\"")
             .tabStop(1, "1")
             .literal("x ")
-            .registry(Registry.ITEM_REGISTRY)
+            .registry(Registries.ITEM)
             .literal("\"");
     }
 

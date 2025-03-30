@@ -24,13 +24,16 @@ public final class RegistryInfos {
     private Map<ResourceLocation, RegistryInfo> ALL = new HashMap<>();
 
     public void refresh() {
-        ALL = new HashMap<>();
-        for (val entry : ((AccessForgeRegistryManager) RegistryManager.FROZEN).getRegistries().entrySet()) {
-            ALL.put(entry.getKey(), new RegistryInfo(entry.getValue()));
+        val server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null) {
+            return;
         }
-        for (val entry : ((AccessForgeRegistryManager) RegistryManager.ACTIVE).getRegistries().entrySet()) {
-            ALL.put(entry.getKey(), new RegistryInfo(entry.getValue()));
-        }
+        ALL.clear();
+        server.registryAccess()
+            .registries()
+            .map(RegistryAccess.RegistryEntry::value)
+            .map(RegistryInfo::new)
+            .forEach(info -> ALL.put(info.id(), info));
     }
 
     public @NotNull Collection<RegistryInfo> values() {

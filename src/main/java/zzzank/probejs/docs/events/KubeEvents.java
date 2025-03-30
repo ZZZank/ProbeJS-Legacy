@@ -1,90 +1,99 @@
 package zzzank.probejs.docs.events;
 
+import com.google.common.collect.ArrayListMultimap;
+import dev.latvian.mods.kubejs.event.EventGroup;
+import dev.latvian.mods.kubejs.event.EventHandler;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.features.kubejs.BindingFilter;
-import zzzank.probejs.features.kubejs.EventJSInfo;
-import zzzank.probejs.features.kubejs.EventJSInfos;
+import zzzank.probejs.features.kesseractjs.TypeDescAdapter;
+import zzzank.probejs.features.kubejs.EventJSFilter;
 import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.Code;
-import zzzank.probejs.lang.typescript.code.ts.FunctionDeclaration;
+import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
-import zzzank.probejs.lang.typescript.code.type.BaseType;
+import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.BiPredicate;
 
 public class KubeEvents implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        val disabled = getSkippedEvents(scriptDump);
-        val scriptType = scriptDump.scriptType;
+        val availableHandlers = ArrayListMultimap.<String, EventHandler>create();
+        val filter = getDisabledEvents(scriptDump);
         val converter = scriptDump.transpiler.typeConverter;
 
-        val events = new TreeMap<String, EventJSInfo>();
-        synchronized (EventJSInfos.KNOWN) {
-            for (var entry : EventJSInfos.KNOWN.entrySet()) {
-                val id = entry.getKey();
-                val info = entry.getValue();
-                if (!disabled.contains(id) && info.scriptTypes().contains(scriptType)) {
-                    events.put(id, entry.getValue());
+        for (val entry : EventGroup.getGroups().entrySet()) {
+            val name = entry.getKey();
+            val group = entry.getValue();
+
+            for (val handler : group.getHandlers().values()) {
+                if (!handler.scriptTypePredicate.test(scriptDump.scriptType)
+                    || filter.test(group, handler)) {
+                    continue;
                 }
+                availableHandlers.put(name, handler);
             }
         }
 
-        List<Code> codes = new ArrayList<>();
-        for (val entry : events.entrySet()) {
-            val info = entry.getValue();
-            val id = entry.getKey();
+        val codes = new ArrayList<Code>();
+        for (val entry : availableHandlers.asMap().entrySet()) {
+            val group = entry.getKey();
+            val handlers = entry.getValue();
 
-            val decl = declareEventMethod(Types.literal(id), converter, info);
-            decl.addComment(
-                "@at " + info.scriptTypes().stream().map(type -> type.name).collect(Collectors.joining(", ")),
-                "@cancellable " + (info.cancellable() ? "Yes" : "No")
-            );
-            if (!info.sub.isEmpty()) {
-                decl.addComment(String.format(
-                    "This event provides sub-event variant, e.g. `%s.%s`",
-                    id,
-                    info.sub
-                ));
-                codes.add(declareEventMethod(Types.templateLiteral(id + ".${string}"), converter, info));
+            val groupNamespace = new Wrapped.Namespace(group);
+            for (val handler : handlers) {
+                if (handler.extra != null) {
+                    groupNamespace.addCode(formatEvent(converter, handler, true));
+                    if (handler.extra.required) {
+                        continue;
+                    }
+                }
+                groupNamespace.addCode(formatEvent(converter, handler, false));
             }
-            codes.add(decl);
+            codes.add(groupNamespace);
         }
 
-        scriptDump.addGlobal("events", codes.toArray(new Code[0]));
-    }
-
-    private static @NotNull FunctionDeclaration declareEventMethod(BaseType id, TypeConverter converter, EventJSInfo info) {
-        return Statements
-            .func("onEvent")
-            .param("id", id)
-            .param("handler", Types.lambda()
-                .param("event", converter.convertType(info.clazzRaw()))
-                .build()
-            )
-            .build();
+        scriptDump.addGlobal("events", codes.toArray(Code[]::new));
     }
 
     @Override
     public Set<Class<?>> provideJavaClass(ScriptDump scriptDump) {
-        return EventJSInfos.provideClasses();
+        val classes = new HashSet<Class<?>>();
+
+        for (val group : EventGroup.getGroups().values()) {
+            for (val handler : group.getHandlers().values()) {
+                if (!handler.scriptTypePredicate.test(scriptDump.scriptType)) {
+                    continue;
+                }
+                classes.add(handler.eventType.get());
+            }
+        }
+
+        return classes;
     }
 
-    private static Set<String> getSkippedEvents(ScriptDump dump) {
-        val events = new HashSet<String>();
-        ProbeJSPlugins.forEachPlugin(plugin -> events.addAll(plugin.disableEventDumps(dump)));
-        return events;
+    private static MethodDecl formatEvent(TypeConverter converter, EventHandler handler, boolean useExtra) {
+        val builder = Statements.method(handler.name);
+        if (useExtra) {
+            val typeDesc = handler.extra.describeType.apply(TypeDescAdapter.PROBEJS);
+            val extraType = TypeDescAdapter.convertType(typeDesc);
+            builder.param("extra", extraType);
+        }
+        val callback = Types.lambda()
+            .param("event", Types.typeMaybeGeneric(handler.eventType.get()))
+            .build();
+        builder.param("handler", callback);
+        return builder.buildAsMethod();
     }
 
-    @Override
-    public void denyBindings(BindingFilter filter) {
-        filter.denyFunction("onEvent");
+    private static BiPredicate<EventGroup, EventHandler> getDisabledEvents(ScriptDump dump) {
+        val filter = new EventJSFilter(dump);
+        ProbeJSPlugins.forEachPlugin(plugin -> plugin.disableEventDumps(filter));
+        return filter.freeze();
     }
 }

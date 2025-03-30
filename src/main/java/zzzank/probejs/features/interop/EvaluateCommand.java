@@ -25,9 +25,9 @@ public class EvaluateCommand extends Command {
         val content = payload.get("content").getAsString();
 
         ScriptManager scriptManager = switch (scriptType) {
-            case "startup_scripts" -> KubeJS.startupScriptManager;
-            case "client_scripts" -> KubeJS.clientScriptManager;
-            case "server_scripts" -> ServerScriptManager.instance.scriptManager;
+            case "startup_scripts" -> KubeJS.getStartupScriptManager();
+            case "client_scripts" -> KubeJS.getClientScriptManager();
+            case "server_scripts" -> ServerScriptManager.instance;
             default -> throw new RuntimeException("Unable to get script manager.");
         };
 
@@ -36,7 +36,7 @@ public class EvaluateCommand extends Command {
         if (pack == null) {
             throw new RuntimeException("Unable to get script context or scope.");
         }
-        Object result = pack.context.evaluateString(pack.scope, content, "probejsEvaluator", 1, null);
+        Object result = scriptManager.context.evaluateString(pack.scope, content, "probejsEvaluator", 1, null);
         if (result instanceof NativeJavaObject nativeJavaObject) {
             result = nativeJavaObject.unwrap();
         }

@@ -5,6 +5,7 @@ import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.ClientLanguage;
+import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -35,14 +36,15 @@ public class GlobalStates {
         }
         val mc = Minecraft.getInstance();
         val manager = mc.getLanguageManager();
-        val english = manager.getLanguage("en_us");
+        val english = manager.getLanguage(LanguageManager.DEFAULT_LANGUAGE_CODE);
         if (english == null) {
             return keys;
         }
 
         val clientLanguage = ClientLanguage.loadFrom(
             mc.getResourceManager(),
-            Collections.singletonList(english)
+            Collections.singletonList(english.name()),
+            english.bidirectional()
         );
         keys.addAll(clientLanguage.getLanguageData().keySet());
         return keys;

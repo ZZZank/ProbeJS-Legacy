@@ -23,7 +23,7 @@ public class ParamFix implements ProbeJSPlugin {
                 file,
                 m -> m.params.size() == 1 && m.name.equals("of"),
                 0,
-                Types.type(Text.class)
+                Types.type(Component.class)
             );
         }
 
@@ -38,7 +38,7 @@ public class ParamFix implements ProbeJSPlugin {
                         "type",
                         Types.primitive(
                             SpecialTypes.dot(
-                                NameUtils.registryName(Registry.RECIPE_SERIALIZER_REGISTRY)
+                                NameUtils.registryName(Registries.RECIPE_SERIALIZER)
                             )
                         )
                     )

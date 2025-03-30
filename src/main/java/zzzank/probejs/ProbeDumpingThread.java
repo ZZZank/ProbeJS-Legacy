@@ -1,5 +1,6 @@
 package zzzank.probejs;
 
+import dev.latvian.mods.kubejs.KubeJS;
 import lombok.val;
 import net.minecraft.network.chat.ClickEvent;
 import zzzank.probejs.features.rhizo.RhizoClazzRemapper;
@@ -59,7 +60,7 @@ public class ProbeDumpingThread extends Thread {
 
         ProbeConfig.refresh();
         messageSender.accept(ProbeText.pjs("config_refreshed"));
-        RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper() : new RhinoDefault());
+        RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper(KubeJS.getClientScriptManager().context) : new RhinoDefault());
         RegistryInfos.refresh();
 
         val probeDump = new ProbeDump(messageSender);

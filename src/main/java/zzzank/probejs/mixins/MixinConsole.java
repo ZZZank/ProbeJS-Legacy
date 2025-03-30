@@ -22,7 +22,7 @@ public abstract class MixinConsole {
 
     @Shadow
     @Final
-    private ScriptType type;
+    public ScriptType scriptType;
 
     @Inject(
         method = "error(Ljava/lang/String;Ljava/lang/Throwable;Ljava/util/regex/Pattern;)V",

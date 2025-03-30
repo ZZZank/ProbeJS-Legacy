@@ -1,6 +1,6 @@
 package zzzank.probejs.lang.transpiler.redirect;
 
-import dev.latvian.mods.rhino.annotations.typing.Generics;
+import dev.latvian.mods.kubejs.typings.Generics;
 import lombok.val;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.ParamType;

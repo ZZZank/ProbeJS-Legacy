@@ -1,6 +1,5 @@
 package zzzank.probejs.features.kubejs;
 
-import dev.latvian.mods.rhino.CompilerEnvirons;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.Parser;
 import dev.latvian.mods.rhino.ast.FunctionCall;
@@ -20,12 +19,7 @@ import java.util.stream.Collectors;
 public class ScriptTransformer {
     private static final String PLACEHOLDER = "!@#$%^"; // placeholder to not mutate original string length
 
-    private static final Supplier<Parser> PARSER = () -> {
-        val compilerEnvirons = new CompilerEnvirons();
-        compilerEnvirons.initFromContext(Context.enterWithNewFactory());
-        Context.exit();
-        return new Parser(compilerEnvirons);
-    };
+    private static final Supplier<Parser> PARSER = () -> new Parser(Context.enter());
 
     public final Set<String> exportedSymbols;
     private int requireCounts;
