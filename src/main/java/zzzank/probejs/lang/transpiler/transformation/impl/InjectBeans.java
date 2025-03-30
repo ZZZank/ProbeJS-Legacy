@@ -71,22 +71,18 @@ public class InjectBeans implements ClassTransformer {
     private void fromField(ClassDecl clazzDecl, Set<String> excludedNames) {
         val keptFields = new ArrayList<FieldDecl>();
         for (val field : clazzDecl.fields) {
-            if (field.isStatic) {
+            if (field.isStatic || field.isFinal || excludedNames.contains(field.name)) {
                 keptFields.add(field);
                 continue;
             }
 
-            if (!excludedNames.contains(field.name)) {
-                val getter = new BeanDecl.Getter(field.name, field.type);
-                getter.comments.addAll(field.comments);
-                clazzDecl.bodyCode.add(getter);
-            }
+            val getter = new BeanDecl.Getter(field.name, field.type);
+            getter.comments.addAll(field.comments);
+            clazzDecl.bodyCode.add(getter);
 
-            if (!field.isFinal) {
-                val setter = new BeanDecl.Setter(field.name, field.type);
-                setter.comments.addAll(field.comments);
-                clazzDecl.bodyCode.add(setter);
-            }
+            val setter = new BeanDecl.Setter(field.name, field.type);
+            setter.comments.addAll(field.comments);
+            clazzDecl.bodyCode.add(setter);
 
             excludedNames.add(field.name);
         }
