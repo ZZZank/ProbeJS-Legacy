@@ -5,6 +5,8 @@ import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.ConfigEntry;
 import zzzank.probejs.utils.config.ConfigImpl;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
+import zzzank.probejs.utils.config.serde.GsonSerdeFactory;
+import zzzank.probejs.utils.config.serde.PatternSerde;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -14,7 +16,14 @@ import java.util.regex.Pattern;
  */
 public interface ProbeConfig {
 
-    ConfigImpl INSTANCE = new ConfigImpl(ProbePaths.SETTINGS_JSON, ProbeJS.MOD_ID);
+    ConfigImpl INSTANCE = new ConfigImpl(
+        ProbePaths.SETTINGS_JSON,
+        ProbeJS.MOD_ID,
+        JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {
+            io.addSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
+            io.putSerde(Pattern.class, new PatternSerde());
+        })
+    );
 
     static void refresh() {
         INSTANCE.readFromFile();

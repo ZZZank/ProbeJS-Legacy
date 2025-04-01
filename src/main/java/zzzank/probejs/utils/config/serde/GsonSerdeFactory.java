@@ -1,0 +1,24 @@
+package zzzank.probejs.utils.config.serde;
+
+import com.google.gson.Gson;
+import zzzank.probejs.utils.Asser;
+
+/**
+ * @author ZZZank
+ */
+public class GsonSerdeFactory implements ConfigSerdeFactory {
+    private final Gson gson;
+
+    public GsonSerdeFactory(Gson gson) {
+        this.gson = Asser.tNotNull(gson, "gson");
+    }
+
+    @Override
+    public <T> ConfigSerde<T> getSerde(Class<T> type) {
+        try {
+            return new GsonAdapterSerde<>(gson.getAdapter(type));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}

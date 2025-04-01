@@ -21,20 +21,16 @@ import java.util.Map;
  */
 public class ConfigImpl {
 
+    public final Path path;
     public final String defaultNamespace;
     public final ConfigIO io;
-    public final Path path;
 
     private final Table<String, String, ConfigEntry<?>> all = HashBasedTable.create();
 
-    public ConfigImpl(Path path, ConfigIO io, String defaultNamespace) {
+    public ConfigImpl(Path path, String defaultNamespace, ConfigIO io) {
         this.path = path;
         this.io = io;
         this.defaultNamespace = defaultNamespace;
-    }
-
-    public ConfigImpl(Path path, String defaultNamespace) {
-        this(path, new JsonConfigIO(), defaultNamespace);
     }
 
     public Map.Entry<String, String> ensureNamespace(String name) {

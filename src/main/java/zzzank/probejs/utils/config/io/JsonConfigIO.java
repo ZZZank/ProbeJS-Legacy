@@ -1,9 +1,9 @@
 package zzzank.probejs.utils.config.io;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author ZZZank
@@ -25,8 +26,19 @@ public class JsonConfigIO implements ConfigIO {
     public static final String VALUE_KEY = "$value";
     public static final String COMMENTS_KEY = "$comment";
 
+    private final Gson gson;
     private final Map<Class<?>, ConfigSerde<?>> serdes = new ConcurrentHashMap<>();
     private final List<ConfigSerdeFactory> serdeFactories = new ArrayList<>();
+
+    public static JsonConfigIO make(Gson gson, Consumer<JsonConfigIO> modifier) {
+        val io = new JsonConfigIO(gson);
+        modifier.accept(io);
+        return io;
+    }
+
+    public JsonConfigIO(Gson gson) {
+        this.gson = Asser.tNotNull(gson, "gson");
+    }
 
     public <T> ConfigSerde<T> putSerde(Class<T> type, ConfigSerde<T> serde) {
         return cast(serdes.put(type, serde));
@@ -54,7 +66,7 @@ public class JsonConfigIO implements ConfigIO {
 
     @Override
     public void read(ConfigImpl config, Reader reader) {
-        val json = ProbeJS.GSON.fromJson(reader, JsonObject.class);
+        val json = gson.fromJson(reader, JsonObject.class);
         for (val entry : json.entrySet()) {
             val namespaced = config.ensureNamespace(entry.getKey());
             val namespace = namespaced.getKey();
@@ -93,6 +105,6 @@ public class JsonConfigIO implements ConfigIO {
 
             object.add(config.stripNamespace(entry.namespace, entry.name), o);
         }
-        ProbeJS.GSON_WRITER.toJson(object, writer);
+        gson.toJson(object, writer);
     }
 }
