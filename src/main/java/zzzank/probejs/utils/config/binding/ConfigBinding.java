@@ -14,6 +14,9 @@ public interface ConfigBinding<T> {
     T getDefault();
 
     @NotNull
+    Class<T> getDefaultType();
+
+    @NotNull
     T get();
 
     @NotNull

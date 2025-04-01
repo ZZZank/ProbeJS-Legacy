@@ -14,8 +14,8 @@ public class DynamicBinding<T> extends BindingBase<T> {
     @NotNull
     public final Consumer<T> setter;
 
-    public DynamicBinding(@NotNull T defaultValue, @NotNull String name, @NotNull Supplier<T> getter, @NotNull Consumer<T> setter) {
-        super(defaultValue, name);
+    public DynamicBinding(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name, @NotNull Supplier<T> getter, @NotNull Consumer<T> setter) {
+        super(defaultValue, defaultType, name);
         this.getter = getter;
         this.setter = setter;
     }

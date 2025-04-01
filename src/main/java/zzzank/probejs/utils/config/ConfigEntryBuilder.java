@@ -63,11 +63,11 @@ public class ConfigEntryBuilder<T> {
     }
 
     public <T_> ConfigEntryBuilder<T_> setDefault(@NotNull T_ defaultValue) {
-        return setDefault(new DefaultBinding<>(defaultValue, name));
+        return setDefault(new DefaultBinding<>(defaultValue, extractType(defaultValue), name));
     }
 
     public <T_> ConfigEntryBuilder<T_> readOnly(@NotNull T_ defaultValue) {
-        return setDefault(new ReadOnlyBinding<>(defaultValue, name));
+        return setDefault(new ReadOnlyBinding<>(defaultValue, extractType(defaultValue), name));
     }
 
     public <T_ extends Comparable<T_>> ConfigEntryBuilder<T_> setDefault(
@@ -75,7 +75,14 @@ public class ConfigEntryBuilder<T> {
         @NotNull T_ min,
         @NotNull T_ max
     ) {
-        return setDefault(new RangedBinding<>(defaultValue, name, min, max));
+        return setDefault(new RangedBinding<>(defaultValue, extractType(defaultValue), name, min, max));
+    }
+
+    private static <T> Class<T> extractType(T value) {
+        if (value instanceof Enum<?> e) {
+            return (Class<T>) e.getDeclaringClass();
+        }
+        return (Class<T>) value.getClass();
     }
 
     public ConfigEntryBuilder<T> setSerde(ConfigSerde<T> serde) {

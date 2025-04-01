@@ -9,8 +9,8 @@ import zzzank.probejs.utils.config.report.ReadOnlyError;
  */
 public class ReadOnlyBinding<T> extends BindingBase<T> {
 
-    public ReadOnlyBinding(@NotNull T defaultValue, @NotNull String name) {
-        super(defaultValue, name);
+    public ReadOnlyBinding(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name) {
+        super(defaultValue, defaultType, name);
     }
 
     @Override

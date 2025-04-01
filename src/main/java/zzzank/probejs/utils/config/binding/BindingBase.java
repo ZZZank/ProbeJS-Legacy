@@ -2,6 +2,7 @@ package zzzank.probejs.utils.config.binding;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.report.ConfigReport;
 import zzzank.probejs.utils.config.report.NoError;
 import zzzank.probejs.utils.config.report.NullValueError;
@@ -17,16 +18,24 @@ public abstract class BindingBase<T> implements ConfigBinding<T> {
     @NotNull
     protected final T defaultValue;
     @NotNull
+    protected final Class<T> defaultType;
+    @NotNull
     protected final String name;
 
-    protected BindingBase(@NotNull T defaultValue, @NotNull String name) {
+    protected BindingBase(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name) {
         this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.defaultType = Asser.tNotNull(defaultType, "defaultType");
         this.name = Objects.requireNonNull(name);
     }
 
     @Override
     public @NotNull T getDefault() {
         return defaultValue;
+    }
+
+    @Override
+    public @NotNull Class<T> getDefaultType() {
+        return defaultType;
     }
 
     @Override

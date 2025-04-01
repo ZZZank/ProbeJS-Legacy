@@ -15,8 +15,8 @@ public class RangedBinding<T extends Comparable<T>> extends DefaultBinding<T> {
     private final T min;
     private final T max;
 
-    public RangedBinding(@NotNull T defaultValue, @NotNull String name, @NotNull T min, @NotNull T max) {
-        super(defaultValue, name);
+    public RangedBinding(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name, @NotNull T min, @NotNull T max) {
+        super(defaultValue, defaultType, name);
         this.min = Asser.tNotNull(min, "min");
         this.max = Asser.tNotNull(max, "max");
     }
