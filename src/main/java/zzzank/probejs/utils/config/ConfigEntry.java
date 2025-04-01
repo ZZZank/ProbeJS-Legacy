@@ -82,4 +82,8 @@ public class ConfigEntry<T> {
     public boolean readOnly() {
         return this.binding instanceof ReadOnlyBinding<?>;
     }
+
+    public String path() {
+        return source.stripNamespace(namespace, name);
+    }
 }

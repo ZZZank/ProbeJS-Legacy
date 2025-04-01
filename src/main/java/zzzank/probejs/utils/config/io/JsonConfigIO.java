@@ -85,7 +85,11 @@ public class JsonConfigIO implements ConfigIO {
             val raw = entry.getValue().getAsJsonObject().get(VALUE_KEY);
             val serde = getSerde(reference.binding.getDefaultType());
             if (serde == null) {
-                throw new IllegalStateException("should we throw earlier");
+                throw new IllegalStateException(String.format(
+                    "No ConfigSerde available for config '%s' with type '%s'",
+                    reference.path(),
+                    reference.binding.getDefaultType().getName()
+                ));
             }
             reference.setNoSave(serde.fromJson(raw));
         }
@@ -108,7 +112,7 @@ public class JsonConfigIO implements ConfigIO {
                 default -> o.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
             }
 
-            object.add(config.stripNamespace(entry.namespace, entry.name), o);
+            object.add(entry.path(), o);
         }
         gson.toJson(object, writer);
     }
