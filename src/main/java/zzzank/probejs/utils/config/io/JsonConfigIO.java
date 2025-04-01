@@ -1,12 +1,12 @@
 package zzzank.probejs.utils.config.io;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.ConfigEntry;
 import zzzank.probejs.utils.config.ConfigImpl;
@@ -47,7 +47,7 @@ public class JsonConfigIO implements ConfigIO {
 
     public <T> ConfigSerde<T> getSerde(Class<T> type) {
         val serde = serdes.computeIfAbsent(
-            type, t -> Lists.reverse(serdeFactories)
+            type, t -> serdeFactories
                 .stream()
                 .map(serdeFactory -> serdeFactory.getSerde(type))
                 .filter(Objects::nonNull)
@@ -57,11 +57,22 @@ public class JsonConfigIO implements ConfigIO {
         return cast(serde);
     }
 
+    public Map<Class<?>, ConfigSerde<?>> getKnownSerdes() {
+        return Collections.unmodifiableMap(serdes);
+    }
+
+    /**
+     * There's no guarantee in the order of factories
+     */
+    public List<ConfigSerdeFactory> getSerdeFactories() {
+        return Collections.unmodifiableList(serdeFactories);
+    }
+
     /**
      * factories added in a later time will have higher priority
      */
     public synchronized void addSerdeFactory(ConfigSerdeFactory factory) {
-        serdeFactories.add(Asser.tNotNull(factory, "serde factory"));
+        serdeFactories.add(0, Asser.tNotNull(factory, "serde factory"));
     }
 
     @SuppressWarnings("unchecked")
@@ -98,7 +109,7 @@ public class JsonConfigIO implements ConfigIO {
     @Override
     public void save(ConfigImpl config, Writer writer) {
         val object = new JsonObject();
-        for (val entry : config.entries()) {
+        for (val entry : CollectUtils.iterate(config.entries())) {
             val o = new JsonObject();
             val serde = getSerde(entry.binding.getDefaultType());
 

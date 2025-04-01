@@ -194,15 +194,19 @@ public interface CollectUtils {
         };
     }
 
-    static <T> Iterable<T> enumToIterable(Enumeration<T> enumeration) {
-        return () -> enumToItr(enumeration);
-    }
-
     static <E> Set<E> identityHashSet() {
         return Collections.newSetFromMap(new IdentityHashMap<>());
     }
 
     static <E> Set<E> identityHashSet(int expectedMaxSize) {
         return Collections.newSetFromMap(new IdentityHashMap<>(expectedMaxSize));
+    }
+
+    static <T> Iterable<T> iterate(Enumeration<T> enumeration) {
+        return () -> enumToItr(enumeration);
+    }
+
+    static <T> Iterable<T> iterate(Stream<T> stream) {
+        return stream::iterator;
     }
 }

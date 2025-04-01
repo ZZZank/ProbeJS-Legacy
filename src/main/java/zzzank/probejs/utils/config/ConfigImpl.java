@@ -1,20 +1,18 @@
 package zzzank.probejs.utils.config;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.Asser;
-import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.io.ConfigIO;
-import zzzank.probejs.utils.config.io.JsonConfigIO;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -25,7 +23,7 @@ public class ConfigImpl {
     public final String defaultNamespace;
     public final ConfigIO io;
 
-    private final Table<String, String, ConfigEntry<?>> all = HashBasedTable.create();
+    private final Map<String, Map<String, ConfigEntry<?>>> entries = new HashMap<>();
 
     public ConfigImpl(Path path, String defaultNamespace, ConfigIO io) {
         this.path = path;
@@ -67,12 +65,16 @@ public class ConfigImpl {
         }
     }
 
+    public Collection<ConfigEntry<?>> getByNameSpace(String namespace) {
+        return entries.getOrDefault(namespace, Collections.emptyMap()).values();
+    }
+
     public ConfigEntry<?> get(String name) {
         return get(defaultNamespace, name);
     }
 
     public ConfigEntry<?> get(String namespace, String name) {
-        return all.get(namespace, name);
+        return entries.getOrDefault(namespace, Collections.emptyMap()).get(name);
     }
 
     public ConfigEntryBuilder<Void> define(String name) {
@@ -86,30 +88,23 @@ public class ConfigImpl {
     public <T> ConfigEntry<T> register(ConfigEntry<T> entry) {
         Asser.tNotNull(entry, "config entry");
         Asser.t(
-            all.get(entry.namespace, entry.name) == null,
+            get(entry.namespace, entry.name) == null,
             "a config entry with same namespace and name already exists"
         );
         Asser.t(
             entry.source == this,
             "config source in config entry not matching config source that accepts this entry"
         );
-        all.put(entry.namespace, entry.name, entry);
+        entries.computeIfAbsent(entry.namespace, CollectUtils.ignoreInput(HashMap::new))
+            .put(entry.name, entry);
         return entry;
     }
 
-    public <T> ConfigEntry<T> merge(ConfigEntry<T> entry) {
-        Asser.tNotNull(entry, "config entry to be merged");
-        val old = all.get(entry.namespace, entry.name);
-        if (old != null && old.getDefault().getClass().isInstance(entry.getDefault())) {
-            old.setNoSave(Cast.to(entry.get()));
-            return Cast.to(old);
-        } else {
-            all.put(entry.namespace, entry.name, entry);
-            return entry;
-        }
-    }
-
-    public Collection<ConfigEntry<?>> entries() {
-        return Collections.unmodifiableCollection(all.values());
+    public Stream<ConfigEntry<?>> entries() {
+        return this.entries
+            .values()
+            .stream()
+            .map(Map::values)
+            .flatMap(Collection::stream);
     }
 }
