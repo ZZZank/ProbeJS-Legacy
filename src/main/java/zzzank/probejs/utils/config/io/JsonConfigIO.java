@@ -1,5 +1,6 @@
 package zzzank.probejs.utils.config.io;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -46,7 +47,8 @@ public class JsonConfigIO implements ConfigIO {
 
     public <T> ConfigSerde<T> getSerde(Class<T> type) {
         val serde = serdes.computeIfAbsent(
-            type, t -> serdeFactories.stream()
+            type, t -> Lists.reverse(serdeFactories)
+                .stream()
                 .map(serdeFactory -> serdeFactory.getSerde(type))
                 .filter(Objects::nonNull)
                 .findFirst()
@@ -55,6 +57,9 @@ public class JsonConfigIO implements ConfigIO {
         return cast(serde);
     }
 
+    /**
+     * factories added in a later time will have higher priority
+     */
     public synchronized void addSerdeFactory(ConfigSerdeFactory factory) {
         serdeFactories.add(Asser.tNotNull(factory, "serde factory"));
     }
