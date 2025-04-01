@@ -9,7 +9,6 @@ import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.report.ConfigReport;
-import zzzank.probejs.utils.config.serde.ConfigSerde;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ public class ConfigEntry<T> {
     public final String namespace;
     public final String name;
 
-    public final ConfigSerde<T> serde;
     public final ConfigBinding<T> binding;
     public final ConfigProperties properties;
 
@@ -30,13 +28,11 @@ public class ConfigEntry<T> {
         ConfigImpl source,
         String namespace,
         String name,
-        ConfigSerde<T> serde,
         ConfigBinding<T> binding,
         ConfigProperties properties
     ) {
         this.source = Asser.tNotNull(source, "source");
         this.name = Asser.tNotNull(name, "name");
-        this.serde = Asser.tNotNull(serde, "serde");
         this.binding = Asser.tNotNull(binding, "defaultValue");
         this.namespace = Asser.tNotNull(namespace, "namespace");
         this.properties = Asser.tNotNull(properties, "properties");

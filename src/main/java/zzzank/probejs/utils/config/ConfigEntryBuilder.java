@@ -11,8 +11,6 @@ import zzzank.probejs.utils.config.binding.RangedBinding;
 import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
-import zzzank.probejs.utils.config.serde.ConfigSerde;
-import zzzank.probejs.utils.config.serde.ConfigSerdes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +29,6 @@ public class ConfigEntryBuilder<T> {
     protected Class<T> expectedType;
     public List<String> comments;
     public ConfigBinding<T> binding;
-    public ConfigSerde<T> serde;
     private final ConfigProperties properties = new ConfigProperties();
 
     protected ConfigEntryBuilder(@NotNull ConfigImpl config, @NotNull String namespace, @NotNull String name) {
@@ -50,16 +47,13 @@ public class ConfigEntryBuilder<T> {
         return this;
     }
 
-    public <T_> ConfigEntryBuilder<T_> setDefault(Class<T_> type, ConfigBinding<T_> binding) {
+    public <T_> ConfigEntryBuilder<T_> setDefault(ConfigBinding<T_> binding) {
+        val type = binding.getDefaultType();
         Asser.t(type.isInstance(binding.getDefault()), "config default value must match expected type");
         val casted = Cast.<ConfigEntryBuilder<T_>>to(this);
         casted.expectedType = Asser.tNotNull(type, "config expected type");
         casted.binding = Asser.tNotNull(binding, "config binding");
         return casted;
-    }
-
-    public <T_> ConfigEntryBuilder<T_> setDefault(ConfigBinding<T_> binding) {
-        return setDefault(binding.clazzFromDefaultValue(), binding);
     }
 
     public <T_> ConfigEntryBuilder<T_> setDefault(@NotNull T_ defaultValue) {
@@ -83,11 +77,6 @@ public class ConfigEntryBuilder<T> {
             return (Class<T>) e.getDeclaringClass();
         }
         return (Class<T>) value.getClass();
-    }
-
-    public ConfigEntryBuilder<T> setSerde(ConfigSerde<T> serde) {
-        this.serde = serde;
-        return this;
     }
 
     public <T_> ConfigEntryBuilder<T> setProperty(ConfigProperty<T_> property, @NotNull T_ value) {
@@ -118,11 +107,6 @@ public class ConfigEntryBuilder<T> {
         if (comments == null) {
             comments = Collections.emptyList();
         }
-        if (serde == null) {
-            serde = ConfigSerdes.get(binding.getDefault());
-        }
-        return this.root.register(
-            new ConfigEntry<>(this.root, namespace, name, serde, binding, properties)
-        );
+        return this.root.register(new ConfigEntry<>(this.root, namespace, name, binding, properties));
     }
 }
