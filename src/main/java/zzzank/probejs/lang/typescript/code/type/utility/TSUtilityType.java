@@ -158,6 +158,7 @@ public interface TSUtilityType {
     ThisParameterType<Type>
     OmitThisParameter<Type>
     ThisType<Type>
+
     Intrinsic String Manipulation Types
         Uppercase<StringType>
         Lowercase<StringType>

@@ -6,9 +6,9 @@ import lombok.val;
  * @author ZZZank
  */
 public interface Asser {
-    static void t(boolean condition, String message) {
+    static void t(boolean condition, String errorMessage) {
         if (!condition) {
-            throw new AssertionError(message);
+            throw new AssertionError(errorMessage);
         }
     }
 

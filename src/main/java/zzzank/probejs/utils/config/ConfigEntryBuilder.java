@@ -29,7 +29,7 @@ public class ConfigEntryBuilder<T> {
     protected Class<T> expectedType;
     public List<String> comments;
     public ConfigBinding<T> binding;
-    private final ConfigProperties properties = new ConfigProperties();
+    public final ConfigProperties properties = new ConfigProperties();
 
     protected ConfigEntryBuilder(@NotNull ConfigImpl config, @NotNull String namespace, @NotNull String name) {
         this.root = config;
