@@ -1,0 +1,26 @@
+package zzzank.probejs.utils.config.struct;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import zzzank.probejs.utils.Asser;
+import zzzank.probejs.utils.config.binding.ConfigBinding;
+import zzzank.probejs.utils.config.prop.ConfigProperties;
+
+/**
+ * @author ZZZank
+ */
+@Getter
+@Accessors(fluent = true)
+class ConfigEntryImpl<T> implements ConfigEntry<T> {
+    private final String name;
+    private final ConfigBinding<T> binding;
+    private final ConfigProperties properties;
+    private final ConfigCategory parent;
+
+    public ConfigEntryImpl(String name, ConfigBinding<T> binding, ConfigProperties properties, ConfigCategory parent) {
+        this.name = Asser.tNotNull(name, "name");
+        this.binding = Asser.tNotNull(binding, "binding");
+        this.properties = Asser.tNotNull(properties, "properties");
+        this.parent = Asser.tNotNull(parent, "parent");
+    }
+}

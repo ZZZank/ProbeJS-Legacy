@@ -1,6 +1,7 @@
 package zzzank.probejs.utils;
 
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author ZZZank
@@ -12,6 +13,7 @@ public interface Asser {
         }
     }
 
+    @NotNull
     static <T> T tNotNull(T value, String name) {
         if (value == null) {
             throw new NullPointerException("'" + name + "' must not be null");
@@ -19,6 +21,7 @@ public interface Asser {
         return value;
     }
 
+    @NotNull
     static <T extends Iterable<?>> T tNotNullAll(T collection, String name) {
         tNotNull(collection, name);
         val elementName = "element in " + name;
@@ -28,6 +31,7 @@ public interface Asser {
         return collection;
     }
 
+    @NotNull
     static <T> T[] tNotNullAll(T[] collection, String name) {
         tNotNull(collection, name);
         val elementName = "element in " + name;
