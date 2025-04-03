@@ -1,5 +1,6 @@
 package zzzank.probejs.utils.config.struct;
 
+import zzzank.probejs.utils.config.binding.ConfigBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
 
@@ -19,13 +20,18 @@ public interface ConfigEntry<T> {
     ///
     /// @return the config value of this config entry, or `null` if exceptions happened when getting config value
     default T get() {
-        return getSafe().value();
+        return binding().get();
     }
 
-    AccessResult<T> getSafe();
+    default AccessResult<T> getSafe() {
+        return binding().getSafe();
+    }
 
-    ///
-    AccessResult<T> set(T value);
+    ConfigBinding<T> binding();
+
+    default AccessResult<T> set(T value) {
+        return binding().set(value);
+    }
 
     ConfigProperties properties();
 

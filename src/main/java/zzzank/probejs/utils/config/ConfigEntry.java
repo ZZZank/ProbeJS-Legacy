@@ -8,7 +8,7 @@ import zzzank.probejs.utils.config.binding.ConfigBinding;
 import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
-import zzzank.probejs.utils.config.report.ConfigReport;
+import zzzank.probejs.utils.config.report.holder.AccessResult;
 
 import java.util.List;
 
@@ -41,24 +41,18 @@ public class ConfigEntry<T> {
     /**
      * `null` will be redirected to default value
      */
-    public ConfigReport set(T value) {
+    public AccessResult<T> set(T value) {
         val report = setNoSave(value);
         source.save();
         return report;
     }
 
-    public ConfigReport reset() {
-        val report = binding.reset();
-        source.save();
-        return report;
-    }
-
-    public ConfigReport setNoSave(T value) {
-        val report = binding.set(value);
-        if (report.hasError()) {
-            ProbeJS.LOGGER.error("error when trying to set value for config entry '{}'", name, report.asException());
+    public AccessResult<T> setNoSave(T value) {
+        val result = binding.set(value);
+        if (result.hasReport()) {
+            ProbeJS.LOGGER.error("error when trying to set value for config entry '{}': {}", name, result.reports());
         }
-        return report;
+        return result;
     }
 
     @NotNull

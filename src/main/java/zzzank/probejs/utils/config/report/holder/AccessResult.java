@@ -18,6 +18,10 @@ public interface AccessResult<T> {
         return () -> reports;
     }
 
+    static <T> NoValue<T> noValue(ConfigReport report) {
+        return noValue(Collections.singletonList(report));
+    }
+
     static <T> AccessResult<T> none() {
         return (AccessResult<T>) NoneResult.INSTANCE;
     }

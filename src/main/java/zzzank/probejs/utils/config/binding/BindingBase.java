@@ -7,8 +7,7 @@ import zzzank.probejs.utils.config.report.ConfigReport;
 import zzzank.probejs.utils.config.report.NoError;
 import zzzank.probejs.utils.config.report.NullValueError;
 import zzzank.probejs.utils.config.report.WrappedException;
-
-import java.util.Objects;
+import zzzank.probejs.utils.config.report.holder.AccessResult;
 
 /**
  * @author ZZZank
@@ -23,9 +22,9 @@ public abstract class BindingBase<T> implements ConfigBinding<T> {
     protected final String name;
 
     protected BindingBase(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name) {
-        this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.defaultValue = Asser.tNotNull(defaultValue, "defaultValue");
         this.defaultType = Asser.tNotNull(defaultType, "defaultType");
-        this.name = Objects.requireNonNull(name);
+        this.name = Asser.tNotNull(name, "name");
     }
 
     @Override
@@ -39,18 +38,17 @@ public abstract class BindingBase<T> implements ConfigBinding<T> {
     }
 
     @Override
-    public @NotNull ConfigReport set(T value) {
+    public @NotNull AccessResult<T> set(T value) {
         val validated = validate(value);
         if (validated.hasError()) {
-            return validated;
+            return AccessResult.noValue(validated);
         }
         try {
             setImpl(value);
+            return AccessResult.none();
         } catch (Exception e) {
-            reset();
-            return new WrappedException(e);
+            return AccessResult.noValue(new WrappedException(e));
         }
-        return NoError.INSTANCE;
     }
 
     abstract protected void setImpl(T value);
