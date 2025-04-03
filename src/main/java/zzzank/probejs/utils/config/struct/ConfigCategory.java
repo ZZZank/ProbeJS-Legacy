@@ -43,4 +43,6 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
         Asser.t(name.indexOf('.') < 0, "");
         return new ConfigEntryBuilder<>(this, name);
     }
+
+    <T> ConfigEntry<T> register(ConfigEntry<T> entry);
 }

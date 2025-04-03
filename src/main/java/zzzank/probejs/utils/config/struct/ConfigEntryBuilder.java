@@ -85,4 +85,8 @@ public class ConfigEntryBuilder<T> {
         );
         return this;
     }
+
+    public ConfigEntry<T> build() {
+        return this.parent.register(new ConfigEntryImpl<>(name, binding, properties, this.parent));
+    }
 }
