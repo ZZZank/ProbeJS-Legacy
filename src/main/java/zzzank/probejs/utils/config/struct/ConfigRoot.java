@@ -21,6 +21,6 @@ public interface ConfigRoot extends ConfigCategory {
 
     @Override
     default String path() {
-        return name();
+        return "";
     }
 }
