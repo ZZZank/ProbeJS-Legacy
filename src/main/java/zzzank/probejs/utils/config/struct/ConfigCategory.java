@@ -1,10 +1,10 @@
 package zzzank.probejs.utils.config.struct;
 
 import lombok.val;
+import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.report.RuntimeError;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -37,5 +37,10 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
     default String path() {
         val parent = parent();
         return parent == null ? name() : parent.path() + '.' + name();
+    }
+
+    default ConfigEntryBuilder<Void> define(String name) {
+        Asser.t(name.indexOf('.') < 0, "");
+        return new ConfigEntryBuilder<>(this, name);
     }
 }
