@@ -8,10 +8,10 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
-import zzzank.probejs.utils.config.ConfigEntry;
-import zzzank.probejs.utils.config.ConfigImpl;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.serde.ConfigSerdeFactory;
+import zzzank.probejs.utils.config.struct.ConfigEntry;
+import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 import java.io.Reader;
 import java.io.Writer;
@@ -81,7 +81,7 @@ public class JsonConfigIO implements ConfigIO {
     }
 
     @Override
-    public void read(ConfigImpl config, Reader reader) {
+    public void read(ConfigRoot config, Reader reader) {
         val json = gson.fromJson(reader, JsonObject.class);
         for (val entry : json.entrySet()) {
             val namespaced = config.ensureNamespace(entry.getKey());
@@ -107,7 +107,7 @@ public class JsonConfigIO implements ConfigIO {
     }
 
     @Override
-    public void save(ConfigImpl config, Writer writer) {
+    public void save(ConfigRoot config, Writer writer) {
         val object = new JsonObject();
         for (val entry : CollectUtils.iterate(config.entries())) {
             val o = new JsonObject();
