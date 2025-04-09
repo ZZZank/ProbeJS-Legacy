@@ -27,6 +27,10 @@ public interface ConfigEntry<T> {
         return binding().get();
     }
 
+    default T getDefault() {
+        return binding().getDefault();
+    }
+
     default AccessResult<T> getSafe() {
         return binding().getSafe();
     }

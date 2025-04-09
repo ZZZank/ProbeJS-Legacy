@@ -9,30 +9,23 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
-import zzzank.probejs.utils.config.report.NullValueError;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
-import zzzank.probejs.utils.config.serde.ConfigSerde;
-import zzzank.probejs.utils.config.serde.ConfigSerdeFactory;
 import zzzank.probejs.utils.config.struct.ConfigCategory;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 import java.io.Reader;
 import java.io.Writer;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
  * @author ZZZank
  */
-public class JsonConfigIO implements WithSerdeConfigIO<JsonElement> {
+public class JsonConfigIO extends WithSerdeConfigIOBase<JsonElement> {
     public static final String DEFAULT_VALUE_KEY = "$default";
     public static final String VALUE_KEY = "$value";
     public static final String COMMENTS_KEY = "$comment";
 
     private final Gson gson;
-    private final Map<Class<?>, ConfigSerde<JsonElement, ?>> serdes = new ConcurrentHashMap<>();
-    private final List<ConfigSerdeFactory<JsonElement>> serdeFactories = new ArrayList<>();
 
     public static JsonConfigIO make(Gson gson, Consumer<JsonConfigIO> modifier) {
         val io = new JsonConfigIO(gson);
@@ -42,39 +35,6 @@ public class JsonConfigIO implements WithSerdeConfigIO<JsonElement> {
 
     public JsonConfigIO(Gson gson) {
         this.gson = Asser.tNotNull(gson, "gson");
-    }
-
-    @Override
-    public <T, S extends ConfigSerde<JsonElement, T>> AccessResult<S> registerSerde(Class<T> type, S serde) {
-        if (serde == null) {
-            return AccessResult.noValue(Collections.singletonList(new NullValueError("serde")));
-        } else if (type == null) {
-            return AccessResult.noValue(Collections.singletonList(new NullValueError("type")));
-        }
-        serdes.put(type, serde);
-        return AccessResult.onlyValue(serde);
-    }
-
-    @Override
-    public Map<Class<?>, ConfigSerde<JsonElement, ?>> getKnownSerdes() {
-        return Collections.unmodifiableMap(serdes);
-    }
-
-    /**
-     * There's no guarantee in the order of factories
-     */
-    @Override
-    public List<ConfigSerdeFactory<JsonElement>> getSerdeFactories() {
-        return Collections.unmodifiableList(serdeFactories);
-    }
-
-    @Override
-    public synchronized  <F extends ConfigSerdeFactory<JsonElement>> AccessResult<F> registerSerdeFactory(F factory) {
-        if (factory == null) {
-            return AccessResult.noValue(Collections.singletonList(new NullValueError("serde factory")));
-        }
-        serdeFactories.add(0, factory);
-        return AccessResult.onlyValue(factory);
     }
 
     @Override
