@@ -1,6 +1,7 @@
 package zzzank.probejs.utils.config.io;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
@@ -8,6 +9,8 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
+import zzzank.probejs.utils.config.report.NullValueError;
+import zzzank.probejs.utils.config.report.holder.AccessResult;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.serde.ConfigSerdeFactory;
 import zzzank.probejs.utils.config.struct.ConfigCategory;
@@ -22,14 +25,14 @@ import java.util.function.Consumer;
 /**
  * @author ZZZank
  */
-public class JsonConfigIO implements ConfigIO {
+public class JsonConfigIO implements WithSerdeConfigIO<JsonElement> {
     public static final String DEFAULT_VALUE_KEY = "$default";
     public static final String VALUE_KEY = "$value";
     public static final String COMMENTS_KEY = "$comment";
 
     private final Gson gson;
-    private final Map<Class<?>, ConfigSerde<?>> serdes = new ConcurrentHashMap<>();
-    private final List<ConfigSerdeFactory> serdeFactories = new ArrayList<>();
+    private final Map<Class<?>, ConfigSerde<JsonElement, ?>> serdes = new ConcurrentHashMap<>();
+    private final List<ConfigSerdeFactory<JsonElement>> serdeFactories = new ArrayList<>();
 
     public static JsonConfigIO make(Gson gson, Consumer<JsonConfigIO> modifier) {
         val io = new JsonConfigIO(gson);
@@ -41,43 +44,37 @@ public class JsonConfigIO implements ConfigIO {
         this.gson = Asser.tNotNull(gson, "gson");
     }
 
-    public <T> ConfigSerde<T> putSerde(Class<T> type, ConfigSerde<T> serde) {
-        return cast(serdes.put(type, serde));
+    @Override
+    public <T, S extends ConfigSerde<JsonElement, T>> AccessResult<S> registerSerde(Class<T> type, S serde) {
+        if (serde == null) {
+            return AccessResult.noValue(Collections.singletonList(new NullValueError("serde")));
+        } else if (type == null) {
+            return AccessResult.noValue(Collections.singletonList(new NullValueError("type")));
+        }
+        serdes.put(type, serde);
+        return AccessResult.onlyValue(serde);
     }
 
-    public <T> ConfigSerde<T> getSerde(Class<T> type) {
-        val serde = serdes.computeIfAbsent(
-            type, t -> serdeFactories
-                .stream()
-                .map(serdeFactory -> serdeFactory.getSerde(type))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null)
-        );
-        return cast(serde);
-    }
-
-    public Map<Class<?>, ConfigSerde<?>> getKnownSerdes() {
+    @Override
+    public Map<Class<?>, ConfigSerde<JsonElement, ?>> getKnownSerdes() {
         return Collections.unmodifiableMap(serdes);
     }
 
     /**
      * There's no guarantee in the order of factories
      */
-    public List<ConfigSerdeFactory> getSerdeFactories() {
+    @Override
+    public List<ConfigSerdeFactory<JsonElement>> getSerdeFactories() {
         return Collections.unmodifiableList(serdeFactories);
     }
 
-    /**
-     * factories added in a later time will have higher priority
-     */
-    public synchronized void addSerdeFactory(ConfigSerdeFactory factory) {
-        serdeFactories.add(0, Asser.tNotNull(factory, "serde factory"));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> ConfigSerde<T> cast(ConfigSerde<?> serde) {
-        return (ConfigSerde<T>) serde;
+    @Override
+    public synchronized  <F extends ConfigSerdeFactory<JsonElement>> AccessResult<F> registerSerdeFactory(F factory) {
+        if (factory == null) {
+            return AccessResult.noValue(Collections.singletonList(new NullValueError("serde factory")));
+        }
+        serdeFactories.add(0, factory);
+        return AccessResult.onlyValue(factory);
     }
 
     @Override

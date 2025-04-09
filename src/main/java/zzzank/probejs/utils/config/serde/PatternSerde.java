@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 /**
  * @author ZZZank
  */
-public class PatternSerde implements ConfigSerde<Pattern> {
+public class PatternSerde implements ConfigSerde<JsonElement, Pattern> {
     @Override
     public @NotNull JsonElement toJson(@NotNull Pattern value) {
         return new JsonPrimitive(value.pattern());

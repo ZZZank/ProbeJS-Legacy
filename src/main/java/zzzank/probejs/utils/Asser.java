@@ -13,10 +13,14 @@ public interface Asser {
         }
     }
 
+    static String nullMessage(String name) {
+        return "'" + name + "' must not be null";
+    }
+
     @NotNull
     static <T> T tNotNull(T value, String name) {
         if (value == null) {
-            throw new NullPointerException("'" + name + "' must not be null");
+            throw new NullPointerException(nullMessage(name));
         }
         return value;
     }

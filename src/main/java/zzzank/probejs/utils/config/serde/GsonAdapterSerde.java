@@ -8,7 +8,7 @@ import zzzank.probejs.utils.Asser;
 /**
  * @author ZZZank
  */
-public class GsonAdapterSerde<T> implements ConfigSerde<T> {
+public class GsonAdapterSerde<T> implements ConfigSerde<JsonElement, T> {
     private final TypeAdapter<T> typeAdapter;
 
     public GsonAdapterSerde(TypeAdapter<T> typeAdapter) {

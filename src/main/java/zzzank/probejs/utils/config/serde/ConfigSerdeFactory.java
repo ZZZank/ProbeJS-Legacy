@@ -5,11 +5,11 @@ import java.lang.reflect.Type;
 /**
  * @author ZZZank
  */
-public interface ConfigSerdeFactory {
+public interface ConfigSerdeFactory<I> {
 
-    <T> ConfigSerde<T> getSerde(Class<T> type);
+    <T> ConfigSerde<I, T> getSerde(Class<T> type);
 
-    default ConfigSerde<?> getSerde(Type type) {
+    default ConfigSerde<I, ?> getSerde(Type type) {
         throw new IllegalStateException("no impl yet");
     }
 }

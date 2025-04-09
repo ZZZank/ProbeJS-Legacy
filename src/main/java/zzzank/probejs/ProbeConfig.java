@@ -24,8 +24,8 @@ public interface ProbeConfig {
         HashMap::new,
         new ConfigProperties(),
         JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {
-            io.addSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
-            io.putSerde(Pattern.class, new PatternSerde());
+            io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
+            io.registerSerde(Pattern.class, new PatternSerde());
         })
     );
 

@@ -1,12 +1,13 @@
 package zzzank.probejs.utils.config.serde;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import zzzank.probejs.utils.Asser;
 
 /**
  * @author ZZZank
  */
-public class GsonSerdeFactory implements ConfigSerdeFactory {
+public class GsonSerdeFactory implements ConfigSerdeFactory<JsonElement> {
     private final Gson gson;
 
     public GsonSerdeFactory(Gson gson) {
@@ -14,7 +15,7 @@ public class GsonSerdeFactory implements ConfigSerdeFactory {
     }
 
     @Override
-    public <T> ConfigSerde<T> getSerde(Class<T> type) {
+    public <T> ConfigSerde<JsonElement, T> getSerde(Class<T> type) {
         try {
             return new GsonAdapterSerde<>(gson.getAdapter(type));
         } catch (Exception e) {
