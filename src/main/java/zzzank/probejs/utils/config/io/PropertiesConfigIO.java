@@ -6,6 +6,7 @@ import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
+import zzzank.probejs.utils.config.serde.holder.AbstractSerdeHolder;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
 /**
  * @author ZZZank
  */
-public class PropertiesConfigIO extends WithSerdeConfigIOBase<String> {
+public class PropertiesConfigIO extends AbstractSerdeHolder<String> implements ConfigIO {
 
     public PropertiesConfigIO() {
         addPrimitiveSerde(Byte::valueOf, Byte.class, byte.class);
@@ -46,14 +47,7 @@ public class PropertiesConfigIO extends WithSerdeConfigIOBase<String> {
                 continue;
             }
 
-            val serde = getSerde(configEntry.binding().getDefaultType());
-            if (serde == null) {
-                throw new IllegalStateException(String.format(
-                    "No ConfigSerde available for config '%s' with type '%s'",
-                    configEntry.path(),
-                    configEntry.binding().getDefaultType().getName()
-                ));
-            }
+            val serde = serdeByEntryRequired(configEntry);
 
             configEntry.set(Cast.to(serde.deserialize(value)));
         }
@@ -63,15 +57,8 @@ public class PropertiesConfigIO extends WithSerdeConfigIOBase<String> {
     public void save(ConfigRoot config, Writer writer) throws IOException {
         val properties = new Properties();
         val comments = new ArrayList<String>();
-        for (var entry : CollectUtils.iterate(walkEntries(config))) {
-            var serde = getSerde(entry.binding().getDefaultType());
-            if (serde == null) {
-                throw new IllegalStateException(String.format(
-                    "No ConfigSerde available for config '%s' with type '%s'",
-                    entry.path(),
-                    entry.binding().getDefaultType().getName()
-                ));
-            }
+        for (val entry : CollectUtils.iterate(walkEntries(config))) {
+            val serde = serdeByEntryRequired(entry);
 
             val defaultValue = entry.getDefault();
             val currentValue = entry.get();

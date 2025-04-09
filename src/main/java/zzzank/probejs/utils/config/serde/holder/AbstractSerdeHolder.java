@@ -1,4 +1,4 @@
-package zzzank.probejs.utils.config.io;
+package zzzank.probejs.utils.config.serde.holder;
 
 import zzzank.probejs.utils.config.report.NullValueError;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
@@ -10,16 +10,17 @@ import java.util.*;
 /**
  * @author ZZZank
  */
-public abstract class WithSerdeConfigIOBase<I> implements WithSerdeConfigIO<I> {
-    protected final List<ConfigSerdeFactory<I>> factories;
-    private final Map<Class<?>, ConfigSerde<I, ?>> serdes;
+public abstract class AbstractSerdeHolder<I> implements SerdeHolder<I> {
 
-    protected WithSerdeConfigIOBase(List<ConfigSerdeFactory<I>> factories, Map<Class<?>, ConfigSerde<I, ?>> serdes) {
+    protected final List<ConfigSerdeFactory<I>> factories;
+    protected final Map<Class<?>, ConfigSerde<I, ?>> serdes;
+
+    protected AbstractSerdeHolder(List<ConfigSerdeFactory<I>> factories, Map<Class<?>, ConfigSerde<I, ?>> serdes) {
         this.factories = factories;
         this.serdes = serdes;
     }
 
-    protected WithSerdeConfigIOBase() {
+    protected AbstractSerdeHolder() {
         this(new ArrayList<>(), new HashMap<>());
     }
 

@@ -9,6 +9,7 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
+import zzzank.probejs.utils.config.serde.holder.AbstractSerdeHolder;
 import zzzank.probejs.utils.config.struct.ConfigCategory;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
@@ -20,7 +21,7 @@ import java.util.function.Consumer;
 /**
  * @author ZZZank
  */
-public class JsonConfigIO extends WithSerdeConfigIOBase<JsonElement> {
+public class JsonConfigIO extends AbstractSerdeHolder<JsonElement> implements ConfigIO {
     public static final String DEFAULT_VALUE_KEY = "$default";
     public static final String VALUE_KEY = "$value";
     public static final String COMMENTS_KEY = "$comment";
@@ -58,14 +59,7 @@ public class JsonConfigIO extends WithSerdeConfigIOBase<JsonElement> {
             if (valueInConfig == null) {
                 continue;
             }
-            val serde = getSerde(entry.binding().getDefaultType());
-            if (serde == null) {
-                throw new IllegalStateException(String.format(
-                    "No ConfigSerde available for config '%s' with type '%s'",
-                    entry.path(),
-                    entry.binding().getDefaultType().getName()
-                ));
-            }
+            val serde = serdeByEntryRequired(entry);
             entry.set(Cast.to(serde.deserialize(valueInConfig)));
         }
     }
@@ -87,14 +81,7 @@ public class JsonConfigIO extends WithSerdeConfigIOBase<JsonElement> {
                 continue;
             }
 
-            val serde = getSerde(entry.binding().getDefaultType());
-            if (serde == null) {
-                throw new IllegalStateException(String.format(
-                    "No ConfigSerde available for config '%s' with type '%s'",
-                    entry.path(),
-                    entry.binding().getDefaultType().getName()
-                ));
-            }
+            val serde = serdeByEntryRequired(entry);
 
             val entryJson = new JsonObject();
 
