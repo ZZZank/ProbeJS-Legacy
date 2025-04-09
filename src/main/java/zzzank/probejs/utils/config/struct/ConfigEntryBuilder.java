@@ -5,15 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.NameUtils;
-import zzzank.probejs.utils.config.binding.ConfigBinding;
-import zzzank.probejs.utils.config.binding.DefaultBinding;
-import zzzank.probejs.utils.config.binding.RangedBinding;
-import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
+import zzzank.probejs.utils.config.binding.*;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -39,12 +38,25 @@ public class ConfigEntryBuilder<T> {
         return casted;
     }
 
+    public <T_> ConfigEntryBuilder<T_> bind(@NotNull Supplier<@NotNull T_> getter, @NotNull Consumer<T_> setter) {
+        val defaultValue = getter.get();
+        return bind(new DynamicBinding<>(defaultValue, extractType(defaultValue), name, getter, setter));
+    }
+
     public <T_> ConfigEntryBuilder<T_> bindDefault(@NotNull T_ defaultValue) {
-        return bind(new DefaultBinding<>(defaultValue, extractType(defaultValue), name));
+        return bindDefault(defaultValue, extractType(defaultValue));
+    }
+
+    public <T_> ConfigEntryBuilder<T_> bindDefault(@NotNull T_ defaultValue, @NotNull Class<T_> defaultType) {
+        return bind(new DefaultBinding<>(defaultValue, defaultType, name));
     }
 
     public <T_> ConfigEntryBuilder<T_> bindReadOnly(@NotNull T_ defaultValue) {
-        return bind(new ReadOnlyBinding<>(defaultValue, extractType(defaultValue), name));
+        return bindReadOnly(defaultValue, extractType(defaultValue));
+    }
+
+    public <T_> ConfigEntryBuilder<T_> bindReadOnly(@NotNull T_ defaultValue, @NotNull Class<T_> defaultType) {
+        return bind(new ReadOnlyBinding<>(defaultValue, defaultType, name));
     }
 
     public <T_ extends Comparable<T_>> ConfigEntryBuilder<T_> bindRanged(
@@ -52,7 +64,16 @@ public class ConfigEntryBuilder<T> {
         @NotNull T_ min,
         @NotNull T_ max
     ) {
-        return bind(new RangedBinding<>(defaultValue, extractType(defaultValue), name, min, max));
+        return bindRanged(defaultValue, min, max, extractType(defaultValue));
+    }
+
+    public <T_ extends Comparable<T_>> ConfigEntryBuilder<T_> bindRanged(
+        @NotNull T_ defaultValue,
+        @NotNull T_ min,
+        @NotNull T_ max,
+        @NotNull Class<T_> defaultType
+    ) {
+        return bind(new RangedBinding<>(defaultValue, defaultType, name, min, max));
     }
 
     private static <T> Class<T> extractType(T value) {
