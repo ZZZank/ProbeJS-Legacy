@@ -6,11 +6,11 @@ import com.google.gson.JsonPrimitive;
 import lombok.val;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
+import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.serde.ConfigSerdeFactory;
-import zzzank.probejs.utils.config.struct.ConfigEntry;
+import zzzank.probejs.utils.config.struct.ConfigCategory;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 import java.io.Reader;
@@ -83,48 +83,75 @@ public class JsonConfigIO implements ConfigIO {
     @Override
     public void read(ConfigRoot config, Reader reader) {
         val json = gson.fromJson(reader, JsonObject.class);
-        for (val entry : json.entrySet()) {
-            val namespaced = config.ensureNamespace(entry.getKey());
-            val namespace = namespaced.getKey();
-            val name = namespaced.getValue();
+        readCategory(config, json);
+    }
 
-            val reference = (ConfigEntry<Object>) config.get(namespace, name);
-            if (reference == null || reference.readOnly()) {
+    private void readCategory(ConfigCategory category, JsonObject config) {
+        for (val entry : category.get().values()) {
+            val name = entry.name();
+            val entryInConfig = config.getAsJsonObject(name);
+            if (entryInConfig == null) {
                 continue;
             }
-
-            val raw = entry.getValue().getAsJsonObject().get(VALUE_KEY);
-            val serde = getSerde(reference.binding.getDefaultType());
+            if (entry.isCategory()) {
+                readCategory(entry.asCategory(), entryInConfig);
+                continue;
+            }
+            val valueInConfig = entryInConfig.get(VALUE_KEY);
+            if (valueInConfig == null) {
+                continue;
+            }
+            val serde = getSerde(entry.binding().getDefaultType());
             if (serde == null) {
                 throw new IllegalStateException(String.format(
                     "No ConfigSerde available for config '%s' with type '%s'",
-                    reference.path(),
-                    reference.binding.getDefaultType().getName()
+                    entry.path(),
+                    entry.binding().getDefaultType().getName()
                 ));
             }
-            reference.setNoSave(serde.fromJson(raw));
+            entry.set(Cast.to(serde.fromJson(valueInConfig)));
         }
     }
 
     @Override
     public void save(ConfigRoot config, Writer writer) {
         val object = new JsonObject();
-        for (val entry : CollectUtils.iterate(config.entries())) {
-            val o = new JsonObject();
-            val serde = getSerde(entry.binding.getDefaultType());
+        writeCategory(config, object);
+        gson.toJson(object, writer);
+    }
 
-            o.add(DEFAULT_VALUE_KEY, serde.toJson(Cast.to(entry.getDefault())));
-            o.add(VALUE_KEY, serde.toJson(Cast.to(entry.get())));
-            val comments = entry.getComments();
+    private void writeCategory(ConfigCategory category, JsonObject writeTo) {
+        for (val entry : category.get().values()) {
+            val name = entry.name();
+            if (entry.isCategory()) {
+                val entryJson = new JsonObject();
+                writeCategory(entry.asCategory(), entryJson);
+                writeTo.add(name, entryJson);
+                continue;
+            }
+
+            val serde = getSerde(entry.binding().getDefaultType());
+            if (serde == null) {
+                throw new IllegalStateException(String.format(
+                    "No ConfigSerde available for config '%s' with type '%s'",
+                    entry.path(),
+                    entry.binding().getDefaultType().getName()
+                ));
+            }
+
+            val entryJson = new JsonObject();
+
+            entryJson.add(DEFAULT_VALUE_KEY, serde.toJson(Cast.to(entry.binding().getDefault())));
+            entryJson.add(VALUE_KEY, serde.toJson(Cast.to(entry.get())));
+            val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
             switch (comments.size()) {
                 case 0 -> {
                 }
-                case 1 -> o.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
-                default -> o.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
+                case 1 -> entryJson.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
+                default -> entryJson.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
             }
 
-            object.add(entry.path(), o);
+            writeTo.add(name, entryJson);
         }
-        gson.toJson(object, writer);
     }
 }

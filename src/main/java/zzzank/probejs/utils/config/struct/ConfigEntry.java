@@ -1,8 +1,12 @@
 package zzzank.probejs.utils.config.struct;
 
 import zzzank.probejs.utils.config.binding.ConfigBinding;
+import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
+import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
+
+import java.util.Optional;
 
 /**
  * @author ZZZank
@@ -27,6 +31,10 @@ public interface ConfigEntry<T> {
         return binding().getSafe();
     }
 
+    default boolean isReadOnly() {
+        return binding() instanceof ReadOnlyBinding<?>;
+    }
+
     ConfigBinding<T> binding();
 
     default AccessResult<T> set(T value) {
@@ -34,6 +42,10 @@ public interface ConfigEntry<T> {
     }
 
     ConfigProperties properties();
+
+    default  <P> Optional<P> getProp(ConfigProperty<P> property) {
+        return properties().get(property);
+    }
 
     /// The parent config category holding this config entry
     ///
