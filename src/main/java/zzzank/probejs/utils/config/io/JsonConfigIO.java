@@ -106,7 +106,7 @@ public class JsonConfigIO implements WithSerdeConfigIO<JsonElement> {
                     entry.binding().getDefaultType().getName()
                 ));
             }
-            entry.set(Cast.to(serde.fromJson(valueInConfig)));
+            entry.set(Cast.to(serde.deserialize(valueInConfig)));
         }
     }
 
@@ -138,8 +138,8 @@ public class JsonConfigIO implements WithSerdeConfigIO<JsonElement> {
 
             val entryJson = new JsonObject();
 
-            entryJson.add(DEFAULT_VALUE_KEY, serde.toJson(Cast.to(entry.binding().getDefault())));
-            entryJson.add(VALUE_KEY, serde.toJson(Cast.to(entry.get())));
+            entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(Cast.to(entry.binding().getDefault())));
+            entryJson.add(VALUE_KEY, serde.serialize(Cast.to(entry.get())));
             val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
             switch (comments.size()) {
                 case 0 -> {

@@ -16,12 +16,12 @@ public class GsonAdapterSerde<T> implements ConfigSerde<JsonElement, T> {
     }
 
     @Override
-    public @NotNull JsonElement toJson(@NotNull T value) {
+    public @NotNull JsonElement serialize(@NotNull T value) {
         return typeAdapter.toJsonTree(value);
     }
 
     @Override
-    public @NotNull T fromJson(@NotNull JsonElement json) {
+    public @NotNull T deserialize(@NotNull JsonElement json) {
         return typeAdapter.fromJsonTree(json);
     }
 }
