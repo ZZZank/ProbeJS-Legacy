@@ -1,8 +1,10 @@
-package zzzank.probejs.utils.config.serde;
+package zzzank.probejs.utils.config.serde.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import zzzank.probejs.utils.Asser;
+import zzzank.probejs.utils.config.serde.ConfigSerde;
+import zzzank.probejs.utils.config.serde.ConfigSerdeFactory;
 
 /**
  * @author ZZZank

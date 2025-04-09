@@ -1,8 +1,9 @@
-package zzzank.probejs.utils.config.serde;
+package zzzank.probejs.utils.config.serde.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.utils.config.serde.ConfigSerde;
 
 import java.util.regex.Pattern;
 

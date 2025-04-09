@@ -1,9 +1,10 @@
-package zzzank.probejs.utils.config.serde;
+package zzzank.probejs.utils.config.serde.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
+import zzzank.probejs.utils.config.serde.ConfigSerde;
 
 /**
  * @author ZZZank
