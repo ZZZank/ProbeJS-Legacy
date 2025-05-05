@@ -1,14 +1,13 @@
 package zzzank.probejs.features.forge_scan;
 
-import com.mojang.datafixers.util.Pair;
 import lombok.val;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.collect.map.HashMultiMap;
 
 import java.util.*;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,19 +36,21 @@ public enum BuiltinScanners implements ClassDataScanner {
         @Override
         public Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
             val names = new HashSet<>(PREDEFINED_BASECLASS);
-            final Pair<String, String>[] dataNames = dataStream
+
+            val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
+            val toSubClasses = new HashMultiMap<String, String>();
+            dataStream
                 .map(AccessClassData::new)
-                .map(access -> new Pair<>(access.parentClassName(), access.className()))
-                .toArray((IntFunction<Pair<String, String>[]>) Pair[]::new);
-            boolean changed = true;
-            while (changed) {
-                changed = false;
-                for (val data : dataNames) {
-                    if (names.contains(data.getFirst())) {
-                        changed |= names.add(data.getSecond());
-                    }
+                .forEach(access -> toSubClasses.add(access.parentClassName(), access.className()));
+            while (!queue.isEmpty()) {
+                val parent = queue.pop();
+                names.add(parent);
+                val subClasses = toSubClasses.get(parent);
+                if (subClasses != null) {
+                    queue.addAll(subClasses);
                 }
             }
+
             ProbeJS.LOGGER.debug("ForgeEventSubclassOnly collected {} class names", names.size());
             return names;
         }
