@@ -7,6 +7,7 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.util.*;
@@ -49,38 +50,41 @@ public class ConstructorDecl extends CommentableCode {
         return Collections.singletonList(String.format("%s%s%s", head, body, tail));
     }
 
-    public static class Builder {
+    public static class BuilderBase<SELF extends BuilderBase<SELF>> {
         public final List<TSVariableType> variableTypes = new ArrayList<>();
         public final List<ParamDecl> params = new ArrayList<>();
 
-        public Builder typeVariables(String... symbols) {
+        public SELF typeVariables(String... symbols) {
             return typeVariables(CollectUtils.mapToList(symbols, Types::generic));
         }
 
-        public Builder typeVariables(TSVariableType... variableTypes) {
+        public SELF typeVariables(TSVariableType... variableTypes) {
             return typeVariables(Arrays.asList(variableTypes));
         }
 
-        public Builder typeVariables(Collection<TSVariableType> variableTypes) {
+        public SELF typeVariables(Collection<TSVariableType> variableTypes) {
             this.variableTypes.addAll(variableTypes);
-            return this;
+            return Cast.to(this);
         }
 
-        public Builder param(String symbol, BaseType type) {
+        public SELF param(String symbol, BaseType type) {
             return param(symbol, type, false);
         }
 
-        public Builder param(String symbol, BaseType type, boolean isOptional) {
+        public SELF param(String symbol, BaseType type, boolean isOptional) {
             return param(symbol, type, isOptional, false);
         }
 
-        public Builder param(String symbol, BaseType type, boolean isOptional, boolean isVarArg) {
+        public SELF param(String symbol, BaseType type, boolean isOptional, boolean isVarArg) {
             params.add(new ParamDecl(symbol, type, isVarArg, isOptional));
-            return this;
+            return Cast.to(this);
         }
 
         public final ConstructorDecl buildAsConstructor() {
             return new ConstructorDecl(variableTypes, params);
         }
+    }
+
+    public static class Builder extends BuilderBase<Builder> {
     }
 }

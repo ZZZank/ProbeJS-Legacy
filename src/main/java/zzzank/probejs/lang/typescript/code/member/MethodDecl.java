@@ -77,7 +77,7 @@ public class MethodDecl extends CommentableCode {
         return Collections.singletonList(head + body + tail);
     }
 
-    public static class Builder extends ConstructorDecl.Builder {
+    public static class Builder extends ConstructorDecl.BuilderBase<Builder> {
         public final String name;
         public BaseType returnType = Types.VOID;
         public boolean isAbstract = false;

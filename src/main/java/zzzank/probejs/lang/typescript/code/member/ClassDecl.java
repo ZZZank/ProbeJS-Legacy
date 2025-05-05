@@ -189,16 +189,16 @@ public class ClassDecl extends CommentableCode {
             return this;
         }
 
-        public Builder method(String name, Consumer<MethodDecl.Builder> method) {
-            MethodDecl.Builder builder = new MethodDecl.Builder(name);
-            method.accept(builder);
+        public Builder method(String name, Consumer<MethodDecl.Builder> modifier) {
+            val builder = new MethodDecl.Builder(name);
+            modifier.accept(builder);
             methods.add(builder.buildAsMethod());
             return this;
         }
 
-        public Builder ctor(Consumer<ConstructorDecl.Builder> constructor) {
-            ConstructorDecl.Builder builder = new ConstructorDecl.Builder();
-            constructor.accept(builder);
+        public Builder ctor(Consumer<ConstructorDecl.Builder> modifier) {
+            val builder = new ConstructorDecl.Builder();
+            modifier.accept(builder);
             constructors.add(builder.buildAsConstructor());
             return this;
         }
