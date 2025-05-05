@@ -6,7 +6,6 @@ import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.code.type.js.JSObjectType;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
 
 import javax.annotation.Nullable;
@@ -124,33 +123,17 @@ public class ValueTypes {
         } else if (limitConsumed(limit)) {
             return Types.OBJECT;
         }
-        val nextLimit = consumeLimit(limit);
-        val builder = Types.object();
 
         val prototype = scriptable.getPrototype();
-        if (prototype.get("constructor", prototype) instanceof BaseFunction func) {
+        if (prototype != null && prototype.get("constructor", prototype) instanceof BaseFunction func) {
             //Resolves Object since they're not typed
-            if (!func.getFunctionName().isEmpty() && !func.getFunctionName().equals("Object")) {
-                return Types.primitive(func.getFunctionName());
+            val functionName = func.getFunctionName();
+            if (!functionName.isEmpty() && !functionName.equals("Object")) {
+                return Types.primitive(functionName);
             }
         }
 
-        for (val id : scriptable.getIds()) {
-            val value = id instanceof Number
-                ? scriptable.get((Integer) id, scriptable)
-                : scriptable.get((String) id, scriptable);
-            builder.member(String.valueOf(id), convert(value, converter, nextLimit));
-        }
-
-        val proto = scriptable.getPrototype();
-        for (val id : proto.getIds()) {
-            val value = id instanceof Number
-                ? proto.get((Integer) id, scriptable)
-                : proto.get((String) id, scriptable);
-            builder.member(String.valueOf(id), convert(value, converter, nextLimit));
-        }
-
-        return builder.build();
+        return convertMap(obj, converter, limit);
     }
 
     public static BaseType formatFunction(Object obj, TypeConverter converter, int limit) {
