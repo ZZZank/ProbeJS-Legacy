@@ -37,21 +37,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Controls a dump. A dump is made of a script type, and is responsible for
  * maintaining the file structures
  */
 public class ScriptDump {
-    public static final Supplier<ScriptDump> SERVER_DUMP = () -> {
+    public static final Function<CodeDump, ScriptDump> SERVER_DUMP = (codeDump) -> {
         ServerScriptManager scriptManager = ServerScriptManager.instance;
         if (scriptManager == null) {
             return null;
         }
 
         return new ScriptDump(
+            codeDump,
             scriptManager.scriptManager,
             ProbePaths.PROBE.resolve("server"),
             KubeJSPaths.SERVER_SCRIPTS,
@@ -62,7 +63,8 @@ public class ScriptDump {
         );
     };
 
-    public static final Supplier<ScriptDump> CLIENT_DUMP = () -> new ScriptDump(
+    public static final Function<CodeDump, ScriptDump> CLIENT_DUMP = (codeDump) -> new ScriptDump(
+        codeDump,
         KubeJS.clientScriptManager,
         ProbePaths.PROBE.resolve("client"),
         KubeJSPaths.CLIENT_SCRIPTS,
@@ -72,19 +74,23 @@ public class ScriptDump {
             .noneMatch(Dist::isDedicatedServer)
     );
 
-    public static final Supplier<ScriptDump> STARTUP_DUMP = () -> new ScriptDump(
+    public static final Function<CodeDump, ScriptDump> STARTUP_DUMP = (codeDump) -> new ScriptDump(
+        codeDump,
         KubeJS.startupScriptManager,
         ProbePaths.PROBE.resolve("startup"),
         KubeJSPaths.STARTUP_SCRIPTS,
         (clazz -> true)
     );
 
+    public final CodeDump parent;
+
     public final ScriptType scriptType;
     public final ScriptManager manager;
+
     public final Path basePath;
     public final Path scriptPath;
+
     public final Map<String, TypeScriptFile> globals = new HashMap<>();
-    public final Transpiler transpiler;
     public final Set<Clazz> recordedClasses = new HashSet<>();
     private final Predicate<Clazz> accept;
     private final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
@@ -92,12 +98,12 @@ public class ScriptDump {
     public final TSFileWriter classesWriter = new AutoSplitPackagedWriter(2, Integer.MAX_VALUE, 200, CodeDump.SIMPLE_PACKAGE);
     public final TSFileWriter globalWriter = new PerFileWriter().setWithIndex(false).setWriteAsModule(false);
 
-    public ScriptDump(ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
+    public ScriptDump(CodeDump parent, ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
+        this.parent = parent;
         this.scriptType = manager.type;
         this.manager = manager;
         this.basePath = basePath;
         this.scriptPath = scriptPath;
-        this.transpiler = new Transpiler();
         this.accept = scriptPredicate;
     }
 
@@ -176,16 +182,8 @@ public class ScriptDump {
         return ensurePath("probe-types/global");
     }
 
-    public Path getSource() {
-        return ensurePath("src", true);
-    }
-
-    public Path getTest() {
-        return ensurePath("test", true);
-    }
-
     public void dumpClasses() throws IOException {
-        val globalClasses = transpiler.dump(recordedClasses);
+        val globalClasses = transpiler().dump(recordedClasses);
         val filesToModify = new DumpSpecificFiles(globalClasses, this);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyFiles(filesToModify));
 
@@ -279,7 +277,7 @@ public class ScriptDump {
     }
 
     public void dump() throws IOException, ClassNotFoundException {
-        transpiler.init();
+        transpiler().init();
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
         dumpClasses();
@@ -287,9 +285,7 @@ public class ScriptDump {
         dumpJSConfig();
     }
 
-    private static void write(Path writeTo, String content) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(writeTo)) {
-            writer.write(content);
-        }
+    public Transpiler transpiler() {
+        return parent.transpiler;
     }
 }

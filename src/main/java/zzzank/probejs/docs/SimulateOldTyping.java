@@ -28,7 +28,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
             return;
         }
 
-        val transpiler = scriptDump.transpiler;
+        val transpiler = scriptDump.transpiler();
         val namespace = new Wrapped.Namespace("Internal");
 
         for (val clazz : scriptDump.recordedClasses) {

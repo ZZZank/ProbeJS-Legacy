@@ -28,7 +28,7 @@ public class GlobalClasses implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        val converter = scriptDump.transpiler.typeConverter;
+        val converter = scriptDump.transpiler().typeConverter;
 
         val T = Types.generic("T", CLASS_PATH);
         val TRaw = Types.generic("T");

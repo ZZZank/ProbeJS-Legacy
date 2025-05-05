@@ -22,7 +22,7 @@ public class KubeEvents implements ProbeJSPlugin {
     @Override
     public void addGlobals(ScriptDump scriptDump) {
         val disabled = getSkippedEvents(scriptDump);
-        val converter = scriptDump.transpiler.typeConverter;
+        val converter = scriptDump.transpiler().typeConverter;
 
         List<Code> codes = new ArrayList<>();
         for (val info : EventJSInfos.sortedInfos()) {

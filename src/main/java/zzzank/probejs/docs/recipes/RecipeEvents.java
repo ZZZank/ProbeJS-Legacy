@@ -55,7 +55,7 @@ public class RecipeEvents implements ProbeJSPlugin {
             return;
         }
 
-        val reader = new RecipeEventReader(scriptDump.transpiler.typeConverter, getPredefinedRecipeDocs(scriptDump));
+        val reader = new RecipeEventReader(scriptDump.transpiler().typeConverter, getPredefinedRecipeDocs(scriptDump));
         reader.read(capturedRecipes);
         val parsed = reader.result.build().contextShield(BaseType.FormatType.RETURN);
 

@@ -63,9 +63,9 @@ public class ProbeDumpingThread extends Thread {
         RegistryInfos.refresh();
 
         val probeDump = new ProbeDump(messageSender);
-        probeDump.addScript(ScriptDump.CLIENT_DUMP.get());
-        probeDump.addScript(ScriptDump.SERVER_DUMP.get());
-        probeDump.addScript(ScriptDump.STARTUP_DUMP.get());
+        probeDump.addScript(ScriptDump.CLIENT_DUMP.apply(probeDump.codeDump));
+        probeDump.addScript(ScriptDump.SERVER_DUMP.apply(probeDump.codeDump));
+        probeDump.addScript(ScriptDump.STARTUP_DUMP.apply(probeDump.codeDump));
         try {
             probeDump.trigger();
         } catch (Throwable e) {

@@ -10,7 +10,7 @@ public class FunctionalInterfaces implements ProbeJSPlugin {
 
     @Override
     public void assignType(ScriptDump scriptDump) {
-        val converter = scriptDump.transpiler.typeConverter;
+        val converter = scriptDump.transpiler().typeConverter;
 
         for (val recorded : scriptDump.recordedClasses) {
             if (!recorded.isInterface()) {
