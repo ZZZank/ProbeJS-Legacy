@@ -185,7 +185,7 @@ public class ScriptDump {
     }
 
     public void dumpClasses() throws IOException {
-        val globalClasses = transpiler.dump(this, recordedClasses);
+        val globalClasses = transpiler.dump(recordedClasses);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyClasses(this, globalClasses));
 
         for (val entry : globalClasses.entrySet()) {

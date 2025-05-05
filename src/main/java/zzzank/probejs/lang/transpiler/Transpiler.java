@@ -5,7 +5,6 @@ import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
-import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.Asser;
@@ -38,10 +37,10 @@ public class Transpiler {
         });
     }
 
-    public Map<ClassPath, TypeScriptFile> dump(ScriptDump scriptDump, Collection<Clazz> clazzes) {
+    public Map<ClassPath, TypeScriptFile> dump(Collection<Clazz> clazzes) {
         val transpiler = new ClassTranspiler(
             typeConverter,
-            ClassTransformer.fromPlugin(scriptDump, this)
+            ClassTransformer.fromPlugin(this)
         );
         Map<ClassPath, TypeScriptFile> result = new HashMap<>();
 

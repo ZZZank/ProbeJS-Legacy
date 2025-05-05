@@ -72,7 +72,6 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
             registration.register(new RhizoReturnsSelf());
         }
         registration.register(
-            new KubeJSDenied(registration.scriptDump.manager),
             new InjectAnnotation(),
             new InjectArray(),
             new InjectBeans(ProbeConfig.fieldAsBeaning.get()),

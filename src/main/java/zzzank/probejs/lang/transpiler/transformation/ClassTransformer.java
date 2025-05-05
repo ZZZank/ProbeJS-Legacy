@@ -6,7 +6,6 @@ import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
 import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.transpiler.Transpiler;
-import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.ConstructorDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
@@ -19,8 +18,8 @@ import zzzank.probejs.plugin.ProbeJSPlugins;
  */
 public interface ClassTransformer {
 
-    static ClassTransformer fromPlugin(ScriptDump scriptDump, Transpiler transpiler) {
-        val registration = new ClassTransformerRegistration(scriptDump, transpiler);
+    static ClassTransformer fromPlugin(Transpiler transpiler) {
+        val registration = new ClassTransformerRegistration(transpiler);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.registerClassTransformer(registration));
         return new TransformerSequence(registration.getRegistered().toArray(new ClassTransformer[0]));
     }

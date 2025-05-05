@@ -2,8 +2,6 @@ package zzzank.probejs.docs;
 
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Lazy;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.docs.assignments.*;
 import zzzank.probejs.docs.bindings.Bindings;
@@ -21,7 +19,6 @@ import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.GameUtils;
 
 import java.util.*;
@@ -58,6 +55,7 @@ public final class ProbeBuiltinDocs implements ProbeJSPlugin {
             new BuiltinRecipeDocs(),
             new ForgeEvents(),
             //misc
+            new KubeJSDenied(),
             new GlobalClasses(),
             new ParamFix(),
             new Snippets(),
