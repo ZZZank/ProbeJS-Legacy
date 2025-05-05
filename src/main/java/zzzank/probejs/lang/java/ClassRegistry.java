@@ -20,10 +20,14 @@ import java.util.stream.Collectors;
 
 @HideFromJS
 public class ClassRegistry {
-    public static final ClassRegistry REGISTRY = new ClassRegistry(new ClazzMemberCollector());
+    public static final ClassRegistry REGISTRY = new ClassRegistry();
 
     public final Map<ClassPath, Clazz> foundClasses = new HashMap<>(256);
     public final MemberCollector collector;
+
+    public ClassRegistry() {
+        this(new ClazzMemberCollector());
+    }
 
     public ClassRegistry(MemberCollector memberCollector) {
         collector = memberCollector;
@@ -35,10 +39,10 @@ public class ClassRegistry {
         }
     }
 
-    public List<Clazz> fromClasses(Collection<Class<?>> classes) {
+    public List<Clazz> addClasses(Collection<Class<?>> classes) {
         return classes
             .stream()
-            .map(this::fromClass)
+            .map(this::addClass)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
@@ -48,7 +52,10 @@ public class ClassRegistry {
      * @return the {@link Clazz} object corresponds to the provided parameter {@code c}, or {@code null} if the class
      * fail to pass {@link #classPrefilter(Class)} or exceptions happen
      */
-    public Clazz fromClass(Class<?> c) {
+    public Clazz addClass(Class<?> c) {
+        if (c == null || c.isPrimitive()) {
+            return null;
+        }
         if (!classPrefilter(c)) {
             ProbeJS.LOGGER.debug("class '{}' did not pass class prefilter", c.getName());
             // We test if the class actually exists from forName
@@ -122,7 +129,7 @@ public class ClassRegistry {
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
                 .filter(new HashSet<>()::add) // deduplicate
-                .map(this::fromClass) // class adding happens here
+                .map(this::addClass) // class adding happens here
                 .filter(Objects::nonNull)
                 .filter(walked::add)
                 .collect(Collectors.toSet());
@@ -173,7 +180,7 @@ public class ClassRegistry {
                             ClassRegistry.class.getClassLoader()
                         );
                         if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
-                            fromClass(c);
+                            addClass(c);
                         }
                     } catch (Throwable ex) {
                         ProbeJS.LOGGER.error(

@@ -14,7 +14,6 @@ import zzzank.probejs.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -42,8 +41,8 @@ public class ProbeDump {
     private void onModChange() throws IOException {
         // Decompile stuffs - here we scan mod classes even if we don't decompile
         // So we have all classes without needing to decompile
-        ClassRegistry.REGISTRY.fromClasses(ClassScanner.scanForge());
-        ClassRegistry.REGISTRY.fromClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
+        ClassRegistry.REGISTRY.addClasses(ClassScanner.scanForge());
+        ClassRegistry.REGISTRY.addClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
 
         report(ProbeText.pjs("dump.cleaning"));
         for (ScriptDump scriptDump : scriptDumps) {
@@ -99,7 +98,7 @@ public class ProbeDump {
         // Fetch classes that will be used in the dump
         ClassRegistry.REGISTRY.loadFrom(CLASS_CACHE);
         for (ScriptDump scriptDump : scriptDumps) {
-            ClassRegistry.REGISTRY.fromClasses(scriptDump.retrieveClasses());
+            ClassRegistry.REGISTRY.addClasses(scriptDump.retrieveClasses());
         }
 
         ClassRegistry.REGISTRY.walkClass();

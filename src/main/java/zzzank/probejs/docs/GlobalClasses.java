@@ -24,6 +24,7 @@ public class GlobalClasses implements ProbeJSPlugin {
     public static final JSPrimitiveType JAVA_CLASS_PATH = Types.primitive("JavaClassPath");
     public static final JSPrimitiveType TS_CLASS_PATH = Types.primitive("TSClassPath");
     public static final JSPrimitiveType GLOBAL_CLASSES = Types.primitive("GlobalClasses");
+    public static final JSPrimitiveType LOAD_CLASSES = Types.primitive("LoadClass");
     public static final TSClassType J_CLASS = Types.type(ClassPath.fromRaw("zzzank.probejs.docs.duck.JClass"));
 
     @Override
@@ -57,7 +58,7 @@ public class GlobalClasses implements ProbeJSPlugin {
                 .exportDecl(false)
                 .build(),
             new TypeDecl(
-                "LoadClass",
+                LOAD_CLASSES.content,
                 Collections.singletonList(T),
                 Types.ternary(
                     T.symbol,

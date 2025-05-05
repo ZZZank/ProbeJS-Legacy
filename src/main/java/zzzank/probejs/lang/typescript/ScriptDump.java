@@ -79,8 +79,6 @@ public class ScriptDump {
         (clazz -> true)
     );
 
-    public static final String SIMPLE_PACKAGE = "simple_package_classes";
-
     public final ScriptType scriptType;
     public final ScriptManager manager;
     public final Path basePath;
@@ -91,7 +89,7 @@ public class ScriptDump {
     private final Predicate<Clazz> accept;
     private final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
 
-    public final TSFileWriter classesWriter = new AutoSplitPackagedWriter(2, Integer.MAX_VALUE, 200, SIMPLE_PACKAGE);
+    public final TSFileWriter classesWriter = new AutoSplitPackagedWriter(2, Integer.MAX_VALUE, 200, CodeDump.SIMPLE_PACKAGE);
     public final TSFileWriter globalWriter = new PerFileWriter().setWithIndex(false).setWriteAsModule(false);
 
     public ScriptDump(ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
@@ -99,7 +97,7 @@ public class ScriptDump {
         this.manager = manager;
         this.basePath = basePath;
         this.scriptPath = scriptPath;
-        this.transpiler = new Transpiler(this);
+        this.transpiler = new Transpiler();
         this.accept = scriptPredicate;
     }
 
@@ -187,7 +185,7 @@ public class ScriptDump {
     }
 
     public void dumpClasses() throws IOException {
-        val globalClasses = transpiler.dump(recordedClasses);
+        val globalClasses = transpiler.dump(this, recordedClasses);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyClasses(this, globalClasses));
 
         for (val entry : globalClasses.entrySet()) {

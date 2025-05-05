@@ -3,8 +3,8 @@ package zzzank.probejs.lang.typescript.refer;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.utils.Asser;
 
-import java.util.Objects;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -12,12 +12,31 @@ import java.util.stream.Stream;
  * @author ZZZank
  */
 public final class ImportInfo {
+    public static ImportInfo of(ClassPath path) {
+        return new ImportInfo(path);
+    }
+
+    public static ImportInfo ofDefault(ClassPath path) {
+        return of(path).addType(ImportType.ORIGINAL).addType(ImportType.TYPE);
+    }
+
+    public static ImportInfo ofType(ClassPath path) {
+        return of(path).addType(ImportType.TYPE);
+    }
+
+    public static ImportInfo ofOriginal(ClassPath path) {
+        return of(path).addType(ImportType.ORIGINAL);
+    }
+
+    public static ImportInfo ofStatic(ClassPath path) {
+        return of(path).addType(ImportType.STATIC);
+    }
 
     public final ClassPath path;
     public int imports;
 
     private ImportInfo(ClassPath path) {
-        this.path = path;
+        this.path = Asser.tNotNull(path, "ClassPath");
         this.imports = 0;
     }
 
@@ -36,30 +55,6 @@ public final class ImportInfo {
     public ImportInfo mergeWith(@NotNull ImportInfo addition) {
         imports |= addition.imports;
         return this;
-    }
-
-    public static ImportInfo of(ClassPath path, ImportType type) {
-        return new ImportInfo(Objects.requireNonNull(path)).addType(type);
-    }
-
-    public static ImportInfo of(ClassPath path, ImportType... types) {
-        return new ImportInfo(Objects.requireNonNull(path)).addTypes(types);
-    }
-
-    public static ImportInfo ofDefault(ClassPath path) {
-        return new ImportInfo(path).addType(ImportType.ORIGINAL).addType(ImportType.TYPE);
-    }
-
-    public static ImportInfo ofType(ClassPath path) {
-        return of(path, ImportType.TYPE);
-    }
-
-    public static ImportInfo ofOriginal(ClassPath path) {
-        return of(path, ImportType.ORIGINAL);
-    }
-
-    public static ImportInfo ofStatic(ClassPath path) {
-        return of(path, ImportType.STATIC);
     }
 
     @Override

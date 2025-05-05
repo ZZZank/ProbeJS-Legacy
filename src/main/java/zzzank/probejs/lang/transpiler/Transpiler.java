@@ -18,14 +18,12 @@ import java.util.*;
 public class Transpiler {
     public final TypeConverter typeConverter;
     public final Set<ClassPath> rejectedClasses = new HashSet<>();
-    private final ScriptDump scriptDump;
 
-    public Transpiler(ScriptDump scriptDump) {
-        this(scriptDump, new TypeConverter());
+    public Transpiler() {
+        this(new TypeConverter());
     }
 
-    public Transpiler(ScriptDump scriptDump, TypeConverter typeConverter) {
-        this.scriptDump = Asser.tNotNull(scriptDump, "scriptDump");
+    public Transpiler(TypeConverter typeConverter) {
         this.typeConverter = Asser.tNotNull(typeConverter, "typeConverter");
     }
 
@@ -40,7 +38,7 @@ public class Transpiler {
         });
     }
 
-    public Map<ClassPath, TypeScriptFile> dump(Collection<Clazz> clazzes) {
+    public Map<ClassPath, TypeScriptFile> dump(ScriptDump scriptDump, Collection<Clazz> clazzes) {
         val transpiler = new ClassTranspiler(
             typeConverter,
             ClassTransformer.fromPlugin(scriptDump, this)
