@@ -51,11 +51,8 @@ public class TagEvents implements ProbeJSPlugin {
 
         val groupNamespace = new Wrapped.Namespace("ServerEvents");
         for (val info : RegistryInfos.values()) {
-            val key = info.resKey;
-            val registry = info.raw;
-            if (registry == null) {
-                continue;
-            }
+            val key = info.resourceKey();
+
             val typeName = "Special." + NameUtils.rlToTitle(key.location().getPath());
             val tagName = typeName + "Tag";
             val extraName = key.location().getNamespace().equals("minecraft")

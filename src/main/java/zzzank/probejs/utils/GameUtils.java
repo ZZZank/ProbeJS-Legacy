@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.ProbeJS;
+import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.nio.ByteBuffer;
@@ -47,7 +48,7 @@ public class GameUtils {
 
             RegistryInfos.values()
                 .stream()
-                .flatMap(registryInfo -> registryInfo.names.stream())
+                .flatMap(RegistryInfo::objectIds)
                 .map(ResourceLocation::toString)
                 .sorted()
                 .forEach(s -> digest.update(s.getBytes()));

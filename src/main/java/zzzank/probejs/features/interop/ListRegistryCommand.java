@@ -5,19 +5,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tags.StaticTags;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import zzzank.probejs.features.bridge.Command;
+import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.stream.Stream;
 
 public abstract class ListRegistryCommand extends Command {
 
-    protected abstract Stream<ResourceLocation> getItems(Registry<?> registry);
+    protected abstract Stream<ResourceLocation> getItems(RegistryInfo registry);
 
     @Override
     public JsonElement handle(JsonObject payload) {
@@ -28,19 +27,16 @@ public abstract class ListRegistryCommand extends Command {
         }
 
         for (val info : RegistryInfos.values()) {
-            val key = info.resKey;
+            val key = info.resourceKey();
             val registryName = key.location().getNamespace().equals("minecraft") ?
                 key.location().getPath() :
                 key.location().toString();
             if (!registryKey.equals(registryName)) {
                 continue;
             }
-            if (info.raw == null) {
-                break;
-            }
 
             val result = new JsonArray();
-            getItems(info.raw)
+            getItems(info)
                 .map(ResourceLocation::toString)
                 .map(JsonPrimitive::new)
                 .forEach(result::add);
@@ -57,8 +53,8 @@ public abstract class ListRegistryCommand extends Command {
         }
 
         @Override
-        protected Stream<ResourceLocation> getItems(Registry<?> registry) {
-            return registry.keySet().stream();
+        protected Stream<ResourceLocation> getItems(RegistryInfo registry) {
+            return registry.objectIds();
         }
     }
 
@@ -70,9 +66,8 @@ public abstract class ListRegistryCommand extends Command {
         }
 
         @Override
-        protected Stream<ResourceLocation> getItems(Registry<?> registry) {
-            val tagHelper = StaticTags.get(registry.key().location());
-            return tagHelper == null ? Stream.of() : tagHelper.getAllTags().getAvailableTags().stream();
+        protected Stream<ResourceLocation> getItems(RegistryInfo registry) {
+            return registry.tagIds();
         }
     }
 }

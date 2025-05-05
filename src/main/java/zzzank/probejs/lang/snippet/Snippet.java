@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.snippet.parts.*;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Snippet {
 
@@ -87,7 +87,7 @@ public class Snippet {
             ProbeJS.LOGGER.error("no registry info found for key {}, skipping", key.location());
             return this;
         }
-        return choices(CollectUtils.mapToList(registry.names, ResourceLocation::toString));
+        return choices(registry.objectIds().map(ResourceLocation::toString).collect(Collectors.toList()));
     }
 
     private List<SnippetPart> getRecent() {

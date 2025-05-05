@@ -10,31 +10,20 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class RegistryInfo implements Comparable<RegistryInfo> {
 
-    public final Registry<?> raw;
     public final ForgeRegistry<? extends IForgeRegistryEntry<?>> forgeRaw;
-    public final ResourceKey<? extends Registry<?>> resKey;
-    public final Set<ResourceLocation> names;
+    private final ResourceKey<? extends Registry<?>> resKey;
     @Nullable
-    public final StaticTagHelper<?> tagHelper;
+    private final StaticTagHelper<?> tagHelper;
 
     public RegistryInfo(ForgeRegistry<? extends IForgeRegistryEntry<?>> forgeRegistry) {
         this.forgeRaw = forgeRegistry;
         this.resKey = forgeRaw.getRegistryKey();
-        this.names = forgeRaw.getKeys();
-        this.tagHelper = StaticTags.get(id());
-
-        this.raw = Registry.REGISTRY.get(id());
-    }
-
-    public RegistryInfo(Registry<?> registry) {
-        this.raw = registry;
-        this.forgeRaw = null;
-        this.resKey = raw.key();
-        this.names = raw.keySet();
         this.tagHelper = StaticTags.get(id());
     }
 
@@ -45,5 +34,30 @@ public class RegistryInfo implements Comparable<RegistryInfo> {
 
     public ResourceLocation id() {
         return resKey.location();
+    }
+
+    public ResourceKey<? extends Registry<?>> resourceKey() {
+        return resKey;
+    }
+
+    public Stream<ResourceLocation> objectIds() {
+        return forgeRaw.getKeys().stream();
+    }
+
+    public Stream<ResourceLocation> tagIds() {
+        if (tagHelper == null) {
+            return Stream.empty();
+        }
+        return tagHelper.getAllTags()
+            .getAvailableTags()
+            .stream();
+    }
+
+    public Collection<? extends Map.Entry<? extends ResourceKey<?>, ?>> entries() {
+        return forgeRaw.getEntries();
+    }
+
+    public Class<?> objectBaseType() {
+        return forgeRaw.getRegistrySuperType();
     }
 }

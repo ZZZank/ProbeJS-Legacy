@@ -19,12 +19,12 @@ import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.NameUtils;
 import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Assign types to all the registry types
@@ -45,10 +45,10 @@ public class RegistryTypes implements ProbeJSPlugin {
         }
 
         for (val info : RegistryInfos.values()) {
-            val key = info.resKey;
+            val key = info.resourceKey();
             val typeName = NameUtils.registryName(key);
             scriptDump.assignType(
-                info.forgeRaw.getRegistrySuperType(),
+                info.objectBaseType(),
                 Types.primitive(SpecialTypes.dot(typeName))
             );
             registryNames.add(Types.literal(key.location().toString()));
@@ -104,25 +104,20 @@ public class RegistryTypes implements ProbeJSPlugin {
         RegistryInfo info,
         boolean resolveAll
     ) {
-        val key = info.resKey;
+        val key = info.resourceKey();
 
         val types = resolveAll
-            ? Types.or(info.names.stream().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
+            ? Types.or(info.objectIds().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
             : Types.STRING;
         val typeName = NameUtils.registryName(key);
 
         val typeDecl = new TypeDecl(typeName, types);
         special.addCode(typeDecl);
 
-        val tagNames = info.tagHelper == null
-            ? new BaseType[0]
-            : info.tagHelper
-                .getAllTags()
-                .getAvailableTags()
-                .stream()
-                .map(ResourceLocation::toString)
-                .map(Types::literal)
-                .toArray(BaseType[]::new);
+        val tagNames = info.tagIds()
+            .map(ResourceLocation::toString)
+            .map(Types::literal)
+            .toArray(BaseType[]::new);
 
         val tagTypes = resolveAll ? Types.or(tagNames) : Types.STRING;
         val tagName = typeName + "Tag";
@@ -139,8 +134,8 @@ public class RegistryTypes implements ProbeJSPlugin {
 
         // We inject literal and tag into registry types
         for (val info : RegistryInfos.values()) {
-            val key = info.resKey;
-            makeClassModifications(globalClasses, key, info.forgeRaw.getRegistrySuperType());
+            val key = info.resourceKey();
+            makeClassModifications(globalClasses, key, info.objectBaseType());
         }
         makeClassModifications(globalClasses, Registry.REGISTRY.key(), Registry.class);
         makeClassModifications(globalClasses, Registry.DIMENSION_REGISTRY, Level.class);
@@ -177,18 +172,15 @@ public class RegistryTypes implements ProbeJSPlugin {
 
         val classes = new HashSet<Class<?>>();
         for (val info : RegistryInfos.values()) {
-            val registry = info.forgeRaw;
-            if (registry == null) {
-                continue;
-            }
 
-            for (var entry : registry.getEntries()) { //don't use val, lombok is not smart enough to infer types here
+            classes.add(info.objectBaseType());
+
+            for (var entry : info.entries()) { //don't use val, lombok is not smart enough to infer types here
                 val location = entry.getKey().location().toString();
                 if (filter.matcher(location).matches()) {
                     classes.add(entry.getValue().getClass());
                 }
             }
-            classes.add(registry.getRegistrySuperType());
         }
         return classes;
     }
@@ -200,16 +192,11 @@ public class RegistryTypes implements ProbeJSPlugin {
         }
 
         for (val info : RegistryInfos.values()) {
-            val registry = info.raw;
-            val key = info.resKey;
-            if (registry == null) {
-                continue;
-            }
+            val key = info.resourceKey();
 
-            val entries = CollectUtils.mapToList(
-                registry.keySet(),
-                ResourceLocation::toString
-            );
+            val entries =info.objectIds()
+                .map(ResourceLocation::toString)
+                .collect(Collectors.toList());
             if (entries.isEmpty()) {
                 continue;
             }
@@ -225,12 +212,10 @@ public class RegistryTypes implements ProbeJSPlugin {
                 .choices(entries)
                 .literal("\"");
 
-            val tags = info.tagHelper == null
-                ? Collections.<String>emptyList()
-                : CollectUtils.mapToList(
-                    info.tagHelper.getAllTags().getAvailableTags(),
-                    rl -> "#".concat(rl.toString())
-                );
+            val tags = info.tagIds()
+                .map(ResourceLocation::toString)
+                .map("#"::concat)
+                .collect(Collectors.toList());
             if (tags.isEmpty()) {
                 continue;
             }
