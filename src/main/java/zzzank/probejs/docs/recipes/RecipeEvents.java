@@ -71,7 +71,7 @@ public class RecipeEvents implements ProbeJSPlugin {
 
         //2.Inject types into the RecipeEventJS
         val recipeEventFile = globalClasses.get(ClassPath.fromJava(RecipeEventJS.class));
-        val recipeEvent = recipeEventFile.findCode(ClassDecl.class).orElse(null);
+        val recipeEvent = recipeEventFile.findCodeNullable(ClassDecl.class);
         if (recipeEvent == null) {
             ProbeJS.LOGGER.error("RecipeEventJS class declaration not found");
             return; // What???

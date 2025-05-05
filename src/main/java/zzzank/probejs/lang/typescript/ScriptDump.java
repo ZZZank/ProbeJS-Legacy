@@ -191,7 +191,7 @@ public class ScriptDump {
         for (val entry : globalClasses.entrySet()) {
             val classPath = entry.getKey();
             val output = entry.getValue();
-            val classDecl = output.findCode(ClassDecl.class).orElse(null);
+            val classDecl = output.findCodeNullable(ClassDecl.class);
             if (classDecl == null) {
                 continue;
             }

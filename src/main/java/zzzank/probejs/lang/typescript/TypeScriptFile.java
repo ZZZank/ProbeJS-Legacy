@@ -1,6 +1,8 @@
 package zzzank.probejs.lang.typescript;
 
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
@@ -76,13 +78,18 @@ public class TypeScriptFile {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @NotNull
     public <T extends Code> Optional<T> findCode(Class<T> type) {
-        for (Code code : codes) {
+        return Optional.ofNullable(findCodeNullable(type));
+    }
+
+    @Nullable
+    public <T extends Code> T findCodeNullable(Class<T> type) {
+        for (val code : codes) {
             if (type.isInstance(code)) {
-                return Optional.of((T) code);
+                return (T) code;
             }
         }
-        return Optional.empty();
+        return null;
     }
 }

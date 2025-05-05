@@ -146,7 +146,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         if (typeScriptFile == null) {
             return;
         }
-        val classDecl = typeScriptFile.findCode(ClassDecl.class).orElse(null);
+        val classDecl = typeScriptFile.findCodeNullable(ClassDecl.class);
         if (classDecl == null) {
             return;
         }
