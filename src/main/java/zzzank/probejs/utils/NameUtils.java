@@ -56,6 +56,9 @@ public class NameUtils {
     }
 
     public static String firstLower(String word) {
+        if (word.isEmpty() || !Character.isLetter(word.charAt(0))) {
+            return word;
+        }
         return Character.toLowerCase(word.charAt(0)) + word.substring(1);
     }
 
