@@ -2,8 +2,8 @@ package zzzank.probejs.docs;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.typescript.DumpSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -14,7 +14,6 @@ import zzzank.probejs.lang.typescript.code.type.utility.TSUtilityType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
 import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author ZZZank
@@ -71,15 +70,15 @@ public class GlobalClasses implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        val classT = Types.type(Class.class).withParams("T");
-        val jClass = Statements.clazz(J_CLASS.classPath.getName())
-            .abstractClass()
-            .typeVariables("T")
-            .field("prototype", Types.NULL)
-            .field("__javaObject__", classT);
-        val file = new TypeScriptFile(J_CLASS.classPath);
-        file.addCode(jClass.build());
-        globalClasses.put(J_CLASS.classPath, file);
+    public void modifyFiles(DumpSpecificFiles files) {
+        files.addDumpSpecificFile(
+            J_CLASS.classPath,
+            Statements.clazz(J_CLASS.classPath.getName())
+                .abstractClass()
+                .typeVariables("T")
+                .field("prototype", Types.NULL)
+                .field("__javaObject__", Types.type(Class.class).withParams("T"))
+                .build()
+        );
     }
 }

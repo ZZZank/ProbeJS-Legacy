@@ -19,7 +19,7 @@ public class Require extends BaseFunction {
         if (!ProbeConfig.isolatedScopes.get()) {
             manager.type.console.warn(String.format(
                 "'require(...)' used without enabling '%s' config, this might cause inconsistency between IDE report and actual behaviour",
-                ProbeConfig.isolatedScopes.name
+                ProbeConfig.isolatedScopes.name()
             ));
         }
         String name;

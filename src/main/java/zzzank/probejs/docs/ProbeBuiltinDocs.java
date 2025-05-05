@@ -10,13 +10,12 @@ import zzzank.probejs.docs.events.KubeEvents;
 import zzzank.probejs.docs.recipes.RecipeEvents;
 import zzzank.probejs.docs.recipes.doc.BuiltinRecipeDocs;
 import zzzank.probejs.features.kubejs.BindingFilter;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.transpiler.TypeConverter;
+import zzzank.probejs.lang.typescript.DumpSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.GameUtils;
@@ -85,8 +84,8 @@ public final class ProbeBuiltinDocs implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        forEach(builtinDoc -> builtinDoc.modifyClasses(scriptDump, globalClasses));
+    public void modifyFiles(DumpSpecificFiles files) {
+        forEach(builtinDoc -> builtinDoc.modifyFiles(files));
     }
 
     @Override

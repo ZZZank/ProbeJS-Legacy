@@ -6,9 +6,8 @@ import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.typescript.DumpSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
@@ -64,18 +63,18 @@ public class RecipeEvents implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        if (scriptDump.scriptType == ScriptType.CLIENT) {
+    public void modifyFiles(DumpSpecificFiles files) {
+        if (files.scriptDump().scriptType == ScriptType.CLIENT) {
             return;
         }
 
         //2.Inject types into the RecipeEventJS
-        val recipeEventFile = globalClasses.get(ClassPath.fromJava(RecipeEventJS.class));
-        val recipeEvent = recipeEventFile.findCodeNullable(ClassDecl.class);
+        val recipeEvent = files.requestCode(RecipeEventJS.class, ClassDecl.class);
         if (recipeEvent == null) {
             ProbeJS.LOGGER.error("RecipeEventJS class declaration not found");
             return; // What???
         }
+
         for (val m : recipeEvent.methods) {
             if (m.params.isEmpty() && m.name.equals("getRecipes")) {
                 m.returnType = DOCUMENTED;

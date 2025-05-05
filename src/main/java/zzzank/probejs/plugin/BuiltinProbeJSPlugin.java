@@ -7,15 +7,12 @@ import dev.latvian.kubejs.util.ClassFilter;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.events.*;
 import zzzank.probejs.features.rhizo.RhizoState;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.transpiler.transformation.impl.*;
+import zzzank.probejs.lang.typescript.DumpSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
-
-import java.util.Map;
 
 public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin {
 
@@ -43,8 +40,8 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        new TypingModificationEventJS(scriptDump, globalClasses).post(ScriptType.CLIENT, ProbeEvents.MODIFY_DOC);
+    public void modifyFiles(DumpSpecificFiles files) {
+        new TypingModificationEventJS(files).post(ScriptType.CLIENT, ProbeEvents.MODIFY_DOC);
     }
 
     @Override

@@ -1,13 +1,9 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
-import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.lang.typescript.DumpSpecificFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-
-import java.util.Map;
 
 /**
  * @author ZZZank
@@ -15,9 +11,9 @@ import java.util.Map;
 public class KubeJSDenied implements ProbeJSPlugin {
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        val scriptManager = scriptDump.manager;
-        for (var scriptFile : globalClasses.values()) {
+    public void modifyFiles(DumpSpecificFiles files) {
+        val scriptManager = files.scriptDump().manager;
+        for (val scriptFile : files.globalFiles().values()) {
             val classDecl = scriptFile.findCodeNullable(ClassDecl.class);
             if (classDecl == null
                 || classDecl.nativeClazz == null
@@ -30,6 +26,7 @@ public class KubeJSDenied implements ProbeJSPlugin {
                 "You should not load the class, or KubeJS will throw an error.",
                 "Loading the class using require() will not throw an error, but the class will be undefined."
             );
+            files.markRequested(scriptFile.path);
         }
     }
 }
