@@ -31,7 +31,7 @@ public abstract class MixinEventJS {
             EventJSInfos.KNOWN.put(id, new EventJSInfo(t, (EventJS) (Object) this, id, sub));
         } else {
             e.scriptTypes().add(t);
-            e.sub().setIfAbsent(sub);
+            e.sub = sub;
         }
     }
 }

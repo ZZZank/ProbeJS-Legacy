@@ -1,15 +1,14 @@
 package zzzank.probejs.features.kubejs;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -18,9 +17,12 @@ import java.util.stream.Collectors;
 public final class EventJSInfos {
 
     public static final Map<String, EventJSInfo> KNOWN = new HashMap<>();
+    public static final Codec<List<EventJSInfo>> CODEC = EventJSInfo.CODEC.listOf();
 
-    public static Set<EventJSInfo> sortedInfos() {
-        return new TreeSet<>(KNOWN.values());
+    public static List<EventJSInfo> sortedInfos() {
+        val sorted = new ArrayList<>(KNOWN.values());
+        sorted.sort(null);
+        return sorted;
     }
 
     public static Set<Class<?>> provideClasses() {
@@ -32,16 +34,15 @@ public final class EventJSInfos {
             return;
         }
         try (val reader = Files.newBufferedReader(path)) {
-            val obj = ProbeJS.GSON.fromJson(reader, JsonObject.class);
+            val obj = ProbeJS.GSON.fromJson(reader, JsonArray.class);
             if (obj == null) {
                 return;
             }
-            for (val entry : obj.entrySet()) {
-                val id = entry.getKey();
-                val info = EventJSInfo.fromJson(id, entry.getValue().getAsJsonObject());
-                if (info != null) {
-                    KNOWN.put(id, info);
-                }
+            val decoded = CODEC.parse(JsonOps.INSTANCE, obj)
+                .resultOrPartial(ProbeJS.LOGGER::error)
+                .orElse(Collections.emptyList());
+            for (val info : decoded) {
+                KNOWN.put(info.id(), info);
             }
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when reading EventJS infos", e);
@@ -50,12 +51,9 @@ public final class EventJSInfos {
 
     public static void writeTo(Path path) {
         try (val writer = Files.newBufferedWriter(path)) {
-            val obj = new JsonObject();
-            for (val info : KNOWN.values()) {
-                val pair = info.toJson();
-                obj.add(pair.getKey(), pair.getValue());
-            }
-            ProbeJS.GSON_WRITER.toJson(obj, writer);
+            CODEC.encodeStart(JsonOps.INSTANCE, sortedInfos())
+                .resultOrPartial(ProbeJS.LOGGER::error)
+                .ifPresent(element -> ProbeJS.GSON_WRITER.toJson(element, writer));
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when writing EventJS infos", e);
         }

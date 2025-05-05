@@ -1,21 +1,17 @@
 package zzzank.probejs.features.kubejs;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.ProbeJS;
-import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.JsonUtils;
-import zzzank.probejs.utils.Mutable;
-import zzzank.probejs.utils.ReflectUtils;
+import zzzank.probejs.utils.PJSCodecs;
 
 import javax.annotation.Nullable;
-import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Map;
 
 /**
  * @author ZZZank
@@ -26,52 +22,27 @@ import java.util.Map;
 @EqualsAndHashCode
 @AllArgsConstructor
 public final class EventJSInfo implements Comparable<EventJSInfo> {
-    private final Class<? extends EventJS> clazzRaw;
+    private final Class<?> clazzRaw;
     private final String id;
     private final boolean cancellable;
     private final EnumSet<ScriptType> scriptTypes;
-    private final Mutable<String> sub;
+    public String sub;
+
+    public static final Codec<EventJSInfo> CODEC = RecordCodecBuilder.create(
+        builder -> builder.group(
+            PJSCodecs.CLASS_CODEC.fieldOf("clazz").forGetter(EventJSInfo::clazzRaw),
+            Codec.STRING.fieldOf("id").forGetter(EventJSInfo::id),
+            Codec.BOOL.fieldOf("cancellable").forGetter(EventJSInfo::cancellable),
+            PJSCodecs.SCRIPT_TYPE_CODEC.listOf()
+                .xmap(EnumSet::copyOf, ArrayList::new)
+                .fieldOf("scriptTypes")
+                .forGetter(EventJSInfo::scriptTypes),
+            Codec.STRING.optionalFieldOf("sub", null).forGetter(EventJSInfo::sub)
+        ).apply(builder, EventJSInfo::new)
+    );
 
     public EventJSInfo(ScriptType type, EventJS event, String id, @Nullable String sub) {
-        this(event.getClass(), id, event.canCancel(), EnumSet.of(type), new Mutable<>(sub));
-    }
-
-    @Nullable
-    public static EventJSInfo fromJson(String id, JsonObject json) {
-        //class
-        val clazz = ReflectUtils.classOrNull(json.get("class").getAsString(), ProbeJS.LOGGER);
-        if (clazz == null || !EventJS.class.isAssignableFrom(clazz)) {
-            return null;
-        }
-        //type
-        val types = EnumSet.noneOf(ScriptType.class);
-        for (val element : json.get("type").getAsJsonArray()) {
-            types.add(ScriptType.valueOf(element.getAsString()));
-        }
-        //sub
-        val sub = json.has("sub") ? json.get("sub").getAsString() : null;
-        //cancellable
-        val cancellable = json.has("cancellable") && json.get("cancellable").getAsBoolean();
-
-        return new EventJSInfo(
-            (Class<? extends EventJS>) clazz,
-            id,
-            cancellable,
-            types,
-            new Mutable<>(sub)
-        );
-    }
-
-    public Map.Entry<String, JsonObject> toJson() {
-        val m = CollectUtils.ofMap(
-            "class", clazzRaw.getName(),
-            "type", CollectUtils.mapToList(scriptTypes, ScriptType::name),
-            "cancellable", this.cancellable
-        );
-        if (sub.notNull()) {
-            m.put("sub", sub.get());
-        }
-        return new AbstractMap.SimpleImmutableEntry<>(id, (JsonObject) JsonUtils.parseObject(m));
+        this(event.getClass(), id, event.canCancel(), EnumSet.of(type), sub);
     }
 
     @Override
