@@ -38,6 +38,7 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
             .map(converter::convertType)
             .filter(t -> t != Types.ANY)
             .collect(Collectors.toList());
+
         ClassDecl decl;
         if (clazz.isInterface()) {
             decl = new InterfaceDecl(
@@ -54,6 +55,7 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
                 variableTypes
             );
         }
+        decl.nativeClazz = clazz;
 
         for (val fieldInfo : clazz.fields) {
             val fieldDecl = field.transpile(fieldInfo);
