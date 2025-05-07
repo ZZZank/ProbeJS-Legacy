@@ -1,4 +1,4 @@
-package zzzank.probejs.lang.typescript;
+package zzzank.probejs.lang.typescript.dump;
 
 import com.google.common.collect.Maps;
 import dev.latvian.kubejs.util.UtilsJS;
@@ -20,15 +20,9 @@ import java.util.Set;
  * @author ZZZank
  */
 public class CodeDump {
-    public static final String SIMPLE_PACKAGE = "simple_package_classes";
 
     public final Transpiler transpiler = new Transpiler();
-    public final TSFileWriter writer = new AutoSplitPackagedWriter(
-        2,
-        Integer.MAX_VALUE,
-        200,
-        SIMPLE_PACKAGE
-    );
+    public final TSFileWriter writer = AutoSplitPackagedWriter.defaultSetup();
     public final Set<ClassPath> requestedBySubDump = new HashSet<>();
     public final Path path;
 

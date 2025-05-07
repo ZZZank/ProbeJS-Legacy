@@ -8,7 +8,7 @@ import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
-import zzzank.probejs.lang.typescript.CodeDump;
+import zzzank.probejs.lang.typescript.dump.CodeDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.utils.*;
 
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

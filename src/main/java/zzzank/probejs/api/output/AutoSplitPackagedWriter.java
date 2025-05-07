@@ -16,6 +16,17 @@ import java.util.*;
  */
 public class AutoSplitPackagedWriter extends AbstractWriter {
 
+    public static final String SIMPLE_PACKAGE = "simple_package_classes";
+
+    public static AutoSplitPackagedWriter defaultSetup() {
+        return new AutoSplitPackagedWriter(
+            2,
+            Integer.MAX_VALUE,
+            200,
+            SIMPLE_PACKAGE
+        );
+    }
+
     protected Map<String, List<TypeScriptFile>> packaged = Collections.singletonMap(null, new ArrayList<>());
 
     public final int minPackageCount;

@@ -1,8 +1,10 @@
-package zzzank.probejs.lang.typescript;
+package zzzank.probejs.lang.typescript.dump;
 
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.typescript.ScriptDump;
+import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.utils.Asser;
 

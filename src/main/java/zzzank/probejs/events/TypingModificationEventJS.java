@@ -2,7 +2,7 @@ package zzzank.probejs.events;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.dump.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.util.Map;

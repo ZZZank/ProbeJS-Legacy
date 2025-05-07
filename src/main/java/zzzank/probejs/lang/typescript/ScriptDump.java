@@ -13,11 +13,7 @@ import lombok.val;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.FileUtils;
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.ProbePaths;
-import zzzank.probejs.api.output.AutoSplitPackagedWriter;
-import zzzank.probejs.api.output.PerFileWriter;
-import zzzank.probejs.api.output.TSFileWriter;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -27,6 +23,10 @@ import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.dump.CodeDump;
+import zzzank.probejs.lang.typescript.dump.TSFilesDump;
+import zzzank.probejs.lang.typescript.dump.TSGlobalDump;
+import zzzank.probejs.lang.typescript.dump.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.CollectUtils;
@@ -89,13 +89,12 @@ public class ScriptDump {
     public final Path basePath;
     public final Path scriptPath;
 
-    public final Map<String, TypeScriptFile> globals = new HashMap<>();
     public final Set<Clazz> recordedClasses = new HashSet<>();
     private final Predicate<Clazz> accept;
     private final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
 
-    public final TSFileWriter classesWriter = new AutoSplitPackagedWriter(2, Integer.MAX_VALUE, 200, CodeDump.SIMPLE_PACKAGE);
-    public final TSFileWriter globalWriter = new PerFileWriter().setWithIndex(false).setWriteAsModule(false);
+    public final TSFilesDump filesDump = new TSFilesDump(getPackageFolder());
+    public final TSGlobalDump globalDump = new TSGlobalDump(getGlobalFolder());
 
     public ScriptDump(CodeDump parent, ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
         this.parent = parent;
@@ -141,7 +140,7 @@ public class ScriptDump {
     }
 
     public void addGlobal(String identifier, Collection<String> excludedNames, Code... content) {
-        val file = globals.computeIfAbsent(
+        val file = globalDump.globals.computeIfAbsent(
             identifier,
             (k) -> new TypeScriptFile(ClassPath.fromRaw(k))
         );
@@ -236,26 +235,15 @@ public class ScriptDump {
                 Global type exported for convenience, use class-specific types if there's a naming conflict.""");
             output.addCode(typeConvertible);
             output.addCode(typeGlobal);
-
-            classesWriter.accept(output);
         }
 
-        classesWriter.write(getPackageFolder());
+        filesDump.files = globalClasses.values();
+        filesDump.dump();
     }
 
     public void dumpGlobal() throws IOException {
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
-
-        for (val file : globals.values()) {
-            globalWriter.accept(file);
-        }
-
-        try (val writer = Files.newBufferedWriter(getGlobalFolder().resolve("index.d.ts"))) {
-            for (val identifier : globals.keySet()) {
-                writer.write(String.format("export * from %s\n", ProbeJS.GSON.toJson("./" + identifier)));
-            }
-        }
-        globalWriter.write(getGlobalFolder());
+        globalDump.dump();
     }
 
     public void dumpJSConfig() throws IOException {
