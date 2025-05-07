@@ -52,7 +52,7 @@ public final class EventJSInfos {
     public static void writeTo(Path path) {
         try (val writer = Files.newBufferedWriter(path)) {
             CODEC.encodeStart(JsonOps.INSTANCE, sortedInfos())
-                .resultOrPartial(ProbeJS.LOGGER::error)
+                .resultOrPartial(error -> ProbeJS.LOGGER.error("Error when serializing EventJS infos: {}", error))
                 .ifPresent(element -> ProbeJS.GSON_WRITER.toJson(element, writer));
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when writing EventJS infos", e);

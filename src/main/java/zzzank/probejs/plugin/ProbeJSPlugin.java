@@ -13,7 +13,6 @@ import zzzank.probejs.lang.transpiler.redirect.TypeRedirect;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.typescript.DumpSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
@@ -44,15 +43,6 @@ public interface ProbeJSPlugin {
      * @see Transpiler#reject(Class)
      */
     default void denyTypes(Transpiler transpiler) {
-    }
-
-    /**
-     * Used to modify the classes that will be dumped to a certain script type.
-     * <br>
-     * Can add / remove dumps by mutating the globalClasses.
-     */
-    @Deprecated
-    default void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
     }
 
     /// Used for modifying the files that will be dumped to a certain script type.
