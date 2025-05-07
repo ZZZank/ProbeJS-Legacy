@@ -11,11 +11,12 @@ import java.nio.file.Path;
 public abstract class TSDumpBase implements TSDump {
     protected final TSFileWriter writer;
     protected final Path writeTo;
-    protected boolean running = false;
+    protected final ReporterImpl reporter;
 
     public TSDumpBase(TSFileWriter writer, Path writeTo) {
         this.writer = writer;
         this.writeTo = writeTo;
+        reporter = new ReporterImpl(this.writer);
     }
 
     protected abstract void dumpImpl() throws IOException;
@@ -27,25 +28,45 @@ public abstract class TSDumpBase implements TSDump {
 
     @Override
     public void dump() throws IOException {
-        running = true;
+        reporter.running = true;
         try {
+            ensureFolder();
             dumpImpl();
         } catch (IOException io) {
             throw io;
         } catch (Exception e) {
             throw (e instanceof RuntimeException runtime ? runtime : new RuntimeException(e));
         } finally {
-            running = false;
+            reporter.running = false;
         }
     }
 
     @Override
-    public TSFileWriter writer() {
-        return writer;
+    public ReporterImpl reporter() {
+        return reporter;
     }
 
-    @Override
-    public boolean running() {
-        return running;
+    public static final class ReporterImpl implements Reporter {
+        private final TSFileWriter writer;
+        private boolean running = false;
+
+        public ReporterImpl(TSFileWriter writer) {
+            this.writer = writer;
+        }
+
+        @Override
+        public boolean running() {
+            return running;
+        }
+
+        @Override
+        public int countTotal() {
+            return writer.countAcceptedFiles();
+        }
+
+        @Override
+        public int countWritten() {
+            return writer.countWrittenFiles();
+        }
     }
 }

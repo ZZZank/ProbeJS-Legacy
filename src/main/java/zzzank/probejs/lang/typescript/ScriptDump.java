@@ -23,10 +23,7 @@ import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.dump.CodeDump;
-import zzzank.probejs.lang.typescript.dump.TSFilesDump;
-import zzzank.probejs.lang.typescript.dump.TSGlobalDump;
-import zzzank.probejs.lang.typescript.dump.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.dump.*;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.CollectUtils;
@@ -44,7 +41,7 @@ import java.util.function.Predicate;
  * maintaining the file structures
  */
 public class ScriptDump {
-    public static final Function<CodeDump, ScriptDump> SERVER_DUMP = (codeDump) -> {
+    public static final Function<SharedDump, ScriptDump> SERVER_DUMP = (codeDump) -> {
         ServerScriptManager scriptManager = ServerScriptManager.instance;
         if (scriptManager == null) {
             return null;
@@ -62,7 +59,7 @@ public class ScriptDump {
         );
     };
 
-    public static final Function<CodeDump, ScriptDump> CLIENT_DUMP = (codeDump) -> new ScriptDump(
+    public static final Function<SharedDump, ScriptDump> CLIENT_DUMP = (codeDump) -> new ScriptDump(
         codeDump,
         KubeJS.clientScriptManager,
         ProbePaths.PROBE.resolve("client"),
@@ -73,7 +70,7 @@ public class ScriptDump {
             .noneMatch(Dist::isDedicatedServer)
     );
 
-    public static final Function<CodeDump, ScriptDump> STARTUP_DUMP = (codeDump) -> new ScriptDump(
+    public static final Function<SharedDump, ScriptDump> STARTUP_DUMP = (codeDump) -> new ScriptDump(
         codeDump,
         KubeJS.startupScriptManager,
         ProbePaths.PROBE.resolve("startup"),
@@ -81,7 +78,7 @@ public class ScriptDump {
         (clazz -> true)
     );
 
-    public final CodeDump parent;
+    public final SharedDump parent;
 
     public final ScriptType scriptType;
     public final ScriptManager manager;
@@ -93,16 +90,18 @@ public class ScriptDump {
     private final Predicate<Clazz> accept;
     private final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
 
-    public final TSFilesDump filesDump = new TSFilesDump(getPackageFolder());
-    public final TSGlobalDump globalDump = new TSGlobalDump(getGlobalFolder());
+    public final TSFilesDump filesDump;
+    public final TSGlobalDump globalDump;
 
-    public ScriptDump(CodeDump parent, ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
+    public ScriptDump(SharedDump parent, ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
         this.parent = parent;
         this.scriptType = manager.type;
         this.manager = manager;
         this.basePath = basePath;
         this.scriptPath = scriptPath;
         this.accept = scriptPredicate;
+        filesDump = new TSFilesDump(getPackageFolder());
+        globalDump = new TSGlobalDump(getGlobalFolder());
     }
 
     public void acceptClasses(Collection<Clazz> classes) {
@@ -186,7 +185,7 @@ public class ScriptDump {
         val filesToModify = new TypeSpecificFiles(globalClasses, this);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyFiles(filesToModify));
         val requested = filesToModify.requested();
-        this.parent.requestedBySubDump.addAll(requested);
+        this.parent.denied.addAll(requested);
 
         for (val entry : globalClasses.entrySet()) {
             val classPath = entry.getKey();

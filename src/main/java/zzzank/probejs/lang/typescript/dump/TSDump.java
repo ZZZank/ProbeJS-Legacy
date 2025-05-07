@@ -1,8 +1,9 @@
 package zzzank.probejs.lang.typescript.dump;
 
-import zzzank.probejs.api.output.TSFileWriter;
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -11,9 +12,27 @@ import java.nio.file.Path;
 public interface TSDump {
     Path writeTo();
 
+    default void clearFiles() throws IOException {
+        if (Files.exists(writeTo())) {
+            FileUtils.deleteDirectory(writeTo().toFile());
+        }
+    }
+
+    default void ensureFolder() throws IOException {
+        if (Files.notExists(writeTo())) {
+            Files.createDirectories(writeTo());
+        }
+    }
+
     void dump() throws IOException;
 
-    TSFileWriter writer();
+    Reporter reporter();
 
-    boolean running();
+    interface Reporter {
+        boolean running();
+
+        int countTotal();
+
+        int countWritten();
+    }
 }

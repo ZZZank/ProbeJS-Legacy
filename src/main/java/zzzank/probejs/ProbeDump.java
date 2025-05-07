@@ -8,7 +8,7 @@ import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
-import zzzank.probejs.lang.typescript.dump.CodeDump;
+import zzzank.probejs.lang.typescript.dump.SharedDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.utils.*;
 
@@ -27,7 +27,7 @@ public class ProbeDump {
     public static final Path CLASS_CACHE = ProbePaths.PROBE.resolve("classes.txt");
     public static final Path EVENT_CACHE = ProbePaths.PROBE.resolve("kube_event.json");
 
-    final CodeDump codeDump = new CodeDump(ProbePaths.PROBE.resolve("shared"));
+    final SharedDump codeDump = new SharedDump(ProbePaths.PROBE.resolve("shared"));
     final SchemaDump schemaDump = new SchemaDump();
     final SnippetDump snippetDump = new SnippetDump();
     final Collection<ScriptDump> scriptDumps = new ArrayList<>();
