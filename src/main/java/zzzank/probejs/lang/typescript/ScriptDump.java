@@ -19,7 +19,6 @@ import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.dump.*;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.CollectUtils;

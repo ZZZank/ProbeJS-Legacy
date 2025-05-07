@@ -1,4 +1,4 @@
-package zzzank.probejs.lang.typescript.dump;
+package zzzank.probejs.lang.typescript;
 
 import zzzank.probejs.api.dump.TSFilesDump;
 import zzzank.probejs.lang.java.ClassRegistry;

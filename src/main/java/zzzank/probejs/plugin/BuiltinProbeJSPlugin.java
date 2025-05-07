@@ -11,7 +11,7 @@ import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.transpiler.transformation.impl.*;
-import zzzank.probejs.lang.typescript.dump.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 
 public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin {

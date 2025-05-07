@@ -1,7 +1,7 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
-import zzzank.probejs.lang.typescript.dump.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 

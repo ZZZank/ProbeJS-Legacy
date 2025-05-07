@@ -1,10 +1,8 @@
-package zzzank.probejs.lang.typescript.dump;
+package zzzank.probejs.lang.typescript;
 
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.utils.Asser;
 
@@ -42,7 +40,7 @@ public class TypeSpecificFiles {
         return got.findCodeNullable(codeType);
     }
 
-    public void deRequest(ClassPath path) {
+    public void unRequest(ClassPath path) {
         requested.remove(path);
     }
 

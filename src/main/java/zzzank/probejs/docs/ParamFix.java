@@ -5,7 +5,7 @@ import dev.latvian.kubejs.recipe.RecipeEventJS;
 import dev.latvian.kubejs.text.Text;
 import net.minecraft.core.Registry;
 import zzzank.probejs.docs.assignments.SpecialTypes;
-import zzzank.probejs.lang.typescript.dump.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
