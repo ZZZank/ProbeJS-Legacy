@@ -21,6 +21,10 @@ class ConfigEntryImpl<T> implements ConfigEntry<T> {
         this.name = Asser.tNotNull(name, "name");
         this.binding = Asser.tNotNull(binding, "binding");
         this.properties = Asser.tNotNull(properties, "properties");
-        this.parent = Asser.tNotNull(parent, "parent");
+        this.parent = parent;
+
+        if (!this.isRoot()) {
+            Asser.tNotNull(parent, "parent for non-root config entry");
+        }
     }
 }
