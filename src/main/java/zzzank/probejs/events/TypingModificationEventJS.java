@@ -2,7 +2,7 @@ package zzzank.probejs.events;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.DumpSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.util.Map;
@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 
 public class TypingModificationEventJS extends ScriptEventJS {
 
-    private final DumpSpecificFiles files;
+    private final TypeSpecificFiles files;
 
-    public TypingModificationEventJS(DumpSpecificFiles files) {
+    public TypingModificationEventJS(TypeSpecificFiles files) {
         super(files.scriptDump());
         this.files = files;
     }

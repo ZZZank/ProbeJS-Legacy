@@ -11,7 +11,7 @@ import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.transpiler.redirect.TypeRedirect;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
-import zzzank.probejs.lang.typescript.DumpSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -47,12 +47,12 @@ public interface ProbeJSPlugin {
 
     /// Used for modifying the files that will be dumped to a certain script type.
     ///
-    /// modify an existed file via [DumpSpecificFiles#request(zzzank.probejs.lang.java.clazz.ClassPath)] and its
+    /// modify an existed file via [TypeSpecificFiles#request(zzzank.probejs.lang.java.clazz.ClassPath)] and its
     /// overloads
     ///
-    /// add a new file via [DumpSpecificFiles#addDumpSpecificFile(zzzank.probejs.lang.typescript.TypeScriptFile)] and
+    /// add a new file via [TypeSpecificFiles#addDumpSpecificFile(zzzank.probejs.lang.typescript.TypeScriptFile)] and
     /// its overloads
-    default void modifyFiles(DumpSpecificFiles files) {
+    default void modifyFiles(TypeSpecificFiles files) {
     }
 
     /**

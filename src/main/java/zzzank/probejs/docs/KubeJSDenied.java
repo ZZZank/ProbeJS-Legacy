@@ -1,7 +1,7 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
-import zzzank.probejs.lang.typescript.DumpSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
@@ -11,7 +11,7 @@ import zzzank.probejs.plugin.ProbeJSPlugin;
 public class KubeJSDenied implements ProbeJSPlugin {
 
     @Override
-    public void modifyFiles(DumpSpecificFiles files) {
+    public void modifyFiles(TypeSpecificFiles files) {
         val scriptManager = files.scriptDump().manager;
         for (val scriptFile : files.globalFiles().values()) {
             val classDecl = scriptFile.findCodeNullable(ClassDecl.class);

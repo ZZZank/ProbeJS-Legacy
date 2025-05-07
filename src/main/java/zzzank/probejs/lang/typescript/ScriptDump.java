@@ -32,7 +32,6 @@ import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -184,7 +183,7 @@ public class ScriptDump {
 
     public void dumpClasses() throws IOException {
         val globalClasses = transpiler().dump(recordedClasses);
-        val filesToModify = new DumpSpecificFiles(globalClasses, this);
+        val filesToModify = new TypeSpecificFiles(globalClasses, this);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyFiles(filesToModify));
 
         for (val entry : globalClasses.entrySet()) {

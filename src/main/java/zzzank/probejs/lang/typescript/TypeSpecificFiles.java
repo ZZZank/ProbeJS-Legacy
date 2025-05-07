@@ -12,13 +12,13 @@ import java.util.function.BiFunction;
 /**
  * @author ZZZank
  */
-public class DumpSpecificFiles {
+public class TypeSpecificFiles {
     private final Map<ClassPath, TypeScriptFile> globalFiles;
     private final ScriptDump scriptDump;
     private final Set<ClassPath> requested = new HashSet<>();
     private final Map<ClassPath, TypeScriptFile> dumpSpecific = new HashMap<>();
 
-    public DumpSpecificFiles(Map<ClassPath, TypeScriptFile> globalFiles, ScriptDump scriptDump) {
+    public TypeSpecificFiles(Map<ClassPath, TypeScriptFile> globalFiles, ScriptDump scriptDump) {
         this.globalFiles = globalFiles;
         this.scriptDump = scriptDump;
     }

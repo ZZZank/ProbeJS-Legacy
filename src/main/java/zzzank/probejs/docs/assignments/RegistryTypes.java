@@ -10,7 +10,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
-import zzzank.probejs.lang.typescript.DumpSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
@@ -126,7 +126,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         special.addCode(tagDecl);
     }
 
-    public void modifyFiles(DumpSpecificFiles files) {
+    public void modifyFiles(TypeSpecificFiles files) {
         if (ServerLifecycleHooks.getCurrentServer() == null) {
             return;
         }
@@ -140,7 +140,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         makeClassModifications(files, Registry.DIMENSION_REGISTRY, Level.class);
     }
 
-    private static void makeClassModifications(DumpSpecificFiles files, ResourceKey<? extends Registry<?>> key, Class<?> baseClass) {
+    private static void makeClassModifications(TypeSpecificFiles files, ResourceKey<? extends Registry<?>> key, Class<?> baseClass) {
         val typeScriptFile = files.globalFiles().get(ClassPath.fromJava(baseClass));
         if (typeScriptFile == null) {
             return;

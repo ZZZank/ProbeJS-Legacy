@@ -2,7 +2,7 @@ package zzzank.probejs.docs;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.DumpSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
@@ -70,7 +70,7 @@ public class GlobalClasses implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyFiles(DumpSpecificFiles files) {
+    public void modifyFiles(TypeSpecificFiles files) {
         files.addDumpSpecificFile(
             J_CLASS.classPath,
             Statements.clazz(J_CLASS.classPath.getName())

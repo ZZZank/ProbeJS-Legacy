@@ -6,7 +6,7 @@ import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.lang.typescript.DumpSpecificFiles;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
@@ -63,7 +63,7 @@ public class RecipeEvents implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyFiles(DumpSpecificFiles files) {
+    public void modifyFiles(TypeSpecificFiles files) {
         if (files.scriptDump().scriptType == ScriptType.CLIENT) {
             return;
         }
