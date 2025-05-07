@@ -70,7 +70,7 @@ public class ProbeDumpingThread extends Thread {
             probeDump.trigger();
         } catch (Throwable e) {
             messageSender.accept(ProbeText.pjs("error").red());
-            messageSender.accept(ProbeText.literal(e.getLocalizedMessage()).red());
+            messageSender.accept(ProbeText.literal(e.toString()).red());
             GameUtils.logThrowable(e);
         }
     }
