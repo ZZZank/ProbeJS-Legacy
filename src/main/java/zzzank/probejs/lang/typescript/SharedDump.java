@@ -25,6 +25,7 @@ public class SharedDump extends TSFilesDump {
     @Override
     protected void dumpImpl() throws IOException {
         this.files = transpiler.dump(ClassRegistry.REGISTRY.getFoundClasses()).values();
+        transpiler.init();
         super.dumpImpl();
     }
 }

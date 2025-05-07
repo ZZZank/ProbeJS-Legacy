@@ -223,7 +223,6 @@ public class ScriptDump extends MultiDump {
     }
 
     public void dump() throws IOException {
-        transpiler.init();
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
         loadClasses();
