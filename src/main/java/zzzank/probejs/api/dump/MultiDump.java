@@ -5,22 +5,32 @@ import lombok.val;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author ZZZank
  */
-public class DirChainedDump implements TSDump {
+public class MultiDump implements TSDump {
     private final Path base;
-    private final Map<String, TSDump> children = new LinkedHashMap<>();
+    private final List<TSDump> dumps = new ArrayList<>();
     private Reporter reporter = null;
 
-    public DirChainedDump(Path base) {
+    public MultiDump(Path base) {
         this.base = base;
     }
 
-    public void addChild(String path, TSDump dump) {
-        children.put(path, dump);
+    public <T extends TSDump> T addChild(T dump) {
+        dumps.add(dump);
         reporter = null;
+        return dump;
+    }
+
+    public <T extends TSDump> T addChild(String relativePath, Function<Path, T> dump) {
+        return addChild(dump.apply(base.resolve(relativePath)));
+    }
+
+    public List<TSDump> dumps() {
+        return Collections.unmodifiableList(dumps);
     }
 
     @Override
@@ -30,7 +40,7 @@ public class DirChainedDump implements TSDump {
 
     @Override
     public void dump() throws IOException {
-        for (val tsDump : children.values()) {
+        for (val tsDump : dumps) {
             tsDump.dump();
         }
     }
@@ -39,8 +49,7 @@ public class DirChainedDump implements TSDump {
     public Reporter reporter() {
         if (reporter == null) {
             reporter = new ChainedReporter(
-                this.children.values()
-                    .stream()
+                this.dumps.stream()
                     .map(TSDump::reporter)
                     .toArray(Reporter[]::new)
             );
