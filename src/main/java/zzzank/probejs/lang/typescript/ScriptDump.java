@@ -183,8 +183,11 @@ public class ScriptDump {
 
     public void dumpClasses() throws IOException {
         val globalClasses = transpiler().dump(recordedClasses);
+
         val filesToModify = new TypeSpecificFiles(globalClasses, this);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyFiles(filesToModify));
+        val requested = filesToModify.requested();
+        this.parent.requestedBySubDump.addAll(requested);
 
         for (val entry : globalClasses.entrySet()) {
             val classPath = entry.getKey();
@@ -192,6 +195,10 @@ public class ScriptDump {
             val classDecl = output.findCodeNullable(ClassDecl.class);
             if (classDecl == null) {
                 continue;
+            }
+
+            if (!requested.contains(classPath)) {
+                output.codes.clear();
             }
 
             // Add all assignable types
