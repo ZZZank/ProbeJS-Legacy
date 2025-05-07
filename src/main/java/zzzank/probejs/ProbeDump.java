@@ -3,6 +3,8 @@ package zzzank.probejs;
 import com.google.gson.JsonObject;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.api.dump.MultiDump;
+import zzzank.probejs.api.dump.TSDump;
 import zzzank.probejs.features.forge_scan.ClassScanner;
 import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
@@ -17,8 +19,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -109,57 +112,62 @@ public class ProbeDump {
         ClassRegistry.REGISTRY.writeTo(CLASS_CACHE);
         report(ProbeText.pjs("dump.class_discovered", ClassRegistry.REGISTRY.foundClasses.size()));
 
-        val futures = scriptDumps.stream()
+        val reporters = Collections.synchronizedList(new ArrayList<TSDump.Reporter>());
+        scriptDumps.stream().map(MultiDump::reporter).forEach(reporters::add);
+        reporters.add(codeDump.reporter());
+
+        val executor = new ForkJoinPool(
+            4, pool -> new ForkJoinWorkerThread(pool){}, null, false
+        );
+
+        val scriptDumpFutures = scriptDumps.stream()
             .map(dump -> (Runnable) () -> {
                 dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
                 try {
                     dump.dump();
                     report(ProbeText.pjs("dump.dump_finished", dump.manager.type).green());
                 } catch (Throwable e) {
-                    report(ProbeText.pjs("dump.dump_error", dump.manager.type).red());
-                    throw new RuntimeException(e);
+                    val error = ProbeText.pjs("dump.dump_error", dump.manager.type).red();
+                    report(error);
+                    ProbeJS.LOGGER.error(error.unwrap().getString(), e);
+                } finally {
+                    reporters.remove(dump.reporter());
                 }
             })
-            .map(CompletableFuture::runAsync)
+            .map(r -> CompletableFuture.runAsync(r, executor))
             .toArray(CompletableFuture[]::new);
-        CompletableFuture
-            .allOf(futures)
+        CompletableFuture.allOf(scriptDumpFutures)
             .thenRunAsync(() -> {
                 try {
                     codeDump.dump();
                     report(ProbeText.pjs("dump.dump_finished", "SHARED").green());
-                } catch (Exception e) {
-                    report(ProbeText.pjs("dump.dump_error", "SHARED").red());
+                } catch (Throwable e) {
+                    val error = ProbeText.pjs("dump.dump_error", "SHARED").red();
+                    report(error);
+                    ProbeJS.LOGGER.error(error.unwrap().getString(), e);
+                } finally {
+                    reporters.remove(codeDump.reporter());
+                }
+            }, executor);
+        executor.submit(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(3000);
+                    val dumpProgress = reporters.stream()
+                        .filter(TSDump.Reporter::running)
+                        .map(rep -> rep.countWritten() + "/" + rep.countTotal())
+                        .collect(Collectors.joining(", "));
+                    if (dumpProgress.isEmpty()) {
+                        return;
+                    }
+                    report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
+                } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            })
-            .get();
+            }
+        });
 
-//        Thread reportingThread = new Thread(
-//            () -> {
-//                while (true) {
-//                    try {
-//                        Thread.sleep(3000);
-//                        if (threads.stream().noneMatch(Thread::isAlive)) {
-//                            return;
-//                        }
-//                        val dumpProgress = scriptDumps.stream()
-//                            .filter(sd -> sd.classesWriter.countAcceptedFiles() != 0)
-//                            .map(sd -> String.format(
-//                                "%s/%s",
-//                                sd.classesWriter.countWrittenFiles(),
-//                                sd.classesWriter.countAcceptedFiles()
-//                            ))
-//                            .collect(Collectors.joining(", "));
-//                        report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//            },
-//            "ProbeDumpingThread-report"
-//        );
-//        reportingThread.start();
+        executor.shutdown();
     }
 
     private void writeVSCodeConfig() throws IOException {
