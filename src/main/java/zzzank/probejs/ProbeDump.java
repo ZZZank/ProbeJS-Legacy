@@ -50,7 +50,7 @@ public class ProbeDump {
         report(ProbeText.pjs("dump.cleaning"));
         codeDump.clearFiles();
         for (ScriptDump scriptDump : scriptDumps) {
-            scriptDump.removeClasses();
+            scriptDump.clearFiles();
             report(ProbeText.pjs("removed_script", scriptDump.manager.type.toString()));
         }
 

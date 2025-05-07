@@ -3,19 +3,13 @@ package zzzank.probejs.lang.typescript;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.KubeJS;
 import dev.latvian.kubejs.KubeJSPaths;
 import dev.latvian.kubejs.script.ScriptManager;
 import dev.latvian.kubejs.script.ScriptType;
-import dev.latvian.kubejs.server.ServerScriptManager;
-import dev.latvian.kubejs.util.UtilsJS;
 import lombok.val;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.commons.io.FileUtils;
 import zzzank.probejs.ProbePaths;
-import zzzank.probejs.api.dump.TSFilesDump;
-import zzzank.probejs.api.dump.TSGlobalDump;
+import zzzank.probejs.api.dump.*;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -32,7 +26,6 @@ import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
@@ -42,50 +35,39 @@ import java.util.function.Predicate;
  * Controls a dump. A dump is made of a script type, and is responsible for
  * maintaining the file structures
  */
-public class ScriptDump {
-    public static final Function<SharedDump, ScriptDump> SERVER_DUMP = (codeDump) -> {
-        ServerScriptManager scriptManager = ServerScriptManager.instance;
-        if (scriptManager == null) {
-            return null;
+public class ScriptDump extends MultiDump {
+    public static final Function<SharedDump, ScriptDump> SERVER_DUMP = (codeDump) -> new ScriptDump(
+        codeDump,
+        ScriptType.SERVER,
+        KubeJSPaths.SERVER_SCRIPTS,
+        clazz -> {
+            val annotation = clazz.getAnnotation(OnlyIn.class);
+            return annotation == null || annotation.value().isDedicatedServer();
         }
-
-        return new ScriptDump(
-            codeDump,
-            scriptManager.scriptManager,
-            ProbePaths.PROBE.resolve("server"),
-            KubeJSPaths.SERVER_SCRIPTS,
-            clazz -> clazz.getAnnotations(OnlyIn.class)
-                .stream()
-                .map(OnlyIn::value)
-                .noneMatch(Dist::isClient)
-        );
-    };
+    );
 
     public static final Function<SharedDump, ScriptDump> CLIENT_DUMP = (codeDump) -> new ScriptDump(
         codeDump,
-        KubeJS.clientScriptManager,
-        ProbePaths.PROBE.resolve("client"),
+        ScriptType.CLIENT,
         KubeJSPaths.CLIENT_SCRIPTS,
-        clazz -> clazz.getAnnotations(OnlyIn.class)
-            .stream()
-            .map(OnlyIn::value)
-            .noneMatch(Dist::isDedicatedServer)
+        clazz -> {
+            val annotation = clazz.getAnnotation(OnlyIn.class);
+            return annotation == null || annotation.value().isClient();
+        }
     );
 
     public static final Function<SharedDump, ScriptDump> STARTUP_DUMP = (codeDump) -> new ScriptDump(
         codeDump,
-        KubeJS.startupScriptManager,
-        ProbePaths.PROBE.resolve("startup"),
+        ScriptType.STARTUP,
         KubeJSPaths.STARTUP_SCRIPTS,
         (clazz -> true)
     );
 
     public final SharedDump parent;
+    public final Transpiler transpiler;
 
     public final ScriptType scriptType;
     public final ScriptManager manager;
-
-    public final Path basePath;
     public final Path scriptPath;
 
     public final Set<Clazz> recordedClasses = new HashSet<>();
@@ -95,15 +77,19 @@ public class ScriptDump {
     public final TSFilesDump filesDump;
     public final TSGlobalDump globalDump;
 
-    public ScriptDump(SharedDump parent, ScriptManager manager, Path basePath, Path scriptPath, Predicate<Clazz> scriptPredicate) {
+    public ScriptDump(SharedDump parent, ScriptType type, Path scriptPath, Predicate<Clazz> classFilter) {
+        super(ProbePaths.PROBE.resolve(type.name));
         this.parent = parent;
-        this.scriptType = manager.type;
-        this.manager = manager;
-        this.basePath = basePath;
+        this.transpiler = parent.transpiler;
+
+        this.scriptType = type;
+        this.manager = type.manager.get();
         this.scriptPath = scriptPath;
-        this.accept = scriptPredicate;
-        filesDump = new TSFilesDump(getPackageFolder());
-        globalDump = new TSGlobalDump(getGlobalFolder());
+
+        this.accept = classFilter;
+        this.filesDump = addChild("probe-types/packages", TSFilesDump::new);
+        this.globalDump = addChild("probe-types/global", TSGlobalDump::new);
+        addChild(new CustomDump(scriptPath.resolve("jsconfig.json"), this::writeJSConfig));
     }
 
     public void acceptClasses(Collection<Clazz> classes) {
@@ -157,31 +143,7 @@ public class ScriptDump {
         file.addCode(global);
     }
 
-    public Path ensurePath(String path) {
-        return ensurePath(path, false);
-    }
-
-    public Path ensurePath(String path, boolean script) {
-        Path full = (script ? scriptPath : basePath).resolve(path);
-        if (Files.notExists(full)) {
-            UtilsJS.tryIO(() -> Files.createDirectories(full));
-        }
-        return full;
-    }
-
-    public Path getTypeFolder() {
-        return ensurePath("probe-types");
-    }
-
-    public Path getPackageFolder() {
-        return ensurePath("probe-types/packages");
-    }
-
-    public Path getGlobalFolder() {
-        return ensurePath("probe-types/global");
-    }
-
-    public void dumpClasses() throws IOException {
+    private void loadClasses() {
         val globalClasses = transpiler().dump(recordedClasses);
 
         val filesToModify = new TypeSpecificFiles(globalClasses, this);
@@ -239,15 +201,9 @@ public class ScriptDump {
         }
 
         filesDump.files = globalClasses.values();
-        filesDump.dump();
     }
 
-    public void dumpGlobal() throws IOException {
-        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
-        globalDump.dump();
-    }
-
-    public void dumpJSConfig() throws IOException {
+    public void writeJSConfig(Path path) throws IOException {
         val config = (JsonObject) JsonUtils.parseObject(
             CollectUtils.ofMap(
                 "compilerOptions", CollectUtils.ofMap(
@@ -256,31 +212,29 @@ public class ScriptDump {
                     "lib", CollectUtils.ofList("ES5", "ES2015"),
                     "rootDir", ".",
                     "typeRoots", CollectUtils.ofList(
-                        String.format("../../.probe/%s/probe-types", basePath.getFileName())
+                        String.format("../../.probe/%s/probe-types", writeTo().getFileName())
                     ),
-                    "baseUrl", String.format("../../.probe/%s/probe-types", basePath.getFileName()),
+                    "baseUrl", String.format("../../.probe/%s/probe-types", writeTo().getFileName()),
                     "skipLibCheck", true
                 ),
                 "include", CollectUtils.ofList("./**/*.js")
             )
         );
-        zzzank.probejs.utils.FileUtils.writeMergedConfig(scriptPath.resolve("jsconfig.json"), config);
+        zzzank.probejs.utils.FileUtils.writeMergedConfig(path, config);
     }
 
-    public void removeClasses() throws IOException {
-        FileUtils.deleteDirectory(getTypeFolder().toFile());
-    }
-
-    public void dump() throws IOException, ClassNotFoundException {
+    public void dump() throws IOException {
         transpiler().init();
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
-        dumpClasses();
-        dumpGlobal();
-        dumpJSConfig();
+        loadClasses();
+
+        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
+
+        super.dump();
     }
 
     public Transpiler transpiler() {
-        return parent.transpiler;
+        return transpiler;
     }
 }
