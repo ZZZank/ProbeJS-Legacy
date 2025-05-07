@@ -14,6 +14,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.io.FileUtils;
 import zzzank.probejs.ProbePaths;
+import zzzank.probejs.api.dump.TSFilesDump;
+import zzzank.probejs.api.dump.TSGlobalDump;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.Transpiler;

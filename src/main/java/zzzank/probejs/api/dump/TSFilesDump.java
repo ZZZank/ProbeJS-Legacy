@@ -1,4 +1,4 @@
-package zzzank.probejs.lang.typescript.dump;
+package zzzank.probejs.api.dump;
 
 import lombok.val;
 import zzzank.probejs.api.output.AutoSplitPackagedWriter;

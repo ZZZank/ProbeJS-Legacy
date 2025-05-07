@@ -1,5 +1,6 @@
 package zzzank.probejs.lang.typescript.dump;
 
+import zzzank.probejs.api.dump.TSFilesDump;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.transpiler.Transpiler;

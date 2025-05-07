@@ -1,4 +1,4 @@
-package zzzank.probejs.lang.typescript.dump;
+package zzzank.probejs.api.dump;
 
 import zzzank.probejs.api.output.TSFileWriter;
 
