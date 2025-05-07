@@ -143,7 +143,7 @@ public class ScriptDump extends MultiDump {
     }
 
     private void loadClasses() {
-        val globalClasses = transpiler().dump(recordedClasses);
+        val globalClasses = transpiler.dump(recordedClasses);
 
         val filesToModify = new TypeSpecificFiles(globalClasses, this);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyFiles(filesToModify));
@@ -223,7 +223,7 @@ public class ScriptDump extends MultiDump {
     }
 
     public void dump() throws IOException {
-        transpiler().init();
+        transpiler.init();
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
         loadClasses();
@@ -231,9 +231,5 @@ public class ScriptDump extends MultiDump {
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
 
         super.dump();
-    }
-
-    public Transpiler transpiler() {
-        return transpiler;
     }
 }

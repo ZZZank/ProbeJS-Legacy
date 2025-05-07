@@ -28,7 +28,7 @@ public class Bindings implements ProbeJSPlugin {
         val filter = new BindingFilter();
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.denyBindings(filter));
 
-        val converter = scriptDump.transpiler().typeConverter;
+        val converter = scriptDump.transpiler.typeConverter;
 
         val exported = new TreeMap<String, BaseType>();
         val reexported = new TreeMap<String, BaseType>(); // Namespaces

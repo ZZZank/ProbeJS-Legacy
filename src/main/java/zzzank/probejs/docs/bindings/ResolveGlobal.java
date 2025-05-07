@@ -25,7 +25,7 @@ class ResolveGlobal {
         val resolved = resolveType(
             ProbeConfig.globalResolvingDepth.get(),
             BuiltinKubeJSPlugin.GLOBAL,
-            scriptDump.transpiler().typeConverter
+            scriptDump.transpiler.typeConverter
         );
         scriptDump.addGlobal(
             "resolved_global",

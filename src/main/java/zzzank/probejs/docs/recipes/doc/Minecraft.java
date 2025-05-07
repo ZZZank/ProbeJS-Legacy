@@ -15,7 +15,7 @@ class Minecraft extends RecipeDocProvider {
 
     @Override
     public void addDocs(ScriptDump scriptDump) {
-        val converter = scriptDump.transpiler().typeConverter;
+        val converter = scriptDump.transpiler.typeConverter;
         add("smelting", basicCookingRecipe());
         add("smoking", basicCookingRecipe());
         add("blasting", basicCookingRecipe());
