@@ -220,7 +220,7 @@ public class ScriptDump extends MultiDump {
                     .put("rootDir", ".")
                     .put("types", Stream.of(filesDump, globalDump, parent)
                         .map(TSDumpBase::writeTo)
-                        .map(p -> p.relativize(scriptPath))
+                        .map(scriptPath::relativize)
                         .map(Path::toString)
                         .collect(Collectors.toList())
                     )
