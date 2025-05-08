@@ -12,6 +12,7 @@ import zzzank.probejs.utils.config.prop.ConfigProperty;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,11 @@ public class ConfigEntryBuilder<T> {
         val casted = Cast.<ConfigEntryBuilder<T_>>to(this);
         casted.binding = Asser.tNotNull(binding, "config binding");
         return casted;
+    }
+
+    public <T_> ConfigEntryBuilder<T_> bind(Function<String, ConfigBinding<T_>> toBinding) {
+        val binding = toBinding.apply(name);
+        return bind(binding);
     }
 
     public <T_> ConfigEntryBuilder<T_> bind(@NotNull Supplier<@NotNull T_> getter, @NotNull Consumer<T_> setter) {

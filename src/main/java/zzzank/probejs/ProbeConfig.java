@@ -1,7 +1,9 @@
 package zzzank.probejs;
 
+import lombok.val;
 import zzzank.probejs.features.forge_scan.BuiltinScanners;
 import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.config.binding.InputIgnoredBinding;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.serde.gson.GsonSerdeFactory;
@@ -34,8 +36,13 @@ public interface ProbeConfig {
         INSTANCE.save(ProbePaths.SETTINGS_JSON);
     }
 
+    static boolean configVersionMisMatched() {
+        val binding = (InputIgnoredBinding<Integer>) configVersion.binding();
+        return binding.receivedInput().intValue() != binding.get().intValue();
+    }
+
     ConfigEntry<Integer> configVersion = INSTANCE.define("configVersion")
-        .bindDefault(3)
+        .bind(name -> new InputIgnoredBinding<>(4, Integer.class, name))
         .comment(String.format("""
             welcome to ProbeJS Legacy config file
             remember to use '/probejs refresh_config' to refresh your config after changing config values
