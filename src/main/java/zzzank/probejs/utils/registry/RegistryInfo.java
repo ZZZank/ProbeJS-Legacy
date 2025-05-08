@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class RegistryInfo implements Comparable<RegistryInfo> {
 
-    public final ForgeRegistry<? extends IForgeRegistryEntry<?>> forgeRaw;
+    private final ForgeRegistry<? extends IForgeRegistryEntry<?>> forgeRaw;
     private final ResourceKey<? extends Registry<?>> resKey;
     @Nullable
     private final StaticTagHelper<?> tagHelper;
