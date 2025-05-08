@@ -13,7 +13,7 @@ public interface TSDump {
     Path writeTo();
 
     default void clearFiles() throws IOException {
-        if (Files.exists(writeTo())) {
+        if (Files.exists(writeTo()) && Files.isDirectory(writeTo())) {
             FileUtils.deleteDirectory(writeTo().toFile());
         }
     }
