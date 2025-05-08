@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class FileUtils {
     public static void forEachFile(Path basePath, Consumer<Path> callback) throws IOException {
@@ -28,11 +29,18 @@ public class FileUtils {
     }
 
     public static void writeMergedConfig(Path path, JsonObject config) throws IOException {
+        writeMergedConfig(path, config, e -> false);
+    }
+
+    /// @param path the path to config
+    /// @param config new config
+    /// @param replaceIf returns `true` -> original config should be discarded
+    public static void writeMergedConfig(Path path, JsonObject config, Predicate<JsonObject> replaceIf) throws IOException {
         JsonObject read = null;
         if (Files.exists(path)) {
             read = ProbeJS.GSON.fromJson(Files.newBufferedReader(path), JsonObject.class);
         }
-        if (read == null) {
+        if (read == null || replaceIf.test(read)) {
             read = new JsonObject();
         }
         try (val writer = ProbeJS.GSON_WRITER.newJsonWriter(Files.newBufferedWriter(path))) {

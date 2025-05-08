@@ -8,6 +8,7 @@ import dev.latvian.kubejs.script.ScriptManager;
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbePaths;
 import zzzank.probejs.api.dump.*;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -22,6 +23,7 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.FileUtils;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.collect.WrappedMap;
 
@@ -230,7 +232,7 @@ public class ScriptDump extends MultiDump {
                 "include", CollectUtils.ofList("./**/*.js")
             )
         );
-        zzzank.probejs.utils.FileUtils.writeMergedConfig(path, config);
+        FileUtils.writeMergedConfig(path, config, ignored -> ProbeConfig.configVersionMisMatched());
     }
 
     public void dump() throws IOException {
