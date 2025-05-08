@@ -23,12 +23,15 @@ import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.JsonUtils;
+import zzzank.probejs.utils.collect.WrappedMap;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controls a dump. A dump is made of a script type, and is responsible for
@@ -86,8 +89,8 @@ public class ScriptDump extends MultiDump {
         this.scriptPath = scriptPath;
 
         this.accept = classFilter;
-        this.filesDump = addChild("probe-types/packages", TSFilesDump::new);
-        this.globalDump = addChild("probe-types/global", TSGlobalDump::new);
+        this.filesDump = addChild("packages", TSFilesDump::new);
+        this.globalDump = addChild("global", TSGlobalDump::new);
         addChild(new CustomDump(scriptPath.resolve("jsconfig.json"), this::writeJSConfig));
     }
 
@@ -205,17 +208,25 @@ public class ScriptDump extends MultiDump {
     public void writeJSConfig(Path path) throws IOException {
         val config = (JsonObject) JsonUtils.parseObject(
             CollectUtils.ofMap(
-                "compilerOptions", CollectUtils.ofMap(
-                    "module", "commonjs",
-                    "target", "ES2015",
-                    "lib", CollectUtils.ofList("ES5", "ES2015"),
-                    "rootDir", ".",
-                    "typeRoots", CollectUtils.ofList(
-                        String.format("../../.probe/%s/probe-types", writeTo().getFileName())
-                    ),
-                    "baseUrl", String.format("../../.probe/%s/probe-types", writeTo().getFileName()),
-                    "skipLibCheck", true
-                ),
+                "compilerOptions", WrappedMap.<String, Object>ofHash()
+                    .put("module", "commonjs")
+                    .put("moduleResolution", "classic")
+                    .put("isolatedModules", true)
+                    .put("composite", true)
+                    .put("incremental", true)
+                    .put("allowJs", true)
+                    .put("target", "ES2015")
+                    .put("lib", CollectUtils.ofList("ES5", "ES2015"))
+                    .put("rootDir", ".")
+                    .put("types", Stream.of(filesDump, globalDump, parent)
+                        .map(TSDumpBase::writeTo)
+                        .map(p -> p.relativize(scriptPath))
+                        .map(Path::toString)
+                        .collect(Collectors.toList())
+                    )
+                    .put("skipLibCheck", true)
+                    .put("skipDefaultLibCheck", true)
+                    .build(),
                 "include", CollectUtils.ofList("./**/*.js")
             )
         );
