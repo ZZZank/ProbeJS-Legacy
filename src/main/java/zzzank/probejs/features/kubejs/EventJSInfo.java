@@ -37,11 +37,11 @@ public final class EventJSInfo implements Comparable<EventJSInfo> {
                 .xmap(EnumSet::copyOf, ArrayList::new)
                 .fieldOf("scriptTypes")
                 .forGetter(EventJSInfo::scriptTypes),
-            Codec.STRING.optionalFieldOf("sub", null).forGetter(EventJSInfo::sub)
+            Codec.STRING.optionalFieldOf("sub", "").forGetter(EventJSInfo::sub)
         ).apply(builder, EventJSInfo::new)
     );
 
-    public EventJSInfo(ScriptType type, EventJS event, String id, @Nullable String sub) {
+    public EventJSInfo(ScriptType type, EventJS event, String id, String sub) {
         this(event.getClass(), id, event.canCancel(), EnumSet.of(type), sub);
     }
 
