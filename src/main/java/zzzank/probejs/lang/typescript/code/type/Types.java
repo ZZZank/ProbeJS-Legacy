@@ -42,6 +42,7 @@ public interface Types {
      * , and only 'any' will be returned
      * @param content a string, number or boolean
      */
+    @Deprecated
     static JSPrimitiveType literal(Object content) {
         return content instanceof String
             || content instanceof Number

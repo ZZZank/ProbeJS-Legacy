@@ -30,7 +30,9 @@ public class ImportInfos implements Iterable<ImportInfo> {
     }
 
     public static ImportInfos of(@NotNull ImportInfo info) {
-        return new ImportInfos(CollectUtils.ofMap(info.path, info));
+        val map = new HashMap<ClassPath, ImportInfo>(CollectUtils.calcMapExpectedSize(1));
+        map.put(info.path, info);
+        return new ImportInfos(map);
     }
 
     public static ImportInfos of(@NotNull ImportInfo... initial) {

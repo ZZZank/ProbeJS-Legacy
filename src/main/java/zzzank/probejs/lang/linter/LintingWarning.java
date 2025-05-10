@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.linter;
 
-import com.github.bsideup.jabel.Desugar;
 import com.google.gson.JsonElement;
 import dev.latvian.mods.rhino.mod.util.color.Color;
 import dev.latvian.mods.rhino.mod.wrapper.ColorWrapper;
@@ -10,7 +9,6 @@ import zzzank.probejs.utils.ProbeText;
 
 import java.nio.file.Path;
 
-@Desugar
 public record LintingWarning(Path file, Level level, int line, int column, String message) {
     public enum Level {
         INFO(ColorWrapper.BLUE),

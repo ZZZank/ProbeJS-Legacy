@@ -209,7 +209,7 @@ public class ScriptDump extends MultiDump {
 
     public void writeJSConfig(Path path) throws IOException {
         val config = (JsonObject) JsonUtils.parseObject(
-            CollectUtils.ofMap(
+            Map.of(
                 "compilerOptions", WrappedMap.<String, Object>ofHash()
                     .put("module", "commonjs")
                     .put("moduleResolution", "classic")
@@ -218,7 +218,7 @@ public class ScriptDump extends MultiDump {
                     .put("incremental", true)
                     .put("allowJs", true)
                     .put("target", "ES2015")
-                    .put("lib", CollectUtils.ofList("ES5", "ES2015"))
+                    .put("lib", List.of("ES5", "ES2015"))
                     .put("rootDir", ".")
                     .put("types", Stream.of(filesDump, globalDump, parent)
                         .map(TSDumpBase::writeTo)
@@ -229,7 +229,7 @@ public class ScriptDump extends MultiDump {
                     .put("skipLibCheck", true)
                     .put("skipDefaultLibCheck", true)
                     .build(),
-                "include", CollectUtils.ofList("./**/*.js")
+                "include", List.of("./**/*.js")
             )
         );
         FileUtils.writeMergedConfig(path, config, ignored -> ProbeConfig.configVersionMisMatched());

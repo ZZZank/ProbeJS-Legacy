@@ -17,10 +17,7 @@ import zzzank.probejs.utils.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -171,10 +168,10 @@ public class ProbeDump {
     }
 
     private void writeVSCodeConfig() throws IOException {
-        val config = (JsonObject) JsonUtils.parseObject(CollectUtils.ofMap(
-            "json.schemas", CollectUtils.ofList(
-                CollectUtils.ofMap(
-                    "fileMatch", CollectUtils.ofList("/recipe_schemas/*.json"),
+        val config = (JsonObject) JsonUtils.parseObject(Map.of(
+            "json.schemas", List.of(
+                Map.of(
+                    "fileMatch", List.of("/recipe_schemas/*.json"),
                     "url", "./.vscode/recipe.json"
                 )
             )

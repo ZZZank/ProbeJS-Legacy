@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.linter.rules;
 
-import com.github.bsideup.jabel.Desugar;
 import com.mojang.datafixers.util.Pair;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.linter.LintingWarning;
@@ -95,7 +94,6 @@ public class RespectPriority extends Rule {
         return warnings;
     }
 
-    @Desugar
     record ScriptFile(Path path, int priority, List<String> content,
                       List<Pair<Integer, Path>> dependencies) {
 
