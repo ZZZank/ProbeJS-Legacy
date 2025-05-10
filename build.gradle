@@ -1,20 +1,88 @@
+// ModTemplatez: An Architectury Loom based template workspace for Minecraft Forge mod development.
+//
+// ideally you don't need to touch this gradle script, instead:
+//
+// see ./gradle/scripts/dependencies.gradle for dependency management
+//
+// see ./gradle/scripts/publishing.gradle for publishing
+//
+// see ./gradle/scripts/extra.gradle for adding custom action after publishing
+//
+// see ./gradle.properties for almost everything about mod metadata, mod compiling, Minecraft sources, etc.
+//
+//
+//
+//
+//
+
+import org.jetbrains.changelog.Changelog
+
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id "dev.architectury.loom" version "1.9-SNAPSHOT"
-    id "maven-publish"
+    id('com.github.johnrengelman.shadow').version('8.1.1')
+    id('dev.architectury.loom').version('1.10-SNAPSHOT')
+    id('maven-publish')
+    id('idea')
+    id('com.matthewprenger.cursegradle').version('1.4.0').apply(false) //only used for CF publishing
+    id('com.modrinth.minotaur').version('2.+').apply(false)            //only used for Modrinth publishing
+    id('org.jetbrains.changelog').version('2.2.0')
+    id('xyz.wagyourtail.jvmdowngrader').version("${jvmdowngrader_version}").apply(false)
+}
+
+apply from: 'gradle/scripts/helpers.gradle'
+apply from: 'gradle/scripts/custom_tasks.gradle'
+
+def props = project.properties
+def sysProps = System.getProperties()
+
+if (project.hasProperty("run_number")) {
+    println("On GitHub runs #${props.run_number}")
+}
+println("Gradle running on Java: ${ -> sysProps['java.version']} | JVM: ${ -> sysProps['java.vm.version']} | Vendor: ${ -> sysProps['java.vendor']} | Architecture: ${ -> sysProps['os.arch']}")
+
+def javaTarget = JavaVersion.toVersion(propertyString("target_java_version"))
+println("Target Java version is set to: ${javaTarget.majorVersion}")
+
+if (propertyBool('use_jvmdowngrader')) {
+    apply plugin: 'xyz.wagyourtail.jvmdowngrader'
+    jvmdg.downgradeTo = javaTarget
 }
 
 base {
-    archivesName = project.archives_base_name
+    archivesName = "${propertyString('archives_base_name')}-${propertyString('minecraft_version')}"
 }
 
-version = project.mod_version
-group = project.maven_group
+version = propertyString('mod_version')
+group = propertyString('maven_group')
+
+java {
+    if (!propertyBool('use_jvmdowngrader')) {
+        sourceCompatibility = targetCompatibility = javaTarget
+    }
+
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    if (propertyBool('generate_sources_jar')) {
+        withSourcesJar()
+    }
+    if (propertyBool('generate_javadocs_jar')) {
+        withJavadocJar()
+    }
+}
 
 loom {
     // use this if you are using the official mojang mappings
     // and want loom to stop warning you about their license
     silentMojangMappingsLicense()
+
+
+    if (propertyBool('use_access_widener')) {
+        def f = file("src/main/resources/${propertyString('access_widener_name')}.accesswidener")
+        if (!f.exists()) {
+            logger.warn("Configured AccessWidener not found, force generating")
+            fnGenerateAccessWidenerBase()
+        }
+        accessWidenerPath = f
+    }
 
     // since loom 0.10, you are **required** to use the
     // "forge" block to configure forge-specific features,
@@ -22,53 +90,12 @@ loom {
     forge {
         // specify the mixin configs used in this mod
         // this will be added to the jar manifest as well!
-        mixinConfigs = [
-            "probejs.mixins.json"
-        ]
-
-        // missing access transformers?
-        // don't worry, you can still use them!
-        // note that your AT *MUST* be located at
-        // src/main/resources/META-INF/accesstransformer.cfg
-        // to work as there is currently no config option to change this.
-        // also, any names used in your access transformer will need to be
-        // in SRG mapped ("func_" / "field_" with MCP class names) to work!
-        // (both of these things may be subject to change in the future)
-    }
-
-    //accessWidenerPath = file("src/main/resources/probejs.accesswidener")
-}
-
-repositories {
-    mavenCentral()
-    // Add repositories to retrieve artifacts from in here.
-    // You should only use this when depending on other mods because
-    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-    // for more information about repositories.
-    maven {
-        url "https://maven.architectury.dev/"
-        content {
-            includeGroup("me.shedaniel")
+        if (propertyBool('use_mixin')) {
+            it.mixinConfigs.set(propertyStringList('mixin_configs').collect {"${it}.json"})
         }
-    }
-    maven {
-        url "https://maven.saps.dev/minecraft"
-        content {
-            includeGroup "dev.latvian.mods"
-            includeGroup "dev.ftb.mods"
-        }
-    }
-    maven {
-		url = "https://maven.parchmentmc.net/"
-		content {
-			includeGroup "org.parchmentmc.data"
-		}
-	}
-    maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
+
+        if (propertyBool('use_access_widener')) {
+            convertAccessWideners = true
         }
     }
 }
@@ -78,154 +105,136 @@ configurations {
     implementation.extendsFrom(shade)
 }
 
+repositories {
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
+}
+
 dependencies {
+    def mc_ver = propertyString("minecraft_version")
+    def forge_ver = propertyString("forge_version")
+
     // to change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    minecraft("com.mojang:minecraft:${mc_ver}")
 
-    // choose what mappings you want to use here
-    // leave this uncommented if you want to use
-    // mojang's official mappings, or feel free
-    // to add your own mappings here (how about
-    // mojmap layered with parchment, for example?)
-	mappings loom.layered() {
-		officialMojangMappings()
-		parchment("org.parchmentmc.data:parchment-${rootProject.parchment_version}")
-	}
-
-    // uncomment this if you want to use yarn mappings
-    // mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-
-    // your forge dependency, this is **required** when using Forge Loom in forge mode!
-    forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-
-    // additional dependencies can be specified using loom's regular format
-    // specifying a "mod" dependency (like modImplementation or modApi)
-    // will cause loom to remap the file to your specified mappings
-
-    // in this example, we'll be adding JEI as a dependency
-    // according to their developer example on GitHub
-    // see: https://github.com/mezz/JustEnoughItems/wiki/Getting-Started
-    // compile against the JEI API but do not include it at runtime
-    // don't worry about loom "not finding a forge mod" here,
-    // JEI's api just doesn't have any class with an @Mod annotation
-    // modCompileOnly "mezz.jei:jei-1.16.5:${jei_version}:api"
-    // at runtime, use the full JEI jar
-    // modRuntimeOnly "mezz.jei:jei-1.16.5:${jei_version}"
-
-    modApi("curse.maven:rhizo-1003287:$rhizo_cf_id")
-    modApi("dev.latvian.mods:kubejs-forge:${kubejs_version}") {
-        exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])
+    def mappingType = propertyString("mapping_type")
+    if (mappingType == "official") {
+        mappings(loom.officialMojangMappings())
+    } else if (mappingType == 'parchment') {
+        mappings(loom.layered {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${parchment_version}")
+        })
+    } else if (mappingType == 'yarn') {
+        mappings("net.fabricmc:yarn:${yarn_version}:v2")
+    } else if (mappingType == 'custom') {
+        mappings(propertyString('custom_mapping'))
+    } else {
+        throw new IllegalArgumentException("mapping type '${mappingType}' not one of: official, parchment, yarn, custom")
     }
 
-    //lombok
-    compileOnly "org.projectlombok:lombok:${lombok_version}"
-    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
-    testCompileOnly "org.projectlombok:lombok:${lombok_version}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombok_version}"
+    forge("net.minecraftforge:forge:${mc_ver}-${forge_ver}")
 
-    // https://mvnrepository.com/artifact/com.pkware.jabel/jabel-javac-plugin
-    annotationProcessor 'com.pkware.jabel:jabel-javac-plugin:1.0.1-1'
-    compileOnly 'com.pkware.jabel:jabel-javac-plugin:1.0.1-1'
-
-    //
-    shade('org.java-websocket:Java-WebSocket:1.5.6')
-//    shade('com.github.javaparser:javaparser-symbol-solver-core:3.25.8')
-//    shade('com.github.javaparser:javaparser-core:3.25.8')
-//    implementation("org.vineflower:vineflower:${project.vineflower_version}")
-//    // https://mvnrepository.com/artifact/io.github.classgraph/classgraph
-//    shade('io.github.classgraph:classgraph:4.8.174')
+    if (propertyBool('use_lombok')) {
+        def vers = propertyString("lombok_version")
+        compileOnly("org.projectlombok:lombok:${vers}")
+        annotationProcessor("org.projectlombok:lombok:${vers}")
+        testCompileOnly("org.projectlombok:lombok:${vers}")
+        testAnnotationProcessor("org.projectlombok:lombok:${vers}")
+    }
 }
+
+apply from: 'gradle/scripts/dependencies.gradle'
 
 processResources {
-    // define properties that can be used during resource processing
-    inputs.property("version", project.version)
+    if (!propertyBool("use_access_widener")) {
+        exclude("${propertyString('access_widener_name')}.accesswidener")
+    }
 
-    // this will replace the property "${version}" in your mods.toml
-    // with the version you've defined in your gradle.properties
-    filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+    if (!propertyBool('use_mixin')) {
+        exclude(propertyStringList('mixin_configs').collect({"${it}.json"}))
+    }
+
+    def filters = ['META-INF/mods.toml', 'pack.mcmeta']
+
+    filesMatching(filters) {
+        it.expand(
+            "version": propertyString('mod_version'),
+            "forge_version": propertyString('forge_version'),
+            "loader_version_range": propertyString('loader_version_range'),
+            "license": propertyString('license'),
+            "mod_id": propertyString('mod_id'),
+            "mod_display_name": propertyString('mod_display_name'),
+            "mod_author": propertyString('mod_author'),
+            "mod_description": propertyString('mod_description'),
+            "minecraft_version": propertyString('minecraft_version'),
+            "resource_pack_format": propertyString('resource_pack_format')
+        )
     }
 }
 
-configure([tasks.compileJava]) {
+tasks.withType(JavaCompile) {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     // If Javadoc is generated, this must be specified in that task too.
     options.encoding = "UTF-8"
-    sourceCompatibility = 21
 
-    // The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
-    // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-    // We'll use that if it's available, but otherwise we'll use the older option.
-    options.release = 8
-}
+    // very few developers will provide source jar when publishing mods, we add param names in production jar
+    // to make life easier for those whose mod depend on this mod
+    options.compilerArgs << '-parameters'
 
-java {
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    withSourcesJar()
-
-    setSourceCompatibility(JavaVersion.VERSION_21)
+//    options.release = javaTarget
 }
 
 jar {
-//    def containedDeps = [
-//        "classgraph-4.8.174"
-//    ]
-//        .collect { e -> "META-INF/jars/" + e + ".jar"}
-//        .join(",")
-
     // add some additional metadata to the jar manifest
     manifest {
         attributes([
-            "Specification-Title"     : project.mod_id,
-            "Specification-Vendor"    : project.mod_author,
+            "Specification-Title"     : mod_id,
+            "Specification-Vendor"    : mod_author,
             "Specification-Version"   : "1",
-            "Implementation-Title"    : project.name,
+            "Implementation-Title"    : mod_display_name,
             "Implementation-Version"  : version,
-            "Implementation-Vendor"   : project.mod_author,
+            "Implementation-Vendor"   : mod_author,
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-//            ,
-//            "ContainedDeps": containedDeps
         ])
     }
 }
 
-shadowJar {
-    archiveClassifier.set("shadow")
-
-    relocate("org.java_websocket", "zzzank.probejs.shaded.java_websocket")
-    relocate("org.slf4j", "zzzank.probejs.shaded.slf4j")
-//    relocate("io.github.classgraph", "zzzank.probejs.shaded.classgraph")
-//    relocate("nonapi.io.github.classgraph", "zzzank.probejs.shaded.classgraph_nonapi")
-
-    configurations = [project.configurations.shade]
-}
-
 remapJar {
-    setInput(shadowJar.archiveFile)
-    dependsOn shadowJar
+    if (propertyBool('use_jvmdowngrader')) {
+        setInput(downgradeJar.archiveFile)
+    } else {
+        setInput(shadowJar.archiveFile)
+    }
+    dependsOn(shadowJar)
 }
 
-assemble.dependsOn shadowJar
-
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
-    }
+if (propertyBool('use_jvmdowngrader')) {
+    assemble.dependsOn(downgradeJar)
+} else {
+    assemble.dependsOn(shadowJar)
 }
 
-//assemble.dependsOn shadowJar
+String parserChangelog() {
+    if (!file('CHANGELOG.md').exists()) {
+        throw new GradleException('publish_with_changelog is true, but CHANGELOG.md does not exist in the workspace!')
+    }
+    String parsedChangelog = changelog.renderItem(
+        changelog.get(propertyString('mod_version')).withHeader(false).withEmptySections(false),
+        Changelog.OutputType.MARKDOWN
+    )
+    if (parsedChangelog.isEmpty()) {
+        throw new GradleException('publish_with_changelog is true, but the changelog for the latest version is empty!')
+    }
+    return parsedChangelog
+}
+
+processResources.dependsOn(generateMixinJson, generateAccessWidenerBase)
+
+apply from: 'gradle/scripts/publishing.gradle'
+
+apply from: 'gradle/scripts/extra.gradle'
