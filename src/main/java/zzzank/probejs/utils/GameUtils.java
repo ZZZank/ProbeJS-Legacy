@@ -28,10 +28,13 @@ public class GameUtils {
 
     public long modHash() {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            for (Mod mod : Platform.getMods()) {
-                digest.update((mod.getModId() + mod.getVersion()).getBytes());
-            }
+            val digest = MessageDigest.getInstance("SHA-256");
+            Platform.getMods()
+                .stream()
+                .sorted(Comparator.comparing(Mod::getModId))
+                .map(m -> m.getModId() + m.getVersion())
+                .map(String::getBytes)
+                .forEach(digest::update);
             return ByteBuffer.wrap(digest.digest()).getLong();
         } catch (NoSuchAlgorithmException e) {
             return -1;
@@ -51,7 +54,8 @@ public class GameUtils {
                 .flatMap(RegistryInfo::objectIds)
                 .map(ResourceLocation::toString)
                 .sorted()
-                .forEach(s -> digest.update(s.getBytes()));
+                .map(String::getBytes)
+                .forEach(digest::update);
 
             ByteBuffer buffer = ByteBuffer.wrap(digest.digest());
             return buffer.getLong();
