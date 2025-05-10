@@ -19,7 +19,7 @@ public final class EventJSInfos {
     public static final Map<String, EventJSInfo> KNOWN = new HashMap<>();
     public static final Codec<List<EventJSInfo>> CODEC = EventJSInfo.CODEC.listOf();
 
-    public static List<EventJSInfo> sortedInfos() {
+    public static List<EventJSInfo> copySortedInfos() {
         val sorted = new ArrayList<>(KNOWN.values());
         sorted.sort(null);
         return sorted;
@@ -51,7 +51,7 @@ public final class EventJSInfos {
 
     public static void writeTo(Path path) {
         try (val writer = Files.newBufferedWriter(path)) {
-            CODEC.encodeStart(JsonOps.INSTANCE, sortedInfos())
+            CODEC.encodeStart(JsonOps.INSTANCE, copySortedInfos())
                 .resultOrPartial(error -> ProbeJS.LOGGER.error("Error when serializing EventJS infos: {}", error))
                 .ifPresent(element -> ProbeJS.GSON_WRITER.toJson(element, writer));
         } catch (Exception e) {

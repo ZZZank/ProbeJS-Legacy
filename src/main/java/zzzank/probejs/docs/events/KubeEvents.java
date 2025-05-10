@@ -25,7 +25,7 @@ public class KubeEvents implements ProbeJSPlugin {
         val converter = scriptDump.transpiler.typeConverter;
 
         List<Code> codes = new ArrayList<>();
-        for (val info : EventJSInfos.sortedInfos()) {
+        for (val info : EventJSInfos.copySortedInfos()) {
             val id = info.id();
             if (disabled.contains(id) || !info.scriptTypes().contains(scriptDump.scriptType)) {
                 continue;

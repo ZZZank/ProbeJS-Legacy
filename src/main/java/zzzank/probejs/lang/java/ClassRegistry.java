@@ -124,8 +124,7 @@ public class ClassRegistry {
         while (!toWalk.isEmpty()) {
             ProbeJS.LOGGER.info("walking {} newly discovered classes", toWalk.size());
 
-            toWalk = toWalk
-                .stream()
+            toWalk = toWalk.stream()
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
                 .filter(new HashSet<>()::add) // deduplicate

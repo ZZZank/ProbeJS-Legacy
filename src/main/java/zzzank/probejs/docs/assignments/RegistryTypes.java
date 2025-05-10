@@ -140,7 +140,11 @@ public class RegistryTypes implements ProbeJSPlugin {
         makeClassModifications(files, Registry.DIMENSION_REGISTRY, Level.class);
     }
 
-    private static void makeClassModifications(TypeSpecificFiles files, ResourceKey<? extends Registry<?>> key, Class<?> baseClass) {
+    private static void makeClassModifications(
+        TypeSpecificFiles files,
+        ResourceKey<? extends Registry<?>> key,
+        Class<?> baseClass
+    ) {
         val typeScriptFile = files.globalFiles().get(ClassPath.fromJava(baseClass));
         if (typeScriptFile == null) {
             return;
@@ -195,7 +199,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         for (val info : RegistryInfos.values()) {
             val key = info.resourceKey();
 
-            val entries =info.objectIds()
+            val entries = info.objectIds()
                 .map(ResourceLocation::toString)
                 .collect(Collectors.toList());
             if (entries.isEmpty()) {
