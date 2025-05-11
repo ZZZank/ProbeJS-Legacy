@@ -81,7 +81,7 @@ public class Snippet {
     }
 
     public <T> Snippet registry(ResourceKey<Registry<T>> key) {
-        val registry = RegistryInfos.ALL.get(key.location());
+        val registry = RegistryInfos.all().get(key.location());
         if (registry == null) {
             ProbeJS.LOGGER.error("no registry info found for key {}, skipping", key.location());
             return this;

@@ -146,7 +146,7 @@ public class ScriptDump extends MultiDump {
         file.addCode(global);
     }
 
-    private void loadClasses() {
+    private Map<ClassPath, TypeScriptFile> loadClasses() {
         val globalClasses = transpiler.dump(recordedClasses);
 
         val filesToModify = new TypeSpecificFiles(globalClasses, this);
@@ -156,14 +156,16 @@ public class ScriptDump extends MultiDump {
 
         for (val entry : globalClasses.entrySet()) {
             val classPath = entry.getKey();
-            val output = entry.getValue();
+            var output = entry.getValue();
+
             val classDecl = output.findCodeNullable(ClassDecl.class);
             if (classDecl == null) {
                 continue;
             }
 
             if (!requested.contains(classPath)) {
-                output.codes.clear();
+                output = new TypeScriptFile(output.path);
+                entry.setValue(output);
             }
 
             // Add all assignable types
@@ -203,7 +205,7 @@ public class ScriptDump extends MultiDump {
             output.addCode(typeGlobal);
         }
 
-        filesDump.files = globalClasses.values();
+        return globalClasses;
     }
 
     public void writeJSConfig(Path path) throws IOException {
@@ -236,7 +238,8 @@ public class ScriptDump extends MultiDump {
     public void dump() throws IOException {
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
-        loadClasses();
+        val loaded = loadClasses();
+        filesDump.files = loaded.values();
 
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
 

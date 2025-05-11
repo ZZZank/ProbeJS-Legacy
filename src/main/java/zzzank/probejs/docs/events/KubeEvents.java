@@ -10,6 +10,7 @@ import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.ts.FunctionDeclaration;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
+import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.plugin.ProbeJSPlugins;
@@ -33,22 +34,18 @@ public class KubeEvents implements ProbeJSPlugin {
             if (disabled.contains(id) || !info.scriptTypes().contains(scriptDump.scriptType)) {
                 continue;
             }
-            val decl = declareEventMethod(id, converter, info);
-            decl.addComment(String.format(
-                """
-                    @at %s
-                    @cancellable %s
-                    """,
-                info.scriptTypes().stream().map(type -> type.name).collect(Collectors.joining(", ")),
-                info.cancellable() ? "Yes" : "No"
-            ));
+            val decl = declareEventMethod(Types.literal(id), converter, info);
+            decl.addComment(
+                "@at " + info.scriptTypes().stream().map(type -> type.name).collect(Collectors.joining(", ")),
+                "@cancellable " + (info.cancellable() ? "Yes" : "No")
+            );
             if (!info.sub.isEmpty()) {
                 decl.addComment(String.format(
                     "This event provides sub-event variant, e.g. `%s.%s`",
                     id,
                     info.sub
                 ));
-                codes.add(declareEventMethod(id + ".${string}", converter, info));
+                codes.add(declareEventMethod(Types.templateLiteral(id + ".${string}"), converter, info));
             }
             codes.add(decl);
         }
@@ -56,10 +53,10 @@ public class KubeEvents implements ProbeJSPlugin {
         scriptDump.addGlobal("events", codes.toArray(new Code[0]));
     }
 
-    private static @NotNull FunctionDeclaration declareEventMethod(String id, TypeConverter converter, EventJSInfo info) {
+    private static @NotNull FunctionDeclaration declareEventMethod(BaseType id, TypeConverter converter, EventJSInfo info) {
         return Statements
             .func("onEvent")
-            .param("id", Types.templateLiteral(id))
+            .param("id", id)
             .param("handler", Types.lambda()
                 .param("event", converter.convertType(info.clazzRaw()))
                 .build()

@@ -21,10 +21,10 @@ public final class RegistryInfos {
      * not using {@link net.minecraft.resources.ResourceKey} as key, because ResourceKey for registries
      * will always use {@link net.minecraft.core.Registry#ROOT_REGISTRY_NAME} as its parent
      */
-    public final Map<ResourceLocation, RegistryInfo> ALL = new HashMap<>();
+    private Map<ResourceLocation, RegistryInfo> ALL = new HashMap<>();
 
     public void refresh() {
-        ALL.clear();
+        ALL = new HashMap<>();
         for (val entry : ((AccessForgeRegistryManager) RegistryManager.FROZEN).getRegistries().entrySet()) {
             ALL.put(entry.getKey(), new RegistryInfo(entry.getValue()));
         }
@@ -39,5 +39,9 @@ public final class RegistryInfos {
 
     public Set<ResourceLocation> keys() {
         return ALL.keySet();
+    }
+
+    public Map<ResourceLocation, RegistryInfo> all() {
+        return ALL;
     }
 }
