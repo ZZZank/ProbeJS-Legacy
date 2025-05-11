@@ -50,7 +50,7 @@ public class GameEvents {
         if (ProbeConfig.modHash.get() == -1) {
             sendMsg.accept(ProbeText.pjs("hello").gold());
         }
-        if (ProbeConfig.registryHash.get() != GameUtils.registryHash()) {
+        if (GameUtils.registryHash() != ProbeConfig.registryHash.get()) {
             if (!ProbeDumpingThread.exists()) {
                 ProbeDumpingThread.create(sendMsg).start();
             }

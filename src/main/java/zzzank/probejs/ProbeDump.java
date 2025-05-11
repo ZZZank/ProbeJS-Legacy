@@ -90,15 +90,19 @@ public class ProbeDump {
         EventJSInfos.loadFrom(EVENT_CACHE);
         EventJSInfos.writeTo(EVENT_CACHE);
 
-        if (GameUtils.modHash() != ProbeConfig.modHash.get()) {
+        val modHash = GameUtils.modHash();
+        if (modHash != ProbeConfig.modHash.get()) {
             report(ProbeText.pjs("dump.mod_changed").aqua());
             onModChange();
+            ProbeJS.LOGGER.info("mod hash updating from {} to {}", ProbeConfig.modHash.get(), modHash);
             ProbeConfig.modHash.set(GameUtils.modHash());
         }
 
-        if (GameUtils.registryHash() != ProbeConfig.registryHash.get()) {
+        val registryHash = GameUtils.registryHash();
+        if (registryHash != ProbeConfig.registryHash.get()) {
             onRegistryChange();
-            ProbeConfig.registryHash.set(GameUtils.registryHash());
+            ProbeJS.LOGGER.info("registry hash updating from {} to {}", ProbeConfig.registryHash.get(), registryHash);
+            ProbeConfig.registryHash.set(registryHash);
         }
 
         // Fetch classes that will be used in the dump
