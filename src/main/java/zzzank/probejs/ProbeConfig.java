@@ -12,7 +12,7 @@ import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 import zzzank.probejs.utils.config.struct.ConfigRootImpl;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public interface ProbeConfig {
 
     ConfigRoot INSTANCE = new ConfigRootImpl(
-        HashMap::new,
+        LinkedHashMap::new,
         new ConfigProperties(),
         JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {
             io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
