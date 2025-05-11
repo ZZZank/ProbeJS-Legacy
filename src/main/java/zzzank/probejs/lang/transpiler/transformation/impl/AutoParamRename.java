@@ -60,7 +60,11 @@ public class AutoParamRename implements ClassTransformer {
     @Nullable
     public static String autoParamName(TypeDescriptor type, int index) {
         if (type instanceof ClassType c) {
-            return NameUtils.firstLower(c.clazz.getSimpleName()) + index;
+            val simpleName = c.clazz.getSimpleName();
+            if (simpleName.isEmpty()) {
+                return null;
+            }
+            return NameUtils.firstLower(simpleName) + index;
         } else if (type instanceof ArrayType arr) {
             return autoParamName(arr.component, index) + 's';
         } else if (type instanceof ParamType param) {
