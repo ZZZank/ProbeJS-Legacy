@@ -54,7 +54,7 @@ public interface ProbeConfig {
             JsonConfigIO.COMMENTS_KEY, JsonConfigIO.VALUE_KEY, JsonConfigIO.DEFAULT_VALUE_KEY,
             JsonConfigIO.VALUE_KEY
         ))
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> enabled = INSTANCE.define("enabled")
         .bindDefault(true)
         .comment("""
