@@ -9,7 +9,7 @@ repositories {
             }
         }
         filter {
-            includeGroup 'curse.maven'
+            includeGroup('curse.maven')
         }
     }
     exclusiveContent {
@@ -20,20 +20,21 @@ repositories {
             }
         }
         filter {
-            includeGroup 'maven.modrinth'
+            includeGroup('maven.modrinth')
         }
     }
     maven {
         url "https://maven.architectury.dev/"
         content {
             includeGroup("me.shedaniel")
+            includeGroup("dev.architectury")
         }
     }
     maven {
-        url "https://maven.saps.dev/minecraft"
+        url "https://maven.latvian.dev/releases"
         content {
-            includeGroup "dev.latvian.mods"
-            includeGroup "dev.ftb.mods"
+            includeGroup("dev.latvian.mods")
+            includeGroup("dev.latvian.apps")
         }
     }
     mavenLocal() // Must be last for caching to work
@@ -41,7 +42,8 @@ repositories {
 
 dependencies {
     modApi("curse.maven:rhizo-1003287:$rhizo_cf_id")
-    modApi("dev.latvian.mods:kubejs-forge:${kubejs_version}") {
+    modApi("me.shedaniel:architectury-forge:1.32.68")
+    modApi("curse.maven:kubejs-238086:3647098") {
         exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])
     }
 
