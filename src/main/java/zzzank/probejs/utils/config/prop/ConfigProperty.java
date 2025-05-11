@@ -2,17 +2,14 @@ package zzzank.probejs.utils.config.prop;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import lombok.val;
+import zzzank.probejs.utils.Asser;
 
 import java.util.*;
 
 /**
  * @author ZZZank
  */
-@Getter
-@Accessors(fluent = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConfigProperty<T> {
 
@@ -24,8 +21,8 @@ public final class ConfigProperty<T> {
     public static final ConfigProperty<String> EXAMPLE = register("example", "");
 
     public static synchronized <T> ConfigProperty<T> register(String name, T defaultValue) {
-        Objects.requireNonNull(name);
-        Objects.requireNonNull(defaultValue);
+        Asser.tNotNull(name, "name");
+        Asser.tNotNull(defaultValue, "default value");
         if (NAMED.containsKey(name)) {
             throw new IllegalArgumentException("config property with name '" + name + "' already registered");
         }
@@ -38,4 +35,16 @@ public final class ConfigProperty<T> {
     private final String name;
     private final int index;
     private final T defaultValue;
+
+    public String name() {
+        return this.name;
+    }
+
+    public int index() {
+        return this.index;
+    }
+
+    public T defaultValue() {
+        return this.defaultValue;
+    }
 }

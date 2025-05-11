@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 /**
  * @author ZZZank
  */
+@SuppressWarnings("unchecked")
 public class ConfigProperties {
     public static final int SIZE_THRESHOLD = 5;
 
