@@ -27,7 +27,7 @@ public class ProbeDump {
     public static final Path CLASS_CACHE = ProbePaths.PROBE.resolve("classes.txt");
     public static final Path EVENT_CACHE = ProbePaths.PROBE.resolve("kube_event.json");
 
-    final SharedDump codeDump = new SharedDump(ProbePaths.PROBE.resolve("shared"));
+    final SharedDump sharedDump = new SharedDump(ProbePaths.PROBE.resolve("shared"));
     final SchemaDump schemaDump = new SchemaDump();
     final SnippetDump snippetDump = new SnippetDump();
     final Collection<ScriptDump> scriptDumps = new ArrayList<>();
@@ -48,7 +48,7 @@ public class ProbeDump {
         ClassRegistry.REGISTRY.addClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
 
         report(ProbeText.pjs("dump.cleaning"));
-        codeDump.clearFiles();
+        sharedDump.clearFiles();
         for (ScriptDump scriptDump : scriptDumps) {
             scriptDump.clearFiles();
             report(ProbeText.pjs("removed_script", scriptDump.manager.type.toString()));
@@ -111,7 +111,7 @@ public class ProbeDump {
 
         val reporters = Collections.synchronizedList(new ArrayList<TSDump.Reporter>());
         scriptDumps.stream().map(MultiDump::reporter).forEach(reporters::add);
-        reporters.add(codeDump.reporter());
+        reporters.add(sharedDump.reporter());
 
         val executor = new ForkJoinPool(
             4, pool -> new ForkJoinWorkerThread(pool){}, null, false
@@ -136,14 +136,14 @@ public class ProbeDump {
         CompletableFuture.allOf(scriptDumpFutures)
             .thenRunAsync(() -> {
                 try {
-                    codeDump.dump();
+                    sharedDump.dump();
                     report(ProbeText.pjs("dump.dump_finished", "SHARED").green());
                 } catch (Throwable e) {
                     val error = ProbeText.pjs("dump.dump_error", "SHARED").red();
                     report(error);
                     ProbeJS.LOGGER.error(error.unwrap().getString(), e);
                 } finally {
-                    reporters.remove(codeDump.reporter());
+                    reporters.remove(sharedDump.reporter());
                 }
             }, executor);
         executor.submit(() -> {

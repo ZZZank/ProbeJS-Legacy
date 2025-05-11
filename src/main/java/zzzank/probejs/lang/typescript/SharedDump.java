@@ -20,11 +20,11 @@ public class SharedDump extends TSFilesDump {
     public SharedDump(Path writeTo) {
         super(writeTo);
         this.modifiers.add(f -> !denied.contains(f.path));
+        transpiler.init();
     }
 
     @Override
     protected void dumpImpl() throws IOException {
-        transpiler.init();
         this.files = transpiler.dump(ClassRegistry.REGISTRY.getFoundClasses()).values();
         super.dumpImpl();
     }
