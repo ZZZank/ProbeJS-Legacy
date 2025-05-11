@@ -26,8 +26,8 @@ public class ConfigEntryBuilder<T> {
     public ConfigProperties properties = new ConfigProperties();
 
     ConfigEntryBuilder(ConfigCategory parent, String name) {
-        this.parent = parent;
-        this.name = name;
+        this.parent = Asser.tNotNull(parent, "parent category");
+        this.name = Asser.tNotNull(name, "name");
     }
 
     public <T_> ConfigEntryBuilder<T_> bind(ConfigBinding<T_> binding) {
@@ -117,11 +117,7 @@ public class ConfigEntryBuilder<T> {
     }
 
     public ConfigEntry<T> buildAutoSave() {
-        return this.parent.register(new ConfigEntryImpl<>(
-            name,
-            new AutoSaveBinding<>(binding, parent.getRoot()),
-            properties,
-            this.parent
-        ));
+        this.binding = new AutoSaveBinding<>(binding, parent.getRoot());
+        return build();
     }
 }

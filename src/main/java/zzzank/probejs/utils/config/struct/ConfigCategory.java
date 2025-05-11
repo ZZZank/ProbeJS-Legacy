@@ -12,6 +12,8 @@ import java.util.Map;
  */
 public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>> {
 
+    char PATH_SPLITTER_CHAR = '.';
+
     String PATH_SPLITTER = "\\.";
 
     default ConfigEntry<?> getEntry(String path) {
@@ -43,7 +45,6 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
     }
 
     default ConfigEntryBuilder<Void> define(String name) {
-        Asser.t(name.indexOf('.') < 0, "");
         return new ConfigEntryBuilder<>(this, name);
     }
 

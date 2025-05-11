@@ -23,6 +23,13 @@ class ConfigEntryImpl<T> implements ConfigEntry<T> {
         this.properties = Asser.tNotNull(properties, "properties");
         this.parent = parent;
 
+        Asser.t(
+            name.indexOf(ConfigCategory.PATH_SPLITTER_CHAR) < 0,
+            String.format(
+                "There should not be path splitter (%s) in config entry name",
+                ConfigCategory.PATH_SPLITTER_CHAR
+            )
+        );
         if (!this.isRoot()) {
             Asser.tNotNull(parent, "parent for non-root config entry");
         }
