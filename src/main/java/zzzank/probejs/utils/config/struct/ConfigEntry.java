@@ -80,6 +80,10 @@ public interface ConfigEntry<T> {
         return (ConfigRoot) this;
     }
 
+    default ConfigRoot getRoot() {
+        return this instanceof ConfigRoot root ? root : this.parent().getRoot();
+    }
+
     default String path() {
         return parent().path() + '.' + name();
     }

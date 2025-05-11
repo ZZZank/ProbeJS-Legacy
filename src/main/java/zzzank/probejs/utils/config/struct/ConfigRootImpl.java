@@ -4,6 +4,7 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.io.ConfigIO;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -12,19 +13,27 @@ import java.util.function.Supplier;
  */
 public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     private final ConfigIO io;
+    private final Path path;
 
     public ConfigRootImpl(
         String name,
         Supplier<Map<String, ConfigEntry<?>>> provider,
         ConfigProperties properties,
-        ConfigIO io
+        ConfigIO io,
+        Path path
     ) {
         super(name, provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
+        this.path = path;
     }
 
     @Override
     public ConfigIO io() {
         return io;
+    }
+
+    @Override
+    public Path filePath() {
+        return path;
     }
 }

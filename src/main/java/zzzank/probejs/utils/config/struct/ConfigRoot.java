@@ -13,20 +13,22 @@ public interface ConfigRoot extends ConfigCategory {
 
     ConfigIO io();
 
-    default void save(Path saveTo) {
+    Path filePath();
+
+    default void save() {
         try {
-            io().save(this, saveTo);
+            io().save(this, filePath());
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error happened when writing configs to file", e);
         }
     }
 
-    default void read(Path readFrom) {
-        if (!Files.exists(readFrom)) {
+    default void read() {
+        if (!Files.exists(filePath())) {
             return;
         }
         try {
-            io().read(this, readFrom);
+            io().read(this, filePath());
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error happened when reading configs from file", e);
         }
@@ -35,6 +37,11 @@ public interface ConfigRoot extends ConfigCategory {
     @Override
     default boolean isRoot() {
         return true;
+    }
+
+    @Override
+    default ConfigRoot getRoot() {
+        return this;
     }
 
     @Override

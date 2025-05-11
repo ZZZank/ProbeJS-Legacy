@@ -115,4 +115,13 @@ public class ConfigEntryBuilder<T> {
     public ConfigEntry<T> build() {
         return this.parent.register(new ConfigEntryImpl<>(name, binding, properties, this.parent));
     }
+
+    public ConfigEntry<T> buildAutoSave() {
+        return this.parent.register(new ConfigEntryImpl<>(
+            name,
+            new AutoSaveBinding<>(binding, parent.getRoot()),
+            properties,
+            this.parent
+        ));
+    }
 }
