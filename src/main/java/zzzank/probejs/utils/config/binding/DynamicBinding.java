@@ -1,6 +1,7 @@
 package zzzank.probejs.utils.config.binding;
 
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.utils.Asser;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -16,8 +17,8 @@ public class DynamicBinding<T> extends BindingBase<T> {
 
     public DynamicBinding(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name, @NotNull Supplier<T> getter, @NotNull Consumer<T> setter) {
         super(defaultValue, defaultType, name);
-        this.getter = getter;
-        this.setter = setter;
+        this.getter = Asser.tNotNull(getter, "getter");
+        this.setter = Asser.tNotNull(setter, "setter");
     }
 
     @Override

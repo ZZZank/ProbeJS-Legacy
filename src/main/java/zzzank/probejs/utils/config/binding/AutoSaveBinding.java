@@ -2,6 +2,7 @@ package zzzank.probejs.utils.config.binding;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
@@ -13,8 +14,8 @@ public class AutoSaveBinding<T> implements ConfigBinding<T> {
     private final ConfigRoot root;
 
     public AutoSaveBinding(ConfigBinding<T> inner, ConfigRoot root) {
-        this.inner = inner;
-        this.root = root;
+        this.inner = Asser.tNotNull(inner, "inner binding");
+        this.root = Asser.tNotNull(root, "config root");
     }
 
     @Override
