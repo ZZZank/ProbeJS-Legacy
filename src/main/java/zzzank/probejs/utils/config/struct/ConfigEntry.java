@@ -15,9 +15,9 @@ public interface ConfigEntry<T> {
 
     /// basic action
 
-    /// The name of this config entry.
+    /// The name of this config entry. For [ConfigRoot], it will always return an empty string
     ///
-    /// For complete path of this config entry, use {@link #path()}
+    /// For complete path of this config entry, use [#path()]
     String name();
 
     /// Get the config value of this config entry
@@ -47,7 +47,7 @@ public interface ConfigEntry<T> {
 
     ConfigProperties properties();
 
-    default  <P> Optional<P> getProp(ConfigProperty<P> property) {
+    default <P> Optional<P> getProp(ConfigProperty<P> property) {
         return properties().get(property);
     }
 
@@ -84,6 +84,9 @@ public interface ConfigEntry<T> {
         return this instanceof ConfigRoot root ? root : this.parent().getRoot();
     }
 
+    /// The path from the root of the config to this config entry. For [ConfigRoot], it will always return an empty string
+    ///
+    /// For name of this config entry, use [#name()]
     default String path() {
         return parent().path() + '.' + name();
     }

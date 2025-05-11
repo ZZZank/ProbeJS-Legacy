@@ -16,13 +16,12 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     private final Path path;
 
     public ConfigRootImpl(
-        String name,
         Supplier<Map<String, ConfigEntry<?>>> provider,
         ConfigProperties properties,
         ConfigIO io,
         Path path
     ) {
-        super(name, provider, properties, null);
+        super("", provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
         this.path = path;
     }

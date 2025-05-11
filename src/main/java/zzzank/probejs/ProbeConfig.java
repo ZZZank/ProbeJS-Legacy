@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 public interface ProbeConfig {
 
     ConfigRoot INSTANCE = new ConfigRootImpl(
-        ProbeJS.MOD_ID,
         HashMap::new,
         new ConfigProperties(),
         JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {

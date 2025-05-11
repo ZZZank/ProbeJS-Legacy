@@ -15,6 +15,9 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
     String PATH_SPLITTER = "\\.";
 
     default ConfigEntry<?> getEntry(String path) {
+        if (path.isEmpty()) {
+            return this;
+        }
         ConfigEntry<?> entry = this;
         for (val s : path.split(PATH_SPLITTER)) {
             entry = entry.asCategory().get().get(s);

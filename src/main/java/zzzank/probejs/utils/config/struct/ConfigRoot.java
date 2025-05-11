@@ -50,6 +50,11 @@ public interface ConfigRoot extends ConfigCategory {
     }
 
     @Override
+    default String name() {
+        return "";
+    }
+
+    @Override
     default String path() {
         return "";
     }
