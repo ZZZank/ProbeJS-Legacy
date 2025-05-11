@@ -59,7 +59,7 @@ public class KubeEvents implements ProbeJSPlugin {
     private static @NotNull FunctionDeclaration declareEventMethod(String id, TypeConverter converter, EventJSInfo info) {
         return Statements
             .func("onEvent")
-            .param("id", Types.literal(id))
+            .param("id", Types.templateLiteral(id))
             .param("handler", Types.lambda()
                 .param("event", converter.convertType(info.clazzRaw()))
                 .build()

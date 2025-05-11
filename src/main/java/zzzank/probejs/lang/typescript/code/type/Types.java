@@ -71,6 +71,10 @@ public interface Types {
         return primitive(ProbeJS.GSON.toJson(content));
     }
 
+    static JSPrimitiveType templateLiteral(String content) {
+        return primitive('`' + content + '`');
+    }
+
     /**
      * Returns a type that will be as-is in the TypeScript to represent
      * keywords/types not covered, e.g. InstanceType.
