@@ -206,7 +206,7 @@ jar {
 
 remapJar {
     if (propertyBool('use_jvmdowngrader')) {
-        setInput(downgradeJar.archiveFile)
+        setInput(shadeDowngradedApi.archiveFile)
     } else {
         setInput(shadowJar.archiveFile)
     }
@@ -214,7 +214,7 @@ remapJar {
 }
 
 if (propertyBool('use_jvmdowngrader')) {
-    assemble.dependsOn(downgradeJar)
+    assemble.dependsOn(shadeDowngradedApi)
 } else {
     assemble.dependsOn(shadowJar)
 }
