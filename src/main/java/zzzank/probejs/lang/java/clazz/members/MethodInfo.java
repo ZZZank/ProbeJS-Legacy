@@ -1,13 +1,16 @@
 package zzzank.probejs.lang.java.clazz.members;
 
 import lombok.val;
-import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.base.TypeVariableHolder;
+import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.List;
 import java.util.Map;
 

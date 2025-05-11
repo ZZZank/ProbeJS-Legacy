@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * @author ZZZank
@@ -104,7 +103,7 @@ public class ConfigEntryBuilder<T> {
             Arrays.stream(comments)
                 .map(NameUtils.MATCH_LINE_BREAK::split)
                 .flatMap(Arrays::stream)
-                .collect(Collectors.toList()),
+                .toList(),
             (a, b) -> {
                 a.addAll(b);
                 return a;

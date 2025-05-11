@@ -15,7 +15,7 @@ import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 import java.io.Reader;
 import java.io.Writer;
-import java.util.*;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 /**

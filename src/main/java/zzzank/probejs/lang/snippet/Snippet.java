@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Snippet {
 
@@ -87,7 +86,7 @@ public class Snippet {
             ProbeJS.LOGGER.error("no registry info found for key {}, skipping", key.location());
             return this;
         }
-        return choices(registry.objectIds().map(ResourceLocation::toString).collect(Collectors.toList()));
+        return choices(registry.objectIds().map(ResourceLocation::toString).toList());
     }
 
     private List<SnippetPart> getRecent() {

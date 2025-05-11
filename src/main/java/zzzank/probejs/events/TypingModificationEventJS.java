@@ -2,8 +2,8 @@ package zzzank.probejs.events;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 
 import java.util.Map;
 import java.util.function.Consumer;

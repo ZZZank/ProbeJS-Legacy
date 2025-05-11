@@ -1,7 +1,6 @@
 package zzzank.probejs.lang.transpiler.transformation.impl;
 
 import lombok.val;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;

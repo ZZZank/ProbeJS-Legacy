@@ -8,7 +8,6 @@ import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.collect.map.HashMultiMap;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -27,7 +26,7 @@ public enum BuiltinScanners implements ClassDataScanner {
             val collected = dataStream
                 .map(AccessClassData::new)
                 .map(AccessClassData::className)
-                .collect(Collectors.toList());
+                .toList();
             ProbeJS.LOGGER.debug("FullScan collected {} class names", collected.size());
             return collected;
         }

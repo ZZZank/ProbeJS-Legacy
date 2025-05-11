@@ -3,6 +3,7 @@ package zzzank.probejs.features.forge_scan;
 import lombok.val;
 import me.shedaniel.architectury.platform.Platform;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbeJS;
@@ -11,7 +12,6 @@ import zzzank.probejs.utils.ReflectUtils;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author ZZZank
@@ -24,12 +24,13 @@ public class ClassScanner {
         return scanner.scan(
                 allScanData
                     .stream()
-                    .flatMap(data -> data.getClasses().stream())
+                    .map(ModFileScanData::getClasses)
+                    .flatMap(Collection::stream)
             )
             .stream()
-            .map(ReflectUtils::classOrNull)
+            .<Class<?>>map(ReflectUtils::classOrNull)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public static @NotNull List<Class<?>> scanMods(Collection<String> modids) {
@@ -46,6 +47,6 @@ public class ClassScanner {
             .filter(Objects::nonNull)
             .map(ModJarClassScanner::scanFile)
             .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+            .toList();
     }
 }

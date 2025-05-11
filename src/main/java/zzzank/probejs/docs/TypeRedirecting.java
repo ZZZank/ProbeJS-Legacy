@@ -11,7 +11,8 @@ import zzzank.probejs.lang.transpiler.redirect.SimpleClassRedirect;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.ClassWrapperPJS;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author ZZZank

@@ -10,9 +10,8 @@ import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 public class Clazz extends TypeVariableHolder {
 
@@ -27,15 +26,16 @@ public class Clazz extends TypeVariableHolder {
     public final List<TypeDescriptor> interfaces;
     public final ClassAttribute attribute;
 
+    @SuppressWarnings("unchecked")
     public Clazz(Class<?> clazz, MemberCollector collector) {
         super(clazz.getTypeParameters(), clazz.getAnnotations());
 
         this.classPath = ClassPath.fromJava(clazz);
 
         collector.accept(clazz);
-        this.constructors = collector.constructors().collect(Collectors.toList());
-        this.methods = collector.methods().collect(Collectors.toList());
-        this.fields = collector.fields().collect(Collectors.toList());
+        this.constructors = (List<ConstructorInfo>) collector.constructors().toList();
+        this.methods = (List<MethodInfo>) collector.methods().toList();
+        this.fields = (List<FieldInfo>) collector.fields().toList();
 
         this.superClass = clazz.getSuperclass() == Object.class
             ? null

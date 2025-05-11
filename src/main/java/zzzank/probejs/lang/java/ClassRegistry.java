@@ -44,7 +44,7 @@ public class ClassRegistry {
             .stream()
             .map(this::addClass)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**

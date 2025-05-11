@@ -16,7 +16,10 @@ import zzzank.probejs.mixins.AccessTypedDynamicFunction;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class Bindings implements ProbeJSPlugin {
 

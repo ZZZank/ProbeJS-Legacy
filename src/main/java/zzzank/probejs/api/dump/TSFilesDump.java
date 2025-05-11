@@ -7,7 +7,10 @@ import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**

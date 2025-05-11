@@ -1,6 +1,9 @@
 package zzzank.probejs.lang.typescript.refer;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.val;
 import zzzank.probejs.ProbeJS;
 
 import java.util.function.Function;

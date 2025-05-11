@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public interface Types {
     JSPrimitiveType ANY = primitive("any");
@@ -232,14 +231,14 @@ public interface Types {
                 union.types.stream()
                     .filter((t) -> !typePredicate.test(t))
                     .map((t) -> filter(t, typePredicate))
-                    .collect(Collectors.toList())
+                    .toList()
             );
         } else if (type instanceof JSJoinedType.Intersection intersection) {
             return Types.and(
                 intersection.types.stream()
                     .filter((t) -> !typePredicate.test(t))
                     .map((t) -> filter(t, typePredicate))
-                    .collect(Collectors.toList())
+                    .toList()
             );
         }
         return type;

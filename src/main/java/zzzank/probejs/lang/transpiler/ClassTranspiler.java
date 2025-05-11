@@ -12,8 +12,6 @@ import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.util.stream.Collectors;
-
 public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
     private final Method method;
@@ -33,11 +31,10 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
     public ClassDecl transpile(Clazz clazz) {
 
         val variableTypes = CollectUtils.mapToList(clazz.variableTypes, converter::convertVariableType);
-        val superClass = clazz.superClass == null ? null : converter.convertTypeBuiltin(clazz.superClass);
-        val interfaces = clazz.interfaces.stream()
-            .map(converter::convertType)
-            .filter(t -> t != Types.ANY)
-            .collect(Collectors.toList());
+        val superClass = clazz.superClass == null
+            ? null
+            : converter.convertTypeBuiltin(clazz.superClass);
+        val interfaces = CollectUtils.mapToList(clazz.interfaces, converter::convertType);
 
         ClassDecl decl;
         if (clazz.isInterface()) {

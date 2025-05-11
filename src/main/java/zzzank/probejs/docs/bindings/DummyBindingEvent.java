@@ -2,7 +2,9 @@ package zzzank.probejs.docs.bindings;
 
 import dev.latvian.kubejs.script.BindingsEvent;
 import dev.latvian.kubejs.script.ScriptManager;
-import dev.latvian.mods.rhino.*;
+import dev.latvian.mods.rhino.BaseFunction;
+import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.Scriptable;
 
 /**
  * @author ZZZank

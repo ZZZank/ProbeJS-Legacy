@@ -9,7 +9,6 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AnnotationHolder {
 
@@ -32,7 +31,7 @@ public class AnnotationHolder {
     public <T extends Annotation> List<T> getAnnotations(Class<T> type) {
         return (List<T>) Arrays.stream(annotations)
             .filter(type::isInstance)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Nullable

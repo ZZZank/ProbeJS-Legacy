@@ -10,8 +10,8 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
+import zzzank.probejs.lang.typescript.TypeSpecificFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
@@ -24,7 +24,6 @@ import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Assign types to all the registry types
@@ -201,7 +200,7 @@ public class RegistryTypes implements ProbeJSPlugin {
 
             val entries = info.objectIds()
                 .map(ResourceLocation::toString)
-                .collect(Collectors.toList());
+                .toList();
             if (entries.isEmpty()) {
                 continue;
             }
@@ -220,7 +219,7 @@ public class RegistryTypes implements ProbeJSPlugin {
             val tags = info.tagIds()
                 .map(ResourceLocation::toString)
                 .map("#"::concat)
-                .collect(Collectors.toList());
+                .toList();
             if (tags.isEmpty()) {
                 continue;
             }

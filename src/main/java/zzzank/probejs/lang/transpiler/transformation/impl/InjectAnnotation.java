@@ -16,7 +16,6 @@ import zzzank.probejs.lang.typescript.code.member.*;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 public class InjectAnnotation implements ClassTransformer {
 

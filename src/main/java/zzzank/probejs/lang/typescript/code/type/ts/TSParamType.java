@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TSParamType extends BaseType {
     public final BaseType baseType;

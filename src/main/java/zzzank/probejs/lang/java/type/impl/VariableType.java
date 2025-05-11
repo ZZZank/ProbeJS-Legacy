@@ -3,13 +3,11 @@ package zzzank.probejs.lang.java.type.impl;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class VariableType extends TypeDescriptor {
@@ -35,7 +33,7 @@ public class VariableType extends TypeDescriptor {
             ? Arrays.stream(typeVariable.getAnnotatedBounds())
                 .filter(bound -> Object.class != bound.getType())
                 .map(TypeAdapter::getTypeDescription)
-                .collect(Collectors.toList())
+                .toList()
             : new ArrayList<>();
     }
 
