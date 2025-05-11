@@ -42,7 +42,7 @@ public class KubeEvents implements ProbeJSPlugin {
                 info.scriptTypes().stream().map(type -> type.name).collect(Collectors.joining(", ")),
                 info.cancellable() ? "Yes" : "No"
             ));
-            if (info.sub != null) {
+            if (!info.sub.isEmpty()) {
                 decl.addComment(String.format(
                     "This event provides sub-event variant, e.g. `%s.%s`",
                     id,
