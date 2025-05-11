@@ -6,6 +6,7 @@ import lombok.val;
 import zzzank.probejs.ProbeJS;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +27,10 @@ public class FileUtils {
                 }
             }
         }
+    }
+
+    public static String relativePathStr(Path from, Path to) {
+        return from.relativize(to).toString().replace(File.separatorChar, '/');
     }
 
     public static void writeMergedConfig(Path path, JsonObject config) throws IOException {
