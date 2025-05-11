@@ -19,10 +19,12 @@ public final class EventJSInfos {
     public static final Map<String, EventJSInfo> KNOWN = new HashMap<>();
     public static final Codec<List<EventJSInfo>> CODEC = EventJSInfo.CODEC.listOf();
 
-    public static List<EventJSInfo> copySortedInfos() {
-        val sorted = new ArrayList<>(KNOWN.values());
-        sorted.sort(null);
-        return sorted;
+    public synchronized static List<EventJSInfo> copySortedInfos() {
+        return KNOWN.values()
+            .stream()
+            .filter(Objects::nonNull) // why will there be null value?
+            .sorted()
+            .toList();
     }
 
     public static Set<Class<?>> provideClasses() {
