@@ -164,7 +164,9 @@ public class ScriptDump extends MultiDump {
             }
 
             if (!requested.contains(classPath)) {
+                val old = output;
                 output = new TypeScriptFile(output.path);
+                output.declaration.excludedNames.addAll(old.declaration.excludedNames);
                 entry.setValue(output);
             }
 
