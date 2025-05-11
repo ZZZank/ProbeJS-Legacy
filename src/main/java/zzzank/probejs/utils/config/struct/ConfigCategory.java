@@ -1,11 +1,13 @@
 package zzzank.probejs.utils.config.struct;
 
 import lombok.val;
-import zzzank.probejs.utils.Asser;
+import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.report.RuntimeError;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author ZZZank
@@ -48,5 +50,13 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
         return new ConfigEntryBuilder<>(this, name);
     }
 
-    <T> ConfigEntry<T> register(ConfigEntry<T> entry);
+    <T extends ConfigEntry<?>> T register(T entry);
+
+    default ConfigCategory subCategory(String name, Supplier<Map<String, ConfigEntry<?>>> mapStructure) {
+        return register(new ConfigCategoryImpl(name, mapStructure, new ConfigProperties(), this));
+    }
+
+    default ConfigCategory subCategory(String name) {
+        return subCategory(name, LinkedHashMap::new);
+    }
 }

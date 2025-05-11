@@ -16,6 +16,8 @@ import java.util.function.Supplier;
  */
 public class ConfigCategoryImpl extends ConfigEntryImpl<Map<String, ConfigEntry<?>>> implements ConfigCategory {
 
+    private final Map<String, ConfigEntry<?>> structure;
+
     public ConfigCategoryImpl(
         String name,
         Supplier<Map<String, ConfigEntry<?>>> mapStructure,
@@ -23,10 +25,11 @@ public class ConfigCategoryImpl extends ConfigEntryImpl<Map<String, ConfigEntry<
         ConfigCategory parent
     ) {
         super(name, new CategoryBinding(mapStructure.get(), Cast.to(Map.class), name), properties, parent);
+        structure = ((CategoryBinding) this.binding()).mutable;
     }
 
     @Override
-    public <T> ConfigEntry<T> register(ConfigEntry<T> entry) {
+    public <T extends ConfigEntry<?>> T register(T entry) {
         Asser.tNotNull(entry, "config entry");
         Asser.t(
             this.getEntry(entry.name()) == null,
@@ -36,8 +39,7 @@ public class ConfigCategoryImpl extends ConfigEntryImpl<Map<String, ConfigEntry<
             entry.parent() == this,
             "config source in config entry not matching config source that accepts this entry"
         );
-        val binding = (CategoryBinding) this.binding();
-        binding.mutable.put(entry.name(), entry);
+        structure.put(entry.name(), entry);
         return entry;
     }
 
