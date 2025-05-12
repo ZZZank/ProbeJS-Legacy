@@ -120,9 +120,18 @@ public class ProbeDump {
         reporters.add(sharedDump.reporter());
 
         val executor = new ForkJoinPool(
-            4, pool -> new ForkJoinWorkerThread(pool){}, null, false
+            4,
+            pool -> {
+                val thread = new ForkJoinWorkerThread(pool) {
+                };
+                thread.setName("ProbeDumpWorker" + thread.getPoolIndex());
+                return thread;
+            },
+            null,
+            false
         );
 
+        // per script
         val scriptDumpFutures = scriptDumps.stream()
             .map(dump -> (Runnable) () -> {
                 dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
@@ -139,6 +148,8 @@ public class ProbeDump {
             })
             .map(r -> CompletableFuture.runAsync(r, executor))
             .toArray(CompletableFuture[]::new);
+
+        // shared
         CompletableFuture.allOf(scriptDumpFutures)
             .thenRunAsync(() -> {
                 try {
@@ -152,6 +163,8 @@ public class ProbeDump {
                     reporters.remove(sharedDump.reporter());
                 }
             }, executor);
+
+        // monitor
         executor.submit(() -> {
             while (true) {
                 try {
