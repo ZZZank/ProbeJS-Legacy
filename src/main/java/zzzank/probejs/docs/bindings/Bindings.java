@@ -1,6 +1,5 @@
 package zzzank.probejs.docs.bindings;
 
-import dev.latvian.kubejs.script.TypedDynamicFunction;
 import dev.latvian.mods.rhino.NativeJavaClass;
 import lombok.val;
 import zzzank.probejs.ProbeConfig;
@@ -12,7 +11,6 @@ import zzzank.probejs.lang.typescript.code.ts.ReexportDeclaration;
 import zzzank.probejs.lang.typescript.code.ts.VariableDeclaration;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.mixins.AccessTypedDynamicFunction;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 
@@ -42,17 +40,11 @@ public class Bindings implements ProbeJSPlugin {
                 continue;
             }
 
-            val fn = Types.lambda().returnType(Types.ANY);
-            if (entry.getValue() instanceof TypedDynamicFunction typed) {
-                val types = ((AccessTypedDynamicFunction) typed).types();
-                for (int i = 0; i < types.length; i++) {
-                    var type = types[i];
-                    fn.param("arg" + i, type == null ? Types.ANY : converter.convertType(type));
-                }
-            } else {
-                fn.param("args", Types.ANY.asArray(), false, true);
-            }
-            exported.put(name, fn.build());
+            val fn = Types.lambda()
+                .returnType(Types.ANY)
+                .param("args", Types.ANY.asArray(), false, true)
+                .build();
+            exported.put(name, fn);
         }
 
         for (val entry : reader.constants.entrySet()) {
@@ -114,16 +106,6 @@ public class Bindings implements ProbeJSPlugin {
                 classes.add(c);
             } else {
                 classes.add(o.getClass());
-            }
-        }
-        for (val fn : reader.functions.values()) {
-            if (!(fn instanceof TypedDynamicFunction typed)) {
-                continue;
-            }
-            for (Class<?> type : ((AccessTypedDynamicFunction) typed).types()) {
-                if (type != null) {
-                    classes.add(type);
-                }
             }
         }
 
