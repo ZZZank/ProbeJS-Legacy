@@ -34,7 +34,7 @@ public class VariableType extends TypeDescriptor {
                 .filter(bound -> Object.class != bound.getType())
                 .map(TypeAdapter::getTypeDescription)
                 .toList()
-            : new ArrayList<>();
+            : List.of();
     }
 
 
