@@ -1,10 +1,8 @@
-package zzzank.probejs.utils.config.serde.holder;
+package zzzank.probejs.utils.config.serde;
 
 import lombok.val;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.config.report.holder.AccessResult;
-import zzzank.probejs.utils.config.serde.ConfigSerde;
-import zzzank.probejs.utils.config.serde.ConfigSerdeFactory;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.Objects;
  * @param <I> intermediate object type, used by {@link zzzank.probejs.utils.config.serde.ConfigSerde}
  * @author ZZZank
  */
-public interface SerdeHolder<I> {
+public interface ConfigSerdeHolder<I> {
 
     default <T> ConfigSerde<I, T> getSerde(Class<T> type) {
         val known = getKnownSerdes().get(type);

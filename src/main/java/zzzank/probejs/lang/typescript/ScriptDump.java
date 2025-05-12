@@ -22,10 +22,9 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.FileUtils;
 import zzzank.probejs.utils.JsonUtils;
-import zzzank.probejs.utils.collect.WrappedMap;
+import zzzank.probejs.utils.MapBuilder;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -104,17 +103,17 @@ public class ScriptDump extends MultiDump {
     }
 
     public Set<Class<?>> retrieveClasses() {
-        Set<Class<?>> classes = CollectUtils.identityHashSet();
+        Set<Class<?>> classes = new HashSet<>();
         ProbeJSPlugins.forEachPlugin(plugin -> classes.addAll(plugin.provideJavaClass(this)));
         return classes;
     }
 
     public void assignType(Class<?> classPath, BaseType type) {
-        assignType(ClassPath.fromJava(classPath), type);
+        assignType(ClassPath.fromJava(classPath), null, type);
     }
 
     public void assignType(ClassPath classPath, BaseType type) {
-        convertibles.put(classPath, new TypeDecl(null, type));
+        assignType(classPath, null, type);
     }
 
     public void assignType(Class<?> classPath, String name, BaseType type) {
@@ -213,7 +212,7 @@ public class ScriptDump extends MultiDump {
     public void writeJSConfig(Path path) throws IOException {
         val config = (JsonObject) JsonUtils.parseObject(
             Map.of(
-                "compilerOptions", WrappedMap.<String, Object>ofHash()
+                "compilerOptions", MapBuilder.<String, Object>ofHash()
                     .put("module", "commonjs")
                     .put("moduleResolution", "classic")
                     .put("isolatedModules", true)

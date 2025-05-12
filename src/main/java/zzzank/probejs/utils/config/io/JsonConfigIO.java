@@ -9,7 +9,7 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
-import zzzank.probejs.utils.config.serde.holder.AbstractSerdeHolder;
+import zzzank.probejs.utils.config.serde.AbstractSerdeHolder;
 import zzzank.probejs.utils.config.struct.ConfigCategory;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 

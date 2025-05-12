@@ -7,26 +7,35 @@ import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 import zzzank.probejs.lang.typescript.code.member.ParamDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class DocUtils {
-    public static void applyParam(TypeScriptFile file, Predicate<MethodDecl> test, int index, Consumer<ParamDecl> effect) {
+    public static void applyParam(
+        TypeScriptFile file,
+        Predicate<MethodDecl> methodFilter,
+        int paramIndex,
+        Consumer<ParamDecl> action
+    ) {
         if (file == null) {
             return;
         }
-        val code = file.findCode(ClassDecl.class);
-        if (code.isPresent()) {
-            for (val method : code.get().methods) {
-                if (test.test(method)) {
-                    effect.accept(method.params.get(index));
-                }
-            }
-        }
+        file.findCode(ClassDecl.class)
+            .map(c -> c.methods)
+            .orElse(List.of())
+            .stream()
+            .filter(methodFilter)
+            .forEach(method -> action.accept(method.params.get(paramIndex)));
     }
 
-    public static void replaceParamType(TypeScriptFile file, Predicate<MethodDecl> test, int index, BaseType toReplace) {
-        applyParam(file, test, index, decl -> decl.type = toReplace);
+    public static void replaceParamType(
+        TypeScriptFile file,
+        Predicate<MethodDecl> methodFilter,
+        int paramIndex,
+        BaseType toReplace
+    ) {
+        applyParam(file, methodFilter, paramIndex, param -> param.type = toReplace);
         for (val info : toReplace.getImportInfos(BaseType.FormatType.INPUT)) {
             file.declaration.addImport(info);
         }

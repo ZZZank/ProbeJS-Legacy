@@ -6,7 +6,7 @@ import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
-import zzzank.probejs.utils.config.serde.holder.AbstractSerdeHolder;
+import zzzank.probejs.utils.config.serde.AbstractSerdeHolder;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 

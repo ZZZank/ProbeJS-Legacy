@@ -1,11 +1,11 @@
 package zzzank.probejs.features.forge_scan;
 
+import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.collect.map.HashMultiMap;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -37,10 +37,10 @@ public enum BuiltinScanners implements ClassDataScanner {
             val names = new HashSet<>(PREDEFINED_BASECLASS);
 
             val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
-            val toSubClasses = new HashMultiMap<String, String>();
+            val toSubClasses = ArrayListMultimap.<String, String>create();
             dataStream
                 .map(AccessClassData::new)
-                .forEach(access -> toSubClasses.add(access.parentClassName(), access.className()));
+                .forEach(access -> toSubClasses.put(access.parentClassName(), access.className()));
             while (!queue.isEmpty()) {
                 val parent = queue.pop();
                 names.add(parent);

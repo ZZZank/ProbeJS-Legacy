@@ -52,10 +52,12 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
 
     <T extends ConfigEntry<?>> T register(T entry);
 
+    /// create an empty sub category
     default ConfigCategory subCategory(String name, Supplier<Map<String, ConfigEntry<?>>> mapStructure) {
         return register(new ConfigCategoryImpl(name, mapStructure, new ConfigProperties(), this));
     }
 
+    /// create an empty sub category
     default ConfigCategory subCategory(String name) {
         return subCategory(name, LinkedHashMap::new);
     }
