@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -119,12 +120,13 @@ public class ProbeDump {
         scriptDumps.stream().map(MultiDump::reporter).forEach(reporters::add);
         reporters.add(sharedDump.reporter());
 
+        val index = new AtomicInteger();
         val executor = new ForkJoinPool(
             4,
             pool -> {
                 val thread = new ForkJoinWorkerThread(pool) {
                 };
-                thread.setName("ProbeDumpWorker" + thread.getPoolIndex());
+                thread.setName("ProbeDumpWorker-" + index.getAndIncrement());
                 return thread;
             },
             null,
