@@ -38,7 +38,9 @@ public class ClazzMemberCollector implements MemberCollector {
         return Arrays.stream(ReflectUtils.methodsSafe(clazz))
             .peek(m -> names.add(RemapperBridge.remapMethod(clazz, m)))
             .filter(ClazzMemberCollector::notHideFromJS)
-            .filter(m -> !m.isSynthetic() && !hasIdenticalParentMethod(m, clazz))
+            .filter(m -> !m.isSynthetic())
+            // interface in TS cannot skip declaring methods declared in super
+            .filter(m -> clazz.isInterface() || !hasIdenticalParentMethod(m, clazz))
             .filter(m -> !m.getName().startsWith("jvmdowngrader$")) // remove JVMDG stub
             .sorted(Comparator.comparing(Method::getName))
             .map(method -> new MethodInfo(
@@ -61,22 +63,19 @@ public class ClazzMemberCollector implements MemberCollector {
         return !element.isAnnotationPresent(HideFromJS.class);
     }
 
-    /**
-     * hasIdenticalParentMethodAndEnsureNotDirectlyImplementsInterfaceSinceTypeScriptDoesNotHaveInterfaceAtRuntimeInTypeDeclarationFilesJustBecauseItSucks
-     */
     static boolean hasIdenticalParentMethod(Method method, Class<?> clazz) {
-        Class<?> parent = clazz.getSuperclass();
-        if (parent == null) {
-            return false;
+        if (method.getDeclaringClass() != clazz) {
+            return true; // declared by super, of course there's an identical method in super
         }
-        while (parent != null && !parent.isInterface()) {
+        var parent = clazz.getSuperclass();
+        while (parent != null) {
             try {
                 val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
-                // Check if the generic return type is the same
-                return parentMethod.equals(method);
-            } catch (NoSuchMethodException e) {
-                parent = parent.getSuperclass();
+                // If there is one, return type from "this class" is the same as or the subclass of "super class"
+                return method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
+            } catch (NoSuchMethodException ignored) {
             }
+            parent = parent.getSuperclass();
         }
         return false;
     }
