@@ -13,6 +13,7 @@ import zzzank.probejs.features.bridge.ProbeServer;
 import zzzank.probejs.mixins.AccessTextureAtlas;
 import zzzank.probejs.mixins.AccessTextureManager;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,11 +64,7 @@ public class GlobalStates {
             .map(ResourceLocation::toString)
             .collect(Collectors.toSet());
 
-    public static final Supplier<Set<String>> MODS = () ->
-        Platform.getMods()
-            .stream()
-            .map(Mod::getModId)
-            .collect(Collectors.toSet());
+    public static final Supplier<Collection<String>> MODS = Platform::getModIds;
 
     // For probing stuffs
     public static BlockPos LAST_RIGHTCLICKED = null;

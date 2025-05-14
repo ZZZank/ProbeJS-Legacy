@@ -27,7 +27,7 @@ public abstract class MixinEventsJS {
     public ScriptManager scriptManager;
 
     @Inject(method = "postToHandlers", at = @At("HEAD"))
-    public void pjs$captureEvent(String id, List handlers, EventJS event, CallbackInfoReturnable<Boolean> cir) {
+    public void pjs$captureEvent(String id, List<?> handlers, EventJS event, CallbackInfoReturnable<Boolean> cir) {
         if (!ProbeConfig.enabled.get()) {
             return;
         }

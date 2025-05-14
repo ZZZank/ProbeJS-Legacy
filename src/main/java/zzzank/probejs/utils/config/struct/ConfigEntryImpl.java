@@ -23,6 +23,10 @@ class ConfigEntryImpl<T> implements ConfigEntry<T> {
         this.properties = Asser.tNotNull(properties, "properties");
         this.parent = parent;
 
+        if (!this.isRoot()) {
+            Asser.t(!name.isEmpty(), "non-root config entry should have not-empty name");
+            Asser.tNotNull(parent, "parent for non-root config entry");
+        }
         Asser.t(
             name.indexOf(ConfigCategory.PATH_SPLITTER_CHAR) < 0,
             String.format(
@@ -30,8 +34,5 @@ class ConfigEntryImpl<T> implements ConfigEntry<T> {
                 ConfigCategory.PATH_SPLITTER_CHAR
             )
         );
-        if (!this.isRoot()) {
-            Asser.tNotNull(parent, "parent for non-root config entry");
-        }
     }
 }

@@ -5,14 +5,12 @@ import zzzank.probejs.features.forge_scan.BuiltinScanners;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.binding.InputIgnoredBinding;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
-import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.serde.gson.GsonSerdeFactory;
 import zzzank.probejs.utils.config.serde.gson.PatternSerde;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 import zzzank.probejs.utils.config.struct.ConfigRootImpl;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -22,8 +20,6 @@ import java.util.regex.Pattern;
 public interface ProbeConfig {
 
     ConfigRoot INSTANCE = new ConfigRootImpl(
-        LinkedHashMap::new,
-        new ConfigProperties(),
         JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {
             io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
             io.registerSerde(Pattern.class, new PatternSerde());

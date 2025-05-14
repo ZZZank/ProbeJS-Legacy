@@ -10,6 +10,7 @@ import zzzank.probejs.utils.ReflectUtils;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -29,7 +30,7 @@ public class ClazzMemberCollector implements MemberCollector {
     @Override
     public Stream<? extends ConstructorInfo> constructors() {
         return Arrays.stream(ReflectUtils.constructorsSafe(clazz))
-            .filter(ClazzMemberCollector::notHideFromJS)
+            .filter(NO_HIDE_FROM_JS)
             .map(ConstructorInfo::new);
     }
 
@@ -37,7 +38,7 @@ public class ClazzMemberCollector implements MemberCollector {
     public Stream<? extends MethodInfo> methods() {
         return Arrays.stream(ReflectUtils.methodsSafe(clazz))
             .peek(m -> names.add(RemapperBridge.remapMethod(clazz, m)))
-            .filter(ClazzMemberCollector::notHideFromJS)
+            .filter(NO_HIDE_FROM_JS)
             .filter(m -> !m.isSynthetic())
             // interface in TS cannot skip declaring methods declared in super
             .filter(m -> clazz.isInterface() || !hasIdenticalParentMethod(m, clazz))
@@ -53,15 +54,14 @@ public class ClazzMemberCollector implements MemberCollector {
     @Override
     public Stream<? extends FieldInfo> fields() {
         return Arrays.stream(ReflectUtils.fieldsSafe(clazz))
-            .filter(ClazzMemberCollector::notHideFromJS)
+            .filter(NO_HIDE_FROM_JS)
             .filter(f -> !names.contains(RemapperBridge.remapField(clazz, f)))
             .map(f -> new FieldInfo(clazz, f))
             .sorted(Comparator.comparing(f -> f.name));
     }
 
-    public static boolean notHideFromJS(AnnotatedElement element) {
-        return !element.isAnnotationPresent(HideFromJS.class);
-    }
+    public static final Predicate<AnnotatedElement> NO_HIDE_FROM_JS =
+        element -> !element.isAnnotationPresent(HideFromJS.class);
 
     static boolean hasIdenticalParentMethod(Method method, Class<?> clazz) {
         if (method.getDeclaringClass() != clazz) {

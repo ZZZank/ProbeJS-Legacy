@@ -5,6 +5,7 @@ import zzzank.probejs.utils.config.io.ConfigIO;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -15,6 +16,10 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     private final ConfigIO io;
     private final Path path;
 
+    public ConfigRootImpl(ConfigIO io, Path path) {
+        this(LinkedHashMap::new, new ConfigProperties(), io, path);
+    }
+
     public ConfigRootImpl(
         Supplier<Map<String, ConfigEntry<?>>> provider,
         ConfigProperties properties,
@@ -23,7 +28,7 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     ) {
         super("", provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
-        this.path = path;
+        this.path = Asser.tNotNull(path, "path");
     }
 
     @Override
