@@ -37,6 +37,13 @@ public class VariableType extends TypeDescriptor {
             : List.of();
     }
 
+    @Override
+    public Class<?> asClass() {
+        if (this.descriptors.isEmpty()) {
+            return Object.class;
+        }
+        return descriptors.get(0).asClass();
+    }
 
     @Override
     public Stream<TypeDescriptor> stream() {

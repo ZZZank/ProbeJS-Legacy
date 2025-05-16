@@ -44,4 +44,9 @@ public class WildType extends TypeDescriptor {
     public Stream<TypeDescriptor> stream() {
         return bound != null ? Stream.of(bound) : Stream.empty();
     }
+
+    @Override
+    public Class<?> asClass() {
+        return bound == null ? Object.class : bound.asClass();
+    }
 }
