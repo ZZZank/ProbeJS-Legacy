@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 /**
  * @author ZZZank
  */
-public class ConfigCategoryImpl extends ConfigEntryImpl<Map<String, ConfigEntry<?>>> implements ConfigCategory {
+class ConfigCategoryImpl extends ConfigEntryImpl<Map<String, ConfigEntry<?>>> implements ConfigCategory {
 
     private final Map<String, ConfigEntry<?>> structure;
 

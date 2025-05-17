@@ -3,7 +3,7 @@ package zzzank.probejs.utils.config.binding;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
+import zzzank.probejs.utils.config.report.AccessResult;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 /**

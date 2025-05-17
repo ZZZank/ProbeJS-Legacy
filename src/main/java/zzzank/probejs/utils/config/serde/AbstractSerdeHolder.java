@@ -1,7 +1,7 @@
 package zzzank.probejs.utils.config.serde;
 
-import zzzank.probejs.utils.config.report.NullValueError;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
+import zzzank.probejs.utils.config.report.AccessResult;
 
 import java.util.*;
 
@@ -25,9 +25,9 @@ public abstract class AbstractSerdeHolder<I> implements ConfigSerdeHolder<I> {
     @Override
     public <T, S extends ConfigSerde<I, T>> AccessResult<S> registerSerde(Class<T> type, S serde) {
         if (serde == null) {
-            return AccessResult.noValue(Collections.singletonList(new NullValueError("serde")));
+            return BuiltinResults.nullValue("serde");
         } else if (type == null) {
-            return AccessResult.noValue(Collections.singletonList(new NullValueError("type")));
+            return BuiltinResults.nullValue("type");
         }
         serdes.put(type, serde);
         return AccessResult.onlyValue(serde);
@@ -36,7 +36,7 @@ public abstract class AbstractSerdeHolder<I> implements ConfigSerdeHolder<I> {
     @Override
     public <F extends ConfigSerdeFactory<I>> AccessResult<F> registerSerdeFactory(F factory) {
         if (factory == null) {
-            return AccessResult.noValue(Collections.singletonList(new NullValueError("serde factory")));
+            return BuiltinResults.nullValue("serde factory");
         }
         factories.add(0, factory);
         return AccessResult.onlyValue(factory);

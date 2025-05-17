@@ -3,11 +3,8 @@ package zzzank.probejs.utils.config.binding;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
-import zzzank.probejs.utils.config.report.ConfigReport;
-import zzzank.probejs.utils.config.report.NoError;
-import zzzank.probejs.utils.config.report.NullValueError;
-import zzzank.probejs.utils.config.report.WrappedException;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
+import zzzank.probejs.utils.config.report.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
 
 /**
  * @author ZZZank
@@ -40,23 +37,23 @@ public abstract class BindingBase<T> implements ConfigBinding<T> {
     @Override
     public @NotNull AccessResult<T> set(T value) {
         val validated = validate(value);
-        if (validated.hasError()) {
-            return AccessResult.noValue(validated);
+        if (validated.hasMessage()) {
+            return validated;
         }
         try {
             setImpl(value);
             return AccessResult.none();
         } catch (Exception e) {
-            return AccessResult.noValue(new WrappedException(e));
+            return BuiltinResults.exception(e);
         }
     }
 
     abstract protected void setImpl(T value);
 
-    public ConfigReport validate(T value) {
+    public AccessResult<T> validate(T value) {
         if (value == null) {
-            return new NullValueError(name);
+            return BuiltinResults.nullValue(name);
         }
-        return NoError.INSTANCE;
+        return AccessResult.none();
     }
 }

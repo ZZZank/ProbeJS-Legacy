@@ -3,9 +3,8 @@ package zzzank.probejs.utils.config.binding;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
-import zzzank.probejs.utils.config.report.ConfigReport;
-import zzzank.probejs.utils.config.report.NoError;
-import zzzank.probejs.utils.config.report.OutOfRangeError;
+import zzzank.probejs.utils.config.report.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
 
 /**
  * @author ZZZank
@@ -22,14 +21,14 @@ public class RangedBinding<T extends Comparable<T>> extends DefaultBinding<T> {
     }
 
     @Override
-    public ConfigReport validate(T value) {
+    public AccessResult<T> validate(T value) {
         val superReport = super.validate(value);
-        if (superReport.hasError()) {
+        if (superReport.hasMessage()) {
             return superReport;
         }
         if (value.compareTo(min) < 0 || value.compareTo(max) > 0) {
-            return new OutOfRangeError(name, value, min, max);
+            return BuiltinResults.outOfRange(name, value, min, max);
         }
-        return NoError.INSTANCE;
+        return AccessResult.none();
     }
 }

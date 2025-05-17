@@ -1,8 +1,8 @@
 package zzzank.probejs.utils.config.binding;
 
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.utils.config.report.WrappedException;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
+import zzzank.probejs.utils.config.report.AccessResult;
 
 /**
  * @author ZZZank
@@ -22,7 +22,7 @@ public interface ConfigBinding<T> {
         try {
             return AccessResult.onlyValue(get());
         } catch (Exception e) {
-            return AccessResult.noValue(new WrappedException(e));
+            return BuiltinResults.exception(e);
         }
     }
 

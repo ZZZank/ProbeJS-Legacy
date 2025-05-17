@@ -2,8 +2,8 @@ package zzzank.probejs.utils.config.struct;
 
 import lombok.val;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
-import zzzank.probejs.utils.config.report.RuntimeError;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
+import zzzank.probejs.utils.config.report.AccessResult;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,8 +31,7 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
 
     @Override
     default AccessResult<Map<String, ConfigEntry<?>>> set(Map<String, ConfigEntry<?>> value) {
-        return AccessResult.noValue(new RuntimeError(
-            "internal container of ConfigCategory should not be mutated externally"));
+        return BuiltinResults.error("internal container of ConfigCategory should not be mutated externally");
     }
 
     @Override

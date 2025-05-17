@@ -1,8 +1,8 @@
 package zzzank.probejs.utils.config.binding;
 
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.utils.config.report.ConfigReport;
-import zzzank.probejs.utils.config.report.ReadOnlyError;
+import zzzank.probejs.utils.config.report.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
 
 /**
  * @author ZZZank
@@ -23,7 +23,7 @@ public class ReadOnlyBinding<T> extends BindingBase<T> {
     }
 
     @Override
-    public ConfigReport validate(T value) {
-        return new ReadOnlyError(name);
+    public AccessResult<T> validate(T value) {
+        return BuiltinResults.readOnly(name);
     }
 }

@@ -2,7 +2,7 @@ package zzzank.probejs.utils.config.serde;
 
 import lombok.val;
 import zzzank.probejs.utils.Cast;
-import zzzank.probejs.utils.config.report.holder.AccessResult;
+import zzzank.probejs.utils.config.report.AccessResult;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 
 import java.util.List;
