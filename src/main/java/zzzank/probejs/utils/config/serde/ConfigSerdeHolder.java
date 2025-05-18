@@ -22,7 +22,7 @@ public interface ConfigSerdeHolder<I> {
         }
         val created = getSerdeFactories()
             .stream()
-            .map(f -> f.getSerde(type))
+            .map(f -> f.<T>getSerde(type))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);

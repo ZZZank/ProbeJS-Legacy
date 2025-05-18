@@ -17,7 +17,7 @@ public class PatternSerde implements ConfigSerde<JsonElement, Pattern> {
     }
 
     @Override
-    public @NotNull Pattern deserialize(@NotNull JsonElement json) {
-        return Pattern.compile(json.getAsString());
+    public @NotNull Pattern deserialize(@NotNull JsonElement intermediate) {
+        return Pattern.compile(intermediate.getAsString());
     }
 }

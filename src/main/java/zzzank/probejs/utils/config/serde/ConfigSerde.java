@@ -13,5 +13,5 @@ public interface ConfigSerde<I, T> {
     I serialize(@NotNull T value);
 
     @NotNull
-    T deserialize(@NotNull I json);
+    T deserialize(@NotNull I intermediate);
 }

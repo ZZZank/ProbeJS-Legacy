@@ -22,7 +22,7 @@ public class GsonAdapterSerde<T> implements ConfigSerde<JsonElement, T> {
     }
 
     @Override
-    public @NotNull T deserialize(@NotNull JsonElement json) {
-        return typeAdapter.fromJsonTree(json);
+    public @NotNull T deserialize(@NotNull JsonElement intermediate) {
+        return typeAdapter.fromJsonTree(intermediate);
     }
 }
