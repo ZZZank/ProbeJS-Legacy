@@ -6,7 +6,6 @@ import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
-import zzzank.probejs.utils.config.serde.AbstractSerdeHolder;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
@@ -16,14 +15,19 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
  * @author ZZZank
  */
-public class PropertiesConfigIO extends AbstractSerdeHolder<String> implements ConfigIO {
+public class PropertiesConfigIO extends SerdeHolder<String> implements ConfigIO {
+
+    public static final ConfigProperty<ConfigSerde<String, ?>> PROP_SERDE =
+        ConfigProperty.register("properties_io_serde", null);
 
     public PropertiesConfigIO() {
+        super(PROP_SERDE);
         addPrimitiveSerde(Byte::valueOf, Byte.class, byte.class);
         addPrimitiveSerde(Short::valueOf, Short.class, short.class);
         addPrimitiveSerde(Integer::valueOf, Integer.class, int.class);
@@ -47,7 +51,7 @@ public class PropertiesConfigIO extends AbstractSerdeHolder<String> implements C
                 continue;
             }
 
-            val serde = serdeByEntryRequired(configEntry);
+            val serde = getSerde(configEntry);
 
             configEntry.set(Cast.to(serde.deserialize(value)));
         }
@@ -58,7 +62,7 @@ public class PropertiesConfigIO extends AbstractSerdeHolder<String> implements C
         val properties = new Properties();
         val comments = new ArrayList<String>();
         for (val entry : CollectUtils.iterate(walkEntries(config))) {
-            val serde = serdeByEntryRequired(entry);
+            val serde = getSerde(entry);
 
             val defaultValue = entry.getDefault();
             val currentValue = entry.get();
@@ -80,9 +84,8 @@ public class PropertiesConfigIO extends AbstractSerdeHolder<String> implements C
 
     @SafeVarargs
     private <T> void addPrimitiveSerde(StringRepresentativeSerde<T> serde, Class<T>... types) {
-        for (val type : types) {
-            registerSerde(type, serde);
-        }
+        val toMatch = Set.of(types);
+        registerSerdeFactory(t -> t instanceof Class<?> c && toMatch.contains(c) ? serde : null);
     }
 
     private static Stream<ConfigEntry<?>> walkEntries(ConfigEntry<?> entry) {

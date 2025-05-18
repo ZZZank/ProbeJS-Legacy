@@ -8,7 +8,7 @@ import java.lang.reflect.*;
  */
 public interface ConfigSerdeFactory<I> {
 
-    <T> ConfigSerde<I, T> getSerde(Type type);
+    ConfigSerde<I, ?> getSerde(Type type);
 
     static Class<?> asClass(Type type) {
         return switch (type) {

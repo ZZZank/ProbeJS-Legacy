@@ -43,4 +43,12 @@ public class ConfigProperties {
     public <T> Optional<T> get(ConfigProperty<T> property) {
         return Optional.ofNullable((T) internal.get(property.index()));
     }
+
+    public <T> boolean has(ConfigProperty<T> property) {
+        return internal.containsKey(property.index());
+    }
+
+    public <T> T remove(ConfigProperty<T> property) {
+        return (T) internal.remove(property.index());
+    }
 }

@@ -9,7 +9,7 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
-import zzzank.probejs.utils.config.serde.AbstractSerdeHolder;
+import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.struct.ConfigCategory;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
@@ -21,10 +21,13 @@ import java.util.function.Consumer;
 /**
  * @author ZZZank
  */
-public class JsonConfigIO extends AbstractSerdeHolder<JsonElement> implements ConfigIO {
+public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
     public static final String DEFAULT_VALUE_KEY = "$default";
     public static final String VALUE_KEY = "$value";
     public static final String COMMENTS_KEY = "$comment";
+
+    public static final ConfigProperty<ConfigSerde<JsonElement, ?>> PROP_SERDE =
+        ConfigProperty.register("json_io_serde", null);
 
     private final Gson gson;
 
@@ -35,6 +38,7 @@ public class JsonConfigIO extends AbstractSerdeHolder<JsonElement> implements Co
     }
 
     public JsonConfigIO(Gson gson) {
+        super(PROP_SERDE);
         this.gson = Asser.tNotNull(gson, "gson");
     }
 
@@ -59,7 +63,7 @@ public class JsonConfigIO extends AbstractSerdeHolder<JsonElement> implements Co
             if (valueInConfig == null) {
                 continue;
             }
-            val serde = serdeByEntryRequired(entry);
+            val serde = getSerde(entry);
             entry.set(Cast.to(serde.deserialize(valueInConfig)));
         }
     }
@@ -81,7 +85,7 @@ public class JsonConfigIO extends AbstractSerdeHolder<JsonElement> implements Co
                 continue;
             }
 
-            val serde = serdeByEntryRequired(entry);
+            val serde = getSerde(entry);
 
             val entryJson = new JsonObject();
 

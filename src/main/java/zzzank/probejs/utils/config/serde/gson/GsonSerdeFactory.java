@@ -20,9 +20,9 @@ public class GsonSerdeFactory implements ConfigSerdeFactory<JsonElement> {
     }
 
     @Override
-    public <T> ConfigSerde<JsonElement, T> getSerde(Type type) {
+    public ConfigSerde<JsonElement, ?> getSerde(Type type) {
         try {
-            return new GsonAdapterSerde<>(gson.getAdapter((TypeToken<T>) TypeToken.get(type)));
+            return new GsonAdapterSerde<>(gson.getAdapter(TypeToken.get(type)));
         } catch (Exception e) {
             return null;
         }

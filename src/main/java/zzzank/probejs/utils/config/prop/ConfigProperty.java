@@ -18,11 +18,10 @@ public final class ConfigProperty<T> {
 
     public static final ConfigProperty<List<String>> COMMENTS = register("comments", Collections.emptyList());
     public static final ConfigProperty<Collection<String>> ENUMS = register("enums", Collections.emptyList());
-    public static final ConfigProperty<String> EXAMPLE = register("example", "");
+    public static final ConfigProperty<String> EXAMPLE = register("example", null);
 
     public static synchronized <T> ConfigProperty<T> register(String name, T defaultValue) {
         Asser.tNotNull(name, "name");
-        Asser.tNotNull(defaultValue, "default value");
         if (NAMED.containsKey(name)) {
             throw new IllegalArgumentException("config property with name '" + name + "' already registered");
         }
@@ -46,5 +45,10 @@ public final class ConfigProperty<T> {
 
     public T defaultValue() {
         return this.defaultValue;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigProperty{" + name + "}";
     }
 }
