@@ -44,7 +44,7 @@ public abstract class SerdeHolder<I> {
         if (entry.properties().has(property)) {
             return entry.getProp((ConfigProperty<ConfigSerde<I, T>>) (Object) property)
                 .orElseThrow(() -> new IllegalStateException(String.format(
-                    "config entry %s has property %s, but found null property value",
+                    "config entry '%s' has property '%s', but found null property value",
                     entry.path(),
                     property
                 )));

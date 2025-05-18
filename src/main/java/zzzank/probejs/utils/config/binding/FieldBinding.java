@@ -52,7 +52,7 @@ public class FieldBinding<T> extends BindingBase<T> {
         try {
             return instance == null ? (T) getter.invoke() : (T) getter.invoke(instance);
         } catch (Throwable e) {
-            return defaultValue;
+            throw new RuntimeException(e);
         }
     }
 }

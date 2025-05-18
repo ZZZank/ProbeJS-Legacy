@@ -19,8 +19,7 @@ public class Declaration {
 
     public void addImport(ImportInfo info) {
         val existed = references.get(info.path);
-        //already resolved
-        if (existed != null) {
+        if (existed != null) {//already resolved
             existed.info.mergeWith(info);
             return;
         }

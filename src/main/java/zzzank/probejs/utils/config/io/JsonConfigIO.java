@@ -70,18 +70,16 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
 
     @Override
     public void save(ConfigRoot config, Writer writer) {
-        val object = new JsonObject();
-        writeCategory(config, object);
-        gson.toJson(object, writer);
+        gson.toJson(writeCategory(config), writer);
     }
 
-    private void writeCategory(ConfigCategory category, JsonObject writeTo) {
+    private JsonObject writeCategory(ConfigCategory category) {
+        val writeTo = new JsonObject();
+
         for (val entry : category.get().values()) {
             val name = entry.name();
             if (entry.isCategory()) {
-                val entryJson = new JsonObject();
-                writeCategory(entry.asCategory(), entryJson);
-                writeTo.add(name, entryJson);
+                writeTo.add(name, writeCategory(entry.asCategory()));
                 continue;
             }
 
@@ -101,5 +99,7 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
 
             writeTo.add(name, entryJson);
         }
+
+        return writeTo;
     }
 }
