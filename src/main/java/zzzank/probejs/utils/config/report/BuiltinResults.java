@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class BuiltinResults {
 
     public <T> AccessResult<T> good(T value) {
-        return AccessResult.onlyValue(value);
+        return (AccessResult.OnlyValue<T>) () -> value;
     }
 
     public <T> AccessResult<T> info(T value, Supplier<String> message) {
@@ -25,23 +25,27 @@ public class BuiltinResults {
 
     public <T> AccessResult<T> error(Supplier<String> message) {
         Asser.tNotNull(message, "message provider");
-        return (AccessResult.NoValue<T>) message::get;
+        return errorImpl(message::get);
+    }
+
+    private <T> AccessResult<T> errorImpl(AccessResult.NoValue<T> message) {
+        return message;
     }
 
     public <T> AccessResult<T> error(String message) {
-        return error(() -> message);
+        return errorImpl(() -> message);
     }
 
-    public <T> AccessResult<T> readOnly(String name) {
-        return error(() -> String.format("config entry '%s' is readonly", name));
+    public <T> AccessResult<T> readOnlyError(String name) {
+        return errorImpl(() -> String.format("config entry '%s' is readonly", name));
     }
 
-    public <T> AccessResult<T> nullValue(String name) {
-        return error(() -> String.format("config entry '%s' received a null value", name));
+    public <T> AccessResult<T> nullValueError(String name) {
+        return errorImpl(() -> String.format("config entry '%s' received a null value", name));
     }
 
-    public <T> AccessResult<T> outOfRange(String name, Object received, Object min, Object max) {
-        return error(() -> String.format(
+    public <T> AccessResult<T> outOfRangeError(String name, Object received, Object min, Object max) {
+        return errorImpl(() -> String.format(
             "value %s for config entry '%s' not in range: [%s, %s]",
             received,
             name,
@@ -51,6 +55,7 @@ public class BuiltinResults {
     }
 
     public <T> AccessResult<T> exception(Throwable throwable) {
-        return error(throwable::toString);
+        Asser.tNotNull(throwable, "throwable");
+        return errorImpl(throwable::toString);
     }
 }

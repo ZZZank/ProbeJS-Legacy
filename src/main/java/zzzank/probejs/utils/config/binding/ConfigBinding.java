@@ -20,7 +20,7 @@ public interface ConfigBinding<T> {
 
     default AccessResult<T> getSafe() {
         try {
-            return AccessResult.onlyValue(get());
+            return BuiltinResults.good(get());
         } catch (Exception e) {
             return BuiltinResults.exception(e);
         }

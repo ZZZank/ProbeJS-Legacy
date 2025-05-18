@@ -53,7 +53,7 @@ public interface ConfigEntry<T> {
 
     /// The parent config category holding this config entry
     ///
-    /// this method returns `null` when and only when this config entry is an [ConfigRoot]
+    /// this method returns `null` when and only when this config entry is a [ConfigRoot]
     ConfigCategory parent();
 
     /// @return `true` if and only if this config entry is a [ConfigCategory]

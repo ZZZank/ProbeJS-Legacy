@@ -27,7 +27,7 @@ public class RangedBinding<T extends Comparable<T>> extends DefaultBinding<T> {
             return superReport;
         }
         if (value.compareTo(min) < 0 || value.compareTo(max) > 0) {
-            return BuiltinResults.outOfRange(name, value, min, max);
+            return BuiltinResults.outOfRangeError(name, value, min, max);
         }
         return AccessResult.none();
     }

@@ -42,7 +42,7 @@ public interface ConfigCategory extends ConfigEntry<Map<String, ConfigEntry<?>>>
     @Override
     default String path() {
         val parent = parent();
-        return parent == null ? name() : parent.path() + '.' + name();
+        return parent == null ? name() : parent.path() + PATH_SPLITTER_CHAR + name();
     }
 
     default ConfigEntryBuilder<Void> define(String name) {

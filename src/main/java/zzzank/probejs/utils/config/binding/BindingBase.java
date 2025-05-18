@@ -52,7 +52,7 @@ public abstract class BindingBase<T> implements ConfigBinding<T> {
 
     public AccessResult<T> validate(T value) {
         if (value == null) {
-            return BuiltinResults.nullValue(name);
+            return BuiltinResults.nullValueError(name);
         }
         return AccessResult.none();
     }

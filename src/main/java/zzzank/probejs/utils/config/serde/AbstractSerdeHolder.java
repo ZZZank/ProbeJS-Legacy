@@ -25,21 +25,21 @@ public abstract class AbstractSerdeHolder<I> implements ConfigSerdeHolder<I> {
     @Override
     public <T, S extends ConfigSerde<I, T>> AccessResult<S> registerSerde(Class<T> type, S serde) {
         if (serde == null) {
-            return BuiltinResults.nullValue("serde");
+            return BuiltinResults.nullValueError("serde");
         } else if (type == null) {
-            return BuiltinResults.nullValue("type");
+            return BuiltinResults.nullValueError("type");
         }
         serdes.put(type, serde);
-        return AccessResult.onlyValue(serde);
+        return BuiltinResults.good(serde);
     }
 
     @Override
     public <F extends ConfigSerdeFactory<I>> AccessResult<F> registerSerdeFactory(F factory) {
         if (factory == null) {
-            return BuiltinResults.nullValue("serde factory");
+            return BuiltinResults.nullValueError("serde factory");
         }
         factories.add(0, factory);
-        return AccessResult.onlyValue(factory);
+        return BuiltinResults.good(factory);
     }
 
     @Override

@@ -7,10 +7,6 @@ import java.util.Optional;
  */
 public interface AccessResult<T> {
 
-    static <T> OnlyValue<T> onlyValue(T value) {
-        return () -> value;
-    }
-
     static <T> AccessResult<T> none() {
         return (AccessResult<T>) NoneResult.INSTANCE;
     }

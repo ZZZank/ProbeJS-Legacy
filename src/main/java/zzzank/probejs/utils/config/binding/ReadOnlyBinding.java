@@ -24,6 +24,6 @@ public class ReadOnlyBinding<T> extends BindingBase<T> {
 
     @Override
     public AccessResult<T> validate(T value) {
-        return BuiltinResults.readOnly(name);
+        return BuiltinResults.readOnlyError(name);
     }
 }
