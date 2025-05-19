@@ -21,11 +21,9 @@ import java.util.EnumSet;
 @Getter
 @Accessors(fluent = true)
 @ToString
-@EqualsAndHashCode
 @AllArgsConstructor
-public final class EventJSInfo implements Comparable<EventJSInfo> {
+public final class EventJSInfo {
     private final Class<?> clazzRaw;
-    private final String id;
     private final boolean cancellable;
     private final EnumSet<ScriptType> scriptTypes;
     public String sub;
@@ -33,7 +31,6 @@ public final class EventJSInfo implements Comparable<EventJSInfo> {
     public static final Codec<EventJSInfo> CODEC = RecordCodecBuilder.create(
         builder -> builder.group(
             PJSCodecs.CLASS_CODEC.fieldOf("clazz").forGetter(EventJSInfo::clazzRaw),
-            Codec.STRING.fieldOf("id").forGetter(EventJSInfo::id),
             Codec.BOOL.fieldOf("cancellable").forGetter(EventJSInfo::cancellable),
             PJSCodecs.SCRIPT_TYPE_CODEC.listOf()
                 .xmap(EnumSet::copyOf, ArrayList::new)
@@ -43,12 +40,7 @@ public final class EventJSInfo implements Comparable<EventJSInfo> {
         ).apply(builder, EventJSInfo::new)
     );
 
-    public EventJSInfo(ScriptType type, EventJS event, String id, String sub) {
-        this(event.getClass(), id, event.canCancel(), EnumSet.of(type), sub);
-    }
-
-    @Override
-    public int compareTo(@NotNull EventJSInfo o) {
-        return this.id.compareTo(o.id);
+    public EventJSInfo(ScriptType type, EventJS event, String sub) {
+        this(event.getClass(), event.canCancel(), EnumSet.of(type), sub);
     }
 }

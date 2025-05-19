@@ -1,5 +1,6 @@
 package zzzank.probejs.features.kubejs;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -17,13 +18,12 @@ import java.util.stream.Collectors;
 public final class EventJSInfos {
 
     public static final Map<String, EventJSInfo> KNOWN = new HashMap<>();
-    public static final Codec<List<EventJSInfo>> CODEC = EventJSInfo.CODEC.listOf();
+    public static final Codec<Map<String, EventJSInfo>> CODEC = Codec.unboundedMap(Codec.STRING, EventJSInfo.CODEC);
 
-    public synchronized static List<EventJSInfo> copySortedInfos() {
-        return KNOWN.values()
+    public synchronized static List<Map.Entry<String, EventJSInfo>> copySortedInfos() {
+        return KNOWN.entrySet()
             .stream()
-            .filter(Objects::nonNull) // why will there be null value?
-            .sorted()
+            .sorted(Map.Entry.comparingByKey())
             .toList();
     }
 
@@ -42,10 +42,8 @@ public final class EventJSInfos {
             }
             val decoded = CODEC.parse(JsonOps.INSTANCE, obj)
                 .resultOrPartial(ProbeJS.LOGGER::error)
-                .orElse(Collections.emptyList());
-            for (val info : decoded) {
-                KNOWN.put(info.id(), info);
-            }
+                .orElse(Map.of());
+            KNOWN.putAll(Maps.filterValues(decoded, Objects::nonNull));
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when reading EventJS infos", e);
         }
@@ -53,7 +51,7 @@ public final class EventJSInfos {
 
     public static void writeTo(Path path) {
         try (val writer = Files.newBufferedWriter(path)) {
-            CODEC.encodeStart(JsonOps.INSTANCE, copySortedInfos())
+            CODEC.encodeStart(JsonOps.INSTANCE, new TreeMap<>(KNOWN))
                 .resultOrPartial(error -> ProbeJS.LOGGER.error("Error when serializing EventJS infos: {}", error))
                 .ifPresent(element -> ProbeJS.GSON_WRITER.toJson(element, writer));
         } catch (Exception e) {

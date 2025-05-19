@@ -34,7 +34,7 @@ public abstract class MixinEventsJS {
         val type = this.scriptManager.type;
         val info = EventJSInfos.KNOWN.get(id);
         if (info == null) {
-            EventJSInfos.KNOWN.put(id, new EventJSInfo(type, event, id, ""));
+            EventJSInfos.KNOWN.put(id, new EventJSInfo(type, event, ""));
         } else {
             info.scriptTypes().add(type);
         }

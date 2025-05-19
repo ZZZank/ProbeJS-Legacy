@@ -28,7 +28,7 @@ public abstract class MixinEventJS {
         }
         val e = EventJSInfos.KNOWN.get(id);
         if (e == null) {
-            EventJSInfos.KNOWN.put(id, new EventJSInfo(t, (EventJS) (Object) this, id, sub));
+            EventJSInfos.KNOWN.put(id, new EventJSInfo(t, (EventJS) (Object) this, sub));
         } else {
             e.scriptTypes().add(t);
             e.sub = sub;
