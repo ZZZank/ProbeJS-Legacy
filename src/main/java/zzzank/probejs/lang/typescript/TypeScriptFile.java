@@ -11,9 +11,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class TypeScriptFile {
     public final Declaration declaration;
@@ -38,6 +36,16 @@ public class TypeScriptFile {
         codes.add(code);
         for (val info : code.getImportInfos()) {
             declaration.addImport(info);
+        }
+    }
+
+    public void addCodes(Code... codes) {
+        addCodes(Arrays.asList(codes));
+    }
+
+    public void addCodes(Collection<? extends Code> codes) {
+        for (val code : codes) {
+            addCode(code);
         }
     }
 

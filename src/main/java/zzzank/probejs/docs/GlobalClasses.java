@@ -71,14 +71,14 @@ public class GlobalClasses implements ProbeJSPlugin {
 
     @Override
     public void modifyFiles(TypeSpecificFiles files) {
-        files.addDumpSpecificFile(
-            J_CLASS.classPath,
-            Statements.clazz(J_CLASS.classPath.getName())
-                .abstractClass()
-                .typeVariables("T")
-                .field("prototype", Types.NULL)
-                .field("__javaObject__", Types.type(Class.class).withParams("T"))
-                .build()
-        );
+        files.requestOrCreate(J_CLASS.classPath)
+            .addCodes(
+                Statements.clazz(J_CLASS.classPath.getName())
+                    .abstractClass()
+                    .typeVariables("T")
+                    .field("prototype", Types.NULL)
+                    .field("__javaObject__", Types.type(Class.class).withParams("T"))
+                    .build()
+            );
     }
 }

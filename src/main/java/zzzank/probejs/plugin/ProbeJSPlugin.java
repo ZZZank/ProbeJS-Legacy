@@ -46,8 +46,7 @@ public interface ProbeJSPlugin {
     /// modify an existed file via [TypeSpecificFiles#request(zzzank.probejs.lang.java.clazz.ClassPath)] and its
     /// overloads
     ///
-    /// add a new file via [TypeSpecificFiles#addDumpSpecificFile(zzzank.probejs.lang.typescript.TypeScriptFile)] and
-    /// its overloads
+    /// add a new file via [TypeSpecificFiles#requestOrCreate(ClassPath)] and its overloads
     default void modifyFiles(TypeSpecificFiles files) {
     }
 
