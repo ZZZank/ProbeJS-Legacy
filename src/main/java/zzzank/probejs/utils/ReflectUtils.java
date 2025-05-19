@@ -29,6 +29,14 @@ public interface ReflectUtils {
         }
     }
 
+    static Field[] declaredFieldsSafe(Class<?> c) {
+        try {
+            return c.getDeclaredFields();
+        } catch (Throwable e) {
+            return new Field[0];
+        }
+    }
+
     static Method[] methodsSafe(Class<?> c) {
         try {
             return c.getMethods();

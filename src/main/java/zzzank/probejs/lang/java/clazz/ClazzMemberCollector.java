@@ -53,7 +53,9 @@ public class ClazzMemberCollector implements MemberCollector {
 
     @Override
     public Stream<? extends FieldInfo> fields() {
-        return Arrays.stream(ReflectUtils.fieldsSafe(clazz))
+        // those not declared by it will be inherited from super
+        return Arrays.stream(ReflectUtils.declaredFieldsSafe(clazz))
+            .filter(f -> Modifier.isPublic(f.getModifiers()))
             .filter(NO_HIDE_FROM_JS)
             .filter(f -> !names.contains(RemapperBridge.remapField(clazz, f)))
             .map(f -> new FieldInfo(clazz, f))
