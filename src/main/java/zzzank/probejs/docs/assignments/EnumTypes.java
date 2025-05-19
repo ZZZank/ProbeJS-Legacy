@@ -8,9 +8,9 @@ import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.NameUtils;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,7 +32,7 @@ public class EnumTypes implements ProbeJSPlugin {
                 val types = Arrays.stream(recordedClass.getOriginal().getEnumConstants())
                     .map(EnumTypes::getEnumName)
                     .filter(Objects::nonNull)
-                    .map(s -> s.toLowerCase(Locale.ROOT))
+                    .map(NameUtils.LOWER_CASE)
                     .map(Types::literal)
                     .toArray(BaseType[]::new);
                 if (types.length != 0) { // enum with no constant is possible

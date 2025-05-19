@@ -4,6 +4,7 @@ import dev.latvian.kubejs.block.MaterialJS;
 import dev.latvian.kubejs.block.MaterialListJS;
 import dev.latvian.kubejs.fluid.FluidStackJS;
 import dev.latvian.kubejs.item.ItemStackJS;
+import dev.latvian.kubejs.item.custom.ItemType;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.text.Text;
 import dev.latvian.mods.rhino.mod.util.color.Color;
@@ -20,9 +21,9 @@ import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.mixins.AccessItemTypes;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-
-import java.util.Locale;
+import zzzank.probejs.utils.NameUtils;
 
 /**
  * @author ZZZank
@@ -83,9 +84,18 @@ public class KubeWrappers implements ProbeJSPlugin {
 
         scriptDump.assignType(MaterialJS.class, Types.or(MaterialListJS.INSTANCE.map.keySet()
             .stream()
-            .map(s -> s.toLowerCase(Locale.ROOT))
+            .map(NameUtils.LOWER_CASE)
             .map(Types::literal)
             .toArray(BaseType[]::new))
+        );
+        scriptDump.assignType(
+            ItemType.class,
+            Types.or(AccessItemTypes.getMAP()
+                .keySet()
+                .stream()
+                .map(NameUtils.LOWER_CASE)
+                .map(Types::literal)
+                .toArray(BaseType[]::new))
         );
 
         //unwrap

@@ -36,15 +36,10 @@ public class JavaPrimitives implements ProbeJSPlugin {
             Map.class,
             Types.object().literalMember("[key: string]", Types.generic("V")).build()
         );
-        BuiltinKubeJSPlugin f;
         scriptDump.assignType(Iterable.class, Types.generic("T").asArray());
         scriptDump.assignType(Collection.class, Types.generic("E").asArray());
         scriptDump.assignType(Set.class, Types.generic("E").asArray());
         scriptDump.assignType(UUID.class, Types.STRING);
-//        scriptDump.assignType(Path.class, Types.STRING);
-//        scriptDump.assignType(File.class, Types.type(Path.class));
-//        scriptDump.assignType(TemporalAmount.class, Types.STRING);
-//        scriptDump.assignType(TemporalAmount.class, Types.NUMBER);
 
         scriptDump.assignType(JsonObject.class, Types.OBJECT);
         scriptDump.assignType(JsonArray.class, Types.ANY.asArray());

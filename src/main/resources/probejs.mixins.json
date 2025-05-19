@@ -4,11 +4,12 @@
   "package": "zzzank.probejs.mixins",
   "mixins": [
     "AccessForgeRegistryManager",
-    "MixinRecipeEventJS",
+    "AccessItemTypes",
     "MixinConsole",
     "MixinEventJS",
     "MixinEventsJS",
     "MixinLootTable",
+    "MixinRecipeEventJS",
     "MixinRecipeManager",
     "MixinScriptManager",
     "integration.KubeJSForgeEventRedirection",

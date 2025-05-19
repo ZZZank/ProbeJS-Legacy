@@ -20,6 +20,7 @@ import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.NameUtils;
 
 /**
  * @see BuiltinKubeJSPlugin
@@ -65,7 +66,7 @@ public class WorldTypes implements ProbeJSPlugin {
 
         BaseType[] predefinedColors = ColorWrapper.MAP.keySet()
             .stream()
-            .map(String::toLowerCase)
+            .map(NameUtils.LOWER_CASE)
             .distinct()
             .map(Types::literal)
             .toArray(BaseType[]::new);

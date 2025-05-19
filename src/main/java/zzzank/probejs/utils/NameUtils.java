@@ -7,7 +7,9 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ public class NameUtils {
     public static final Pattern MATCH_CONST_REQUIRE = Pattern.compile("^const \\{(.+)} = require\\((.+)\\)");
     public static final Pattern MATCH_ANY_REQUIRE = Pattern.compile("^.+ \\{(.+)} = require\\((.+)\\)");
     public static final Pattern MATCH_LINE_BREAK = Pattern.compile("\n");
+    public static final UnaryOperator<String> LOWER_CASE = s -> s.toLowerCase(Locale.ROOT);
 
     public static String[] extractAlphabets(String input) {
         return input.split("[^a-zA-Z]+");
