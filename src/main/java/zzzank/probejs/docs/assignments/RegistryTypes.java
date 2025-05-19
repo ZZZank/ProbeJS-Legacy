@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
@@ -39,9 +38,6 @@ public class RegistryTypes implements ProbeJSPlugin {
     @Override
     public void assignType(ScriptDump scriptDump) {
         List<BaseType> registryNames = new ArrayList<>();
-        if (ServerLifecycleHooks.getCurrentServer() == null) {
-            return;
-        }
 
         for (val info : RegistryInfos.values()) {
             val key = info.resourceKey();
@@ -78,11 +74,8 @@ public class RegistryTypes implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        if (ServerLifecycleHooks.getCurrentServer() == null) {
-            return;
-        }
         val special = new Wrapped.Namespace(SpecialTypes.NAMESPACE);
-        final boolean enabled = ProbeConfig.complete.get();
+        val enabled = ProbeConfig.complete.get();
 
         for (val info : RegistryInfos.values()) {
             createTypes(special, info, enabled);
@@ -126,10 +119,6 @@ public class RegistryTypes implements ProbeJSPlugin {
     }
 
     public void modifyFiles(TypeSpecificFiles files) {
-        if (ServerLifecycleHooks.getCurrentServer() == null) {
-            return;
-        }
-
         // We inject literal and tag into registry types
         for (val info : RegistryInfos.values()) {
             val key = info.resourceKey();
@@ -168,10 +157,6 @@ public class RegistryTypes implements ProbeJSPlugin {
 
     @Override
     public Set<Class<?>> provideJavaClass(ScriptDump scriptDump) {
-        if (ServerLifecycleHooks.getCurrentServer() == null) {
-            return Collections.emptySet();
-        }
-
         val filter = ProbeConfig.registryObjectFilter.get();
 
         val classes = new HashSet<Class<?>>();
@@ -191,10 +176,6 @@ public class RegistryTypes implements ProbeJSPlugin {
 
     @Override
     public void addVSCodeSnippets(SnippetDump dump) {
-        if (ServerLifecycleHooks.getCurrentServer() == null) {
-            return;
-        }
-
         for (val info : RegistryInfos.values()) {
             val key = info.resourceKey();
 
