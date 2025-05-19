@@ -12,7 +12,7 @@ import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.transpiler.redirect.TypeRedirect;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
@@ -43,11 +43,11 @@ public interface ProbeJSPlugin {
 
     /// Used for modifying the files that will be dumped to a certain script type.
     ///
-    /// modify an existed file via [TypeSpecificFiles#request(zzzank.probejs.lang.java.clazz.ClassPath)] and its
+    /// modify an existed file via [RequestAwareFiles#request(zzzank.probejs.lang.java.clazz.ClassPath)] and its
     /// overloads
     ///
-    /// add a new file via [TypeSpecificFiles#requestOrCreate(ClassPath)] and its overloads
-    default void modifyFiles(TypeSpecificFiles files) {
+    /// add a new file via [RequestAwareFiles#requestOrCreate(ClassPath)] and its overloads
+    default void modifyFiles(RequestAwareFiles files) {
     }
 
     /// Used to add code to global namespace.

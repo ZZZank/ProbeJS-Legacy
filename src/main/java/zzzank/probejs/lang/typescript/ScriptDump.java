@@ -145,10 +145,10 @@ public class ScriptDump extends MultiDump {
         file.addCode(global);
     }
 
-    private TypeSpecificFiles loadClasses() {
+    private RequestAwareFiles loadClasses() {
         val globalClasses = transpiler.dump(recordedClasses);
 
-        val filesToModify = new TypeSpecificFiles(globalClasses, this);
+        val filesToModify = new RequestAwareFiles(globalClasses, this);
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.modifyFiles(filesToModify));
         val requested = filesToModify.requested();
         this.parent.denied.addAll(requested);

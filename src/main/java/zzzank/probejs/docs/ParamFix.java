@@ -6,7 +6,7 @@ import dev.latvian.kubejs.text.Text;
 import net.minecraft.core.Registry;
 import zzzank.probejs.docs.assignments.SpecialTypes;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.DocUtils;
@@ -14,7 +14,7 @@ import zzzank.probejs.utils.NameUtils;
 
 public class ParamFix implements ProbeJSPlugin {
     @Override
-    public void modifyFiles(TypeSpecificFiles files) {
+    public void modifyFiles(RequestAwareFiles files) {
         TypeScriptFile file;
 
         file = files.request(TextWrapper.class);

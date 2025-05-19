@@ -15,7 +15,7 @@ import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.GameUtils;
@@ -84,7 +84,7 @@ public final class ProbeBuiltinDocs implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyFiles(TypeSpecificFiles files) {
+    public void modifyFiles(RequestAwareFiles files) {
         forEach(builtinDoc -> builtinDoc.modifyFiles(files));
     }
 

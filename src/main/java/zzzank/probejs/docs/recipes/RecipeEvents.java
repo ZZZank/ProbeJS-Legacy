@@ -7,7 +7,7 @@ import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
@@ -63,7 +63,7 @@ public class RecipeEvents implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyFiles(TypeSpecificFiles files) {
+    public void modifyFiles(RequestAwareFiles files) {
         if (files.scriptDump().scriptType == ScriptType.CLIENT) {
             return;
         }

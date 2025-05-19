@@ -12,7 +12,7 @@ import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.transpiler.transformation.impl.*;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeSpecificFiles;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 
 public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin {
 
@@ -40,7 +40,7 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     }
 
     @Override
-    public void modifyFiles(TypeSpecificFiles files) {
+    public void modifyFiles(RequestAwareFiles files) {
         new TypingModificationEventJS(files).post(ScriptType.CLIENT, ProbeEvents.MODIFY_DOC);
     }
 

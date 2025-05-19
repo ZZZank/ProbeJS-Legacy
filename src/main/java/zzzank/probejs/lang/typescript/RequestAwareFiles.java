@@ -10,12 +10,12 @@ import java.util.*;
 /**
  * @author ZZZank
  */
-public class TypeSpecificFiles {
+public class RequestAwareFiles {
     private final Map<ClassPath, TypeScriptFile> globalFiles;
     private final ScriptDump scriptDump;
     private final Set<ClassPath> requested = new HashSet<>();
 
-    public TypeSpecificFiles(Map<ClassPath, TypeScriptFile> globalFiles, ScriptDump scriptDump) {
+    public RequestAwareFiles(Map<ClassPath, TypeScriptFile> globalFiles, ScriptDump scriptDump) {
         this.globalFiles = globalFiles;
         this.scriptDump = scriptDump;
     }
