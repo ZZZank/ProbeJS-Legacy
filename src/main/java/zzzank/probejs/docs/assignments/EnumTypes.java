@@ -35,7 +35,9 @@ public class EnumTypes implements ProbeJSPlugin {
                     .map(s -> s.toLowerCase(Locale.ROOT))
                     .map(Types::literal)
                     .toArray(BaseType[]::new);
-                scriptDump.assignType(recordedClass.classPath, Types.or(types));
+                if (types.length != 0) { // enum with no constant is possible
+                    scriptDump.assignType(recordedClass.classPath, Types.or(types));
+                }
             } catch (Throwable ignore) {
             }
         }
