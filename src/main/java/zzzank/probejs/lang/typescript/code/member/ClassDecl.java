@@ -23,10 +23,11 @@ import java.util.function.Consumer;
  */
 public class ClassDecl extends CommentableCode {
     public final String name;
+    public final List<TSVariableType> variableTypes;
+
     @Nullable
     public BaseType superClass;
     public final List<BaseType> interfaces;
-    public final List<TSVariableType> variableTypes;
 
     public boolean isAbstract = false;
     public Clazz nativeClazz = null;

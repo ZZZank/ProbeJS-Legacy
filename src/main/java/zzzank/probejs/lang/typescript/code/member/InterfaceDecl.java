@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
+import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.ts.VariableDeclaration;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
@@ -21,34 +22,49 @@ import java.util.List;
 public class InterfaceDecl extends ClassDecl {
 
     public boolean withStatic = true;
-    public boolean withNamespace = true;
+    /// generate a namespace with the same name as this interface class
+    ///
+    /// used by `require(...)`, which is deprecated in ProbeJS
+    public boolean withNamespace = ProbeConfig.isolatedScopes.get();
 
-    public InterfaceDecl(String name, @Nullable BaseType superClass, List<BaseType> interfaces, List<TSVariableType> variableTypes) {
+    public InterfaceDecl(
+        String name,
+        @Nullable BaseType superClass,
+        List<BaseType> interfaces,
+        List<TSVariableType> variableTypes
+    ) {
         super(name, superClass, interfaces, variableTypes);
     }
 
-    public ClassDecl createStaticClass(List<MethodDecl> staticMethods) {
+    public ClassDecl createStaticClass() {
         val classDecl = new ClassDecl(
             ImportType.STATIC.fmt(this.name),
             null,
-            Collections.singletonList(Types.primitive(this.name)),
+            Collections.singletonList(Types.primitive(this.name).withPossibleParams(variableTypes)),
             this.variableTypes
         );
-        //methods will at the original interface
-        classDecl.methods.addAll(staticMethods);
+
+        classDecl.isAbstract = true;
+        for (var method : this.methods) {
+            if (method.isStatic) {
+                classDecl.methods.add(method);
+            }
+        }
         classDecl.fields.addAll(fields);
         return classDecl;
     }
 
-    public Wrapped.Namespace createNamespace(List<MethodDecl> staticMethods) {
+    public Wrapped.Namespace createNamespace() {
         val namespace = new Wrapped.Namespace(this.name);
         for (val field : fields) {
             // if (!field.isStatic) throw new RuntimeException("Why an interface can have a non-static field?");
             // Because ProbeJS can add non-static fields to it... And it's legal in TypeScript.
             namespace.addCode(field.asVariableDecl());
         }
-        for (val method : staticMethods) {
-            namespace.addCode(method.asFunctionDecl());
+        for (val method : methods) {
+            if (method.isStatic) {
+                namespace.addCode(method.asFunctionDecl());
+            }
         }
         // Adds a marker in it to prevent VSCode from not recognizing the namespace to import
         if (namespace.isEmpty()) {
@@ -77,15 +93,12 @@ public class InterfaceDecl extends ClassDecl {
         // Format body - fields, constructors, methods
         List<String> body = new ArrayList<>();
 
-        val staticMethods = new ArrayList<MethodDecl>();
         for (val method : methods) {
-            if (method.isStatic) {
-                staticMethods.add(method);
-            } else {
+            if (!method.isStatic) {// static method will be in static class
                 body.addAll(method.format(declaration));
             }
         }
-        //but, includes no field, because all fields in an interface is static
+        // field (all static) will be in static class
 
         // tail - }
         List<String> tail = new ArrayList<>();
@@ -102,10 +115,10 @@ public class InterfaceDecl extends ClassDecl {
 
         // Static methods and fields, adds it even if it's empty, so auto import can still discover it
         if (this.withNamespace) {
-            formatted.addAll(createNamespace(staticMethods).format(declaration));
+            formatted.addAll(createNamespace().format(declaration));
         }
         if (this.withStatic) {
-            formatted.addAll(createStaticClass(staticMethods).format(declaration));
+            formatted.addAll(createStaticClass().format(declaration));
         }
         return formatted;
     }
