@@ -10,7 +10,7 @@ import zzzank.probejs.utils.config.prop.ConfigProperties;
  * @author ZZZank
  */
 @Getter
-@Accessors(fluent = true)
+@Accessors(fluent = true, makeFinal = true)
 class ConfigEntryImpl<T> implements ConfigEntry<T> {
     private final String name;
     private final ConfigBinding<T> binding;

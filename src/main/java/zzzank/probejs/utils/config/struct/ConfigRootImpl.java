@@ -1,5 +1,7 @@
 package zzzank.probejs.utils.config.struct;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.io.ConfigIO;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
@@ -12,9 +14,11 @@ import java.util.function.Supplier;
 /**
  * @author ZZZank
  */
+@Getter
+@Accessors(fluent = true, makeFinal = true)
 public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     private final ConfigIO io;
-    private final Path path;
+    private final Path filePath;
 
     public ConfigRootImpl(ConfigIO io, Path path) {
         this(LinkedHashMap::new, new ConfigProperties(), io, path);
@@ -28,16 +32,6 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     ) {
         super("", provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
-        this.path = Asser.tNotNull(path, "path");
-    }
-
-    @Override
-    public ConfigIO io() {
-        return io;
-    }
-
-    @Override
-    public Path filePath() {
-        return path;
+        this.filePath = Asser.tNotNull(path, "path");
     }
 }

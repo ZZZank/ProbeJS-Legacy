@@ -1,6 +1,5 @@
 package zzzank.probejs.utils.config.struct;
 
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
