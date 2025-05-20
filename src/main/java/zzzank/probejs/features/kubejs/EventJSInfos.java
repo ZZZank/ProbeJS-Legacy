@@ -1,7 +1,7 @@
 package zzzank.probejs.features.kubejs;
 
 import com.google.common.collect.Maps;
-import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import lombok.val;
@@ -36,7 +36,7 @@ public final class EventJSInfos {
             return;
         }
         try (val reader = Files.newBufferedReader(path)) {
-            val obj = ProbeJS.GSON.fromJson(reader, JsonArray.class);
+            val obj = ProbeJS.GSON.fromJson(reader, JsonObject.class);
             if (obj == null) {
                 return;
             }

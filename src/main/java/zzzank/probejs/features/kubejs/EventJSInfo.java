@@ -30,11 +30,11 @@ public final class EventJSInfo {
 
     public static final Codec<EventJSInfo> CODEC = RecordCodecBuilder.create(
         builder -> builder.group(
-            PJSCodecs.CLASS_CODEC.fieldOf("clazz").forGetter(EventJSInfo::clazzRaw),
+            PJSCodecs.CLASS_CODEC.fieldOf("class").forGetter(EventJSInfo::clazzRaw),
             Codec.BOOL.fieldOf("cancellable").forGetter(EventJSInfo::cancellable),
             PJSCodecs.SCRIPT_TYPE_CODEC.listOf()
                 .xmap(EnumSet::copyOf, ArrayList::new)
-                .fieldOf("scriptTypes")
+                .fieldOf("type")
                 .forGetter(EventJSInfo::scriptTypes),
             Codec.STRING.optionalFieldOf("sub", "").forGetter(EventJSInfo::sub)
         ).apply(builder, EventJSInfo::new)
