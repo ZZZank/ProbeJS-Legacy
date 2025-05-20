@@ -1,3 +1,24 @@
+# ProbeJS Legacy 4.8.2 -> 5.0.0
+
+Typing files sharing
+
+- Common files in three script types will now be extracted to `shared` folder, making total typing folder size much smaller
+- Options in `jsconfig.json` are tweaked to make typing loading faster
+- `TypedDynamicFunction` support is removed, there doesn't seem to be anyone using it
+- better filtering for "methods from superclass"
+- better filtering for fields inherited from superclass
+- namespace generation for interface will be skipped when possible
+- typing support for `ItemType`, used by item builder
+- simplify js object formatting in `global`
+- fix some method in MethodDecl.Builder not returning `this`
+- mod jar scanning can now handle mod with no file properly
+- (internal) seal most registry info access
+- invalid classes will now be skipped in auto param renaming
+- (internal) config system rewritten, will not affect actual config file
+- `TSUtilityTypes` are exposed to JS event
+
+---
+
 # ProbeJS Legacy 4.8.1 -> 4.8.2
 
 fix setter name
