@@ -20,13 +20,6 @@ public final class EventJSInfos {
     public static final Map<String, EventJSInfo> KNOWN = new HashMap<>();
     public static final Codec<Map<String, EventJSInfo>> CODEC = Codec.unboundedMap(Codec.STRING, EventJSInfo.CODEC);
 
-    public synchronized static List<Map.Entry<String, EventJSInfo>> copySortedInfos() {
-        return KNOWN.entrySet()
-            .stream()
-            .sorted(Map.Entry.comparingByKey())
-            .toList();
-    }
-
     public static Set<Class<?>> provideClasses() {
         return KNOWN.values().stream().map(EventJSInfo::clazzRaw).collect(Collectors.toSet());
     }

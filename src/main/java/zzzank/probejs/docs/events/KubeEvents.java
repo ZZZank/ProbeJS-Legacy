@@ -15,10 +15,7 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class KubeEvents implements ProbeJSPlugin {
@@ -26,15 +23,25 @@ public class KubeEvents implements ProbeJSPlugin {
     @Override
     public void addGlobals(ScriptDump scriptDump) {
         val disabled = getSkippedEvents(scriptDump);
+        val scriptType = scriptDump.scriptType;
         val converter = scriptDump.transpiler.typeConverter;
 
+        val events = new TreeMap<String, EventJSInfo>();
+        synchronized (EventJSInfos.KNOWN) {
+            for (var entry : EventJSInfos.KNOWN.entrySet()) {
+                val id = entry.getKey();
+                val info = entry.getValue();
+                if (!disabled.contains(id) && info.scriptTypes().contains(scriptType)) {
+                    events.put(id, entry.getValue());
+                }
+            }
+        }
+
         List<Code> codes = new ArrayList<>();
-        for (val entry : EventJSInfos.copySortedInfos()) {
+        for (val entry : events.entrySet()) {
             val info = entry.getValue();
             val id = entry.getKey();
-            if (disabled.contains(id) || !info.scriptTypes().contains(scriptDump.scriptType)) {
-                continue;
-            }
+
             val decl = declareEventMethod(Types.literal(id), converter, info);
             decl.addComment(
                 "@at " + info.scriptTypes().stream().map(type -> type.name).collect(Collectors.joining(", ")),
