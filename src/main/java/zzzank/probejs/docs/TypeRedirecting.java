@@ -1,7 +1,7 @@
 package zzzank.probejs.docs;
 
 import com.google.common.collect.ImmutableSet;
-import dev.latvian.mods.rhino.util.ClassWrapper;
+import dev.latvian.mods.kubejs.util.ClassWrapper;
 import lombok.val;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.transpiler.TypeConverter;
