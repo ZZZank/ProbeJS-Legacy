@@ -1,14 +1,14 @@
 package zzzank.probejs.docs.assignments;
 
-import dev.latvian.kubejs.block.MaterialJS;
-import dev.latvian.kubejs.block.MaterialListJS;
-import dev.latvian.kubejs.fluid.FluidStackJS;
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.custom.ItemType;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.text.Text;
+import dev.latvian.mods.kubejs.block.MaterialJS;
+import dev.latvian.mods.kubejs.block.MaterialListJS;
+import dev.latvian.mods.kubejs.fluid.FluidStackJS;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.custom.ItemType;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.text.Text;
 import dev.latvian.mods.rhino.mod.util.color.Color;
-import me.shedaniel.architectury.fluid.FluidStack;
+import dev.architectury.fluid.FluidStack;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

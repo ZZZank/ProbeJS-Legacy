@@ -1,6 +1,6 @@
 package zzzank.probejs.docs.recipes.doc;
 
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Platform;
 import zzzank.probejs.docs.recipes.RecipeDocProvider;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.Types;
@@ -19,8 +19,8 @@ class Create extends RecipeDocProvider {
     private static final JSJoinedType.Union STACK_FLUID = STACK.or(FLUID);
     private static final TSArrayType INGR_FLUID_N = INGR_FLUID.asArray();
 
-    private static final TSClassType PROCESSING = classType("dev.latvian.kubejs.create.ProcessingRecipeJS");
-    private static final TSClassType SEQUENCED_ASSEMBLY = classType("dev.latvian.kubejs.create.SequencedAssemblyRecipeJS");
+    private static final TSClassType PROCESSING = classType("dev.latvian.mods.kubejs.create.ProcessingRecipeJS");
+    private static final TSClassType SEQUENCED_ASSEMBLY = classType("dev.latvian.mods.kubejs.create.SequencedAssemblyRecipeJS");
 
     @Override
     public void addDocs(ScriptDump scriptDump) {

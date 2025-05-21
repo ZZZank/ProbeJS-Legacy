@@ -1,7 +1,7 @@
 package zzzank.probejs.docs.recipes.doc;
 
-import dev.latvian.kubejs.recipe.minecraft.SmithingRecipeJS;
-import dev.latvian.kubejs.recipe.minecraft.StonecuttingRecipeJS;
+import dev.latvian.mods.kubejs.recipe.minecraft.SmithingRecipeJS;
+import dev.latvian.mods.kubejs.recipe.minecraft.StonecuttingRecipeJS;
 import lombok.val;
 import zzzank.probejs.docs.recipes.RecipeDocProvider;
 import zzzank.probejs.lang.typescript.ScriptDump;

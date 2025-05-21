@@ -54,7 +54,7 @@ public class ProbeDump {
         sharedDump.clearFiles();
         for (ScriptDump scriptDump : scriptDumps) {
             scriptDump.clearFiles();
-            report(ProbeText.pjs("removed_script", scriptDump.manager.type.toString()));
+            report(ProbeText.pjs("removed_script", scriptDump.scriptType.toString()));
         }
 
 //        SchemaDownloader downloader = new SchemaDownloader();
@@ -139,9 +139,9 @@ public class ProbeDump {
                 dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
                 try {
                     dump.dump();
-                    report(ProbeText.pjs("dump.dump_finished", dump.manager.type).green());
+                    report(ProbeText.pjs("dump.dump_finished", dump.scriptType).green());
                 } catch (Throwable e) {
-                    val error = ProbeText.pjs("dump.dump_error", dump.manager.type).red();
+                    val error = ProbeText.pjs("dump.dump_error", dump.scriptType).red();
                     report(error);
                     ProbeJS.LOGGER.error(error.unwrap().getString(), e);
                 } finally {

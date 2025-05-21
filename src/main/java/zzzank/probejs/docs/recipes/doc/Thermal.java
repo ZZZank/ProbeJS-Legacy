@@ -1,7 +1,7 @@
 package zzzank.probejs.docs.recipes.doc;
 
 import lombok.val;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Platform;
 import zzzank.probejs.docs.recipes.RecipeDocProvider;
 import zzzank.probejs.docs.recipes.RecipeLambdaBuilder;
 import zzzank.probejs.lang.typescript.ScriptDump;
@@ -21,13 +21,13 @@ class Thermal extends RecipeDocProvider {
     public static RecipeLambdaBuilder catalystStyleRecipe() {
         return recipeFn()
             .input(INGR)
-            .returnType(classType("dev.latvian.kubejs.thermal.CatalystRecipeJS"));
+            .returnType(classType("dev.latvian.mods.kubejs.thermal.CatalystRecipeJS"));
     }
 
     public static RecipeLambdaBuilder fuelStyleRecipe() {
         return recipeFn()
             .input(INGR)
-            .returnType(classType("dev.latvian.kubejs.thermal.FuelRecipeJS"));
+            .returnType(classType("dev.latvian.mods.kubejs.thermal.FuelRecipeJS"));
     }
 
     @Override
@@ -43,7 +43,7 @@ class Thermal extends RecipeDocProvider {
         add("pulverizer_catalyst", catalystStyleRecipe());
         add("smelter_catalyst", catalystStyleRecipe());
         //general
-        val basicReturn = classType("dev.latvian.kubejs.thermal.BasicThermalRecipeJS");
+        val basicReturn = classType("dev.latvian.mods.kubejs.thermal.BasicThermalRecipeJS");
         add("bottler",
             recipeFn().output(STACK)
                 .input(selfOrArray(MIXED_IN))

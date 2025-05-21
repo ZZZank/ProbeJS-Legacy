@@ -1,6 +1,6 @@
 package zzzank.probejs.plugin;
 
-import dev.latvian.kubejs.script.ScriptManager;
+import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;

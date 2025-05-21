@@ -1,8 +1,8 @@
 package zzzank.probejs.docs.recipes;
 
-import dev.latvian.kubejs.recipe.RecipeEventJS;
-import dev.latvian.kubejs.recipe.RecipeFunction;
-import dev.latvian.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.recipe.RecipeEventJS;
+import dev.latvian.mods.kubejs.recipe.RecipeFunction;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;

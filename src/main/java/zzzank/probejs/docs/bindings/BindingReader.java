@@ -1,6 +1,6 @@
 package zzzank.probejs.docs.bindings;
 
-import dev.latvian.kubejs.util.KubeJSPlugins;
+import dev.latvian.mods.kubejs.util.KubeJSPlugins;
 import dev.latvian.mods.rhino.BaseFunction;
 import lombok.val;
 import zzzank.probejs.ProbeJS;

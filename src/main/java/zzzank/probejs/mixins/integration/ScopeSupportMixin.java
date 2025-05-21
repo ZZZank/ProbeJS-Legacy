@@ -1,6 +1,6 @@
 package zzzank.probejs.mixins.integration;
 
-import dev.latvian.kubejs.script.ScriptFile;
+import dev.latvian.mods.kubejs.script.ScriptFile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;

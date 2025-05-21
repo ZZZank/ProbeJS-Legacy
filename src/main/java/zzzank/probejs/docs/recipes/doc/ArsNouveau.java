@@ -1,8 +1,8 @@
 package zzzank.probejs.docs.recipes.doc;
 
-import dev.latvian.kubejs.recipe.mod.ArsNouveauEnchantingApparatusRecipeJS;
-import dev.latvian.kubejs.recipe.mod.ArsNouveauEnchantmentRecipeJS;
-import dev.latvian.kubejs.recipe.mod.ArsNouveauGlyphPressRecipeJS;
+import dev.latvian.mods.kubejs.recipe.mod.ArsNouveauEnchantingApparatusRecipeJS;
+import dev.latvian.mods.kubejs.recipe.mod.ArsNouveauEnchantmentRecipeJS;
+import dev.latvian.mods.kubejs.recipe.mod.ArsNouveauGlyphPressRecipeJS;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.docs.recipes.RecipeDocProvider;
 import zzzank.probejs.lang.typescript.ScriptDump;

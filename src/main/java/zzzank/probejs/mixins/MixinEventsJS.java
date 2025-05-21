@@ -1,8 +1,8 @@
 package zzzank.probejs.mixins;
 
-import dev.latvian.kubejs.event.EventJS;
-import dev.latvian.kubejs.event.EventsJS;
-import dev.latvian.kubejs.script.ScriptManager;
+import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.event.EventsJS;
+import dev.latvian.mods.kubejs.script.ScriptManager;
 import lombok.val;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

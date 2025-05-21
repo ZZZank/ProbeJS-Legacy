@@ -2,8 +2,8 @@ package zzzank.probejs.utils;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.shedaniel.architectury.platform.Mod;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Mod;
+import dev.architectury.platform.Platform;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;

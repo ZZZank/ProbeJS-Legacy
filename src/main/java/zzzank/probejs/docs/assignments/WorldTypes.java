@@ -1,7 +1,7 @@
 package zzzank.probejs.docs.assignments;
 
-import dev.latvian.kubejs.BuiltinKubeJSPlugin;
-import dev.latvian.kubejs.block.BlockStatePredicate;
+import dev.latvian.mods.kubejs.BuiltinKubeJSPlugin;
+import dev.latvian.mods.kubejs.block.BlockStatePredicate;
 import dev.latvian.mods.rhino.mod.util.color.Color;
 import dev.latvian.mods.rhino.mod.wrapper.ColorWrapper;
 import net.minecraft.nbt.CompoundTag;

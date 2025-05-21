@@ -1,9 +1,9 @@
 package zzzank.probejs.plugin;
 
-import dev.latvian.kubejs.KubeJSPlugin;
-import dev.latvian.kubejs.script.BindingsEvent;
-import dev.latvian.kubejs.script.ScriptType;
-import dev.latvian.kubejs.util.ClassFilter;
+import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.script.BindingsEvent;
+import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.util.ClassFilter;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.events.*;
 import zzzank.probejs.features.rhizo.RhizoState;

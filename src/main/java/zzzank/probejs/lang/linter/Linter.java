@@ -1,6 +1,6 @@
 package zzzank.probejs.lang.linter;
 
-import dev.latvian.kubejs.KubeJSPaths;
+import dev.latvian.mods.kubejs.KubeJSPaths;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.linter.rules.NoNamespacePollution;

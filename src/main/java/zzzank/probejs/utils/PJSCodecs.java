@@ -2,7 +2,7 @@ package zzzank.probejs.utils;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import dev.latvian.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 
 import java.util.HashMap;

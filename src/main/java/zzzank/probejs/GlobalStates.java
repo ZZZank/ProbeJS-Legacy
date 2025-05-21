@@ -1,8 +1,8 @@
 package zzzank.probejs;
 
 import lombok.val;
-import me.shedaniel.architectury.platform.Mod;
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Mod;
+import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.core.BlockPos;

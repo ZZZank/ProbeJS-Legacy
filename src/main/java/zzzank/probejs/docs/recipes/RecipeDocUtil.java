@@ -1,11 +1,11 @@
 package zzzank.probejs.docs.recipes;
 
-import dev.latvian.kubejs.fluid.FluidStackJS;
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.recipe.minecraft.CookingRecipeJS;
-import dev.latvian.kubejs.recipe.minecraft.ShapedRecipeJS;
-import dev.latvian.kubejs.recipe.minecraft.ShapelessRecipeJS;
+import dev.latvian.mods.kubejs.fluid.FluidStackJS;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.recipe.minecraft.CookingRecipeJS;
+import dev.latvian.mods.kubejs.recipe.minecraft.ShapedRecipeJS;
+import dev.latvian.mods.kubejs.recipe.minecraft.ShapelessRecipeJS;
 import lombok.val;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.code.type.BaseType;

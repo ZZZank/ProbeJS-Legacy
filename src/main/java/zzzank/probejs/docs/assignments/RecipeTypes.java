@@ -1,8 +1,8 @@
 package zzzank.probejs.docs.assignments;
 
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.recipe.filter.RecipeFilter;
-import dev.latvian.kubejs.recipe.ingredientaction.IngredientActionFilter;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.recipe.filter.RecipeFilter;
+import dev.latvian.mods.kubejs.recipe.ingredientaction.IngredientActionFilter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import zzzank.probejs.lang.typescript.ScriptDump;

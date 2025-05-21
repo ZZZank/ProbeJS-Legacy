@@ -1,7 +1,7 @@
 package zzzank.probejs.mixins;
 
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.recipe.RecipeEventJS;
+import dev.latvian.mods.kubejs.recipe.RecipeEventJS;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.spongepowered.asm.mixin.Final;

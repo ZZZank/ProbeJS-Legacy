@@ -1,6 +1,6 @@
 package zzzank.probejs.mixins.integration;
 
-import dev.latvian.kubejs.forge.BuiltinKubeJSForgePlugin;
+import dev.latvian.mods.kubejs.forge.BuiltinKubeJSForgePlugin;
 import dev.latvian.mods.rhino.NativeJavaClass;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

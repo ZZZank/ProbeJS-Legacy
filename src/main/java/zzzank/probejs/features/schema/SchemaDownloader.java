@@ -1,7 +1,7 @@
 package zzzank.probejs.features.schema;
 
-import dev.latvian.kubejs.KubeJSPaths;
-import dev.latvian.kubejs.server.ServerScriptManager;
+import dev.latvian.mods.kubejs.KubeJSPaths;
+import dev.latvian.mods.kubejs.server.ServerScriptManager;
 
 import java.io.IOException;
 import java.net.URI;

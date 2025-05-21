@@ -1,6 +1,6 @@
 package zzzank.probejs.docs.recipes.doc;
 
-import dev.latvian.kubejs.recipe.mod.IDSqueezerRecipeJS;
+import dev.latvian.mods.kubejs.recipe.mod.IDSqueezerRecipeJS;
 import zzzank.probejs.docs.recipes.RecipeDocProvider;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.Types;

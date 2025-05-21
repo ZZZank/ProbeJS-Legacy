@@ -2,7 +2,7 @@ package zzzank.probejs;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import dev.latvian.kubejs.KubeJS;
+import dev.latvian.mods.kubejs.KubeJS;
 import lombok.val;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

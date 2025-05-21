@@ -1,7 +1,7 @@
 package zzzank.probejs.mixins;
 
-import dev.latvian.kubejs.script.ScriptType;
-import dev.latvian.kubejs.util.ConsoleJS;
+import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.util.ConsoleJS;
 import dev.latvian.mods.rhino.RhinoException;
 import lombok.val;
 import org.spongepowered.asm.mixin.Final;

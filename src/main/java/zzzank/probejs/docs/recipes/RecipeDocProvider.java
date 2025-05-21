@@ -1,6 +1,6 @@
 package zzzank.probejs.docs.recipes;
 
-import me.shedaniel.architectury.platform.Platform;
+import dev.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;

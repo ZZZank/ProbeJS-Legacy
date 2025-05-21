@@ -1,6 +1,6 @@
 package zzzank.probejs.lang.java.clazz;
 
-import dev.latvian.kubejs.util.UtilsJS;
+import dev.latvian.mods.kubejs.util.UtilsJS;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.ToString;
 import lombok.val;

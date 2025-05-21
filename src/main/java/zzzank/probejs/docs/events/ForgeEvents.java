@@ -1,7 +1,7 @@
 package zzzank.probejs.docs.events;
 
 
-import dev.latvian.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraftforge.eventbus.api.Event;
 import zzzank.probejs.docs.GlobalClasses;

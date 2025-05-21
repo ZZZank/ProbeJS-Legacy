@@ -1,7 +1,7 @@
 package zzzank.probejs.mixins;
 
 import com.google.gson.JsonNull;
-import dev.latvian.kubejs.script.ScriptManager;
+import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.rhino.NativeJavaClass;
 import dev.latvian.mods.rhino.Scriptable;
 import lombok.val;

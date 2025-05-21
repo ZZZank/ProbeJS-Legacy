@@ -1,7 +1,7 @@
 package zzzank.probejs.utils;
 
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.KubeJSPaths;
+import dev.latvian.mods.kubejs.KubeJSPaths;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 

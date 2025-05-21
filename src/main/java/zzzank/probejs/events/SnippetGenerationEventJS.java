@@ -1,6 +1,6 @@
 package zzzank.probejs.events;
 
-import dev.latvian.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.event.EventJS;
 import zzzank.probejs.lang.snippet.Snippet;
 import zzzank.probejs.lang.snippet.SnippetDump;
 

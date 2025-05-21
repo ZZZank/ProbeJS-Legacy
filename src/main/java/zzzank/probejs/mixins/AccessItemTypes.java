@@ -1,7 +1,7 @@
 package zzzank.probejs.mixins;
 
-import dev.latvian.kubejs.item.custom.ItemType;
-import dev.latvian.kubejs.item.custom.ItemTypes;
+import dev.latvian.mods.kubejs.item.custom.ItemType;
+import dev.latvian.mods.kubejs.item.custom.ItemTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import zzzank.probejs.utils.ShouldNotHappenException;
