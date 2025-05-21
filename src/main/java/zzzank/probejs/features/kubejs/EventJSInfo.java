@@ -40,7 +40,7 @@ public final class EventJSInfo {
         ).apply(builder, EventJSInfo::new)
     );
 
-    public EventJSInfo(ScriptType type, EventJS event, String sub) {
-        this(event.getClass(), event.canCancel(), EnumSet.of(type), sub);
-    }
+//    public EventJSInfo(ScriptType type, EventJS event, String sub) {
+//        this(event.getClass(), event.canCancel(), EnumSet.of(type), sub);
+//    }
 }

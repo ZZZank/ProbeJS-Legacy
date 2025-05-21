@@ -88,8 +88,8 @@ public class ProbeDump {
 
         report(ProbeText.pjs("dump.snippets_generated"));
 
-        EventJSInfos.loadFrom(EVENT_CACHE);
-        EventJSInfos.writeTo(EVENT_CACHE);
+//        EventJSInfos.loadFrom(EVENT_CACHE);
+//        EventJSInfos.writeTo(EVENT_CACHE);
 
         val modHash = GameUtils.modHash();
         if (modHash != ProbeConfig.modHash.get()) {

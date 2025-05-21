@@ -6,8 +6,6 @@
     "AccessForgeRegistryManager",
     "AccessItemTypes",
     "MixinConsole",
-    "MixinEventJS",
-    "MixinEventsJS",
     "MixinLootTable",
     "MixinRecipeManager",
     "MixinScriptManager",
