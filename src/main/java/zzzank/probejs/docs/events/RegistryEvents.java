@@ -7,8 +7,8 @@ import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceKey;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
@@ -17,7 +17,6 @@ import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.NameUtils;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,7 @@ public class RegistryEvents implements ProbeJSPlugin {
                 key.location().getPath() :
                 key.location().toString();
 
-            val declaration = Statements.method("registry")
+            val declaration = Statements.func("registry")
                 .param("extra", Types.literal(extraName))
                 .param(
                     "handler", Types.lambda()
@@ -53,7 +52,8 @@ public class RegistryEvents implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
+    public void modifyFiles(RequestAwareFiles files) {
+        val scriptDump = files.scriptDump();
         if (scriptDump.scriptType != ScriptType.STARTUP) {
             return;
         }
@@ -65,13 +65,11 @@ public class RegistryEvents implements ProbeJSPlugin {
             val registryPath = getRegistryClassPath(key.location().getNamespace(), key.location().getPath());
             val registryClass = generateRegistryClass(key, info);
 
-            val registryFile = new TypeScriptFile(registryPath);
-            registryFile.addCode(registryClass);
-            globalClasses.put(registryPath, registryFile);
+            files.requestOrCreate(registryPath).addCodes(registryClass);
         }
 
         // Let createCustom to use Supplier<T> instead of object
-        val registryEvent = globalClasses.get(ClassPath.fromJava(RegistryEventJS.class));
+        val registryEvent = files.request(ClassPath.fromJava(RegistryEventJS.class));
         val eventClass = registryEvent.findCode(ClassDecl.class).orElse(null);
         if (eventClass == null) {
             return;
