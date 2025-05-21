@@ -8,15 +8,13 @@ import lombok.val;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import zzzank.probejs.docs.assignments.SpecialTypes;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.NameUtils;
-
-import java.util.*;
 
 public class TagEvents implements ProbeJSPlugin {
     public static final ClassPath TAG_EVENT = ClassPath.fromRaw("moe.wolfgirl.probejs.generated.TagEventProbe");
@@ -65,7 +63,8 @@ public class TagEvents implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
+    public void modifyFiles(RequestAwareFiles files) {
+        val scriptDump = files.scriptDump();
         if (scriptDump.scriptType != ScriptType.SERVER) {
             return;
         }
@@ -88,9 +87,7 @@ public class TagEvents implements ProbeJSPlugin {
                     .param("filters", Types.generic("I").asArray(), false, true)
             )
             .build();
-        val eventFile = new TypeScriptFile(TAG_EVENT);
-        eventFile.addCode(tagEventProbe);
-        globalClasses.put(TAG_EVENT, eventFile);
+        files.requestOrCreate(TAG_EVENT).addCodes(tagEventProbe);
 
         val tagWrapperProbe = Statements.clazz(TAG_WRAPPER.getName())
             .superClass(Types.type(TagWrapper.class))
@@ -106,8 +103,6 @@ public class TagEvents implements ProbeJSPlugin {
                     .param("filters", Types.generic("I").asArray(), false, true)
             )
             .build();
-        val wrapperFile = new TypeScriptFile(TAG_WRAPPER);
-        wrapperFile.addCode(tagWrapperProbe);
-        globalClasses.put(TAG_WRAPPER, wrapperFile);
+        files.requestOrCreate(TAG_EVENT).addCodes(tagWrapperProbe);
     }
 }

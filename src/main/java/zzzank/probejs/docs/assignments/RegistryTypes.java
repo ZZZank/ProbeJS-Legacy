@@ -9,10 +9,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import zzzank.probejs.ProbeConfig;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
@@ -20,7 +19,6 @@ import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.NameUtils;
 import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
@@ -48,9 +46,9 @@ public class RegistryTypes implements ProbeJSPlugin {
         }
 
         for (val info : RegistryInfos.values()) {
-            val key = info.resKey;
+            val key = info.resourceKey();
             val typeName = NameUtils.registryName(key);
-            val assignmentType = info.assignmentType();
+            val assignmentType = info.objectBaseType();
             if (assignmentType != null) {
                 scriptDump.assignType(assignmentType, Types.primitive(SpecialTypes.dot(typeName)));
             }
@@ -65,15 +63,6 @@ public class RegistryTypes implements ProbeJSPlugin {
         scriptDump.assignType(Registry.class, Types.or(registryNames.toArray(BaseType[]::new)));
         // TagKey<T> to Special.TagOf<T>
         scriptDump.assignType(TagKey.class, TYPE_SPECIAL_TAG_OF.withParams("T"));
-    }
-
-    private static void assignRegistryType(ScriptDump scriptDump, Class<?> type, String literalType, String symbol) {
-        scriptDump.assignType(type, Types.primitive(literalType).withParams(symbol));
-        scriptDump.assignType(
-            type,
-            Types.type(type).withParams(Types.generic(symbol))
-                .contextShield(BaseType.FormatType.RETURN)
-        );
     }
 
     @Override
@@ -103,10 +92,10 @@ public class RegistryTypes implements ProbeJSPlugin {
         RegistryInfo info,
         boolean resolveAll
     ) {
-        val key = info.resKey;
+        val key = info.resourceKey();
 
         val types = resolveAll
-            ? Types.or(info.names.stream().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
+            ? Types.or(info.objectIds().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
             : Types.STRING;
         val typeName = NameUtils.registryName(key);
 
@@ -115,8 +104,7 @@ public class RegistryTypes implements ProbeJSPlugin {
 
         val tagTypes = resolveAll
             ? Types.or(
-            info.tagNames()
-                .map(TagKey::location)
+            info.tagIds()
                 .map(ResourceLocation::toString)
                 .map(Types::literal)
                 .toArray(BaseType[]::new))
@@ -128,25 +116,20 @@ public class RegistryTypes implements ProbeJSPlugin {
     }
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        if (ServerLifecycleHooks.getCurrentServer() == null) {
-            return;
-        }
-
+    public void modifyFiles(RequestAwareFiles files) {
         // We inject literal and tag into registry types
         for (val info : RegistryInfos.values()) {
-            val key = info.resKey;
-            val assignmentType = info.assignmentType();
+            val key = info.resourceKey();
+            val assignmentType = info.objectBaseType();
             if (assignmentType != null) {
-                makeClassModifications(globalClasses, key, assignmentType);
+                makeClassModifications(files, key, assignmentType);
             }
         }
-        makeClassModifications(globalClasses, BuiltInRegistries.REGISTRY.key(), Registry.class);
-//        makeClassModifications(globalClasses, BuiltInRegistries.DIMENSION_REGISTRY, Level.class);
+        makeClassModifications(files, BuiltInRegistries.REGISTRY.key(), Registry.class);
     }
 
-    private static void makeClassModifications(Map<ClassPath, TypeScriptFile> globalClasses, ResourceKey<? extends Registry<?>> key, Class<?> baseClass) {
-        val typeScriptFile = globalClasses.get(ClassPath.fromJava(baseClass));
+    private static void makeClassModifications(RequestAwareFiles globalClasses, ResourceKey<? extends Registry<?>> key, Class<?> baseClass) {
+        val typeScriptFile = globalClasses.request(baseClass);
         if (typeScriptFile == null) {
             return;
         }
@@ -193,16 +176,10 @@ public class RegistryTypes implements ProbeJSPlugin {
         }
 
         for (val info : RegistryInfos.values()) {
-            val registry = info.raw;
-            val key = info.resKey;
-            if (registry == null) {
-                continue;
-            }
-
-            val entries = CollectUtils.mapToList(
-                registry.keySet(),
-                ResourceLocation::toString
-            );
+            val key = info.resourceKey();
+            val entries = info.objectIds()
+                .map(ResourceLocation::toString)
+                .toList();
             if (entries.isEmpty()) {
                 continue;
             }
@@ -218,8 +195,7 @@ public class RegistryTypes implements ProbeJSPlugin {
                 .choices(entries)
                 .literal("\"");
 
-            val tags = info.tagNames()
-                .map(TagKey::location)
+            val tags = info.tagIds()
                 .map(ResourceLocation::toString)
                 .map("#"::concat)
                 .toList();

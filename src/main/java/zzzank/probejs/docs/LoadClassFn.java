@@ -3,16 +3,12 @@ package zzzank.probejs.docs;
 import dev.latvian.mods.kubejs.bindings.JavaWrapper;
 import lombok.val;
 import zzzank.probejs.features.kubejs.BindingFilter;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-
-import java.util.Map;
 
 /**
  * @author ZZZank

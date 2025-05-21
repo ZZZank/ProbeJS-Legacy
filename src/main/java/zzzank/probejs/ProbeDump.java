@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.api.dump.MultiDump;
 import zzzank.probejs.api.dump.TSDump;
 import zzzank.probejs.features.forge_scan.ClassScanner;
-import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;

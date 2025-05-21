@@ -5,7 +5,6 @@ import zzzank.probejs.lang.java.type.TypeDescriptor;
 
 import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
