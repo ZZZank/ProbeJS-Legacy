@@ -17,7 +17,7 @@ public class Require extends BaseFunction {
     @Override
     public Object call(Context cx, Scriptable scope, Scriptable self, Object[] args) {
         if (!ProbeConfig.isolatedScopes.get()) {
-            manager.type.console.warn(String.format(
+            manager.scriptType.console.warn(String.format(
                 "'require(...)' used without enabling '%s' config, this might cause inconsistency between IDE report and actual behaviour",
                 ProbeConfig.isolatedScopes.name()
             ));
@@ -29,9 +29,9 @@ public class Require extends BaseFunction {
         val path = ClassPath.fromTS(name);
 
         try {
-            return new RequireWrapper(path, manager.loadJavaClass(scope, new String[]{name}));
+            return new RequireWrapper(path, manager.loadJavaClass(name, true));
         } catch (Exception ignored) {
-            manager.type.console.error(String.format(
+            manager.scriptType.console.error(String.format(
                 "Class '%s' not found, returning undefined value",
                 path.getJavaStylePath()
             ));
@@ -55,11 +55,11 @@ public class Require extends BaseFunction {
         }
 
         @Override
-        public Object get(String name, Scriptable start) {
+        public Object get(Context cx, String name, Scriptable start) {
             if (path == null || name.equals(path.getName())) {
                 return clazz;
             }
-            return super.get(name, start);
+            return super.get(cx, name, start);
         }
 
         @HideFromJS

@@ -17,12 +17,17 @@ import zzzank.probejs.lang.typescript.RequestAwareFiles;
 public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin {
 
     @Override
-    public void addBindings(BindingsEvent event) {
+    public void registerEvents() {
+        ProbeEvents.GROUP.register();
+    }
+
+    @Override
+    public void registerBindings(BindingsEvent event) {
         event.add("require", new Require(event.manager));
     }
 
     @Override
-    public void addClasses(ScriptType type, ClassFilter filter) {
+    public void registerClasses(ScriptType type, ClassFilter filter) {
         // lol
         filter.deny("org.jetbrains.java.decompiler");
         filter.deny("com.github.javaparser");
@@ -31,17 +36,17 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        new AddGlobalEventJS(scriptDump).post(ScriptType.CLIENT, ProbeEvents.ADD_GLOBAL);
+        ProbeEvents.ADD_GLOBAL.post(new AddGlobalEventJS(scriptDump));
     }
 
     @Override
     public void assignType(ScriptDump scriptDump) {
-        new TypeAssignmentEventJS(scriptDump).post(ScriptType.CLIENT, ProbeEvents.ASSIGN_TYPE);
+        ProbeEvents.ASSIGN_TYPE.post(new TypeAssignmentEventJS(scriptDump));
     }
 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
-        new TypingModificationEventJS(files).post(ScriptType.CLIENT, ProbeEvents.MODIFY_DOC);
+        ProbeEvents.MODIFY_DOC.post(new TypingModificationEventJS(files));
     }
 
     @Override
@@ -78,6 +83,6 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
 
     @Override
     public void addVSCodeSnippets(SnippetDump dump) {
-        new SnippetGenerationEventJS(dump).post(ScriptType.CLIENT, ProbeEvents.SNIPPETS);
+        ProbeEvents.SNIPPETS.post(new SnippetGenerationEventJS(dump));
     }
 }
