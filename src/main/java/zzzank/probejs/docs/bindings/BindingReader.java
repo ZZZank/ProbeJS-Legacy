@@ -1,9 +1,9 @@
 package zzzank.probejs.docs.bindings;
 
-import dev.latvian.mods.kubejs.util.KubeJSPlugins;
 import dev.latvian.mods.rhino.BaseFunction;
+import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.NativeJavaClass;
 import lombok.val;
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.ScriptDump;
 
 import java.util.HashMap;
@@ -26,29 +26,19 @@ public final class BindingReader {
 
     public void read() {
         val manager = scriptDump.manager;
-        val pack = manager.packs.get(manager.directory.getFileName().toString());
-        if (pack == null) {
-            ProbeJS.LOGGER.error("Script context not found, unable to read binding infos");
-            return;
-        }
-        val context = pack.context;
-        var scope = pack.scope;
-        val dummy = new DummyBindingEvent(manager, context, scope, this);
+        val cx = manager.context;
+        val scope = manager.topLevelScope;
 
-        KubeJSPlugins.forEachPlugin(p -> p.addBindings(dummy));
-        /*
-        if (KessJSState.MOD) {
-            scope = scope.getParentScope();
-        }
-
-        for (val idObj : scope.getIds()) {
+        for (val idObj : scope.getIds(cx)) {
             if (!(idObj instanceof String id)) {
                 continue;
             }
-            var value = scope.get(id, scope);
+
+            var value = scope.get(cx, id, scope);
             value = value instanceof NativeJavaClass nativeJavaClass
                 ? nativeJavaClass.getClassObject()
-                : GameUtils.jsToJava(context, value, Object.class);
+                : Context.jsToJava(cx, value, Object.class);
+
             if (value instanceof Class<?> c) {
                 classes.put(id, c);
             } else if (value instanceof BaseFunction fn) {
@@ -57,6 +47,5 @@ public final class BindingReader {
                 constants.put(id, value);
             }
         }
-         */
     }
 }

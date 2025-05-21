@@ -123,16 +123,6 @@ public class ValueTypes {
         } else if (limitConsumed(limit)) {
             return Types.OBJECT;
         }
-
-        val prototype = scriptable.getPrototype();
-        if (prototype != null && prototype.get("constructor", prototype) instanceof BaseFunction func) {
-            //Resolves Object since they're not typed
-            val functionName = func.getFunctionName();
-            if (!functionName.isEmpty() && !functionName.equals("Object")) {
-                return Types.primitive(functionName);
-            }
-        }
-
         return convertMap(obj, converter, limit);
     }
 

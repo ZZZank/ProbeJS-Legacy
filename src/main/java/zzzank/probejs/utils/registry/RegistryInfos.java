@@ -2,10 +2,10 @@ package zzzank.probejs.utils.registry;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.mixins.AccessForgeRegistryManager;
 
 import java.util.Collection;
 import java.util.HashMap;

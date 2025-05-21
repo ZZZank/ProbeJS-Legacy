@@ -10,7 +10,6 @@ import zzzank.probejs.docs.assignments.SpecialTypes;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.Types;
@@ -52,12 +51,14 @@ public class TagEvents implements ProbeJSPlugin {
             val extraName = key.location().getNamespace().equals("minecraft")
                 ? key.location().getPath()
                 : key.location().toString();
-            val builder = Statements.method("tags")
+            val declaration = Statements.func("tags")
                 .param("extra", Types.literal(extraName))
                 .param("handler", Types.lambda()
                     .param("event", eventType.withParams(tagName, typeName))
-                    .build());
-            groupNamespace.addCode(((MethodDecl.Builder) builder).buildAsMethod());
+                    .build()
+                )
+                .build();
+            groupNamespace.addCode(declaration);
         }
 
         scriptDump.addGlobal("tag_events", groupNamespace);

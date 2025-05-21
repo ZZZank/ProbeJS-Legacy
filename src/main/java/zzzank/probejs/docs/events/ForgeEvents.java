@@ -7,22 +7,20 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import zzzank.probejs.docs.GlobalClasses;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
-import java.util.Map;
-
 public class ForgeEvents implements ProbeJSPlugin {
 
     @Override
-    public void modifyClasses(ScriptDump scriptDump, Map<ClassPath, TypeScriptFile> globalClasses) {
-        val file = globalClasses.get(ClassPath.fromJava(ForgeEventWrapper.class));
+    public void modifyFiles(RequestAwareFiles files) {
+        val file = files.request(ClassPath.fromJava(ForgeEventWrapper.class));
         file.declaration.addImport(ImportInfo.ofDefault(ClassPath.fromJava(Event.class)));
         file.declaration.addImport(ImportInfo.ofDefault(ClassPath.fromJava(GenericEvent.class)));
+        file.declaration.addImport(ImportInfo.ofDefault(GlobalClasses.J_CLASS.classPath));
         val classDecl = file.findCode(ClassDecl.class).orElse(null);
         if (classDecl == null) {
             return;

@@ -26,7 +26,7 @@ public record LintingWarning(Path file, Level level, int line, int column, Strin
         val stripped = relativeBase.getParent().relativize(file);
 
         return ProbeText.literal("[")
-            .append(ProbeText.literal(level().name()).color(level().color.createTextColorKJS()))
+            .append(ProbeText.literal(level().name()).color(level().color.createTextColorJS()))
             .append(ProbeText.literal("] "))
             .append(ProbeText.literal(stripped.toString()))
             .append(ProbeText.literal(String.format(":%d:%d: %s", line, column, message)));

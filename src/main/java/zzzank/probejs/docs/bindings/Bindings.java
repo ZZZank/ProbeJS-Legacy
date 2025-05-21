@@ -14,10 +14,7 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Bindings implements ProbeJSPlugin {
 
@@ -30,7 +27,6 @@ public class Bindings implements ProbeJSPlugin {
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.denyBindings(filter));
 
         val converter = scriptDump.transpiler.typeConverter;
-
         val exported = new TreeMap<String, BaseType>();
         val reexported = new TreeMap<String, BaseType>(); // Namespaces
 
@@ -40,11 +36,9 @@ public class Bindings implements ProbeJSPlugin {
                 continue;
             }
 
-            val fn = Types.lambda()
-                .returnType(Types.ANY)
-                .param("args", Types.ANY.asArray(), false, true)
-                .build();
-            exported.put(name, fn);
+            val fn = Types.lambda().returnType(Types.ANY);
+            fn.param("args", Types.ANY.asArray(), false, true);
+            exported.put(name, fn.build());
         }
 
         for (val entry : reader.constants.entrySet()) {

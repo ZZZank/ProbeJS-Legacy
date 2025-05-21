@@ -1,29 +1,21 @@
 package zzzank.probejs.docs.assignments;
 
-import dev.latvian.mods.kubejs.block.MaterialJS;
-import dev.latvian.mods.kubejs.block.MaterialListJS;
 import dev.latvian.mods.kubejs.fluid.FluidStackJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
-import dev.latvian.mods.kubejs.item.custom.ItemType;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.text.Text;
 import dev.latvian.mods.rhino.mod.util.color.Color;
 import dev.architectury.fluid.FluidStack;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.mixins.AccessItemTypes;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.NameUtils;
 
 /**
  * @author ZZZank
@@ -32,8 +24,8 @@ public class KubeWrappers implements ProbeJSPlugin {
 
     @Override
     public void assignType(ScriptDump scriptDump) {
-        scriptDump.assignType(Text.class, Types.type(Text.class).asArray());
-        scriptDump.assignType(Text.class, "ComponentObject", Types.object()
+        scriptDump.assignType(Component.class, Types.type(Component.class).asArray());
+        scriptDump.assignType(Component.class, "ComponentObject", Types.object()
             .member("text", true, Types.STRING)
             .member("translate", true, Types.primitive("Special.LangKey"))
             .member("with", true, Types.ANY.asArray())
@@ -46,13 +38,12 @@ public class KubeWrappers implements ProbeJSPlugin {
             .member("insertion", true, Types.STRING)
             .member("font", true, Types.STRING)
             .member("click", true, Types.type(ClickEvent.class))
-            .member("hover", true, Types.type(Text.class))
-            .member("extra", true, Types.type(Text.class).asArray())
+            .member("hover", true, Types.type(Component.class))
+            .member("extra", true, Types.type(Component.class).asArray())
             .build());
-        scriptDump.assignType(Text.class, Types.STRING);
-        scriptDump.assignType(Text.class, Types.NUMBER);
-        scriptDump.assignType(Text.class, Types.BOOLEAN);
-        scriptDump.assignType(Text.class, Types.type(Component.class).contextShield(BaseType.FormatType.RETURN));
+        scriptDump.assignType(Component.class, Types.STRING);
+        scriptDump.assignType(Component.class, Types.NUMBER);
+        scriptDump.assignType(Component.class, Types.BOOLEAN);
 
         scriptDump.assignType(ItemStackJS.class, Types.type(Item.class));
         scriptDump.assignType(ItemStackJS.class, Types.type(ItemStack.class).contextShield(BaseType.FormatType.RETURN));
@@ -81,28 +72,5 @@ public class KubeWrappers implements ProbeJSPlugin {
             .member("amount", true, Primitives.INTEGER)
             .member("nbt", true, Types.or(Primitives.CHAR_SEQUENCE, Types.EMPTY_OBJECT))
             .build());
-
-        scriptDump.assignType(MaterialJS.class, Types.or(MaterialListJS.INSTANCE.map.keySet()
-            .stream()
-            .map(NameUtils.LOWER_CASE)
-            .map(Types::literal)
-            .toArray(BaseType[]::new))
-        );
-        scriptDump.assignType(
-            ItemType.class,
-            Types.or(AccessItemTypes.getMAP()
-                .keySet()
-                .stream()
-                .map(NameUtils.LOWER_CASE)
-                .map(Types::literal)
-                .toArray(BaseType[]::new))
-        );
-
-        //unwrap
-        scriptDump.assignType(Component.class, Types.type(Text.class));
-        scriptDump.assignType(MutableComponent.class, Types.type(Text.class));
-        scriptDump.assignType(Ingredient.class, Types.type(IngredientJS.class));
-        scriptDump.assignType(ItemStack.class, Types.type(ItemStackJS.class));
-        scriptDump.assignType(ItemLike.class, Types.type(Item.class));
     }
 }

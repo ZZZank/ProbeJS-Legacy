@@ -1,11 +1,9 @@
 package zzzank.probejs.mixins;
 
-import com.google.gson.JsonElement;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.storage.loot.LootDataType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,20 +13,19 @@ import zzzank.probejs.ProbeConfig;
 
 import java.util.Map;
 
-@Mixin(LootTables.class)
+@Mixin(LootDataManager.class)
 public abstract class MixinLootTable {
     @Inject(method = "apply*", at = @At("RETURN"))
     public void apply(
-        Map<ResourceLocation, JsonElement> object,
-        ResourceManager resourceManager,
-        ProfilerFiller profiler,
-        CallbackInfo ci
+        Map<LootDataType<?>, Map<ResourceLocation, ?>> collectedElements, CallbackInfo ci
     ) {
         if (!ProbeConfig.enabled.get()) {
             return;
         }
-        for (val resourceLocation : object.keySet()) {
-            GlobalStates.LOOT_TABLES.add(resourceLocation.toString());
+        for (val resourceLocations : collectedElements.values()) {
+            for (val resourceLocation : resourceLocations.keySet()) {
+                GlobalStates.LOOT_TABLES.add(resourceLocations.toString());
+            }
         }
     }
 }

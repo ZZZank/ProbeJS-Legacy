@@ -1,6 +1,5 @@
 package zzzank.probejs.docs.assignments;
 
-import dev.latvian.mods.rhino.native_java.type.info.EnumTypeInfo;
 import lombok.val;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.java.clazz.Clazz;
@@ -45,9 +44,9 @@ public class EnumTypes implements ProbeJSPlugin {
     }
 
     private static String getEnumName(Object o) {
-        if (RhizoState.ENUM_TYPE_INFO) {
-            return EnumTypeInfo.getName(o);
-        }
+//        if (RhizoState.ENUM_TYPE_INFO) {
+//            return EnumTypeInfo.getName(o);
+//        }
         if (o instanceof Enum<?> e) {
             return e.name();
         }

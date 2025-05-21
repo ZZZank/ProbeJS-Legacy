@@ -1,14 +1,11 @@
 package zzzank.probejs.utils.registry;
 
+import lombok.val;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.StaticTagHelper;
-import net.minecraft.tags.StaticTags;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraft.tags.TagKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,15 +13,12 @@ import java.util.stream.Stream;
 
 public class RegistryInfo implements Comparable<RegistryInfo> {
 
-    private final ForgeRegistry<? extends IForgeRegistryEntry<?>> forgeRaw;
     private final ResourceKey<? extends Registry<?>> resKey;
-    @Nullable
-    private final StaticTagHelper<?> tagHelper;
+    private final Registry<?> registry;
 
-    public RegistryInfo(ForgeRegistry<? extends IForgeRegistryEntry<?>> forgeRegistry) {
-        this.forgeRaw = forgeRegistry;
-        this.resKey = forgeRaw.getRegistryKey();
-        this.tagHelper = StaticTags.get(id());
+    public RegistryInfo(Registry<?> registry) {
+        this.registry = registry;
+        this.resKey = registry.key();
     }
 
     @Override
@@ -41,23 +35,19 @@ public class RegistryInfo implements Comparable<RegistryInfo> {
     }
 
     public Stream<ResourceLocation> objectIds() {
-        return forgeRaw.getKeys().stream();
+        return registry.keySet().stream();
     }
 
     public Stream<ResourceLocation> tagIds() {
-        if (tagHelper == null) {
-            return Stream.empty();
-        }
-        return tagHelper.getAllTags()
-            .getAvailableTags()
-            .stream();
+        return registry.getTagNames().map(TagKey::location);
     }
 
     public Collection<? extends Map.Entry<? extends ResourceKey<?>, ?>> entries() {
-        return forgeRaw.getEntries();
+        return registry.entrySet();
     }
 
     public Class<?> objectBaseType() {
-        return forgeRaw.getRegistrySuperType();
+        val info = dev.latvian.mods.kubejs.registry.RegistryInfo.MAP.get(resKey);
+        return info == null ? null : info.objectBaseClass;
     }
 }

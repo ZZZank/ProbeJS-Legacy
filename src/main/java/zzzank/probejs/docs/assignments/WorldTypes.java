@@ -1,9 +1,10 @@
 package zzzank.probejs.docs.assignments;
 
 import dev.latvian.mods.kubejs.BuiltinKubeJSPlugin;
-import dev.latvian.mods.kubejs.block.BlockStatePredicate;
+import dev.latvian.mods.kubejs.block.state.BlockStatePredicate;
 import dev.latvian.mods.rhino.mod.util.color.Color;
 import dev.latvian.mods.rhino.mod.wrapper.ColorWrapper;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.TextColor;
@@ -12,15 +13,14 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
-import net.minecraft.world.level.storage.loot.RandomIntGenerator;
 import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.NameUtils;
 
 /**
  * @see BuiltinKubeJSPlugin
@@ -45,28 +45,17 @@ public class WorldTypes implements ProbeJSPlugin {
         scriptDump.assignType(BlockStatePredicate.class, Types.literal("*"));
         scriptDump.assignType(BlockStatePredicate.class, Types.literal("-"));
 
-        scriptDump.assignType(RandomIntGenerator.class, Primitives.FLOAT);
-        scriptDump.assignType(RandomIntGenerator.class, AssignmentHelper.minMaxOf(Primitives.FLOAT));
-        scriptDump.assignType(RandomIntGenerator.class, "BetweenRangeGeneratorObject", Types.object()
-            .member("min", Primitives.FLOAT)
-            .member("max", Primitives.FLOAT)
-            .build());
-        scriptDump.assignType(RandomIntGenerator.class, "BinomialDistributionGeneratorObject", Types.object()
-            .member("n", Primitives.INTEGER)
-            .member("p", Primitives.FLOAT)
-            .build());
-
         scriptDump.assignType(RuleTest.class, Types.type(CompoundTag.class));
         scriptDump.assignType(Tier.class, Types.STRING);
         scriptDump.assignType(ArmorMaterial.class, Types.STRING);
         scriptDump.assignType(EntitySelector.class, Types.STRING);
         scriptDump.assignType(Stat.class, Types.STRING);
-//        scriptDump.assignType(SoundType.class, Types.STRING);
-//        scriptDump.assignType(ParticleOptions.class, Types.STRING);
+        scriptDump.assignType(SoundType.class, Types.STRING);
+        scriptDump.assignType(ParticleOptions.class, Types.STRING);
 
         BaseType[] predefinedColors = ColorWrapper.MAP.keySet()
             .stream()
-            .map(NameUtils.LOWER_CASE)
+            .map(String::toLowerCase)
             .distinct()
             .map(Types::literal)
             .toArray(BaseType[]::new);
@@ -91,8 +80,5 @@ public class WorldTypes implements ProbeJSPlugin {
             .member("value", Types.STRING)
             .build());
         scriptDump.assignType(ClickEvent.class, Types.STRING);
-
-//        scriptDump.assignType(DataComponentMap.class, Types.STRING);
-//        scriptDump.assignType(ItemEnchantments.class, Types.primitive("{[key in Special.Enchantment]?: integer}"));
     }
 }

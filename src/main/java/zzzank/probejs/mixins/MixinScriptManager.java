@@ -3,7 +3,6 @@ package zzzank.probejs.mixins;
 import com.google.gson.JsonNull;
 import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.rhino.NativeJavaClass;
-import dev.latvian.mods.rhino.Scriptable;
 import lombok.val;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,23 +24,20 @@ public abstract class MixinScriptManager {
         }
     }
 
-    @ModifyVariable(method = "loadJavaClass", at = @At("HEAD"), index = 2, argsOnly = true)
-    public Object[] pjs$redirectLoadClass(Object[] args) {
-        if (args.length > 0) {
-            val name = args[0].toString();
-            if (name.startsWith(ClassPath.TS_PATH_PREFIX)) {
-                args[0] = ClassPath.fromTS(name).getJavaPath();
-            }
+    @ModifyVariable(method = "loadJavaClass", at = @At("HEAD"), index = 1, argsOnly = true)
+    public String pjs$supportTSPath(String name) {
+        if (name.startsWith(ClassPath.TS_PATH_PREFIX)) {
+            return ClassPath.fromTS(name).getJavaPath();
         }
-        return args;
+        return name;
     }
 
     @Inject(method = "loadJavaClass", at = @At("RETURN"))
-    public void pjs$captureClass(Scriptable scope, Object[] args, CallbackInfoReturnable<NativeJavaClass> cir) {
+    public void pjs$captureClass(String name, boolean error, CallbackInfoReturnable<NativeJavaClass> cir) {
         val result = cir.getReturnValue();
         if (result == null) {
             return;
         }
-        ClassRegistry.REGISTRY.addClass(result.getClassObject());
+        ClassRegistry.REGISTRY.fromClass(result.getClassObject());
     }
 }

@@ -4,9 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import dev.latvian.mods.kubejs.BuiltinKubeJSPlugin;
-import dev.latvian.mods.kubejs.world.BlockContainerJS;
-import dev.latvian.mods.rhino.util.unit.Unit;
+import dev.latvian.mods.unit.Unit;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CollectionTag;
@@ -67,7 +65,6 @@ public class JavaPrimitives implements ProbeJSPlugin {
         scriptDump.assignType(Tag.class, Types.OBJECT);
         scriptDump.assignType(Tag.class, Types.ANY.asArray());
         scriptDump.assignType(BlockPos.class, AssignmentHelper.xyzOf(Primitives.INTEGER));
-        scriptDump.assignType(BlockPos.class, Types.type(BlockContainerJS.class));
         scriptDump.assignType(Vec3.class, AssignmentHelper.xyzOf(Primitives.DOUBLE));
         scriptDump.assignType(Vec3i.class, AssignmentHelper.xyzOf(Primitives.INTEGER));
         scriptDump.assignType(AABB.class, Types.EMPTY_ARRAY);

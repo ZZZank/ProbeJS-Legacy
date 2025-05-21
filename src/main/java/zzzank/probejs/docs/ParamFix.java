@@ -1,12 +1,12 @@
 package zzzank.probejs.docs;
 
 import dev.latvian.mods.kubejs.bindings.TextWrapper;
-import dev.latvian.mods.kubejs.recipe.RecipeEventJS;
-import dev.latvian.mods.kubejs.text.Text;
-import net.minecraft.core.Registry;
+import dev.latvian.mods.kubejs.recipe.RecipesEventJS;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import zzzank.probejs.docs.assignments.SpecialTypes;
-import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
+import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.DocUtils;
@@ -27,7 +27,7 @@ public class ParamFix implements ProbeJSPlugin {
             );
         }
 
-        file = files.request(RecipeEventJS.class);
+        file = files.request(RecipesEventJS.class);
         if (file != null) {
             DocUtils.replaceParamType(
                 file,

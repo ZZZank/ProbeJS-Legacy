@@ -1,10 +1,17 @@
 package zzzank.probejs.docs.assignments;
 
-import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.fluid.FluidStackJS;
+import dev.latvian.mods.kubejs.item.InputItem;
+import dev.latvian.mods.kubejs.item.OutputItem;
+import dev.latvian.mods.kubejs.recipe.InputReplacement;
+import dev.latvian.mods.kubejs.recipe.OutputReplacement;
 import dev.latvian.mods.kubejs.recipe.filter.RecipeFilter;
 import dev.latvian.mods.kubejs.recipe.ingredientaction.IngredientActionFilter;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.material.Fluid;
+import zzzank.probejs.docs.Primitives;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
@@ -16,50 +23,69 @@ public class RecipeTypes implements ProbeJSPlugin {
     @Override
     public void assignType(ScriptDump scriptDump) {
 
-//        scriptDump.assignType(ItemPredicate.class, Types.type(Item.class));
-//        scriptDump.assignType(ItemPredicate.class, Types.literal("*"));
-//        scriptDump.assignType(ItemPredicate.class, Types.literal("-"));
-//        scriptDump.assignType(ItemPredicate.class, Types.lambda()
-//                .param("item", Types.type(ItemStack.class))
-//                .returnType(Types.BOOLEAN)
-//                .build());
+        scriptDump.assignType(ItemStack.class, Types.type(Item.class));
+        scriptDump.assignType(ItemStack.class, Types.object()
+            .member("item", Types.primitive("Special.Item"))
+            .member("count?", Primitives.INTEGER)
+            .member("nbt?", Types.primitive("{}"))
+            .build());
 
-//        scriptDump.assignType(SizedIngredient.class, Types.type(ItemStack.class));
+        scriptDump.assignType(Ingredient.class, Types.type(ItemStack.class));
+        scriptDump.assignType(Ingredient.class, Types.type(Ingredient.class).asArray());
+
+        scriptDump.assignType(Ingredient.class, Types.primitive("RegExp"));
+        scriptDump.assignType(Ingredient.class, Types.literal("*"));
+        scriptDump.assignType(Ingredient.class, Types.literal("-"));
+        scriptDump.assignType(Ingredient.class, Types.primitive("`#${Special.ItemTag}`"));
+        scriptDump.assignType(Ingredient.class, Types.primitive("`@${Special.Mod}`"));
+        scriptDump.assignType(Ingredient.class, Types.primitive("`%${Special.CreativeModeTab}`"));
+
+        scriptDump.assignType(InputItem.class, Types.type(Ingredient.class));
+        scriptDump.assignType(InputItem.class, Types.primitive("`${number}x ${Special.Item}`"));
+
+        scriptDump.assignType(OutputItem.class, Types.type(ItemStack.class));
+        scriptDump.assignType(OutputItem.class, Types.object()
+            .member("item", Types.primitive("Special.Item"))
+            .member("chance", Primitives.DOUBLE)
+            .build());
+        scriptDump.assignType(OutputItem.class, Types.object()
+            .member("item", Types.primitive("Special.Item"))
+            .member("minRolls", Primitives.INTEGER)
+            .member("maxRolls", Primitives.INTEGER)
+            .build());
+
+        scriptDump.assignType(InputReplacement.class, Types.type(InputItem.class));
+        scriptDump.assignType(OutputReplacement.class, Types.type(OutputItem.class));
 
         scriptDump.assignType(RecipeFilter.class, Types.primitive("RegExp"));
         scriptDump.assignType(RecipeFilter.class, Types.literal("*"));
         scriptDump.assignType(RecipeFilter.class, Types.literal("-"));
         scriptDump.assignType(RecipeFilter.class, Types.type(RecipeFilter.class).asArray());
-        scriptDump.assignType(
-            RecipeFilter.class,
-            "RecipeFilterObject",
-            Types.object()
-                .member("exact", true, Types.BOOLEAN)
-                .member("or", true, Types.type(RecipeFilter.class))
-                .member("not", true, Types.type(RecipeFilter.class))
-                .member("id", true, Types.primitive("Special.RecipeId"))
-                .member("type", true, Types.primitive("Special.RecipeType"))
-                .member("group", true, Types.STRING)
-                .member("mod", true, Types.primitive("Special.Mod"))
-                .member("input", true, Types.type(Ingredient.class))
-                .member("output", true, Types.type(ItemStack.class))
-                .build()
-        );
 
-        scriptDump.assignType(IngredientActionFilter.class, Types.NUMBER);
-        scriptDump.assignType(IngredientActionFilter.class, Types.type(IngredientJS.class));
-        scriptDump.assignType(IngredientActionFilter.class,
-            Types.object()
-                .member("index", true, Types.NUMBER)
-                .member("itemFilter", true, Types.type(IngredientJS.class))
-                .build()
-        );
+        scriptDump.assignType(RecipeFilter.class, Types.object()
+            .member("or?", Types.type(RecipeFilter.class))
+            .member("not?", Types.type(RecipeFilter.class))
+            .member("id?", Types.primitive("Special.RecipeId"))
+            .member("type?", Types.primitive("Special.RecipeType"))
+            .member("group?", Types.STRING)
+            .member("mod?", Types.primitive("Special.Mod"))
+            .member("input?", Types.type(InputItem.class))
+            .member("output?", Types.type(OutputItem.class))
+            .build());
+        scriptDump.assignType(FluidStackJS.class, Types.type(Fluid.class));
+        scriptDump.assignType(FluidStackJS.class, Types.literal("-"));
+        scriptDump.assignType(FluidStackJS.class, Types.object()
+            .member("fluid", Types.primitive("Special.Fluid"))
+            .member("amount?", Primitives.INTEGER)
+            .member("nbt?", Types.OBJECT)
+            .build());
 
-        // Note that this is fluid ingredient without amount
-//        scriptDump.assignType(FluidIngredientJS.class, Types.type(Fluid.class));
-//        scriptDump.assignType(FluidIngredientJS.class, Types.primitive("`#${Special.FluidTag}`"));
-//        scriptDump.assignType(FluidIngredientJS.class, Types.primitive("`@${Special.Mod}`"));
-//        scriptDump.assignType(FluidIngredientJS.class, Types.primitive("RegExp"));
+        scriptDump.assignType(IngredientActionFilter.class, Primitives.INTEGER);
+        scriptDump.assignType(IngredientActionFilter.class, Types.type(Ingredient.class));
+        scriptDump.assignType(IngredientActionFilter.class, Types.object()
+            .member("item?", Types.type(Ingredient.class))
+            .member("index?", Primitives.INTEGER)
+            .build());
     }
 
     @Override

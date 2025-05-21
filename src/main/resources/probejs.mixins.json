@@ -3,9 +3,6 @@
   "compatibilityLevel": "JAVA_8",
   "package": "zzzank.probejs.mixins",
   "mixins": [
-    "AccessForgeRegistryManager",
-    "AccessItemTypes",
-    "MixinConsole",
     "MixinLootTable",
     "MixinRecipeManager",
     "MixinScriptManager",
