@@ -37,15 +37,23 @@ repositories {
             includeGroup("dev.latvian.apps")
         }
     }
+    maven {
+        url "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup("dev.latvian.mods")
+            includeGroup("dev.ftb.mods")
+        }
+    }
     mavenLocal() // Must be last for caching to work
 }
 
 dependencies {
-    modApi("curse.maven:rhizo-1003287:$rhizo_cf_id")
-    modApi("me.shedaniel:architectury-forge:1.32.68")
-    modApi("curse.maven:kubejs-238086:3647098") {
-        exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])
-    }
+    modApi("dev.latvian.mods:kubejs-forge:$kubejs_version")
+//    modApi("curse.maven:rhizo-1003287:$rhizo_cf_id")
+//    modApi("me.shedaniel:architectury-forge:1.32.68")
+//    modApi("curse.maven:kubejs-238086:3647098") {
+//        exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])
+//    }
 
     shade('org.java-websocket:Java-WebSocket:1.5.6')
 
