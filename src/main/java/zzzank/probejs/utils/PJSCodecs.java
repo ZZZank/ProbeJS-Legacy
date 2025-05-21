@@ -58,7 +58,7 @@ public interface PJSCodecs {
             try {
                 return DataResult.success(applyUnsafe(input));
             } catch (Exception e) {
-                return DataResult.error(e.toString());
+                return DataResult.error(e::toString);
             }
         }
     }
