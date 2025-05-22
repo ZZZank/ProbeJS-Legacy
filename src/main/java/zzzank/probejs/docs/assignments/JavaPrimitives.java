@@ -77,6 +77,6 @@ public class JavaPrimitives implements ProbeJSPlugin {
             .member("y2", Primitives.DOUBLE)
             .member("z2", Primitives.DOUBLE)
             .build());
-        scriptDump.assignType(Class.class, GlobalClasses.J_CLASS);
+        scriptDump.assignType(Class.class, GlobalClasses.J_CLASS.withParams("T"));
     }
 }
