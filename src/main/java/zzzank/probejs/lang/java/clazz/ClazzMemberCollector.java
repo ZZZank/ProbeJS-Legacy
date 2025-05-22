@@ -1,5 +1,7 @@
 package zzzank.probejs.lang.java.clazz;
 
+import dev.latvian.mods.kubejs.KubeJS;
+import dev.latvian.mods.rhino.JavaMembers;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
@@ -18,47 +20,51 @@ import java.util.stream.Stream;
  */
 public class ClazzMemberCollector implements MemberCollector {
 
-    private Set<String> names;
     private Class<?> clazz;
+    private JavaMembers members;
 
     @Override
     public void accept(Class<?> clazz) {
         this.clazz = clazz;
-        this.names = new HashSet<>();
+        val scriptManager = KubeJS.getStartupScriptManager();
+        this.members = JavaMembers.lookupClass(
+            scriptManager.context,
+            scriptManager.topLevelScope,
+            clazz,
+            clazz,
+            false
+        );
     }
 
     @Override
     public Stream<? extends ConstructorInfo> constructors() {
-        return Arrays.stream(ReflectUtils.constructorsSafe(clazz))
-            .filter(NO_HIDE_FROM_JS)
+        return members.getAccessibleConstructors()
+            .stream()
             .map(ConstructorInfo::new);
     }
 
     @Override
     public Stream<? extends MethodInfo> methods() {
-        return Arrays.stream(ReflectUtils.methodsSafe(clazz))
-            .peek(m -> names.add(RemapperBridge.remapMethod(clazz, m)))
-            .filter(NO_HIDE_FROM_JS)
-            .filter(m -> !m.isSynthetic())
+        return members.getAccessibleMethods(KubeJS.getStartupScriptManager().context, false)
+            .stream()
+            .filter(m -> !m.method.isSynthetic())
             // interface in TS cannot skip declaring methods declared in super
-            .filter(m -> clazz.isInterface() || !hasIdenticalParentMethod(m, clazz))
-            .filter(m -> !m.getName().startsWith("jvmdowngrader$")) // remove JVMDG stub
-            .sorted(Comparator.comparing(Method::getName))
-            .map(method -> new MethodInfo(
-                clazz,
-                method,
-                getGenericTypeReplacement(clazz, method)
+            .filter(m -> clazz.isInterface() || !hasIdenticalParentMethod(m.method, clazz))
+            .sorted(Comparator.comparing(m -> m.name))
+            .map(info -> new MethodInfo(
+                info.method,
+                info.name.isEmpty() ? info.method.getName() : info.name,
+                getGenericTypeReplacement(clazz, info.method)
             ));
     }
 
     @Override
     public Stream<? extends FieldInfo> fields() {
-        // those not declared by it will be inherited from super
-        return Arrays.stream(ReflectUtils.declaredFieldsSafe(clazz))
-            .filter(f -> Modifier.isPublic(f.getModifiers()))
-            .filter(NO_HIDE_FROM_JS)
-            .filter(f -> !names.contains(RemapperBridge.remapField(clazz, f)))
-            .map(f -> new FieldInfo(clazz, f))
+        return members.getAccessibleFields(KubeJS.getStartupScriptManager().context, false)
+            .stream()
+            // those not declared by it will be inherited from super
+            .filter(info -> info.field.getDeclaringClass() == this.clazz)
+            .map(info -> new FieldInfo(info.field, info.name.isEmpty() ? info.field.getName() : info.name))
             .sorted(Comparator.comparing(f -> f.name));
     }
 
