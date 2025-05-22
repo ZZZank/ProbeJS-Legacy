@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 @Mod(ProbeJS.MOD_ID)
 public class ProbeJS {
-    public static final String MOD_ID = "probejs";
+    public static final String MOD_ID = "probejs_legacy";
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     public static final Gson GSON = new GsonBuilder()
         .serializeSpecialFloatingPointValues()
