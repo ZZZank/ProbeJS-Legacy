@@ -32,7 +32,6 @@ public class Bindings implements ProbeJSPlugin {
         val converter = scriptDump.transpiler.typeConverter;
 
         val exported = new TreeMap<String, BaseType>();
-        val reexported = new TreeMap<String, BaseType>(); // Namespaces
 
         for (val entry : reader.functions.entrySet()) {
             val name = entry.getKey();
@@ -62,11 +61,7 @@ public class Bindings implements ProbeJSPlugin {
                 continue;
             }
             val c = entry.getValue();
-            if (c.isInterface()) {
-                reexported.put(id, converter.convertType(c));
-            } else {
-                exported.put(id, Types.typeOf(converter.convertType(c)));
-            }
+            exported.put(id, Types.typeOf(converter.convertType(c)));
         }
 
         if (ProbeConfig.resolveGlobal.get()) {
@@ -84,11 +79,6 @@ public class Bindings implements ProbeJSPlugin {
             val symbol = entry.getKey();
             val type = entry.getValue();
             codes.add(new VariableDeclaration(symbol, type));
-        }
-        for (val entry : reexported.entrySet()) {
-            val symbol = entry.getKey();
-            val type = entry.getValue();
-            codes.add(new ReexportDeclaration(symbol, type));
         }
         scriptDump.addGlobal("bindings", exported.keySet(), codes.toArray(new Code[0]));
     }
