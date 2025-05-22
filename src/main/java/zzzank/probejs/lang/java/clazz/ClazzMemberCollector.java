@@ -7,8 +7,6 @@ import lombok.val;
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
 import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
-import zzzank.probejs.lang.java.remap.RemapperBridge;
-import zzzank.probejs.utils.ReflectUtils;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -49,7 +47,7 @@ public class ClazzMemberCollector implements MemberCollector {
             .stream()
             .filter(m -> !m.method.isSynthetic())
             // interface in TS cannot skip declaring methods declared in super
-            .filter(m -> clazz.isInterface() || !hasIdenticalParentMethod(m.method, clazz))
+            .filter(m -> noIdenticalParentMethod(m.method, clazz))
             .sorted(Comparator.comparing(m -> m.name))
             .map(info -> new MethodInfo(
                 info.method,
@@ -71,9 +69,13 @@ public class ClazzMemberCollector implements MemberCollector {
     public static final Predicate<AnnotatedElement> NO_HIDE_FROM_JS =
         element -> !element.isAnnotationPresent(HideFromJS.class);
 
-    static boolean hasIdenticalParentMethod(Method method, Class<?> clazz) {
-        if (method.getDeclaringClass() != clazz) {
-            return true; // declared by super, of course there's an identical method in super
+    static boolean noIdenticalParentMethod(Method method, Class<?> clazz) {
+        if (clazz.isInterface() || method.getDeclaringClass().isInterface()) {
+            // interface method is TS cannot be inherited
+            return true;
+        } else if (method.getDeclaringClass() != clazz) {
+            // declared by super, of course there's an identical method in super
+            return false;
         }
         var parent = clazz.getSuperclass();
         while (parent != null) {
