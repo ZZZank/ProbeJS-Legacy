@@ -46,12 +46,11 @@ public class ClazzMemberCollector implements MemberCollector {
         return members.getAccessibleMethods(KubeJS.getStartupScriptManager().context, false)
             .stream()
             .filter(m -> !m.method.isSynthetic())
-            // interface in TS cannot skip declaring methods declared in super
-            .filter(m -> noIdenticalParentMethod(m.method, clazz))
+            .filter(m -> filterInherited(m.method, clazz))
             .sorted(Comparator.comparing(m -> m.name))
             .map(info -> new MethodInfo(
                 info.method,
-                info.name.isEmpty() ? info.method.getName() : info.name,
+                info.name,
                 getGenericTypeReplacement(clazz, info.method)
             ));
     }
@@ -62,19 +61,19 @@ public class ClazzMemberCollector implements MemberCollector {
             .stream()
             // those not declared by it will be inherited from super
             .filter(info -> info.field.getDeclaringClass() == this.clazz)
-            .map(info -> new FieldInfo(info.field, info.name.isEmpty() ? info.field.getName() : info.name))
+            .map(info -> new FieldInfo(info.field, info.name))
             .sorted(Comparator.comparing(f -> f.name));
     }
 
     public static final Predicate<AnnotatedElement> NO_HIDE_FROM_JS =
         element -> !element.isAnnotationPresent(HideFromJS.class);
 
-    static boolean noIdenticalParentMethod(Method method, Class<?> clazz) {
+    static boolean filterInherited(Method method, Class<?> clazz) {
         if (clazz.isInterface() || method.getDeclaringClass().isInterface()) {
             // interface method is TS cannot be inherited
             return true;
         } else if (method.getDeclaringClass() != clazz) {
-            // declared by super, of course there's an identical method in super
+            // declared by super, and no override
             return false;
         }
         var parent = clazz.getSuperclass();
@@ -82,12 +81,13 @@ public class ClazzMemberCollector implements MemberCollector {
             try {
                 val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
                 // If there is one, return type from "this class" is the same as or the subclass of "super class"
-                return method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
+                return !method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
             } catch (NoSuchMethodException ignored) {
             }
             parent = parent.getSuperclass();
         }
-        return false;
+        // no such method in super -> unique method, keep it
+        return true;
     }
 
     /**
