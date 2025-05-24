@@ -73,6 +73,7 @@ public final class ClassPath implements Comparable<ClassPath> {
         return parts[parts.length - 1];
     }
 
+    /// @see Class#getSimpleName()
     public String getJavaName() {
         val name = getName();
         return name.startsWith("$") ? name.substring(1) : name;
@@ -82,10 +83,12 @@ public final class ClassPath implements Comparable<ClassPath> {
         return String.join(sep, parts);
     }
 
+    /// mapped, '.' split path with name prefix '$' for native class
     public String getDirectPath() {
         return getConcatenated(".");
     }
 
+    /// @return mapped, `.` split path without name prefix '$' for native class
     public String getJavaStylePath() {
         val copy = CollectUtils.ofList(parts);
         val last = parts[parts.length - 1];
@@ -95,10 +98,13 @@ public final class ClassPath implements Comparable<ClassPath> {
         return String.join(".", copy);
     }
 
+    /// unmapped, `.` split path without name prefix '$' for native class
+    /// @see Class#getName()
     public String getJavaPath() {
         return RemapperBridge.unmapClass(getJavaStylePath());
     }
 
+    /// @return mapped, '/' split path with name prefix '$' for native class
     public String getTSPath() {
         return TS_PATH_PREFIX + getConcatenated("/");
     }
