@@ -71,18 +71,13 @@ public class GlobalClasses implements ProbeJSPlugin {
 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
-        files.requestOrCreate(J_CLASS.classPath)
-            .addCodes(
-                Statements.clazz(J_CLASS.classPath.getName())
-                    .abstractClass()
-                    .typeVariables("T")
-                    .field("prototype", Types.NULL)
-                    .field("__javaObject__", Types.type(Class.class).withParams("T"))
-                    .field(
-                        "[Symbol.hasInstance]",
-                        Types.lambda().param("o", Types.ANY).returnType(Types.BOOLEAN).build()
-                    )
-                    .build()
-            );
+        val jClassDecl = Statements.clazz(J_CLASS.classPath.getName())
+            .abstractClass()
+            .typeVariables("T")
+            .field("prototype", Types.NULL)
+            .field("__javaObject__", Types.type(Class.class).withParams("T"))
+            .build();
+        jClassDecl.bodyCode.add(Types.primitive("[Symbol.hasInstance]: (o: any) => o is T;"));
+        files.requestOrCreate(J_CLASS.classPath).addCodes(jClassDecl);
     }
 }
