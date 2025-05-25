@@ -78,6 +78,10 @@ public class GlobalClasses implements ProbeJSPlugin {
                     .typeVariables("T")
                     .field("prototype", Types.NULL)
                     .field("__javaObject__", Types.type(Class.class).withParams("T"))
+                    .field(
+                        "[Symbol.hasInstance]",
+                        Types.lambda().param("o", Types.ANY).returnType(Types.BOOLEAN).build()
+                    )
                     .build()
             );
     }
