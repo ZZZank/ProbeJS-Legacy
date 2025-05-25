@@ -40,8 +40,7 @@ public class ClazzMemberCollector implements MemberCollector {
             .peek(m -> names.add(RemapperBridge.remapMethod(clazz, m)))
             .filter(NO_HIDE_FROM_JS)
             .filter(m -> !m.isSynthetic())
-            // interface in TS cannot skip declaring methods declared in super
-            .filter(m -> clazz.isInterface() || !hasIdenticalParentMethod(m, clazz))
+            .filter(m -> filterInherited(m, clazz))
             .filter(m -> !m.getName().startsWith("jvmdowngrader$")) // remove JVMDG stub
             .sorted(Comparator.comparing(Method::getName))
             .map(method -> new MethodInfo(
@@ -65,21 +64,26 @@ public class ClazzMemberCollector implements MemberCollector {
     public static final Predicate<AnnotatedElement> NO_HIDE_FROM_JS =
         element -> !element.isAnnotationPresent(HideFromJS.class);
 
-    static boolean hasIdenticalParentMethod(Method method, Class<?> clazz) {
-        if (method.getDeclaringClass() != clazz) {
-            return true; // declared by super, of course there's an identical method in super
+    static boolean filterInherited(Method method, Class<?> clazz) {
+        if (clazz.isInterface() || method.getDeclaringClass().isInterface()) {
+            // interface method is TS cannot be inherited
+            return true;
+        } else if (method.getDeclaringClass() != clazz) {
+            // declared by super, and no override
+            return false;
         }
         var parent = clazz.getSuperclass();
         while (parent != null) {
             try {
                 val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
                 // If there is one, return type from "this class" is the same as or the subclass of "super class"
-                return method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
+                return !method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
             } catch (NoSuchMethodException ignored) {
             }
             parent = parent.getSuperclass();
         }
-        return false;
+        // no such method in super -> unique method, keep it
+        return true;
     }
 
     /**
