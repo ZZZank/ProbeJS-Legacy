@@ -1,3 +1,13 @@
+# ProbeJS Legacy 5.0.0 -> 5.1.0
+
+Better interface method filtering
+
+- fix typing for some binding via interface class
+- better method filtering for interface method
+- fix type assignment for `$Class`, this should fix `onForgeEvent(...)` in 1.16.5 and `ForgeEvents.onEvent(...)` in 1.20.1
+
+---
+
 # ProbeJS Legacy 4.8.2 -> 5.0.0
 
 Typing files sharing
