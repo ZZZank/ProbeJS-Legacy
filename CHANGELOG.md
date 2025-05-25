@@ -1,7 +1,8 @@
-# ProbeJS Legacy 5.0.0 -> 5.1.0
+# ProbeJS Legacy 5.0.0 -> 5.1.1
 
-Better interface method filtering
+instanceof
 
+- `instanceof` support for `JClass`, aka the class loaded via `java(...)` (1.16.5) or `Java.loadClass(...)` (1.20.1)
 - fix typing for some binding via interface class
 - better method filtering for interface method
 - fix type assignment for `$Class`, this should fix `onForgeEvent(...)` in 1.16.5 and `ForgeEvents.onEvent(...)` in 1.20.1
