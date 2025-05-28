@@ -6,7 +6,10 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.docs.ProbeBuiltinDocs;
+import zzzank.probejs.docs.*;
+import zzzank.probejs.docs.assignments.*;
+import zzzank.probejs.docs.bindings.Bindings;
+import zzzank.probejs.docs.events.*;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.GameUtils;
 
@@ -21,8 +24,34 @@ import java.util.function.Consumer;
 public class ProbeJSPlugins {
 
     private static final List<ProbeJSPlugin> ALL = CollectUtils.ofList(
-        new BuiltinProbeJSPlugin(),
-        new ProbeBuiltinDocs()
+        //type
+        new RegistryTypes(),
+        new SpecialTypes(),
+        new Primitives(),
+        new JavaPrimitives(),
+        new RecipeTypes(),
+        new WorldTypes(),
+        new EnumTypes(),
+        new KubeWrappers(),
+        new FunctionalInterfaces(),
+        new TypeRedirecting(),
+        //binding
+        new Bindings(),
+        new LoadClassFn(),
+        //event
+        new ForgeEvents(),
+        new KubeEvents(),
+        new RecipeEvents(),
+        new RegistryEvents(),
+        new TagEvents(),
+        //misc
+        new KubeJSDenied(),
+        new GlobalClasses(),
+        new ParamFix(),
+        new Snippets(),
+        new SimulateOldTyping(),
+        // js event
+        new BuiltinProbeJSPlugin()
     );
 
     public static void register(@NotNull ProbeJSPlugin @NotNull ... plugins) {
@@ -42,6 +71,7 @@ public class ProbeJSPlugins {
 
     @HideFromJS
     public static void forEachPlugin(@NotNull Consumer<@NotNull ProbeJSPlugin> action) {
+        Objects.requireNonNull(action);
         for (val plugin : ALL) {
             try {
                 action.accept(plugin);
