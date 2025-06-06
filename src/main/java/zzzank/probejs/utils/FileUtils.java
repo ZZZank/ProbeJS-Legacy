@@ -48,13 +48,10 @@ public class FileUtils {
         if (read == null || replaceIf.test(read)) {
             read = new JsonObject();
         }
+        val merged = JsonUtils.mergeJsonRecursively(read, config);
         try (val writer = ProbeJS.GSON_WRITER.newJsonWriter(Files.newBufferedWriter(path))) {
             writer.setIndent("    ");
-            ProbeJS.GSON_WRITER.toJson(
-                JsonUtils.mergeJsonRecursively(read, config),
-                JsonObject.class,
-                writer
-            );
+            ProbeJS.GSON_WRITER.toJson(merged, JsonObject.class, writer);
         }
     }
 

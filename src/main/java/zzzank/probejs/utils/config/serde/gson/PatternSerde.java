@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
 /**
  * @author ZZZank
  */
-public class PatternSerde implements ConfigSerde<JsonElement, Pattern> {
+public enum PatternSerde implements ConfigSerde<JsonElement, Pattern> {
+    INSTANCE;
+
     @Override
     public @NotNull JsonElement serialize(@NotNull Pattern value) {
         return new JsonPrimitive(value.pattern());

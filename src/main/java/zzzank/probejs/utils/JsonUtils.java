@@ -133,8 +133,8 @@ public class JsonUtils {
         return elem;
     }
 
-    public static JsonElement mergeJsonRecursively(JsonElement first, JsonElement second) {
-        if (first instanceof JsonObject firstObject && second instanceof JsonObject secondObject) {
+    public static JsonElement mergeJsonRecursively(JsonElement base, JsonElement toMerge) {
+        if (base instanceof JsonObject firstObject && toMerge instanceof JsonObject secondObject) {
             val result = deepCopy(firstObject);
             for (val entry : secondObject.entrySet()) {
                 val key = entry.getKey();
@@ -148,7 +148,7 @@ public class JsonUtils {
             return result;
         }
 
-        if (first instanceof JsonArray firstArray && second instanceof JsonArray secondArray) {
+        if (base instanceof JsonArray firstArray && toMerge instanceof JsonArray secondArray) {
             val elements = new ArrayList<JsonElement>();
             for (val element : firstArray) {
                 elements.add(deepCopy(element));
@@ -168,10 +168,11 @@ public class JsonUtils {
             return result;
         }
 
-        return second;
+        return toMerge;
     }
 
-    public static class PathConverter implements JsonDeserializer<Path>, JsonSerializer<Path> {
+    public enum PathConverter implements JsonDeserializer<Path>, JsonSerializer<Path> {
+        INSTANCE;
 
         @Override
         public Path deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
