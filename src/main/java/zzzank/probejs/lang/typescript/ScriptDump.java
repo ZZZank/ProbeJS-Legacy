@@ -1,5 +1,6 @@
 package zzzank.probejs.lang.typescript;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
@@ -233,7 +234,7 @@ public class ScriptDump extends MultiDump {
                 "include", List.of("./**/*.js")
             )
         );
-        FileUtils.writeMergedConfig(path, config, ignored -> ProbeConfig.configVersionMisMatched());
+        FileUtils.writeMergedConfig(path, config, Predicates.alwaysTrue());
     }
 
     public void dump() throws IOException {
