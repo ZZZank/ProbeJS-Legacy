@@ -7,15 +7,16 @@ import java.util.function.Supplier;
 /**
  * @author ZZZank
  */
-final class CustomResult<T> implements AccessResult<T> {
-    private final T value;
-    private final ResultType type;
-    private final Supplier<String> message;
+record AccessResultImpl<T>(
+    T value,
+    ResultType type,
+    Supplier<String> messageProvider
+) implements AccessResult<T> {
 
-    CustomResult(T value, ResultType type, Supplier<String> message) {
+    AccessResultImpl(T value, ResultType type, Supplier<String> messageProvider) {
         this.value = value;
         this.type = Asser.tNotNull(type, "result type");
-        this.message = Asser.tNotNull(message, "message provider");
+        this.messageProvider = Asser.tNotNull(messageProvider, "message provider");
     }
 
     @Override
@@ -30,6 +31,6 @@ final class CustomResult<T> implements AccessResult<T> {
 
     @Override
     public String message() {
-        return this.message.get();
+        return this.messageProvider.get();
     }
 }

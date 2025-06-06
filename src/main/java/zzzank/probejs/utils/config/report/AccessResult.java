@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public interface AccessResult<T> {
 
     static <T> AccessResult<T> none() {
-        return (AccessResult<T>) NoneResult.INSTANCE;
+        return (AccessResult<T>) BuiltinResults.NONE;
     }
 
     T value();
@@ -46,30 +46,6 @@ public interface AccessResult<T> {
 
     default boolean hasMessage() {
         return type() != ResultType.GOOD;
-    }
-
-    interface OnlyValue<T> extends AccessResult<T> {
-        @Override
-        default String message() {
-            return null;
-        }
-
-        @Override
-        default ResultType type() {
-            return ResultType.GOOD;
-        }
-    }
-
-    interface NoValue<T> extends AccessResult<T> {
-        @Override
-        default T value() {
-            return null;
-        }
-
-        @Override
-        default ResultType type() {
-            return ResultType.ERROR;
-        }
     }
 
     enum ResultType {
