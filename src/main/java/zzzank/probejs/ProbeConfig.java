@@ -79,7 +79,7 @@ public interface ProbeConfig {
             internal config, used for tracking registry change""")
         .buildAutoSave();
     ConfigEntry<Boolean> isolatedScopes = INSTANCE.define("isolatedScopes")
-        .bindDefault(false)
+        .bindDefault(true)
         .comment("""
             isolate scripts from different script file with certain exposure,
             used for making scripts actual running situation more in line with your coding""")

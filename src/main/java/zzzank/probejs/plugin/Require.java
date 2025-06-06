@@ -17,7 +17,7 @@ public class Require extends BaseFunction {
     @Override
     public Object call(Context cx, Scriptable scope, Scriptable self, Object[] args) {
         if (!ProbeConfig.isolatedScopes.get()) {
-            manager.type.console.warn(String.format(
+            manager.type.console.error(String.format(
                 "'require(...)' used without enabling '%s' config, this might cause inconsistency between IDE report and actual behaviour",
                 ProbeConfig.isolatedScopes.name()
             ));
