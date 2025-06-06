@@ -32,6 +32,6 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     ) {
         super("", provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
-        this.filePath = Asser.tNotNull(path, "path");
+        this.filePath = path;
     }
 }

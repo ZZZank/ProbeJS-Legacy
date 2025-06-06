@@ -15,7 +15,14 @@ public interface ConfigRoot extends ConfigCategory {
 
     Path filePath();
 
+    default boolean inMemoryOnly() {
+        return filePath() == null;
+    }
+
     default void save() {
+        if (inMemoryOnly()) {
+            return;
+        }
         try {
             io().save(this, filePath());
         } catch (Exception e) {
@@ -24,7 +31,7 @@ public interface ConfigRoot extends ConfigCategory {
     }
 
     default void read() {
-        if (!Files.exists(filePath())) {
+        if (inMemoryOnly() || !Files.exists(filePath())) {
             return;
         }
         try {
