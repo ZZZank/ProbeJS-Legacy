@@ -70,12 +70,12 @@ public class GameUtils {
         val limit = maxStackStraceCount < 0
             ? traces.length
             : Math.min(maxStackStraceCount, traces.length);
-        val lines = new ArrayList<String>(1 + limit);
-        lines.add(t.toString());
+        val builder = new StringBuilder();
+        builder.append(t);
         for (int i = 0; i < limit; i++) {
-            lines.add("    at " + traces[i].toString());
+            builder.append('\n').append("    at ").append(traces[i]);
         }
-        ProbeJS.LOGGER.error(String.join("\n", lines));
+        ProbeJS.LOGGER.error(builder);
     }
 
     public void logThrowable(Throwable t) {

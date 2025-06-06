@@ -12,7 +12,6 @@ import java.util.function.BiFunction;
 /**
  * @author ZZZank
  */
-@SuppressWarnings("unchecked")
 public class ConfigProperties {
     public static final int SIZE_THRESHOLD = 5;
 
@@ -26,29 +25,39 @@ public class ConfigProperties {
     public <T> void put(ConfigProperty<T> property, T value) {
         Objects.requireNonNull(property);
         Objects.requireNonNull(value);
-        if (internal.size() == SIZE_THRESHOLD && internal instanceof Int2ObjectArrayMap) {
-            internal = new Int2ObjectOpenHashMap<>(internal);
+        synchronized (this) {
+            if (internal.size() == SIZE_THRESHOLD && internal instanceof Int2ObjectArrayMap) {
+                internal = new Int2ObjectOpenHashMap<>(internal);
+            }
+            internal.put(property.index(), value);
         }
-        internal.put(property.index(), value);
     }
 
     public <T> T merge(ConfigProperty<T> property, T value, BiFunction<? super T, ? super T, ? extends T> merger) {
-        return (T) internal.merge(property.index(), value, (BiFunction) merger);
+        synchronized (this) {
+            return (T) internal.merge(property.index(), value, (BiFunction) merger);
+        }
     }
 
     public <T> T getOrDefault(ConfigProperty<T> property) {
-        return (T) internal.getOrDefault(property.index(), property.defaultValue());
+        synchronized (this) {
+            return (T) internal.getOrDefault(property.index(), property.defaultValue());
+        }
     }
 
     public <T> Optional<T> get(ConfigProperty<T> property) {
-        return Optional.ofNullable((T) internal.get(property.index()));
+        return Optional.ofNullable(getOrDefault(property));
     }
 
     public <T> boolean has(ConfigProperty<T> property) {
-        return internal.containsKey(property.index());
+        synchronized (this) {
+            return internal.containsKey(property.index());
+        }
     }
 
     public <T> T remove(ConfigProperty<T> property) {
-        return (T) internal.remove(property.index());
+        synchronized (this) {
+            return (T) internal.remove(property.index());
+        }
     }
 }

@@ -22,7 +22,7 @@ public interface ProbeConfig {
     ConfigRoot INSTANCE = new ConfigRootImpl(
         JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {
             io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
-            io.registerDirectSerdeFactory(Pattern.class, new PatternSerde());
+            io.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
         }),
         ProbePaths.SETTINGS_JSON
     );

@@ -19,7 +19,7 @@ public class ProbeJS {
         .serializeSpecialFloatingPointValues()
         .setLenient()
         .disableHtmlEscaping()
-        .registerTypeHierarchyAdapter(Path.class, new JsonUtils.PathConverter())
+        .registerTypeHierarchyAdapter(Path.class, JsonUtils.PathConverter.INSTANCE)
         .create();
     public static final Gson GSON_WRITER = new GsonBuilder()
         .setPrettyPrinting()
@@ -28,7 +28,5 @@ public class ProbeJS {
 
     public ProbeJS() {
         EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
-
-        ProbeConfig.refresh();
     }
 }
