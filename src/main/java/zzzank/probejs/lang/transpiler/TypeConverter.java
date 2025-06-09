@@ -47,7 +47,7 @@ public class TypeConverter {
 
     public @NotNull BaseType convertTypeBuiltin(TypeDescriptor descriptor) {
         if (descriptor instanceof ClassType classType) {
-            return Types.type(classType.classPath);
+            return Types.typeMaybeGeneric(classType.clazz);
         } else if (descriptor instanceof ArrayType arrayType) {
             return convertType(arrayType.component).asArray();
         } else if (descriptor instanceof ParamType paramType) {
