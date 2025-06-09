@@ -30,7 +30,7 @@ public class BuiltinResults {
     }
 
     public <T> AccessResult<T> error(Supplier<String> message) {
-        return new AccessResultImpl<>(null, ResultType.WARNING, message);
+        return new AccessResultImpl<>(null, ResultType.ERROR, message);
     }
 
     public <T> AccessResult<T> error(String message) {
