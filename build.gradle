@@ -15,7 +15,7 @@
 //
 //
 
-import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.Changelog;
 
 plugins {
     id('com.github.johnrengelman.shadow').version('8.1.1')
@@ -143,9 +143,19 @@ dependencies {
         testCompileOnly("org.projectlombok:lombok:${vers}")
         testAnnotationProcessor("org.projectlombok:lombok:${vers}")
     }
+
+    if (propertyBool('enable_junit')) {
+        testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+    }
 }
 
 apply from: 'gradle/scripts/dependencies.gradle'
+
+if (propertyBool('enable_junit')) {
+    test {
+        useJUnitPlatform()
+    }
+}
 
 processResources {
     if (!propertyBool("use_access_widener")) {
