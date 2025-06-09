@@ -5,12 +5,11 @@ import zzzank.probejs.lang.java.base.TypeVariableHolder;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
+import zzzank.probejs.lang.java.type.impl.VariableType;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.List;
 import java.util.Map;
 
@@ -20,22 +19,17 @@ public class MethodInfo extends TypeVariableHolder {
     public TypeDescriptor returnType;
     public final MethodAttributes attributes;
 
-    public MethodInfo(Class<?> from, Method method, Map<TypeVariable<?>, Type> typeRemapper) {
+    public MethodInfo(Class<?> from, Method method, Map<VariableType, TypeDescriptor> typeRemapper) {
         super(method.getTypeParameters(), method.getAnnotations());
         this.attributes = new MethodAttributes(method);
         this.name = RemapperBridge.remapMethod(from, method);
         this.params = CollectUtils.mapToList(method.getParameters(), ParamInfo::new);
         this.returnType = TypeAdapter.getTypeDescription(method.getAnnotatedReturnType());
 
-        for (val entry : typeRemapper.entrySet()) {
-            val symbol = entry.getKey();
-            val replacement = TypeAdapter.getTypeDescription(entry.getValue());
-
-            for (val param : this.params) {
-                param.type = TypeAdapter.consolidateType(param.type, symbol.getName(), replacement);
-            }
-            this.returnType = TypeAdapter.consolidateType(this.returnType, symbol.getName(), replacement);
+        for (var param : this.params) {
+            param.type = param.type.consolidate(typeRemapper);
         }
+        this.returnType = returnType.consolidate(typeRemapper);
     }
 
     public static class MethodAttributes {

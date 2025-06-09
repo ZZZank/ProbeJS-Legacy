@@ -6,6 +6,8 @@ import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
 import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
+import zzzank.probejs.lang.java.type.TypeDescriptor;
+import zzzank.probejs.lang.java.type.impl.VariableType;
 import zzzank.probejs.utils.ReflectUtils;
 
 import java.lang.reflect.*;
@@ -18,13 +20,17 @@ import java.util.stream.Stream;
  */
 public class ClazzMemberCollector implements MemberCollector {
 
+    private final TypeReplacementCollector typeReplacementCollector = new TypeReplacementCollector();
+
     private Set<String> names;
     private Class<?> clazz;
+    private Map<VariableType, TypeDescriptor> typeReplacement;
 
     @Override
     public void accept(Class<?> clazz) {
         this.clazz = clazz;
         this.names = new HashSet<>();
+        this.typeReplacement = typeReplacementCollector.getTypeReplacement(clazz);
     }
 
     @Override
@@ -43,11 +49,7 @@ public class ClazzMemberCollector implements MemberCollector {
             .filter(m -> filterInherited(m, clazz))
             .filter(m -> !m.getName().startsWith("jvmdowngrader$")) // remove JVMDG stub
             .sorted(Comparator.comparing(Method::getName))
-            .map(method -> new MethodInfo(
-                clazz,
-                method,
-                getGenericTypeReplacement(clazz, method)
-            ));
+            .map(method -> new MethodInfo(clazz, method, typeReplacement));
     }
 
     @Override
@@ -84,75 +86,5 @@ public class ClazzMemberCollector implements MemberCollector {
         }
         // no such method in super -> unique method, keep it
         return true;
-    }
-
-    /**
-     * getGenericTypeReplacementForParentInterfaceMethodsJustBecauseJavaDoNotKnowToReplaceThemWithGenericArgumentsOfThisClass
-     */
-    static Map<TypeVariable<?>, Type> getGenericTypeReplacement(
-        Class<?> thisClass,
-        Method thatMethod
-    ) {
-        val targetClass = thatMethod.getDeclaringClass();
-        val interfaces = thisClass.getInterfaces();
-
-        Map<TypeVariable<?>, Type> replacement = new HashMap<>();
-        if (Arrays.asList(interfaces).contains(targetClass)) {
-            return getInterfaceRemap(thisClass, targetClass);
-        }
-        val superInterface = Arrays
-            .stream(interfaces)
-            .filter(targetClass::isAssignableFrom)
-            .findFirst()
-            .orElse(null);
-        if (superInterface == null) {
-            return Collections.emptyMap();
-        }
-        val parentType = getGenericTypeReplacement(superInterface, thatMethod);
-        val parentReplacement = getInterfaceRemap(thisClass, superInterface);
-
-        for (val entry : parentType.entrySet()) {
-            val variable = entry.getKey();
-            val type = entry.getValue();
-
-            replacement.put(variable,
-                type instanceof TypeVariable<?> typeVariable
-                    ? parentReplacement.getOrDefault(typeVariable, typeVariable)
-                    : type
-            );
-        }
-        return replacement;
-    }
-
-    static Map<TypeVariable<?>, Type> getInterfaceRemap(Class<?> thisClass, Class<?> thatInterface) {
-        Map<TypeVariable<?>, Type> replacement = new HashMap<>();
-        int indexOfInterface = -1;
-        for (Type type : thisClass.getGenericInterfaces()) {
-            if (type instanceof ParameterizedType parameterizedType) {
-                if (parameterizedType.getRawType().equals(thatInterface)) {
-                    indexOfInterface = 0;
-                    for (TypeVariable<?> typeVariable : thatInterface.getTypeParameters()) {
-                        replacement.put(typeVariable, parameterizedType.getActualTypeArguments()[indexOfInterface]);
-                        indexOfInterface++;
-                    }
-                }
-            } else if (type instanceof Class<?> clazz) {
-                if (clazz.equals(thatInterface)) {
-                    indexOfInterface = 0;
-                    for (TypeVariable<?> typeVariable : thatInterface.getTypeParameters()) {
-                        // Raw use of parameterized type, so we fill with Object.class
-                        // Very bad programming practice, but we have to prepare for random people coding their stuffs bad
-                        replacement.put(typeVariable, Object.class);
-                    }
-                }
-            }
-        }
-
-        if (indexOfInterface == -1) {
-            // throw new IllegalArgumentException("The class does not implement the target interface");
-            return Collections.emptyMap();
-        }
-
-        return replacement;
     }
 }
