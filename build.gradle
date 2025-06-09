@@ -179,6 +179,7 @@ processResources {
             "mod_author": propertyString('mod_author'),
             "mod_description": propertyString('mod_description'),
             "minecraft_version": propertyString('minecraft_version'),
+            "required_minecraft_range": propertyString('required_minecraft_range'),
             "resource_pack_format": propertyString('resource_pack_format')
         )
     }
