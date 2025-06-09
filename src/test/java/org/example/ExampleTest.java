@@ -1,11 +1,10 @@
 package org.example;
+/*
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author ZZZank
- */
+/// see `enable_junit` and `junit_version` in gradle.properties
 public class ExampleTest {
 
     @Test
@@ -13,3 +12,4 @@ public class ExampleTest {
         Assertions.assertEquals(1, 1);
     }
 }
+*/
