@@ -20,16 +20,6 @@ record AccessResultImpl<T>(
     }
 
     @Override
-    public T value() {
-        return this.value;
-    }
-
-    @Override
-    public ResultType type() {
-        return this.type;
-    }
-
-    @Override
     public String message() {
         return this.messageProvider.get();
     }
