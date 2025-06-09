@@ -2,10 +2,12 @@ package zzzank.probejs.lang.java.clazz;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.lang.java.type.TypeAdapter;
+import zzzank.probejs.lang.java.type.TypeDescriptor;
+import zzzank.probejs.lang.java.type.impl.VariableType;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,47 +16,35 @@ import java.util.Map;
  * @author ZZZank
  */
 public final class TypeReplacementCollector {
-    private final Map<Class<?>, Map<TypeVariable<?>, Type>> replacementByClass = new HashMap<>();
+    private final Map<Class<?>, Map<VariableType, TypeDescriptor>> replacementByClass = new HashMap<>();
 
-    public Type replaceType(TypeVariable<?> original, Map<TypeVariable<?>, Type> mapping) {
-        return mapping.getOrDefault(original, original);
-    }
-
-    public Type replaceType(Type original, Map<TypeVariable<?>, Type> mapping) {
-        if (original instanceof TypeVariable<?> variable) {
-            return replaceType(variable, mapping);
-        }
-        // ignore other types, not a good idea though, because of complex types like T[]
-        return original;
-    }
-
-    public Map<TypeVariable<?>, Type> transformMapping(
-        Map<TypeVariable<?>, Type> mapping,
-        Map<TypeVariable<?>, Type> transformer
+    public Map<VariableType, TypeDescriptor> transformMapping(
+        Map<VariableType, TypeDescriptor> mapping,
+        Map<VariableType, TypeDescriptor> transformer
     ) {
         if (mapping.isEmpty()) {
             return Map.of();
         } else if (mapping.size() == 1) {
             val entry = mapping.entrySet().iterator().next();
-            return Map.of(entry.getKey(), replaceType(entry.getValue(), transformer));
+            return Map.of(entry.getKey(), entry.getValue() .consolidate(transformer));
         }
         val transformed = new HashMap<>(mapping);
         for (var entry : transformed.entrySet()) {
-            entry.setValue(replaceType(entry.getValue(), transformer));
+            entry.setValue(entry.getValue().consolidate(transformer));
         }
         return transformed;
     }
 
     @NotNull
-    public Map<TypeVariable<?>, Type> getTypeReplacement(Class<?> type) {
+    public Map<VariableType, TypeDescriptor> getTypeReplacement(Class<?> type) {
         if (type == null || type == Object.class || type.isPrimitive()) {
             return Map.of();
         }
         return replacementByClass.computeIfAbsent(type, this::computeTypeReplacement);
     }
 
-    private Map<TypeVariable<?>, Type> computeTypeReplacement(Class<?> type) {
-        var mapping = new HashMap<TypeVariable<?>, Type>();
+    private Map<VariableType, TypeDescriptor> computeTypeReplacement(Class<?> type) {
+        var mapping = new HashMap<VariableType, TypeDescriptor>();
 
         /*
          * (classes are named as 'XXX': A, B, C, ...)
@@ -83,7 +73,7 @@ public final class TypeReplacementCollector {
         var superMapping = getTypeReplacement(type.getSuperclass());
 
         var interfaces = type.getInterfaces();
-        var interfaceMappings = new ArrayList<Map<TypeVariable<?>, Type>>(interfaces.length);
+        var interfaceMappings = new ArrayList<Map<VariableType, TypeDescriptor>>(interfaces.length);
         for (var interface_ : interfaces) {
             interfaceMappings.add(getTypeReplacement(interface_));
         }
@@ -107,24 +97,25 @@ public final class TypeReplacementCollector {
         return Map.copyOf(merged);
     }
 
-    private static void extractSuperMapping(Type superType, HashMap<TypeVariable<?>, Type> pushTo) {
-        if (superType instanceof ParameterizedType parameterized
-            && parameterized.getRawType() instanceof Class<?> parent) {
+    private static void extractSuperMapping(Type superType, HashMap<VariableType, TypeDescriptor> pushTo) {
+        if (!(superType instanceof ParameterizedType parameterized)
+            || !(parameterized.getRawType() instanceof Class<?> parent)) {
+            return;
+        }
 
-            final var params = parent.getTypeParameters(); // T
-            final var args = parameterized.getActualTypeArguments(); // T is mapped to
+        final var params = parent.getTypeParameters(); // T
+        final var args = parameterized.getActualTypeArguments(); // T is mapped to
 
-            if (params.length != args.length) {
-                throw new IllegalArgumentException(String.format(
-                    "typeParameters.length != actualTypeArguments.length (%s != %s)",
-                    params.length,
-                    args.length
-                ));
-            }
+        if (params.length != args.length) {
+            throw new IllegalArgumentException(String.format(
+                "typeParameters.length != actualTypeArguments.length (%s != %s)",
+                params.length,
+                args.length
+            ));
+        }
 
-            for (int i = 0; i < args.length; i++) {
-                pushTo.put(params[i], args[i]);
-            }
+        for (int i = 0; i < args.length; i++) {
+            pushTo.put(new VariableType(params[i]), TypeAdapter.getTypeDescription(args[i]));
         }
     }
 }
