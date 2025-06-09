@@ -37,9 +37,9 @@ public interface Types {
      * Returns a literal type of the input if it's something OK in TS,
      * otherwise, any will be returned.
      *
+     * @param content a string, number or boolean
      * @deprecated selecting this method overload means that your 'content' actually cannot be converted to JS literal
      * , and only 'any' will be returned
-     * @param content a string, number or boolean
      */
     @Deprecated
     static JSPrimitiveType literal(Object content) {
@@ -154,10 +154,7 @@ public interface Types {
             return type(clazz);
         }
 
-        return parameterized(
-            type(clazz),
-            Collections.nCopies(typeParameters.length, ANY).toArray(new BaseType[0])
-        );
+        return parameterized(type(clazz), Collections.nCopies(typeParameters.length, ANY));
     }
 
     /**
