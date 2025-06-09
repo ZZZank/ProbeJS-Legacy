@@ -7,32 +7,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedWildcardType;
+import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class WildType extends TypeDescriptor {
+public class WildType extends TypeDescriptor.MaybeConsolidatable {
     @Nullable
-    public TypeDescriptor bound;
+    public final TypeDescriptor bound;
 
     public WildType(AnnotatedWildcardType wildcardType) {
         super(wildcardType.getAnnotations());
-        if (wildcardType.getAnnotatedLowerBounds().length != 0) {
-            bound = TypeAdapter.getTypeDescription(wildcardType.getAnnotatedLowerBounds()[0]);
-        } else if (!wildcardType.getAnnotatedUpperBounds()[0].getType().equals(Object.class)) {
-            bound = TypeAdapter.getTypeDescription(wildcardType.getAnnotatedUpperBounds()[0]);
-        } else {
-            bound = null;
-        }
+        bound = TypeAdapter.getTypeDescription(extractBound((WildcardType) wildcardType.getType()));
     }
 
-    public WildType(java.lang.reflect.WildcardType wildcardType) {
+    public WildType(WildcardType wildcardType) {
         super(NO_ANNOTATION);
-        if (wildcardType.getLowerBounds().length != 0) {
-            bound = TypeAdapter.getTypeDescription(wildcardType.getLowerBounds()[0]);
-        } else if (!wildcardType.getUpperBounds()[0].equals(Object.class)) {
-            bound = TypeAdapter.getTypeDescription(wildcardType.getUpperBounds()[0]);
-        } else {
-            bound = null;
-        }
+        bound = TypeAdapter.getTypeDescription(extractBound(wildcardType));
     }
 
     public WildType(@Nonnull Annotation[] annotations, @Nullable TypeDescriptor bound) {
@@ -48,5 +39,35 @@ public class WildType extends TypeDescriptor {
     @Override
     public Class<?> asClass() {
         return bound == null ? Object.class : bound.asClass();
+    }
+
+    @Override
+    public boolean canConsolidate() {
+        return bound != null && bound.canConsolidate();
+    }
+
+    @Override
+    protected TypeDescriptor consolidateImpl(Map<VariableType, TypeDescriptor> mapping) {
+        if (bound == null) {
+            return this;
+        }
+        return new WildType(this.annotations, bound.consolidate(mapping));
+    }
+
+    private static Type extractBound(WildcardType wildcardType) {
+        // upper
+        var bounds = wildcardType.getUpperBounds();
+        if (bounds[0] != Object.class) {
+            return bounds[0];
+        }
+
+        // lower
+        bounds = wildcardType.getLowerBounds();
+        if (bounds.length > 0) {
+            return bounds[0];
+        }
+
+        // fallback
+        return null;
     }
 }

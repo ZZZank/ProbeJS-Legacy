@@ -7,6 +7,7 @@ import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class VariableType extends TypeDescriptor {
@@ -42,6 +43,16 @@ public class VariableType extends TypeDescriptor {
             return Object.class;
         }
         return descriptors.get(0).asClass();
+    }
+
+    @Override
+    public boolean canConsolidate() {
+        return true;
+    }
+
+    @Override
+    public TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping) {
+        return mapping.getOrDefault(this, this);
     }
 
     @Override
