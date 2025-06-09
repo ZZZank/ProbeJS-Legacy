@@ -70,7 +70,7 @@ public class AutoParamRename implements ClassTransformer {
         } else if (type instanceof ParamType param) {
             return autoParamName(param.base, index);
         } else if (type instanceof VariableType vari) {
-            return vari.symbol.toLowerCase(Locale.ROOT) + index;
+            return vari.getSymbol().toLowerCase(Locale.ROOT) + index;
         }
         return null;
     }

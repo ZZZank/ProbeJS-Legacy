@@ -68,10 +68,10 @@ public class TypeConverter {
     public @NotNull TSVariableType convertVariableType(VariableType variableType) {
         val desc = variableType.descriptors;
         return switch (desc.size()) {
-            case 0 -> Types.generic(variableType.symbol);
-            case 1 -> Types.generic(variableType.symbol, convertType(desc.get(0)));
+            case 0 -> Types.generic(variableType.getSymbol());
+            case 1 -> Types.generic(variableType.getSymbol(), convertType(desc.get(0)));
             default -> Types.generic(
-                variableType.symbol,
+                variableType.getSymbol(),
                 Types.and(CollectUtils.mapToList(desc, this::convertType))
             );
         };

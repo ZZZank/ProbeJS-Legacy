@@ -5,13 +5,13 @@ import zzzank.probejs.lang.java.type.TypeDescriptor;
 
 import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.TypeVariable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class VariableType extends TypeDescriptor {
+    private final TypeVariable<?> raw;
     public String symbol;
     public List<TypeDescriptor> descriptors;
 
@@ -29,7 +29,7 @@ public class VariableType extends TypeDescriptor {
 
     public VariableType(TypeVariable<?> typeVariable, boolean checkBounds) {
         super(typeVariable.getAnnotations());
-        this.symbol = typeVariable.getName();
+        this.raw = typeVariable;
         this.descriptors = checkBounds
             ? Arrays.stream(typeVariable.getAnnotatedBounds())
                 .filter(bound -> Object.class != bound.getType())
@@ -62,10 +62,20 @@ public class VariableType extends TypeDescriptor {
     }
 
     public String getSymbol() {
-        return symbol;
+        return raw.getName();
     }
 
     public List<TypeDescriptor> getDescriptors() {
         return descriptors;
+    }
+
+    @Override
+    public int hashCode() {
+        return raw.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof VariableType another && raw.equals(another.raw);
     }
 }
