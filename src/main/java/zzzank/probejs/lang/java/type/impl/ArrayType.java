@@ -9,9 +9,11 @@ import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class ArrayType extends TypeDescriptor {
+public class ArrayType extends TypeDescriptor.MaybeConsolidatable {
     public final TypeDescriptor component;
     private Class<?> asClass;
 
@@ -25,7 +27,7 @@ public class ArrayType extends TypeDescriptor {
 
     public ArrayType(Annotation[] annotations, TypeDescriptor arrayType) {
         super(annotations);
-        this.component = arrayType;
+        this.component = Objects.requireNonNull(arrayType);
     }
 
     @Override
@@ -34,6 +36,16 @@ public class ArrayType extends TypeDescriptor {
             asClass = Array.newInstance(component.asClass(), 0).getClass();
         }
         return asClass;
+    }
+
+    @Override
+    public boolean canConsolidate() {
+        return component.canConsolidate();
+    }
+
+    @Override
+    protected TypeDescriptor consolidateImpl(Map<VariableType, TypeDescriptor> mapping) {
+        return new ArrayType(this.annotations, component.consolidate(mapping));
     }
 
     @Override

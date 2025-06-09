@@ -8,9 +8,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class ParamType extends TypeDescriptor {
+public class ParamType extends TypeDescriptor.MaybeConsolidatable {
     public final TypeDescriptor base;
     public final List<TypeDescriptor> params;
 
@@ -44,6 +45,16 @@ public class ParamType extends TypeDescriptor {
 
     public ParamType(TypeDescriptor base, List<TypeDescriptor> params) {
         this(base.annotations, base, params);
+    }
+
+    @Override
+    public boolean canConsolidate() {
+        return this.params.stream().anyMatch(TypeDescriptor::canConsolidate);
+    }
+
+    @Override
+    protected TypeDescriptor consolidateImpl(Map<VariableType, TypeDescriptor> mapping) {
+        return new ParamType(this.base, CollectUtils.mapToList(this.params, t -> t.consolidate(mapping)));
     }
 
     @Override

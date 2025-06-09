@@ -5,6 +5,7 @@ import zzzank.probejs.lang.java.type.TypeDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ClassType extends TypeDescriptor {
@@ -21,6 +22,16 @@ public class ClassType extends TypeDescriptor {
     @Override
     public Class<?> asClass() {
         return clazz;
+    }
+
+    @Override
+    public boolean canConsolidate() {
+        return false;
+    }
+
+    @Override
+    public TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping) {
+        return this;
     }
 
     @Override
