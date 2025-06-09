@@ -1,8 +1,6 @@
 package zzzank.probejs.lang.java.type;
 
-import org.jetbrains.annotations.Contract;
 import zzzank.probejs.lang.java.type.impl.*;
-import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.reflect.*;
 import java.util.Collections;
@@ -70,31 +68,5 @@ public class TypeAdapter {
             );
         }
         throw new RuntimeException("Unknown type to be resolved");
-    }
-
-    @Contract("null, _, _ -> null")
-    public static TypeDescriptor consolidateType(TypeDescriptor in, String symbol, TypeDescriptor replacement) {
-        if (in instanceof VariableType variableType) {
-            if (variableType.symbol.equals(symbol)) {
-                return replacement;
-            }
-        } else if (in instanceof ArrayType arrayType) {
-            return new ArrayType(
-                in.annotations,
-                consolidateType(arrayType.component, symbol, replacement)
-            );
-        } else if (in instanceof ParamType paramType) {
-            return new ParamType(
-                in.annotations,
-                consolidateType(paramType.base, symbol, replacement),
-                CollectUtils.mapToList(paramType.params, t -> consolidateType(t, symbol, replacement))
-            );
-        } else if (in instanceof WildType wildType) {
-            return new WildType(
-                in.annotations,
-                wildType.bound == null ? null : consolidateType(wildType.bound, symbol, replacement)
-            );
-        }
-        return in;
     }
 }
