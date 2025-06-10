@@ -3,8 +3,8 @@ package zzzank.probejs;
 import com.google.gson.JsonObject;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.api.dump.MultiDump;
 import zzzank.probejs.api.dump.TSDump;
+import zzzank.probejs.api.output.TSFileWriter;
 import zzzank.probejs.features.forge_scan.ClassScanner;
 import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
@@ -116,9 +116,9 @@ public class ProbeDump {
         ClassRegistry.REGISTRY.writeTo(CLASS_CACHE);
         report(ProbeText.pjs("dump.class_discovered", ClassRegistry.REGISTRY.foundClasses.size()));
 
-        val reporters = Collections.synchronizedList(new ArrayList<TSDump.Reporter>());
-        scriptDumps.stream().map(MultiDump::reporter).forEach(reporters::add);
-        reporters.add(sharedDump.reporter());
+        val reporters = Collections.synchronizedList(new ArrayList<TSDump>());
+        reporters.addAll(scriptDumps);
+        reporters.add(sharedDump);
 
         val index = new AtomicInteger();
         val executor = new ForkJoinPool(
@@ -145,7 +145,7 @@ public class ProbeDump {
                     report(error);
                     ProbeJS.LOGGER.error(error.unwrap().getString(), e);
                 } finally {
-                    reporters.remove(dump.reporter());
+                    reporters.remove(dump);
                 }
             })
             .map(r -> CompletableFuture.runAsync(r, executor))
@@ -162,7 +162,7 @@ public class ProbeDump {
                     report(error);
                     ProbeJS.LOGGER.error(error.unwrap().getString(), e);
                 } finally {
-                    reporters.remove(sharedDump.reporter());
+                    reporters.remove(sharedDump);
                 }
             }, executor);
 
@@ -172,8 +172,12 @@ public class ProbeDump {
                 try {
                     Thread.sleep(3000);
                     val dumpProgress = reporters.stream()
-                        .filter(TSDump.Reporter::running)
-                        .map(rep -> rep.countWritten() + "/" + rep.countTotal())
+                        .filter(TSDump::running)
+                        .map(dump -> {
+                            val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
+                            val total = dump.writers().mapToInt(TSFileWriter::countAcceptedFiles).sum();
+                            return written + "/" + total;
+                        })
                         .collect(Collectors.joining(", "));
                     if (dumpProgress.isEmpty()) {
                         return;
