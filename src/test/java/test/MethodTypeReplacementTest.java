@@ -2,15 +2,15 @@ package test;
 
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import zzzank.probejs.lang.java.ClassRegistry;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.VariableType;
-import zzzank.probejs.lang.transpiler.Transpiler;
 
-import java.io.IOException;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
@@ -19,23 +19,19 @@ import java.util.stream.Stream;
  * @author ZZZank
  */
 public class MethodTypeReplacementTest {
-    private static final ClassRegistry CLASS_REGISTRY = new ClassRegistry();
-    private static final Transpiler TRANSPILER = new Transpiler();
 
     static {
         InitFMLPathsTest.init();
-        TRANSPILER.init();
     }
 
-    @Test
-    public void unaryOp() {
-        val classPath = ClassPath.fromJava(UnaryOperator.class);
+    @ParameterizedTest
+    @ValueSource(classes = {UnaryOperator.class, Collection.class, StringIterable.class, StrList.class})
+    public void unaryOp(Class<?> type) {
+        val classRegistry = new ClassRegistry();
 
-        CLASS_REGISTRY.addClass(UnaryOperator.class);
-        CLASS_REGISTRY.walkClass();
-        val clazz = CLASS_REGISTRY.foundClasses.get(classPath);
-
-        clazz.methods
+        classRegistry
+            .addClass(type)
+            .methods
             .stream()
             .flatMap(method -> Stream.concat(
                 Stream.of(method.returnType),
@@ -48,6 +44,10 @@ public class MethodTypeReplacementTest {
             .map(TypeVariable::getGenericDeclaration)
             .map(d -> d instanceof Class<?> c ? c : null)
             .filter(Objects::nonNull)
-            .forEach(c -> Assertions.assertEquals(UnaryOperator.class, c));
+            .forEach(c -> Assertions.assertEquals(type, c));
     }
+
+    interface StringIterable extends Iterable<String> {}
+
+    final class StrList extends ArrayList<String> {}
 }
