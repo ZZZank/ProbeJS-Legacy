@@ -7,8 +7,8 @@ import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -65,7 +65,7 @@ public class TypeScriptFile {
         }
     }
 
-    public void write(BufferedWriter writer) throws IOException {
+    public void write(Writer writer) throws IOException {
         boolean written = false;
 
         for (val value : declaration.references.values()) {

@@ -44,7 +44,7 @@ public class PerFileWriter extends AbstractWriter {
             if (Files.notExists(filePath)) {
                 Files.createFile(filePath);
             }
-            try (val writer = Files.newBufferedWriter(filePath)) {
+            try (val writer = writerProvider.apply(filePath)) {
                 writeFile(file, writer);
             }
         }
@@ -52,7 +52,7 @@ public class PerFileWriter extends AbstractWriter {
 
     @Override
     protected void writeIndex(Path base) throws IOException {
-        try (val writer = Files.newBufferedWriter(base.resolve(INDEX_FILE_NAME + suffix))) {
+        try (val writer = writerProvider.apply(base.resolve(INDEX_FILE_NAME + suffix))) {
             for (val file : files) {
                 writer.write(String.format(
                     "/// <reference path=%s />\n",
