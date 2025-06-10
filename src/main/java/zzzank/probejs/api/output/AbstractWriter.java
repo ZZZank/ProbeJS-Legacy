@@ -18,9 +18,9 @@ public abstract class AbstractWriter implements TSFileWriter {
         = Files::newBufferedWriter;
 
     protected int written = 0;
-    public boolean writeAsModule = true;
-    public boolean withIndex = true;
-    public String suffix = D_TS_SUFFIX;
+    protected boolean writeAsModule = true;
+    protected boolean withIndex = true;
+    protected String suffix = D_TS_SUFFIX;
     protected UnsafeFunction<Path, Writer, IOException> writerProvider = DEFAULT_WRITER_PROVIDER;
 
     @Override

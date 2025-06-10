@@ -6,7 +6,6 @@ import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +40,6 @@ public class SingleFileWriter extends AbstractWriter {
     @Override
     protected void writeClasses(Path base) throws IOException {
         val filePath = base.resolve(this.fileName + suffix);
-        if (Files.notExists(filePath)) {
-            Files.createFile(filePath);
-        }
         try (val writer = writerProvider.apply(filePath)) {
             for (val file : files) {
                 writeFile(file, writer);
