@@ -7,7 +7,6 @@ import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +40,6 @@ public class PerFileWriter extends AbstractWriter {
     protected void writeClasses(Path base) throws IOException {
         for (val file : files) {
             val filePath = base.resolve(filePathOf(file.path));
-            if (Files.notExists(filePath)) {
-                Files.createFile(filePath);
-            }
             try (val writer = writerProvider.apply(filePath)) {
                 writeFile(file, writer);
             }
