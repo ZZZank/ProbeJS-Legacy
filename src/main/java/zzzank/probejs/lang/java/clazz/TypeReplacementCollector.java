@@ -11,12 +11,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author ZZZank
  */
 public final class TypeReplacementCollector {
-    private final Map<Class<?>, Map<VariableType, TypeDescriptor>> replacementByClass = new HashMap<>();
+    private final Map<Class<?>, Map<VariableType, TypeDescriptor>> replacementByClass = new ConcurrentHashMap<>();
 
     public Map<VariableType, TypeDescriptor> transformMapping(
         Map<VariableType, TypeDescriptor> mapping,
