@@ -133,6 +133,9 @@ public interface Types {
     }
 
     static TSParamType parameterized(BaseType base, Collection<? extends BaseType> params) {
+        if (base instanceof TSParamType paramType) {
+            base = paramType.baseType;
+        }
         return new TSParamType(base, params);
     }
 

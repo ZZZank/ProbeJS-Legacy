@@ -61,6 +61,10 @@ public class VariableType extends TypeDescriptor {
         return descriptors.stream().flatMap(TypeDescriptor::stream);
     }
 
+    public TypeVariable<?> raw() {
+        return raw;
+    }
+
     public String getSymbol() {
         return raw.getName();
     }
