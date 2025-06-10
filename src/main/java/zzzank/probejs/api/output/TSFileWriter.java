@@ -2,14 +2,18 @@ package zzzank.probejs.api.output;
 
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.utils.UnsafeFunction;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Path;
 
 /**
  * @author ZZZank
  */
 public interface TSFileWriter {
+
+    TSFileWriter setWriterProvider(UnsafeFunction<Path, Writer, IOException> writerProvider);
 
     TSFileWriter setFileSuffix(String suffix);
 

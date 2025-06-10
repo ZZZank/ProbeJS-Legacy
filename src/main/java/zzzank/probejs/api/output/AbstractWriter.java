@@ -2,9 +2,11 @@ package zzzank.probejs.api.output;
 
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.utils.UnsafeFunction;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -12,10 +14,20 @@ import java.util.Objects;
  * @author ZZZank
  */
 public abstract class AbstractWriter implements TSFileWriter {
+    protected static final UnsafeFunction<Path, Writer, IOException> DEFAULT_WRITER_PROVIDER
+        = Files::newBufferedWriter;
+
     protected int written = 0;
     public boolean writeAsModule = true;
     public boolean withIndex = true;
     public String suffix = D_TS_SUFFIX;
+    protected UnsafeFunction<Path, Writer, IOException> writerProvider = DEFAULT_WRITER_PROVIDER;
+
+    @Override
+    public TSFileWriter setWriterProvider(UnsafeFunction<Path, Writer, IOException> writerProvider) {
+        this.writerProvider = Objects.requireNonNull(writerProvider);
+        return this;
+    }
 
     @Override
     public TSFileWriter setFileSuffix(String suffix) {
@@ -35,7 +47,7 @@ public abstract class AbstractWriter implements TSFileWriter {
         return this;
     }
 
-    protected void writeFile(TypeScriptFile file, BufferedWriter writer) throws IOException {
+    protected void writeFile(TypeScriptFile file, Writer writer) throws IOException {
         if (this.writeAsModule) {
             writer.write("declare module ");
             writer.write(ProbeJS.GSON.toJson(file.path.getTSPath()));

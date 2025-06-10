@@ -7,7 +7,6 @@ import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -150,7 +149,7 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
             val fileName = entry.getKey();
             val files = entry.getValue();
             val filePath = base.resolve(fileName + suffix);
-            try (val writer = Files.newBufferedWriter(filePath)) {
+            try (val writer = writerProvider.apply(filePath)) {
                 for (val file : files) {
                     writeFile(file, writer);
                     writer.write('\n');
@@ -161,7 +160,7 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
 
     @Override
     protected void writeIndex(Path base) throws IOException {
-        try (val writer = Files.newBufferedWriter(base.resolve(INDEX_FILE_NAME + suffix))) {
+        try (val writer = writerProvider.apply(base.resolve(INDEX_FILE_NAME + suffix))) {
             for (val key : packaged.keySet()) {
                 val refPath = key + suffix;
                 writer.write(String.format("/// <reference path=%s />\n", ProbeJS.GSON.toJson(refPath)));
