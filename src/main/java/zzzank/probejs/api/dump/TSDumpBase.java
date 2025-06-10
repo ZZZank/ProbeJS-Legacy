@@ -4,6 +4,7 @@ import zzzank.probejs.api.output.TSFileWriter;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -11,12 +12,11 @@ import java.nio.file.Path;
 public abstract class TSDumpBase implements TSDump {
     protected final TSFileWriter writer;
     protected final Path writeTo;
-    protected final ReporterImpl reporter;
+    private volatile boolean running;
 
     public TSDumpBase(TSFileWriter writer, Path writeTo) {
         this.writer = writer;
         this.writeTo = writeTo;
-        reporter = new ReporterImpl(this.writer);
     }
 
     protected abstract void dumpImpl() throws IOException;
@@ -28,7 +28,7 @@ public abstract class TSDumpBase implements TSDump {
 
     @Override
     public void dump() throws IOException {
-        reporter.running = true;
+        running = true;
         try {
             ensureFolder();
             dumpImpl();
@@ -37,36 +37,17 @@ public abstract class TSDumpBase implements TSDump {
         } catch (Exception e) {
             throw (e instanceof RuntimeException runtime ? runtime : new RuntimeException(e));
         } finally {
-            reporter.running = false;
+            running = false;
         }
     }
 
     @Override
-    public ReporterImpl reporter() {
-        return reporter;
+    public boolean running() {
+        return running;
     }
 
-    public static final class ReporterImpl implements Reporter {
-        private final TSFileWriter writer;
-        private boolean running = false;
-
-        public ReporterImpl(TSFileWriter writer) {
-            this.writer = writer;
-        }
-
-        @Override
-        public boolean running() {
-            return running;
-        }
-
-        @Override
-        public int countTotal() {
-            return writer.countAcceptedFiles();
-        }
-
-        @Override
-        public int countWritten() {
-            return writer.countWrittenFiles();
-        }
+    @Override
+    public Stream<TSFileWriter> writers() {
+        return Stream.of(writer);
     }
 }

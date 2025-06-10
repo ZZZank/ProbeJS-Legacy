@@ -1,10 +1,12 @@
 package zzzank.probejs.api.dump;
 
 import org.apache.commons.io.FileUtils;
+import zzzank.probejs.api.output.TSFileWriter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -26,13 +28,7 @@ public interface TSDump {
 
     void dump() throws IOException;
 
-    Reporter reporter();
+    boolean running();
 
-    interface Reporter {
-        boolean running();
-
-        int countTotal();
-
-        int countWritten();
-    }
+    Stream<TSFileWriter> writers();
 }

@@ -1,14 +1,15 @@
 package zzzank.probejs.api.dump;
 
 import lombok.val;
+import zzzank.probejs.api.output.TSFileWriter;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -16,7 +17,6 @@ import java.util.function.Function;
 public class MultiDump implements TSDump {
     private final Path base;
     private final List<TSDump> dumps = new ArrayList<>();
-    private Reporter reporter = null;
 
     public MultiDump(Path base) {
         this.base = base;
@@ -24,7 +24,6 @@ public class MultiDump implements TSDump {
 
     public <T extends TSDump> T addChild(T dump) {
         dumps.add(dump);
-        reporter = null;
         return dump;
     }
 
@@ -49,37 +48,12 @@ public class MultiDump implements TSDump {
     }
 
     @Override
-    public Reporter reporter() {
-        if (reporter == null) {
-            reporter = new ChainedReporter(
-                this.dumps.stream()
-                    .map(TSDump::reporter)
-                    .toArray(Reporter[]::new)
-            );
-        }
-        return null;
+    public boolean running() {
+        return dumps.stream().anyMatch(TSDump::running);
     }
 
-    public static final class ChainedReporter implements Reporter {
-        private final Reporter[] reporters;
-
-        public ChainedReporter(Reporter[] reporters) {
-            this.reporters = reporters;
-        }
-
-        @Override
-        public boolean running() {
-            return Arrays.stream(reporters).anyMatch(Reporter::running);
-        }
-
-        @Override
-        public int countTotal() {
-            return Arrays.stream(reporters).mapToInt(Reporter::countTotal).sum();
-        }
-
-        @Override
-        public int countWritten() {
-            return Arrays.stream(reporters).mapToInt(Reporter::countWritten).sum();
-        }
+    @Override
+    public Stream<TSFileWriter> writers() {
+        return dumps.stream().flatMap(TSDump::writers);
     }
 }

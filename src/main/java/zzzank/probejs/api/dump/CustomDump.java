@@ -1,16 +1,18 @@
 package zzzank.probejs.api.dump;
 
+import zzzank.probejs.api.output.TSFileWriter;
+
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
  */
 public class CustomDump implements TSDump {
-    private final DummyReporter reporter = new DummyReporter();
-
     private final Path path;
     private final IOAction action;
+    private volatile boolean running = false;
 
     public CustomDump(Path path, IOAction action) {
         this.path = path;
@@ -24,39 +26,25 @@ public class CustomDump implements TSDump {
 
     @Override
     public void dump() throws IOException {
-        reporter.running = true;
+        running = true;
         try {
             action.run(path);
         } finally {
-            reporter.running = false;
+            running = false;
         }
     }
 
     @Override
-    public Reporter reporter() {
-        return reporter;
+    public boolean running() {
+        return running;
+    }
+
+    @Override
+    public Stream<TSFileWriter> writers() {
+        return Stream.empty();
     }
 
     public interface IOAction {
         void run(Path target) throws IOException;
-    }
-
-    private static final class DummyReporter implements Reporter {
-        private boolean running = false;
-
-        @Override
-        public boolean running() {
-            return running;
-        }
-
-        @Override
-        public int countTotal() {
-            return 1;
-        }
-
-        @Override
-        public int countWritten() {
-            return running ? 0 : 1;
-        }
     }
 }
