@@ -28,10 +28,8 @@ public final class ClassPath implements Comparable<ClassPath> {
     public static final Pattern SPLIT = Pattern.compile("\\.");
 
     private final String[] parts;
-    private int hash;
-    private boolean hashCached = false;
 
-    public ClassPath(String[] parts) {
+    private ClassPath(String[] parts) {
         this.parts = parts;
     }
 
@@ -123,18 +121,6 @@ public final class ClassPath implements Comparable<ClassPath> {
         return String.join(sep, getPackage());
     }
 
-    public Path getDirPath(final Path base) {
-        return base.resolve(getConcatenatedPackage("/"));
-    }
-
-    public Path makePath(final Path base) {
-        Path full = getDirPath(base);
-        if (Files.notExists(full)) {
-            UtilsJS.tryIO(() -> Files.createDirectories(full));
-        }
-        return full;
-    }
-
     @Override
     public int compareTo(final @NotNull ClassPath another) {
         val sizeThis = parts.length;
@@ -165,10 +151,6 @@ public final class ClassPath implements Comparable<ClassPath> {
     }
 
     public int hashCode() {
-        if (!hashCached) {
-            hash = Arrays.hashCode(this.parts);
-            hashCached = true;
-        }
-        return hash;
+        return Arrays.hashCode(this.parts);
     }
 }
