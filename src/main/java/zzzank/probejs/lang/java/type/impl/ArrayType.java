@@ -25,9 +25,9 @@ public class ArrayType extends TypeDescriptor.MaybeConsolidatable {
         this(NO_ANNOTATION, TypeAdapter.getTypeDescription(arrayType.getGenericComponentType()));
     }
 
-    public ArrayType(Annotation[] annotations, TypeDescriptor arrayType) {
+    public ArrayType(Annotation[] annotations, TypeDescriptor component) {
         super(annotations);
-        this.component = Objects.requireNonNull(arrayType);
+        this.component = Objects.requireNonNull(component);
     }
 
     @Override
@@ -64,7 +64,12 @@ public class ArrayType extends TypeDescriptor.MaybeConsolidatable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return this == obj || (obj instanceof ArrayType another && component.equals(another.component));
+    }
+
+    @Override
     public int hashCode() {
-        return component.hashCode() * 31;
+        return component.hashCode();
     }
 }
