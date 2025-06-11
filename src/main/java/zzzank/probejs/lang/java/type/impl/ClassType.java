@@ -50,6 +50,11 @@ public class ClassType extends TypeDescriptor {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return obj == this || (obj instanceof ClassType another && clazz == another.clazz);
+    }
+
+    @Override
     public int hashCode() {
         return classPath.hashCode();
     }

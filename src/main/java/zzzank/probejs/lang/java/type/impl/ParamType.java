@@ -68,6 +68,11 @@ public class ParamType extends TypeDescriptor.MaybeConsolidatable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return this == obj || (obj instanceof ParamType another && base.equals(another) && params.equals(another.params));
+    }
+
+    @Override
     public int hashCode() {
         return base.hashCode() * 31 + params.hashCode();
     }

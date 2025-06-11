@@ -80,6 +80,6 @@ public class VariableType extends TypeDescriptor {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof VariableType another && raw.equals(another.raw);
+        return this == obj || (obj instanceof VariableType another && raw.equals(another.raw));
     }
 }

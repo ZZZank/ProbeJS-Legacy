@@ -10,6 +10,7 @@ import java.lang.reflect.AnnotatedWildcardType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class WildType extends TypeDescriptor.MaybeConsolidatable {
@@ -52,6 +53,16 @@ public class WildType extends TypeDescriptor.MaybeConsolidatable {
             return this;
         }
         return new WildType(this.annotations, bound.consolidate(mapping));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || (obj instanceof WildType another && Objects.equals(bound, another.bound));
+    }
+
+    @Override
+    public int hashCode() {
+        return bound == null ? 0 : bound.hashCode();
     }
 
     private static Type extractBound(WildcardType wildcardType) {
