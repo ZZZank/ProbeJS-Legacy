@@ -26,16 +26,15 @@ public class Clazz extends TypeVariableHolder {
     public final List<TypeDescriptor> interfaces;
     public final ClassAttribute attribute;
 
-    @SuppressWarnings("unchecked")
     public Clazz(Class<?> clazz, MemberCollector collector) {
         super(clazz.getTypeParameters(), clazz.getAnnotations());
 
         this.classPath = ClassPath.fromJava(clazz);
 
         collector.accept(clazz);
-        this.constructors = (List<ConstructorInfo>) collector.constructors().toList();
-        this.methods = (List<MethodInfo>) collector.methods().toList();
-        this.fields = (List<FieldInfo>) collector.fields().toList();
+        this.constructors = collector.constructors().toList();
+        this.methods = collector.methods().toList();
+        this.fields = collector.fields().toList();
 
         this.superClass = clazz.getSuperclass() == Object.class
             ? null

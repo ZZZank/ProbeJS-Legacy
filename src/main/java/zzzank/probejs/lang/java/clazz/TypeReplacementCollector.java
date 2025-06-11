@@ -27,7 +27,7 @@ public final class TypeReplacementCollector {
             return Map.of();
         } else if (mapping.size() == 1) {
             val entry = mapping.entrySet().iterator().next();
-            return Map.of(entry.getKey(), entry.getValue() .consolidate(transformer));
+            return Map.of(entry.getKey(), entry.getValue().consolidate(transformer));
         }
         val transformed = new HashMap<>(mapping);
         for (var entry : transformed.entrySet()) {

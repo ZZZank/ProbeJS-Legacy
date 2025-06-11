@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 public interface MemberCollector {
     void accept(Class<?> clazz);
 
-    Stream<? extends ConstructorInfo> constructors();
+    Stream<ConstructorInfo> constructors();
 
-    Stream<? extends MethodInfo> methods();
+    Stream<MethodInfo> methods();
 
-    Stream<? extends FieldInfo> fields();
+    Stream<FieldInfo> fields();
 }

@@ -43,14 +43,14 @@ public class ClazzMemberCollector implements MemberCollector {
     }
 
     @Override
-    public Stream<? extends ConstructorInfo> constructors() {
+    public Stream<ConstructorInfo> constructors() {
         return members.getAccessibleConstructors()
             .stream()
             .map(ConstructorInfo::new);
     }
 
     @Override
-    public Stream<? extends MethodInfo> methods() {
+    public Stream<MethodInfo> methods() {
         return members.getAccessibleMethods(KubeJS.getStartupScriptManager().context, false)
             .stream()
             .filter(m -> !m.method.isSynthetic())
@@ -60,7 +60,7 @@ public class ClazzMemberCollector implements MemberCollector {
     }
 
     @Override
-    public Stream<? extends FieldInfo> fields() {
+    public Stream<FieldInfo> fields() {
         return members.getAccessibleFields(KubeJS.getStartupScriptManager().context, false)
             .stream()
             // those not declared by it will be inherited from super
