@@ -14,8 +14,7 @@ public class BuiltinResults {
 
     private static final Supplier<String> SUPPLY_NULL = () -> null;
 
-    static final AccessResult<?> NONE =
-        new AccessResultImpl<>(null, ResultType.GOOD, SUPPLY_NULL);
+    static final AccessResult<?> NONE = good(null);
 
     public <T> AccessResult<T> good(T value) {
         return new AccessResultImpl<>(value, ResultType.GOOD, SUPPLY_NULL);

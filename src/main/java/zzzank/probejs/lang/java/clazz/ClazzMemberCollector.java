@@ -34,14 +34,14 @@ public class ClazzMemberCollector implements MemberCollector {
     }
 
     @Override
-    public Stream<? extends ConstructorInfo> constructors() {
+    public Stream<ConstructorInfo> constructors() {
         return Arrays.stream(ReflectUtils.constructorsSafe(clazz))
             .filter(NO_HIDE_FROM_JS)
             .map(ConstructorInfo::new);
     }
 
     @Override
-    public Stream<? extends MethodInfo> methods() {
+    public Stream<MethodInfo> methods() {
         return Arrays.stream(ReflectUtils.methodsSafe(clazz))
             .peek(m -> names.add(RemapperBridge.remapMethod(clazz, m)))
             .filter(NO_HIDE_FROM_JS)
@@ -53,7 +53,7 @@ public class ClazzMemberCollector implements MemberCollector {
     }
 
     @Override
-    public Stream<? extends FieldInfo> fields() {
+    public Stream<FieldInfo> fields() {
         // those not declared by it will be inherited from super
         return Arrays.stream(ReflectUtils.declaredFieldsSafe(clazz))
             .filter(f -> Modifier.isPublic(f.getModifiers()))

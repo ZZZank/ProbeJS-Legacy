@@ -26,7 +26,7 @@ public class MethodTypeReplacementTest {
 
     @ParameterizedTest
     @ValueSource(classes = {UnaryOperator.class, Collection.class, StringIterable.class, StrList.class})
-    public void unaryOp(Class<?> type) {
+    public void test(Class<?> type) {
         val classRegistry = new ClassRegistry();
 
         classRegistry
@@ -49,5 +49,5 @@ public class MethodTypeReplacementTest {
 
     interface StringIterable extends Iterable<String> {}
 
-    final class StrList extends ArrayList<String> {}
+    static final class StrList extends ArrayList<String> {}
 }
