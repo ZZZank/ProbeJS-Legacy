@@ -41,7 +41,13 @@ public final class TypeReplacementCollector {
         if (type == null || type == Object.class || type.isPrimitive()) {
             return Map.of();
         }
-        return replacementByClass.computeIfAbsent(type, this::computeTypeReplacement);
+        // no computeIfAbsent because `computeTypeReplacement(...)` will recursively call this method again
+        var got = replacementByClass.get(type);
+        if (got == null) {
+            got = computeTypeReplacement(type);
+            replacementByClass.put(type, got);
+        }
+        return got;
     }
 
     private Map<VariableType, TypeDescriptor> computeTypeReplacement(Class<?> type) {
