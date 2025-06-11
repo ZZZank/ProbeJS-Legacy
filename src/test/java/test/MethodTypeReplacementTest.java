@@ -44,7 +44,12 @@ public class MethodTypeReplacementTest {
             .map(TypeVariable::getGenericDeclaration)
             .map(d -> d instanceof Class<?> c ? c : null)
             .filter(Objects::nonNull)
-            .forEach(c -> Assertions.assertEquals(type, c));
+            .forEach(c -> {
+                if (type == StrList.class || type == StringIterable.class) {
+                    throw new IllegalStateException("non-generic class should have no TypeVariable declared by class");
+                }
+                Assertions.assertEquals(type, c);
+            });
     }
 
     interface StringIterable extends Iterable<String> {}
