@@ -4,7 +4,10 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.report.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
+
+import java.io.IOException;
 
 /**
  * @author ZZZank
@@ -41,7 +44,11 @@ public class AutoSaveBinding<T> implements ConfigBinding<T> {
     @Override
     public @NotNull AccessResult<T> set(T value) {
         val result = inner.set(value);
-        root.save();
+        try {
+            root.save();
+        } catch (IOException e) {
+            return BuiltinResults.exception(e);
+        }
         return result;
     }
 }
