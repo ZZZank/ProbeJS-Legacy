@@ -20,10 +20,6 @@ import java.util.stream.Stream;
  */
 public class MethodTypeReplacementTest {
 
-    static {
-        InitFMLPathsTest.init();
-    }
-
     @ParameterizedTest
     @ValueSource(classes = {UnaryOperator.class, Collection.class, StringIterable.class, StrList.class})
     public void test(Class<?> type) {
