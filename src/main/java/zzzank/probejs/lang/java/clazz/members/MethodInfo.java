@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.java.clazz.members;
 
-import lombok.val;
 import zzzank.probejs.lang.java.base.TypeVariableHolder;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.type.TypeAdapter;

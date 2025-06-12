@@ -7,6 +7,7 @@ import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
+import zzzank.probejs.lang.java.type.TypeReplacementCollector;
 import zzzank.probejs.lang.java.type.impl.VariableType;
 import zzzank.probejs.utils.ReflectUtils;
 
@@ -48,8 +49,8 @@ public class ClazzMemberCollector implements MemberCollector {
             .filter(m -> !m.isSynthetic())
             .filter(m -> filterInherited(m, clazz))
             .filter(m -> !m.getName().startsWith("jvmdowngrader$")) // remove JVMDG stub
-            .sorted(Comparator.comparing(Method::getName))
-            .map(method -> new MethodInfo(clazz, method, typeReplacement));
+            .map(method -> new MethodInfo(clazz, method, typeReplacement))
+            .sorted(Comparator.comparing(info -> info.name));
     }
 
     @Override
