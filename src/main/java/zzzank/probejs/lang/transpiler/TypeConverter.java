@@ -13,6 +13,7 @@ import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +48,15 @@ public class TypeConverter {
 
     public @NotNull BaseType convertTypeBuiltin(TypeDescriptor descriptor) {
         if (descriptor instanceof ClassType classType) {
-            return Types.typeMaybeGeneric(classType.clazz);
+            var typeParameters = classType.clazz.getTypeParameters();
+            if (typeParameters.length == 0) {
+                return Types.type(classType.classPath);
+            }
+
+            return Types.parameterized(
+                Types.type(classType.classPath),
+                Collections.nCopies(typeParameters.length, Types.ANY)
+            );
         } else if (descriptor instanceof ArrayType arrayType) {
             return convertType(arrayType.component).asArray();
         } else if (descriptor instanceof ParamType paramType) {
