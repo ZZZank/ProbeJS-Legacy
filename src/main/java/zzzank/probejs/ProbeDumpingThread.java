@@ -57,8 +57,7 @@ public class ProbeDumpingThread extends Thread {
             );
         }
 
-        ProbeConfig.refresh();
-        messageSender.accept(ProbeText.pjs("config_refreshed"));
+        messageSender.accept(ProbeConfig.refresh());
         RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper() : new RhinoDefault());
         RegistryInfos.refresh();
 
