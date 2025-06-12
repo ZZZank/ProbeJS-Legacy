@@ -146,6 +146,7 @@ dependencies {
 
     if (propertyBool('enable_junit')) {
         testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     }
 }
 
