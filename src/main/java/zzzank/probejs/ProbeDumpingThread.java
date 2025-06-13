@@ -59,7 +59,7 @@ public class ProbeDumpingThread extends Thread {
         }
 
         messageSender.accept(ProbeConfig.refresh());
-        RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper() : new RhinoDefault());
+        RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper(KubeJS.getClientScriptManager().context) : new RhinoDefault());
         RegistryInfos.refresh();
 
         val probeDump = new ProbeDump(messageSender);

@@ -2,6 +2,7 @@ package test;
 
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import zzzank.probejs.lang.java.ClassRegistry;
@@ -16,8 +17,10 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
+ * disabled because MemberCollector relies on KubeJS ScriptManager now
  * @author ZZZank
  */
+@Disabled
 public class MethodTypeReplacementTest {
 
     @ParameterizedTest
