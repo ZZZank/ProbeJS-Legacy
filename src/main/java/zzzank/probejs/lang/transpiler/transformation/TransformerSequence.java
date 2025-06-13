@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.transpiler.transformation;
 
-import lombok.AllArgsConstructor;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
@@ -10,13 +9,17 @@ import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.ConstructorDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
 import zzzank.probejs.lang.typescript.code.member.MethodDecl;
+import zzzank.probejs.utils.Asser;
 
 /**
  * @author ZZZank
  */
-@AllArgsConstructor
-public class TransformerSequence implements ClassTransformer {
+public final class TransformerSequence implements ClassTransformer {
     private final ClassTransformer[] transformers;
+
+    public TransformerSequence(ClassTransformer[] transformers) {
+        this.transformers = Asser.tNotNullAll(transformers, "transformers");
+    }
 
     @Override
     public void transform(Clazz clazz, ClassDecl classDecl) {
