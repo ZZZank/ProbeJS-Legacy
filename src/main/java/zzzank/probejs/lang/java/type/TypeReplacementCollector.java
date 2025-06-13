@@ -1,9 +1,7 @@
-package zzzank.probejs.lang.java.clazz;
+package zzzank.probejs.lang.java.type;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.lang.java.type.TypeAdapter;
-import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.VariableType;
 
 import java.lang.reflect.ParameterizedType;

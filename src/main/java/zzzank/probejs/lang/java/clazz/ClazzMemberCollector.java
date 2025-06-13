@@ -7,10 +7,9 @@ import lombok.val;
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
 import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
-import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
+import zzzank.probejs.lang.java.type.TypeReplacementCollector;
 import zzzank.probejs.lang.java.type.impl.VariableType;
-import zzzank.probejs.utils.ReflectUtils;
 
 import java.lang.reflect.*;
 import java.util.*;
