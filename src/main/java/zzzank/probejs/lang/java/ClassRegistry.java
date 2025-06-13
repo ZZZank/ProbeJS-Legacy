@@ -16,13 +16,14 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @HideFromJS
 public class ClassRegistry {
     public static final ClassRegistry REGISTRY = new ClassRegistry();
 
-    public final Map<ClassPath, Clazz> foundClasses = new HashMap<>(256);
+    public final Map<ClassPath, Clazz> foundClasses = new ConcurrentHashMap<>();
     public final MemberCollector collector;
 
     public ClassRegistry() {
@@ -66,9 +67,10 @@ public class ClassRegistry {
         try {
             return foundClasses.computeIfAbsent(
                 ClassPath.fromJava(c),
-                k -> new Clazz(c, collector)
+                ignored -> new Clazz(c, collector)
             );
-        } catch (Throwable ignored) {
+        } catch (Throwable ex) {
+            ProbeJS.LOGGER.error("Error when trying to add '{}' into class registry", c, ex);
             return null;
         }
     }
@@ -170,7 +172,7 @@ public class ClassRegistry {
                     }
                     parts[i] = lastPath.getPart(i);
                 }
-                val classPath = new ClassPath(parts);
+                val classPath = ClassPath.fromRaw(String.join(".", parts));
                 if (!this.foundClasses.containsKey(classPath)) {
                     try {
                         val c = Class.forName(

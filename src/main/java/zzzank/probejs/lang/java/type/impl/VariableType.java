@@ -12,8 +12,7 @@ import java.util.stream.Stream;
 
 public class VariableType extends TypeDescriptor {
     private final TypeVariable<?> raw;
-    public String symbol;
-    public List<TypeDescriptor> descriptors;
+    private final List<TypeDescriptor> bounds;
 
     public VariableType(AnnotatedTypeVariable typeVariable) {
         this(typeVariable, true);
@@ -30,7 +29,7 @@ public class VariableType extends TypeDescriptor {
     public VariableType(TypeVariable<?> typeVariable, boolean checkBounds) {
         super(typeVariable.getAnnotations());
         this.raw = typeVariable;
-        this.descriptors = checkBounds
+        this.bounds = checkBounds
             ? Arrays.stream(typeVariable.getAnnotatedBounds())
                 .filter(bound -> Object.class != bound.getType())
                 .map(TypeAdapter::getTypeDescription)
@@ -40,10 +39,10 @@ public class VariableType extends TypeDescriptor {
 
     @Override
     public Class<?> asClass() {
-        if (this.descriptors.isEmpty()) {
+        if (this.bounds.isEmpty()) {
             return Object.class;
         }
-        return descriptors.get(0).asClass();
+        return bounds.get(0).asClass();
     }
 
     @Override
@@ -58,7 +57,7 @@ public class VariableType extends TypeDescriptor {
 
     @Override
     public Stream<TypeDescriptor> stream() {
-        return descriptors.stream().flatMap(TypeDescriptor::stream);
+        return bounds.stream().flatMap(TypeDescriptor::stream);
     }
 
     public TypeVariable<?> raw() {
@@ -70,7 +69,7 @@ public class VariableType extends TypeDescriptor {
     }
 
     public List<TypeDescriptor> getDescriptors() {
-        return descriptors;
+        return bounds;
     }
 
     @Override

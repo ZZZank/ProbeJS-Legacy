@@ -29,6 +29,7 @@ import java.util.Set;
 /// but it is advised to call different methods and their own stage
 /// in order to prevent unexpected behavior.
 public interface ProbeJSPlugin {
+
     /// Used to add forcefully-converted types in order to prevent transient types
     /// like boolean / string from showing up.
     /// @see TypeConverter#addTypeRedirect(TypeRedirect)
