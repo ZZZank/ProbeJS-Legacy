@@ -8,7 +8,6 @@ import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 import zzzank.probejs.lang.java.clazz.MemberCollector;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.ReflectUtils;
 
 import java.io.IOException;
@@ -59,9 +58,6 @@ public class ClassRegistry {
         }
         if (!classPrefilter(c)) {
             ProbeJS.LOGGER.debug("class '{}' did not pass class prefilter", c.getName());
-            // We test if the class actually exists from forName
-            // I think some runtime class can have non-existing Class<?> object due to .getSuperClass
-            // or .getInterfaces
             return null;
         }
         try {
@@ -80,7 +76,7 @@ public class ClassRegistry {
     }
 
     private Set<Class<?>> retrieveClass(Clazz clazz) {
-        Set<Class<?>> classes = CollectUtils.identityHashSet();
+        Set<Class<?>> classes = new HashSet<>();
 
         for (val constructor : clazz.constructors) {
             for (val param : constructor.params) {
@@ -129,7 +125,7 @@ public class ClassRegistry {
             toWalk = toWalk.stream()
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
-                .filter(new HashSet<>()::add) // deduplicate
+                .filter(Collections.newSetFromMap(new ConcurrentHashMap<>())::add) // deduplicate
                 .map(this::addClass) // class adding happens here
                 .filter(Objects::nonNull)
                 .filter(walked::add)
