@@ -1,3 +1,15 @@
+# ProbeJS Legacy 5.1.1 -> 5.2.0
+
+isolated scope
+
+- new type replacement system that can replace variable more thoroughly
+- `isolatedScope` is now enabled by default
+- using `require(...)` without scope isolation will now output an error instead of a warning
+- fixed some generic classes having no default type param in converted type
+- minor optimization for converting class type
+
+---
+
 # ProbeJS Legacy 5.0.0 -> 5.1.1
 
 instanceof
