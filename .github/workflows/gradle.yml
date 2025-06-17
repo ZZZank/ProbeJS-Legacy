@@ -9,9 +9,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "1.20.1" ]
   pull_request:
-    branches: [ "1.20.1" ]
 
 permissions:
   contents: read
@@ -28,12 +26,16 @@ jobs:
       with:
         java-version: '21'
         distribution: 'zulu'
+        cache: gradle
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
     - name: Build the mod
       run: ./gradlew --no-daemon build
+
     - uses: actions/upload-artifact@v4
       with:
-        name: Artifacts
+        name: Artifacts-${{ github.ref_name }}
         path: build/libs
 
