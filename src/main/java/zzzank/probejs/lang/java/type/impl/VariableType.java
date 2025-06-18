@@ -63,11 +63,11 @@ public final class VariableType extends TypeDescriptor {
         return raw.getName();
     }
 
-    public final List<TypeDescriptor> getDescriptors() {
+    public List<TypeDescriptor> getDescriptors() {
         if (bounds == null) {
             bounds = Arrays.stream(this.raw.getAnnotatedBounds())
                 .filter(bound -> Object.class != bound.getType())
-                .map(TypeAdapter::getTypeDescription)
+                .map(TypeAdapter::getTypeDescriptionShallow)
                 .toList();
         }
         return bounds;

@@ -29,6 +29,16 @@ public class VariableTypeResolvingTest {
         Assertions.assertNotNull(clazz);
     }
 
+    @ParameterizedTest
+    @MethodSource("getTestClasses")
+    public void use(Class<?> type) {
+        val classReg = new ClassRegistry();
+
+        classReg.addClass(type);
+
+        classReg.walkClass();
+    }
+
     public static Stream<Class<?>> getTestClasses() {
         return Stream.of(
             LongComparator.class,
