@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class WildType extends TypeDescriptor.MaybeConsolidatable {
+public final class WildType extends TypeDescriptor.MaybeConsolidatable {
     @Nullable
     public final TypeDescriptor bound;
 
@@ -27,7 +27,7 @@ public class WildType extends TypeDescriptor.MaybeConsolidatable {
         bound = TypeAdapter.getTypeDescription(extractBound(wildcardType));
     }
 
-    public WildType(@Nonnull Annotation[] annotations, @Nullable TypeDescriptor bound) {
+    private WildType(@Nonnull Annotation[] annotations, @Nullable TypeDescriptor bound) {
         super(annotations);
         this.bound = bound;
     }

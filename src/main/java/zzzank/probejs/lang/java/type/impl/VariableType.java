@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class VariableType extends TypeDescriptor {
+public final class VariableType extends TypeDescriptor {
     private final TypeVariable<?> raw;
     private List<TypeDescriptor> bounds;
 

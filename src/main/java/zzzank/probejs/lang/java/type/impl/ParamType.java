@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class ParamType extends TypeDescriptor.MaybeConsolidatable {
+public final class ParamType extends TypeDescriptor.MaybeConsolidatable {
     public final TypeDescriptor base;
     public final List<TypeDescriptor> params;
 
