@@ -18,10 +18,10 @@ public final class ParamType extends TypeDescriptor.MaybeConsolidatable {
     public ParamType(AnnotatedParameterizedType annotatedType) {
         this(
             annotatedType.getAnnotations(),
-            TypeAdapter.getTypeDescription(((ParameterizedType) annotatedType.getType()).getRawType(), false),
+            TypeAdapter.getTypeDescriptionShallow(((ParameterizedType) annotatedType.getType()).getRawType()),
             CollectUtils.mapToList(
                 annotatedType.getAnnotatedActualTypeArguments(),
-                t -> TypeAdapter.getTypeDescription(t, false)
+                TypeAdapter::getTypeDescriptionShallow
             )
         );
     }
@@ -29,10 +29,10 @@ public final class ParamType extends TypeDescriptor.MaybeConsolidatable {
     public ParamType(ParameterizedType parameterizedType) {
         this(
             NO_ANNOTATION,
-            TypeAdapter.getTypeDescription(parameterizedType.getRawType(), false),
+            TypeAdapter.getTypeDescriptionShallow(parameterizedType.getRawType()),
             CollectUtils.mapToList(
                 parameterizedType.getActualTypeArguments(),
-                t -> TypeAdapter.getTypeDescription(t, false)
+                TypeAdapter::getTypeDescriptionShallow
             )
         );
     }
