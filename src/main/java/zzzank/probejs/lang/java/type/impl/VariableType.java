@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public class VariableType extends TypeDescriptor {
     private final TypeVariable<?> raw;
-    private final List<TypeDescriptor> bounds;
+    private List<TypeDescriptor> bounds;
 
     public VariableType(AnnotatedTypeVariable typeVariable) {
         this(typeVariable, true);
@@ -29,20 +29,15 @@ public class VariableType extends TypeDescriptor {
     public VariableType(TypeVariable<?> typeVariable, boolean checkBounds) {
         super(typeVariable.getAnnotations());
         this.raw = typeVariable;
-        this.bounds = checkBounds
-            ? Arrays.stream(typeVariable.getAnnotatedBounds())
-                .filter(bound -> Object.class != bound.getType())
-                .map(TypeAdapter::getTypeDescription)
-                .toList()
-            : List.of();
+        this.bounds = checkBounds ? null /* delay init */ : List.of();
     }
 
     @Override
     public Class<?> asClass() {
-        if (this.bounds.isEmpty()) {
+        if (getDescriptors().isEmpty()) {
             return Object.class;
         }
-        return bounds.get(0).asClass();
+        return getDescriptors().get(0).asClass();
     }
 
     @Override
@@ -57,7 +52,7 @@ public class VariableType extends TypeDescriptor {
 
     @Override
     public Stream<TypeDescriptor> stream() {
-        return bounds.stream().flatMap(TypeDescriptor::stream);
+        return getDescriptors().stream().flatMap(TypeDescriptor::stream);
     }
 
     public TypeVariable<?> raw() {
@@ -68,7 +63,13 @@ public class VariableType extends TypeDescriptor {
         return raw.getName();
     }
 
-    public List<TypeDescriptor> getDescriptors() {
+    public final List<TypeDescriptor> getDescriptors() {
+        if (bounds == null) {
+            bounds = Arrays.stream(this.raw.getAnnotatedBounds())
+                .filter(bound -> Object.class != bound.getType())
+                .map(TypeAdapter::getTypeDescription)
+                .toList();
+        }
         return bounds;
     }
 
