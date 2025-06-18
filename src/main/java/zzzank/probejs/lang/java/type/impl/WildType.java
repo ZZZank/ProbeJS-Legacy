@@ -17,14 +17,14 @@ public final class WildType extends TypeDescriptor.MaybeConsolidatable {
     @Nullable
     public final TypeDescriptor bound;
 
-    public WildType(AnnotatedWildcardType wildcardType) {
+    public WildType(AnnotatedWildcardType wildcardType, boolean checkBounds) {
         super(wildcardType.getAnnotations());
-        bound = TypeAdapter.getTypeDescription(extractBound((WildcardType) wildcardType.getType()));
+        bound = TypeAdapter.getTypeDescription(extractBound((WildcardType) wildcardType.getType()), checkBounds);
     }
 
-    public WildType(WildcardType wildcardType) {
+    public WildType(WildcardType wildcardType, boolean checkBounds) {
         super(NO_ANNOTATION);
-        bound = TypeAdapter.getTypeDescription(extractBound(wildcardType));
+        bound = TypeAdapter.getTypeDescription(extractBound(wildcardType), checkBounds);
     }
 
     private WildType(@Nonnull Annotation[] annotations, @Nullable TypeDescriptor bound) {

@@ -24,7 +24,7 @@ public class TypeAdapter {
         } else if (type instanceof AnnotatedTypeVariable typeVariable) {
             return new VariableType(typeVariable, recursive);
         } else if (type instanceof AnnotatedWildcardType wildcardType) {
-            return new WildType(wildcardType);
+            return new WildType(wildcardType, recursive);
         }
 
         if (type.getType() instanceof Class<?> clazz) {
@@ -61,7 +61,7 @@ public class TypeAdapter {
         } else if (type instanceof TypeVariable<?> typeVariable) {
             return new VariableType(typeVariable, recursive);
         } else if (type instanceof WildcardType wildcardType) {
-            return new WildType(wildcardType);
+            return new WildType(wildcardType, recursive);
         } else if (type instanceof Class<?> clazz) {
             if (!recursive) {
                 return new ClassType(clazz);
