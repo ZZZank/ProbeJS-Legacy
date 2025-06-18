@@ -1,3 +1,11 @@
+# ProbeJS Legacy 5.2.0 -> 5.2.1
+
+fix StackOverflow, I mean the error, not website
+
+- Fix `java.lang.StackOverflowError` when resolving some method type variables
+
+---
+
 # ProbeJS Legacy 5.1.1 -> 5.2.0
 
 isolated scope
