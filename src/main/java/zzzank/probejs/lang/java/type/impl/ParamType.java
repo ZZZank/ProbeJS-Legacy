@@ -76,4 +76,9 @@ public final class ParamType extends TypeDescriptor.MaybeConsolidatable {
     public int hashCode() {
         return base.hashCode() * 31 + params.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "ParamType(%s%s)".formatted(base, params);
+    }
 }

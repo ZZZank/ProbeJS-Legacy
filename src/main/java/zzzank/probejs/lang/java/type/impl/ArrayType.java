@@ -72,4 +72,9 @@ public final class ArrayType extends TypeDescriptor.MaybeConsolidatable {
     public int hashCode() {
         return component.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return String.format("ArrayType(%s[])", component);
+    }
 }

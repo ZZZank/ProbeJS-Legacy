@@ -65,6 +65,11 @@ public final class WildType extends TypeDescriptor.MaybeConsolidatable {
         return bound == null ? 0 : bound.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "WildType{bound=%s}".formatted(bound);
+    }
+
     private static Type extractBound(WildcardType wildcardType) {
         // upper
         var bounds = wildcardType.getUpperBounds();

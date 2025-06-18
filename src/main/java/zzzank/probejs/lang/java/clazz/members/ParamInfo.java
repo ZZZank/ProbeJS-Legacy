@@ -17,4 +17,9 @@ public class ParamInfo extends AnnotationHolder {
         this.type = TypeAdapter.getTypeDescription(parameter.getAnnotatedType());
         this.varArgs = parameter.isVarArgs();
     }
+
+    @Override
+    public String toString() {
+        return String.format("ParamInfo(%s: %s%s)", name, varArgs ? "..." : "", type);
+    }
 }

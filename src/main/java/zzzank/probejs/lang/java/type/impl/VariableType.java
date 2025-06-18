@@ -82,4 +82,9 @@ public final class VariableType extends TypeDescriptor {
     public boolean equals(Object obj) {
         return this == obj || (obj instanceof VariableType another && raw.equals(another.raw));
     }
+
+    @Override
+    public String toString() {
+        return String.format("VariableType(%s extends %s)", this.getSymbol(), this.getDescriptors());
+    }
 }
