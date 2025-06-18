@@ -10,6 +10,10 @@ public class TypeAdapter {
         return getTypeDescription(type, true);
     }
 
+    public static TypeDescriptor getTypeDescriptionShallow(AnnotatedType type) {
+        return getTypeDescription(type, false);
+    }
+
     public static TypeDescriptor getTypeDescription(AnnotatedType type, boolean recursive) {
         if (type == null) {
             return null;
@@ -41,6 +45,10 @@ public class TypeAdapter {
 
     public static TypeDescriptor getTypeDescription(Type type) {
         return getTypeDescription(type, true);
+    }
+
+    public static TypeDescriptor getTypeDescriptionShallow(Type type) {
+        return getTypeDescription(type, false);
     }
 
     public static TypeDescriptor getTypeDescription(Type type, boolean recursive) {
