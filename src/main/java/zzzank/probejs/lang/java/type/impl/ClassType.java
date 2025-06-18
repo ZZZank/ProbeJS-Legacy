@@ -58,4 +58,9 @@ public final class ClassType extends TypeDescriptor {
     public int hashCode() {
         return classPath.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "ClassType(%s)".formatted(clazz);
+    }
 }

@@ -62,6 +62,11 @@ public class Clazz extends TypeVariableHolder {
         return attribute.raw;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Clazz(%s)", this.attribute.raw);
+    }
+
     public enum ClassType {
         INTERFACE,
         ENUM,
