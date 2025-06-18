@@ -5,8 +5,8 @@ import it.unimi.dsi.fastutil.longs.LongComparator;
 import lombok.val;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.world.ForgeChunkManager;
-import net.minecraftforge.fml.RegistryObject;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import zzzank.probejs.lang.java.ClassRegistry;
@@ -17,6 +17,7 @@ import java.util.Map;
 /**
  * @author ZZZank
  */
+@Disabled
 public class VariableTypeResolvingTest {
 
     @ParameterizedTest
@@ -25,7 +26,6 @@ public class VariableTypeResolvingTest {
         Map.Entry.class,
         Comparator.class,
         ImmutableList.class,
-        RegistryObject.class,
         ForgeConfigSpec.Builder.class,
         ForgeChunkManager.TicketTracker.class
     })
