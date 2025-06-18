@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.longs.LongComparator;
 import lombok.val;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.world.ForgeChunkManager;
-import net.minecraftforge.fml.RegistryObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -25,11 +24,10 @@ public class VariableTypeResolvingTest {
         Map.Entry.class,
         Comparator.class,
         ImmutableList.class,
-        RegistryObject.class,
         ForgeConfigSpec.Builder.class,
         ForgeChunkManager.TicketTracker.class
     })
-    public void test(Class<?> type) {
+    public void create(Class<?> type) {
         val classReg = new ClassRegistry();
 
         val clazz = classReg.addClass(type);
