@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class ArrayType extends TypeDescriptor.MaybeConsolidatable {
+public final class ArrayType extends TypeDescriptor.MaybeConsolidatable {
     public final TypeDescriptor component;
     private Class<?> asClass;
 
