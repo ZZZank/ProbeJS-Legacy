@@ -1,3 +1,11 @@
+# ProbeJS Legacy 5.2.1 -> 5.2.2
+
+fix StackOverflow, again
+
+- Turns out the previous fix is just deferring the StackOverflowError to the first usage
+
+---
+
 # ProbeJS Legacy 5.2.0 -> 5.2.1
 
 fix StackOverflow, I mean the error, not website
