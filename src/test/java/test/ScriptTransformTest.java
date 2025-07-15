@@ -1,11 +1,11 @@
 package test;
 
 import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.ContextFactory;
 import dev.latvian.mods.rhino.Scriptable;
 import dev.latvian.mods.rhino.ScriptableObject;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import zzzank.probejs.features.kubejs.ScriptTransformer;
 
@@ -38,24 +38,28 @@ public class ScriptTransformTest {
     }
 
     private static int eval(Evaluator evaluator, String source) {
-        return ContextFactory.getGlobal().call(cx -> {
-            val scope = cx.initSafeStandardObjects();
+        var cx = Context.enter();
+        val scope = cx.initSafeStandardObjects();
 
-            var lineNumberExtract = new LineNumberExtract();
-            ScriptableObject.putProperty(scope, "extract", lineNumberExtract);
+        var lineNumberExtract = new LineNumberExtract(cx);
+        ScriptableObject.putProperty(scope, "extract", lineNumberExtract, cx);
 
-            evaluator.eval(cx, scope, source, "test.js", 1, null);
+        evaluator.eval(cx, scope, source, "test.js", 1, null);
 
-            return lineNumberExtract.get();
-        });
+        return lineNumberExtract.get();
     }
 
     private static final class LineNumberExtract {
 
         private final int[] lineNumberHolder = new int[]{-1};
+        private final Context cx;
+
+        public LineNumberExtract(Context cx) {
+            this.cx = cx;
+        }
 
         public void record() {
-            Context.getSourcePositionFromStack(lineNumberHolder);
+            Context.getSourcePositionFromStack(cx, lineNumberHolder);
         }
 
         public int get() {
