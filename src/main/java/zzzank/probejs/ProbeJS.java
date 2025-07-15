@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import zzzank.probejs.utils.JsonUtils;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 @Mod(ProbeJS.MOD_ID)
@@ -28,5 +29,11 @@ public class ProbeJS {
 
     public ProbeJS() {
         EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+
+        try {
+            // make sure config data is valid before any usage
+            ProbeConfig.INSTANCE.read();
+        } catch (IOException ignored) {
+        }
     }
 }
