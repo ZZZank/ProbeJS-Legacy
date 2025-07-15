@@ -1,3 +1,12 @@
+# ProbeJS Legacy 5.2.2 -> 5.2.3
+
+fix config data & edge case for script transform
+
+- Fix a config problem which will cause config data ingame to be invalid before first dump, which will then cause auto dump to trigger at each game play
+- Fix ScriptTransformer causing inconsistent line content and accidentally got invalidated when there's trailing comment
+
+---
+
 # ProbeJS Legacy 5.2.1 -> 5.2.2
 
 fix StackOverflow, again
