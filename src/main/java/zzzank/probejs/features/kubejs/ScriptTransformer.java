@@ -2,6 +2,7 @@ package zzzank.probejs.features.kubejs;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.Parser;
+import dev.latvian.mods.rhino.Scriptable;
 import dev.latvian.mods.rhino.ast.FunctionCall;
 import dev.latvian.mods.rhino.ast.Name;
 import dev.latvian.mods.rhino.ast.StringLiteral;
@@ -17,6 +18,25 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ScriptTransformer {
+
+    public static Object transformedScriptEval(
+        Context cx,
+        Scriptable scope,
+        String source,
+        String sourceName,
+        int lineno,
+        Object securityDomain
+    ) {
+        val scriptTransformer = new ScriptTransformer(source.split("\\n"));
+
+        source = String.join("\n", scriptTransformer.transform());
+        if (scriptTransformer.shouldWrapScope()) {
+            lineno -= 1; // first line will be export
+        }
+
+        return cx.evaluateString(scope, source, sourceName, lineno, securityDomain);
+    }
+
     private static final String PLACEHOLDER = "!@#$%^"; // placeholder to not mutate original string length
 
     private static final Supplier<Parser> PARSER = () -> new Parser(Context.enter());
@@ -84,12 +104,13 @@ public class ScriptTransformer {
             if (!trimmed.startsWith("export ")) {
                 continue;
             }
+
             trimmed = trimmed.substring("export ".length()).trim();
             val parts = trimmed.split(" ", 2);
 
             val identifier = switch (parts[0]) {
-                case "function" -> parts[1].split("\\(")[0];
-                case "var", "let", "const" -> parts[1].split(" ")[0];
+                case "function" -> parts[1].split("\\(", 2)[0];
+                case "var", "let", "const" -> parts[1].split(" ", 2)[0];
                 default -> null;
             };
             if (identifier == null) {
@@ -97,7 +118,7 @@ public class ScriptTransformer {
             }
 
             exportedSymbols.add(identifier);
-            lines.set(i, trimmed);
+            lines.set(i, lines.get(i).replaceFirst("export ", ""));
         }
     }
 
@@ -107,8 +128,13 @@ public class ScriptTransformer {
             .stream()
             .map(s -> String.format("%s: %s", s, s))
             .collect(Collectors.joining(", "));
-        lines.set(0, String.format("const {%s} = (()=>{ %s", exported, lines.get(0)));
-        lines.set(lines.size() - 1, String.format("%s; return {%s};})()", lines.get(lines.size() - 1), exported));
+
+        val linesOriginal = lines;
+
+        lines = new ArrayList<>(linesOriginal.size() + 2);
+        lines.add(String.format("const { %s } = (() => {", exported));
+        lines.addAll(linesOriginal);
+        lines.add(String.format("return { %s }; })()", exported));
     }
 
     public String[] transform() {
@@ -116,7 +142,7 @@ public class ScriptTransformer {
             processExport();
             processRequire();
             // If there's no symbol to be exported, and no `require()` call, it will not be marked as CommonJS module
-            if (ProbeConfig.isolatedScopes.get() && (!exportedSymbols.isEmpty() || requireCounts != 0)) {
+            if (shouldWrapScope()) {
                 wrapScope();
             }
         } catch (Throwable t) {
@@ -124,5 +150,9 @@ public class ScriptTransformer {
         }
 
         return lines.toArray(new String[0]);
+    }
+
+    public boolean shouldWrapScope() {
+        return ProbeConfig.isolatedScopes.get() && (!exportedSymbols.isEmpty() || requireCounts != 0);
     }
 }
