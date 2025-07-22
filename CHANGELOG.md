@@ -1,3 +1,11 @@
+# ProbeJS Legacy 5.2.3 -> 5.2.4
+
+fix recipe doc
+
+- Fix recipe doc crashing dumping process when KubeJS Create is NOT installed
+
+---
+
 # ProbeJS Legacy 5.2.2 -> 5.2.3
 
 fix config data & edge case for script transform
