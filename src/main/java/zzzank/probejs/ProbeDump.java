@@ -170,18 +170,17 @@ public class ProbeDump {
         executor.submit(() -> {
             while (true) {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
+                    if (reporters.isEmpty()) {
+                        return;
+                    }
                     val dumpProgress = reporters.stream()
-                        .filter(TSDump::running)
                         .map(dump -> {
                             val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
                             val total = dump.writers().mapToInt(TSFileWriter::countAcceptedFiles).sum();
                             return written + "/" + total;
                         })
                         .collect(Collectors.joining(", "));
-                    if (dumpProgress.isEmpty()) {
-                        return;
-                    }
                     report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
