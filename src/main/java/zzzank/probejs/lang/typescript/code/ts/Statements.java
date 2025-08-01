@@ -25,6 +25,6 @@ public interface Statements {
     }
 
     static TypeDecl.Builder type(String name, @NotNull BaseType type) {
-        return new TypeDecl.Builder(name, type);
+        return new TypeDecl.Builder(new TypeDecl(name, type));
     }
 }

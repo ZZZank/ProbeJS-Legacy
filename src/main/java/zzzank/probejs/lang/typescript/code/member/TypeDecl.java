@@ -80,40 +80,39 @@ public class TypeDecl extends CommentableCode {
     }
 
     public static class Builder {
-        private final String symbol;
-        private final BaseType type;
-        private boolean exportDecl = true;
-        private List<TSVariableType> symbolVariables = Collections.emptyList();
-        private BaseType.FormatType typeFormat = BaseType.FormatType.INPUT;
+        private final TypeDecl decl;
 
-        public Builder(String symbol, @NotNull BaseType type) {
-            this.symbol = symbol;
-            this.type = type;
+        public Builder(TypeDecl toBuild) {
+            this.decl = toBuild;
         }
 
-        public Builder exportDecl(boolean exportDecl) {
-            this.exportDecl = exportDecl;
+        public Builder exportDecl(boolean value) {
+            decl.exportDecl = value;
             return this;
         }
 
-        public Builder symbolVariables(@NotNull List<TSVariableType> symbolVariables) {
-            this.symbolVariables = symbolVariables;
+        public Builder name(String name) {
+            decl.name = name;
             return this;
         }
 
-        public Builder typeFormat(@NotNull BaseType.FormatType typeFormat) {
-            this.typeFormat = typeFormat;
+        public Builder symbolVariables(List<TSVariableType> variableTypes) {
+            decl.symbolVariables = variableTypes;
+            return this;
+        }
+
+        public Builder type(BaseType type) {
+            decl.type = type;
+            return this;
+        }
+
+        public Builder typeFormat(BaseType.FormatType format) {
+            decl.typeFormat = format;
             return this;
         }
 
         public TypeDecl build() {
-            return new TypeDecl(this.exportDecl, this.symbol, this.symbolVariables, this.type, this.typeFormat);
-        }
-
-        public String toString() {
-            return "TypeDecl.TypeDeclBuilder(exportDecl=" + this.exportDecl + ", symbol=" + this.symbol
-                + ", symbolVariables=" + this.symbolVariables + ", type=" + this.type + ", typeFormat="
-                + this.typeFormat + ")";
+            return decl;
         }
     }
 }
