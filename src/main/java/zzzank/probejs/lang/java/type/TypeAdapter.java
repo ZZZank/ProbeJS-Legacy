@@ -28,17 +28,7 @@ public class TypeAdapter {
         }
 
         if (type.getType() instanceof Class<?> clazz) {
-            if (!recursive) {
-                return new ClassType(clazz);
-            }
-            var typeParameters = clazz.getTypeParameters();
-            if (typeParameters.length == 0) {
-                return new ClassType(clazz);
-            }
-            return new ParamType(
-                new ClassType(clazz),
-                Collections.nCopies(typeParameters.length, new ClassType(Object.class))
-            );
+            return new ClassType(clazz);
         }
         throw new RuntimeException("Unknown type to be resolved");
     }
@@ -63,17 +53,7 @@ public class TypeAdapter {
         } else if (type instanceof WildcardType wildcardType) {
             return new WildType(wildcardType, recursive);
         } else if (type instanceof Class<?> clazz) {
-            if (!recursive) {
-                return new ClassType(clazz);
-            }
-            var typeParameters = clazz.getTypeParameters();
-            if (typeParameters.length == 0) {
-                return new ClassType(clazz);
-            }
-            return new ParamType(
-                new ClassType(clazz),
-                Collections.nCopies(typeParameters.length, new ClassType(Object.class))
-            );
+            return new ClassType(clazz);
         }
         throw new RuntimeException("Unknown type to be resolved");
     }

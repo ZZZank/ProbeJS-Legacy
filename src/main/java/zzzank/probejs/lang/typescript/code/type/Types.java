@@ -147,6 +147,10 @@ public interface Types {
         return generic(symbol, extendOn, null);
     }
 
+    static TSVariableType genericAndDefault(String symbol, BaseType extendAndDefault) {
+        return generic(symbol, extendAndDefault, extendAndDefault);
+    }
+
     static TSVariableType generic(String symbol, BaseType extendOn, BaseType defaultTo) {
         return new TSVariableType(symbol, extendOn, defaultTo);
     }

@@ -43,7 +43,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
             } else {
                 val variables = CollectUtils.mapToList(
                     clazz.variableTypes,
-                    transpiler.typeConverter::convertVariableType
+                    transpiler.typeConverter::convertVariableTypeWithDefault
                 );
                 namespace.addCode(new NameInferredTypeDecl(variables, path).setTypeFormat(BaseType.FormatType.RETURN));
                 namespace.addCode(new NameInferredTypeDecl(variables, path));

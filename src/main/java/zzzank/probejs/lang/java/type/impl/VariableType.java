@@ -34,10 +34,8 @@ public final class VariableType extends TypeDescriptor {
 
     @Override
     public Class<?> asClass() {
-        if (getDescriptors().isEmpty()) {
-            return Object.class;
-        }
-        return getDescriptors().get(0).asClass();
+        var descriptors = getDescriptors();
+        return descriptors.isEmpty() ? Object.class : descriptors.get(0).asClass();
     }
 
     @Override

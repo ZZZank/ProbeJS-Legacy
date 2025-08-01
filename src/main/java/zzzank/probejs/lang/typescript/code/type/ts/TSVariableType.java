@@ -17,7 +17,7 @@ public class TSVariableType extends BaseType {
     public TSVariableType(String symbol, @Nullable BaseType extend, BaseType defaultTo) {
         this.symbol = symbol;
         this.extend = extend == Types.ANY ? null : extend;
-        this.defaultTo = defaultTo == Types.ANY ? null : defaultTo;
+        this.defaultTo = defaultTo;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
     @Override
     public ClassDecl transpile(Clazz clazz) {
 
-        val variableTypes = CollectUtils.mapToList(clazz.variableTypes, converter::convertVariableType);
+        val variableTypes = CollectUtils.mapToList(clazz.variableTypes, converter::convertVariableTypeWithDefault);
         val superClass = clazz.superClass == null
             ? null
             : converter.convertTypeBuiltin(clazz.superClass);
