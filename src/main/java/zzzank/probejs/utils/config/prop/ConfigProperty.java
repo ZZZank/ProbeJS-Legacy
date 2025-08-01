@@ -2,6 +2,8 @@ package zzzank.probejs.utils.config.prop;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import zzzank.probejs.utils.Asser;
 
@@ -11,6 +13,8 @@ import java.util.*;
  * @author ZZZank
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+@Accessors(fluent = true)
 public final class ConfigProperty<T> {
 
     private static final Map<String, ConfigProperty<?>> NAMED = new HashMap<>();
@@ -35,16 +39,9 @@ public final class ConfigProperty<T> {
     private final int index;
     private final T defaultValue;
 
-    public String name() {
-        return this.name;
-    }
-
-    public int index() {
-        return this.index;
-    }
-
-    public T defaultValue() {
-        return this.defaultValue;
+    @Override
+    public int hashCode() {
+        return index;
     }
 
     @Override
