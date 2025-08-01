@@ -23,6 +23,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ProbeDump {
@@ -135,36 +136,28 @@ public class ProbeDump {
 
         // per script
         val scriptDumpFutures = scriptDumps.stream()
-            .map(dump -> (Runnable) () -> {
-                dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
-                try {
-                    dump.dump();
-                    report(ProbeText.pjs("dump.dump_finished", dump.manager.type).green());
-                } catch (Throwable e) {
-                    val error = ProbeText.pjs("dump.dump_error", dump.manager.type).red();
-                    report(error);
-                    ProbeJS.LOGGER.error(error.unwrap().getString(), e);
-                } finally {
-                    reporters.remove(dump);
-                }
-            })
-            .map(r -> CompletableFuture.runAsync(r, executor))
+            .map(this::createDumpAction)
+            .map(r -> CompletableFuture.supplyAsync(r, executor))
+            .map(r -> r.thenAccept(reporters::remove))
             .toArray(CompletableFuture[]::new);
 
         // shared
         CompletableFuture.allOf(scriptDumpFutures)
-            .thenRunAsync(() -> {
-                try {
-                    sharedDump.dump();
-                    report(ProbeText.pjs("dump.dump_finished", "SHARED").green());
-                } catch (Throwable e) {
-                    val error = ProbeText.pjs("dump.dump_error", "SHARED").red();
-                    report(error);
-                    ProbeJS.LOGGER.error(error.unwrap().getString(), e);
-                } finally {
-                    reporters.remove(sharedDump);
-                }
-            }, executor);
+            .thenRunAsync(
+                () -> {
+                    try {
+                        sharedDump.dump();
+                        report(ProbeText.pjs("dump.dump_finished", "SHARED").green());
+                    } catch (Throwable e) {
+                        val error = ProbeText.pjs("dump.dump_error", "SHARED").red();
+                        report(error);
+                        ProbeJS.LOGGER.error(error.unwrap().getString(), e);
+                    } finally {
+                        reporters.remove(sharedDump);
+                    }
+                }, executor
+            )
+            .join();
 
         // monitor
         executor.submit(() -> {
@@ -189,6 +182,21 @@ public class ProbeDump {
         });
 
         executor.shutdown();
+    }
+
+    private Supplier<ScriptDump> createDumpAction(ScriptDump dump) {
+        return () -> {
+            dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
+            try {
+                dump.dump();
+                report(ProbeText.pjs("dump.dump_finished", dump.manager.type).green());
+            } catch (Throwable e) {
+                val error = ProbeText.pjs("dump.dump_error", dump.manager.type).red();
+                report(error);
+                ProbeJS.LOGGER.error(error.unwrap().getString(), e);
+            }
+            return dump;
+        };
     }
 
     private void writeVSCodeConfig() throws IOException {
