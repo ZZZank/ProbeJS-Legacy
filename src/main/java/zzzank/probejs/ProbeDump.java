@@ -134,6 +134,29 @@ public class ProbeDump {
             false
         );
 
+        // monitor
+        executor.submit(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                    if (reporters.isEmpty()) {
+                        report(ProbeText.pjs("dump.end"));
+                        return;
+                    }
+                    val dumpProgress = reporters.stream()
+                        .map(dump -> {
+                            val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
+                            val total = dump.writers().mapToInt(TSFileWriter::countAcceptedFiles).sum();
+                            return written + "/" + total;
+                        })
+                        .collect(Collectors.joining(", "));
+                    report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         // per script
         val scriptDumpFutures = scriptDumps.stream()
             .map(this::createDumpAction)
@@ -158,28 +181,6 @@ public class ProbeDump {
                 }, executor
             )
             .join();
-
-        // monitor
-        executor.submit(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                    if (reporters.isEmpty()) {
-                        return;
-                    }
-                    val dumpProgress = reporters.stream()
-                        .map(dump -> {
-                            val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
-                            val total = dump.writers().mapToInt(TSFileWriter::countAcceptedFiles).sum();
-                            return written + "/" + total;
-                        })
-                        .collect(Collectors.joining(", "));
-                    report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
 
         executor.shutdown();
     }

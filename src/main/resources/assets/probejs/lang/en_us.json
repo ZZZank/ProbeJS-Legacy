@@ -11,6 +11,7 @@
   "probejs.dump.dump_error": "Dump generation of script type %s failed, this might be a bug in code.",
   "probejs.dump.report_progress": "Dump executing... Current progress: ",
   "probejs.dump.cleaning": "Removing old dump files that might contain invalid classes... This can be slow.",
+  "probejs.dump.end": "ProbeJS dump process ended.",
   "probejs.hello": "Welcome to ProbeJS! An automatic dump will be triggered everytime you enter the game with some new stuffs!",
   "probejs.enabled_warning": "ProbeJS is enabled! You should exclude .probe generated when you finished development, and disable the mod by: ",
   "probejs.bye_bye": "ProbeJS is now disabled. require() still works, though. Don't forget to exclude the typing.",
