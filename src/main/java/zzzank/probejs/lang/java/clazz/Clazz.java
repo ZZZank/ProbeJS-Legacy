@@ -26,10 +26,10 @@ public class Clazz extends TypeVariableHolder {
     public final List<TypeDescriptor> interfaces;
     public final ClassAttribute attribute;
 
-    public Clazz(Class<?> clazz, MemberCollector collector) {
+    public Clazz(Class<?> clazz, ClassPath path, MemberCollector collector) {
         super(clazz.getTypeParameters(), clazz.getAnnotations());
 
-        this.classPath = ClassPath.fromJava(clazz);
+        this.classPath = path;
 
         collector.accept(clazz);
         this.constructors = collector.constructors().toList();

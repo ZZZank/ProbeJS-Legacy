@@ -47,24 +47,25 @@ public class ClassRegistry {
             .toList();
     }
 
+    public Clazz addClass(Class<?> c) {
+        return addClassImpl(c, ClassPath.fromJava(c));
+    }
+
+    public Clazz addClass(ClassPath path) {
+        return addClassImpl(ReflectUtils.classOrNull(path.getJavaPath(), ProbeJS.LOGGER), path);
+    }
+
     /**
      * @param c the class to be added to class registry
      * @return the {@link Clazz} object corresponds to the provided parameter {@code c}, or {@code null} if the class
      * fail to pass {@link #classPrefilter(Class)} or exceptions happen
      */
-    public Clazz addClass(Class<?> c) {
-        if (c == null || c.isPrimitive()) {
-            return null;
-        }
-        if (!classPrefilter(c)) {
-            ProbeJS.LOGGER.debug("class '{}' did not pass class prefilter", c.getName());
+    public Clazz addClassImpl(Class<?> c, ClassPath path) {
+        if (c == null || c.isPrimitive() || c.isSynthetic() || c.isAnonymousClass()) {
             return null;
         }
         try {
-            return foundClasses.computeIfAbsent(
-                ClassPath.fromJava(c),
-                ignored -> new Clazz(c, collector)
-            );
+            return foundClasses.computeIfAbsent(path, p -> new Clazz(c, p, collector));
         } catch (Throwable ex) {
             ProbeJS.LOGGER.error("Error when trying to add '{}' into class registry", c, ex);
             return null;
@@ -125,7 +126,7 @@ public class ClassRegistry {
             toWalk = toWalk.stream()
                 .map(this::retrieveClass)
                 .flatMap(Collection::stream)
-                .filter(Collections.newSetFromMap(new ConcurrentHashMap<>())::add) // deduplicate
+                .distinct() // deduplicate
                 .map(this::addClass) // class adding happens here
                 .filter(Objects::nonNull)
                 .filter(walked::add)
