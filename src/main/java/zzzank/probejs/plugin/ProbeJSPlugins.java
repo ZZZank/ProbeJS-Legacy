@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -68,8 +69,12 @@ public class ProbeJSPlugins {
     }
 
     @Contract(pure = true)
-    public static @NotNull @UnmodifiableView List<ProbeJSPlugin> getAll() {
+    public static @NotNull @UnmodifiableView List<ProbeJSPlugin> view() {
         return Collections.unmodifiableList(ALL);
+    }
+
+    public static Stream<ProbeJSPlugin> stream() {
+        return ALL.stream();
     }
 
     @HideFromJS
