@@ -1,4 +1,3 @@
-apply from: 'gradle/scripts/helpers.gradle'
 
 public void fnGenerateMixinJson() {
     def missingConfig = propertyStringList('mixin_configs').findAll(config -> !file("src/main/resources/${config}.json").exists())
