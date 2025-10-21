@@ -111,6 +111,19 @@ repositories {
     }
 }
 
+configurations.configureEach {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.ow2.asm") {
+            useVersion("9.6")
+            because("Force ASM to a modern version that supports Java 21")
+        }
+        if (requested.group == "org.lwjgl") {
+            useVersion("3.3.3")
+            because("Force LWJGL to a modern version that supports Java 21")
+        }
+    }
+}
+
 dependencies {
     def mc_ver = propertyString("minecraft_version")
     def forge_ver = propertyString("forge_version")
