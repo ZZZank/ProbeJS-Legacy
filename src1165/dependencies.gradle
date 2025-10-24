@@ -91,7 +91,7 @@ dependencies {
     // Local Libraries
     // not quite recommended, but will be useful when the library you need is not avaliable
     // via any of known mavens
-    file("./gradle/local_libs").eachFile {
+    file("./local_libs").eachFile {
         if (it.isFile() && it.name.endsWith(".jar")) {
             modImplementation(files(rootDir.relativePath(it)))
         }
