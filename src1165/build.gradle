@@ -112,6 +112,8 @@ configurations.configureEach {
 }
 
 dependencies {
+    shade(project(":srcCore"))
+
     def mc_ver = propertyString("minecraft_version")
     def forge_ver = propertyString("forge_version")
 

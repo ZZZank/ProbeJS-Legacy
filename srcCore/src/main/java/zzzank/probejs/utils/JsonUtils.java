@@ -1,10 +1,7 @@
 package zzzank.probejs.utils;
 
 import com.google.gson.*;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -15,38 +12,6 @@ import java.util.regex.Pattern;
 
 public class JsonUtils {
     private static final Pattern MATCH_TRAILING = Pattern.compile(",(?!\\s*?[{\\[\"'\\w])");
-
-    public static String stripSussyJson5Stuffs(String jsonc) {
-        StringBuilder sb = new StringBuilder();
-
-        // remove comments
-        for (String line : jsonc.split("\n")) {
-            // Split by // first
-            String[] parts = line.trim().split("//");
-
-            // first string is always included
-            boolean enclosed = false;
-            int quotes = 0;
-            int escaped = 0;
-            for (int i = 0; i < parts.length; i++) {
-                var part = parts[i];
-                // If the previous quotes are enclosed, then // should be a comment
-                if (enclosed) break;
-
-                // If it's not enclosed but not at the start, then // is in a string
-                if (i != 0) sb.append("//");
-                sb.append(part);
-
-                quotes += StringUtils.countMatches(part, "\"");
-                escaped += StringUtils.countMatches(part, "\\\"");
-                // Test if the quotes are enclosed
-                enclosed = (quotes - escaped) % 2 == 0;
-            }
-        }
-
-        // remove trailing comma
-        return MATCH_TRAILING.matcher(sb.toString()).replaceAll("").trim();
-    }
 
     public static JsonArray asStringArray(Collection<String> array) {
         JsonArray jsonArray = new JsonArray();
@@ -196,10 +161,5 @@ public class JsonUtils {
         object.add("stackTrace", jsonArray);
 
         return object;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> JsonElement forceEncodeAsJson(Codec<T> codec, Object value) {
-        return codec.encodeStart(JsonOps.INSTANCE, (T) value).result().orElse(JsonNull.INSTANCE);
     }
 }

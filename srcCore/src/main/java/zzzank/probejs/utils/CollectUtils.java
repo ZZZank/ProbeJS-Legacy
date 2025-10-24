@@ -1,8 +1,8 @@
 package zzzank.probejs.utils;
 
 import lombok.val;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;

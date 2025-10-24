@@ -1,11 +1,11 @@
 package zzzank.probejs.utils;
 
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 /**
  * @author ZZZank
@@ -45,23 +45,23 @@ public interface ReflectUtils {
         }
     }
 
-    static Class<?> classOrNull(String name, ClassLoader loader, boolean initialize, @Nullable Logger errorReporter) {
+    static Class<?> classOrNull(String name, ClassLoader loader, boolean initialize, @Nullable Consumer<String> errorReporter) {
         try {
             return Class.forName(name, initialize, loader);
         } catch (Throwable e) {
             if (errorReporter != null) {
-                errorReporter.error("error loading class with name '{}': {}", name , e.getLocalizedMessage());
+                errorReporter.accept(String.format("error loading class with name '%s':%s", name , e));
             }
         }
         return null;
     }
 
-    static Class<?> classOrNull(String name, boolean initialize, @Nullable Logger errorReporter) {
+    static Class<?> classOrNull(String name, boolean initialize, @Nullable Consumer<String> errorReporter) {
         return classOrNull(name, ReflectUtils.class.getClassLoader(), initialize, errorReporter);
     }
 
-    static Class<?> classOrNull(String name, Logger errorReporter) {
-        return classOrNull(name, false, errorReporter);
+    static Class<?> classOrNull(String name, Consumer<String> errorReporter) {
+        return classOrNull(name, ReflectUtils.class.getClassLoader(), false, errorReporter);
     }
 
     static Class<?> classOrNull(String name) {

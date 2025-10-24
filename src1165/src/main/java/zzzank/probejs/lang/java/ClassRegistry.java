@@ -52,7 +52,7 @@ public class ClassRegistry {
     }
 
     public Clazz addClass(ClassPath path) {
-        return addClassImpl(ReflectUtils.classOrNull(path.getJavaPath(), ProbeJS.LOGGER), path);
+        return addClassImpl(ReflectUtils.classOrNull(path.getJavaPath(), ProbeJS.LOGGER::error), path);
     }
 
     /**

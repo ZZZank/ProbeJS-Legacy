@@ -1,6 +1,5 @@
 package zzzank.probejs.utils.config.struct;
 
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.config.io.ConfigIO;
 
 import java.io.IOException;
