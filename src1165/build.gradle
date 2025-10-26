@@ -137,20 +137,9 @@ dependencies {
     }
 
     forge("net.minecraftforge:forge:${mc_ver}-${forge_ver}")
-
-    if (propertyBool('enable_junit')) {
-        testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
-        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    }
 }
 
 apply(from: 'dependencies.gradle')
-
-if (propertyBool('enable_junit')) {
-    test {
-        useJUnitPlatform()
-    }
-}
 
 processResources {
     if (!propertyBool("use_access_widener")) {

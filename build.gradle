@@ -46,6 +46,17 @@ subprojects {
         annotationProcessor("org.projectlombok:lombok:${vers}")
         testCompileOnly("org.projectlombok:lombok:${vers}")
         testAnnotationProcessor("org.projectlombok:lombok:${vers}")
+
+        if (propertyBool('enable_junit')) {
+            testImplementation("org.junit.jupiter:junit-jupiter:$junit_version")
+            testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+        }
+    }
+
+    if (propertyBool('enable_junit')) {
+        test {
+            useJUnitPlatform()
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
