@@ -5,6 +5,7 @@ import lombok.val;
 import me.shedaniel.architectury.platform.Mod;
 import me.shedaniel.architectury.platform.Platform;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
@@ -80,5 +81,21 @@ public class GameUtils {
 
     public void logThrowable(Throwable t) {
         logThrowable(t, -1);
+    }
+
+    public static String registryName(ResourceLocation location) {
+        return rlToTitle(location, true);
+    }
+
+    public static String registryName(ResourceKey<?> key) {
+        return registryName(key.location());
+    }
+
+    public static String rlToTitle(ResourceLocation location, boolean ignoreVanillaNamespace) {
+        val pathName = NameUtils.rlToTitle(location.getPath());
+        if (ignoreVanillaNamespace && location.getNamespace().equals("minecraft")) {
+            return pathName;
+        }
+        return NameUtils.rlToTitle(location.getNamespace()) + '$' + pathName;
     }
 }

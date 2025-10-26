@@ -10,7 +10,7 @@ import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.DocUtils;
-import zzzank.probejs.utils.NameUtils;
+import zzzank.probejs.utils.GameUtils;
 
 public class ParamFix implements ProbeJSPlugin {
     @Override
@@ -38,7 +38,7 @@ public class ParamFix implements ProbeJSPlugin {
                         "type",
                         Types.primitive(
                             SpecialTypes.dot(
-                                NameUtils.registryName(Registry.RECIPE_SERIALIZER_REGISTRY)
+                                GameUtils.registryName(Registry.RECIPE_SERIALIZER_REGISTRY)
                             )
                         )
                     )

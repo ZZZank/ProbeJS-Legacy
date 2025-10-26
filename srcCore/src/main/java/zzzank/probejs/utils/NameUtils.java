@@ -1,9 +1,6 @@
 package zzzank.probejs.utils;
 
-import com.google.common.collect.ImmutableSet;
 import lombok.val;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class NameUtils {
-    public static final Set<String> TS_KEYWORDS = ImmutableSet.copyOf(
+    public static final Set<String> TS_KEYWORDS = Set.of(
         ("abstract,arguments,"
         + "boolean,break,byte,"
         + "case,catch,char,const,continue,constructor,"
@@ -73,22 +70,6 @@ public class NameUtils {
         val path = resourceLocationToPath(resourceLocation);
         val last = path[path.length - 1];
         return Arrays.stream(last.split("_")).map(NameUtils::getCapitalized).collect(Collectors.joining());
-    }
-
-    public static String registryName(ResourceLocation location) {
-        return rlToTitle(location, true);
-    }
-
-    public static String registryName(ResourceKey<?> key) {
-        return registryName(key.location());
-    }
-
-    public static String rlToTitle(ResourceLocation location, boolean ignoreVanillaNamespace) {
-        val pathName = rlToTitle(location.getPath());
-        if (ignoreVanillaNamespace && location.getNamespace().equals("minecraft")) {
-            return pathName;
-        }
-        return rlToTitle(location.getNamespace()) + '$' + pathName;
     }
 
     public static String rlToTitle(String s) {

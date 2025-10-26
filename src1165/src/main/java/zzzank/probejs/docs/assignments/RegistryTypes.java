@@ -18,7 +18,7 @@ import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.NameUtils;
+import zzzank.probejs.utils.GameUtils;
 import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
@@ -41,7 +41,7 @@ public class RegistryTypes implements ProbeJSPlugin {
 
         for (val info : RegistryInfos.values()) {
             val key = info.resourceKey();
-            val typeName = NameUtils.registryName(key);
+            val typeName = GameUtils.registryName(key);
             scriptDump.assignType(
                 info.objectBaseType(),
                 Types.primitive(SpecialTypes.dot(typeName))
@@ -101,7 +101,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         val types = resolveAll
             ? Types.or(info.objectIds().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
             : Types.STRING;
-        val typeName = NameUtils.registryName(key);
+        val typeName = GameUtils.registryName(key);
 
         val typeDecl = new TypeDecl(typeName, types);
         special.addCode(typeDecl);
@@ -143,7 +143,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         }
         files.markRequested(typeScriptFile.path);
 
-        val typeName = NameUtils.registryName(key);
+        val typeName = GameUtils.registryName(key);
         val tagName = typeName + "Tag";
 
         val literalField = new FieldDecl(LITERAL_FIELD, Types.primitive(String.format("Special.%s", typeName)));

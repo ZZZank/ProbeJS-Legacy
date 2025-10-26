@@ -4,7 +4,6 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
-import zzzank.probejs.utils.NameUtils;
 import zzzank.probejs.utils.config.binding.*;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
@@ -101,8 +100,7 @@ public class ConfigEntryBuilder<T> {
         this.properties.merge(
             ConfigProperty.COMMENTS,
             Arrays.stream(comments)
-                .map(NameUtils.MATCH_LINE_BREAK::split)
-                .flatMap(Arrays::stream)
+                .flatMap(String::lines)
                 .toList(),
             (a, b) -> {
                 a.addAll(b);
