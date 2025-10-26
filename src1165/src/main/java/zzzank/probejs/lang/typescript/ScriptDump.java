@@ -9,7 +9,6 @@ import dev.latvian.kubejs.script.ScriptManager;
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbePaths;
 import zzzank.probejs.api.dump.*;
 import zzzank.probejs.lang.java.clazz.ClassPath;

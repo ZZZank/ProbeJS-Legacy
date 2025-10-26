@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import zzzank.probejs.lang.java.ClassRegistry;
+import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class VariableTypeResolvingTest {
     @ParameterizedTest
     @MethodSource("getTestClasses")
     public void create(Class<?> type) {
-        val classReg = new ClassRegistry();
+        val classReg = new ClassRegistry(new ClazzMemberCollector());
 
         val clazz = classReg.addClass(type);
         // stack overflow will happen before
@@ -32,7 +33,7 @@ public class VariableTypeResolvingTest {
     @ParameterizedTest
     @MethodSource("getTestClasses")
     public void use(Class<?> type) {
-        val classReg = new ClassRegistry();
+        val classReg = new ClassRegistry(new ClazzMemberCollector());
 
         classReg.addClass(type);
 

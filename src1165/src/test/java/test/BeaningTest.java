@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
@@ -23,7 +24,7 @@ public class BeaningTest {
     @ParameterizedTest
     @ValueSource(classes = {Interf.class, AbsCls.class})
     public void test(Class<?> type) {
-        val classRegistry = new ClassRegistry();
+        val classRegistry = new ClassRegistry(new ClazzMemberCollector());
         classRegistry.addClass(type);
         classRegistry.walkClass();
 

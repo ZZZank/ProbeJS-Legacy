@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import dev.latvian.kubejs.BuiltinKubeJSPlugin;
 import dev.latvian.kubejs.world.BlockContainerJS;
 import dev.latvian.mods.rhino.util.unit.Unit;
 import net.minecraft.core.BlockPos;

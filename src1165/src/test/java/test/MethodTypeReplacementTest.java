@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import zzzank.probejs.lang.java.ClassRegistry;
+import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.VariableType;
 
@@ -23,7 +24,7 @@ public class MethodTypeReplacementTest {
     @ParameterizedTest
     @ValueSource(classes = {UnaryOperator.class, Collection.class, StringIterable.class, StrList.class})
     public void test(Class<?> type) {
-        val classRegistry = new ClassRegistry();
+        val classRegistry = new ClassRegistry(new ClazzMemberCollector());
 
         classRegistry
             .addClass(type)
