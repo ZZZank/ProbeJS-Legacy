@@ -4,6 +4,7 @@ import zzzank.probejs.api.dump.TSFilesDump;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.transpiler.Transpiler;
+import zzzank.probejs.plugin.ProbeJSPlugins;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -14,13 +15,12 @@ import java.util.Set;
  * @author ZZZank
  */
 public class SharedDump extends TSFilesDump {
-    public final Transpiler transpiler = new Transpiler();
+    public final Transpiler transpiler = ProbeJSPlugins.buildTranspiler();
     public final Set<ClassPath> denied = new HashSet<>();
 
     public SharedDump(Path writeTo) {
         super(writeTo);
         this.modifiers.add(f -> !denied.contains(f.path));
-        transpiler.init();
     }
 
     @Override

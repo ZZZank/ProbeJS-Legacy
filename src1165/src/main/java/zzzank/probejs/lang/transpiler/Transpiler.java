@@ -4,7 +4,6 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
-import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.Asser;
@@ -30,17 +29,10 @@ public class Transpiler {
         rejectedClasses.add(ClassPath.fromJava(clazz));
     }
 
-    public void init() {
-        ProbeJSPlugins.forEachPlugin(plugin -> {
-            plugin.addPredefinedTypes(typeConverter);
-            plugin.denyTypes(this);
-        });
-    }
-
     public Map<ClassPath, TypeScriptFile> dump(Collection<Clazz> clazzes) {
         val transpiler = new ClassTranspiler(
             typeConverter,
-            ClassTransformer.fromPlugin(this)
+            ProbeJSPlugins.buildClassTransformer(this)
         );
         Map<ClassPath, TypeScriptFile> result = new HashMap<>();
 

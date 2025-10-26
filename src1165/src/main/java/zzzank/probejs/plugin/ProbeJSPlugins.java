@@ -13,6 +13,10 @@ import zzzank.probejs.docs.events.ForgeEvents;
 import zzzank.probejs.docs.events.KubeEvents;
 import zzzank.probejs.docs.recipes.RecipeEvents;
 import zzzank.probejs.docs.recipes.doc.BuiltinRecipeDocs;
+import zzzank.probejs.lang.transpiler.Transpiler;
+import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
+import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
+import zzzank.probejs.lang.transpiler.transformation.TransformerSequence;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.GameUtils;
 
@@ -88,5 +92,20 @@ public class ProbeJSPlugins {
                 GameUtils.logThrowable(e);
             }
         }
+    }
+
+    public static Transpiler buildTranspiler() {
+        var transpiler = new Transpiler();
+        forEachPlugin(plugin -> {
+            plugin.addPredefinedTypes(transpiler.typeConverter);
+            plugin.denyTypes(transpiler);
+        });
+        return transpiler;
+    }
+
+    public static ClassTransformer buildClassTransformer(Transpiler transpiler) {
+        val registration = new ClassTransformerRegistration(transpiler);
+        forEachPlugin(plugin -> plugin.registerClassTransformer(registration));
+        return new TransformerSequence(registration.getRegistered().toArray(new ClassTransformer[0]));
     }
 }

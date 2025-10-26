@@ -7,10 +7,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
-import zzzank.probejs.lang.transpiler.Transpiler;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
+import zzzank.probejs.plugin.ProbeJSPlugins;
 
 /**
  * @author ZZZank
@@ -28,8 +28,7 @@ public class BeaningTest {
         classRegistry.addClass(type);
         classRegistry.walkClass();
 
-        val transpiler = new Transpiler();
-        transpiler.init();
+        val transpiler = ProbeJSPlugins.buildTranspiler();
 
         val files = transpiler.dump(classRegistry.getFoundClasses());
         val classDecl = files.get(ClassPath.fromJava(type))
