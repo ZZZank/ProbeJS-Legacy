@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.transpiler.redirect;
 
-import com.google.common.collect.ImmutableSet;
 import lombok.val;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.ClassType;
@@ -27,7 +26,7 @@ public class InheritableClassRedirect implements TypeRedirect {
     }
 
     public InheritableClassRedirect(Collection<Class<?>> targets, Function<Class<?>, BaseType> mapper) {
-        this.targets = ImmutableSet.copyOf(targets);
+        this.targets = Set.copyOf(targets);
         this.mapper = mapper;
     }
 

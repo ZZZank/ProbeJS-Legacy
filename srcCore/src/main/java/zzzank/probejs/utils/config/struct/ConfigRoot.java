@@ -21,13 +21,16 @@ public interface ConfigRoot extends ConfigCategory {
 
     default void save() throws IOException {
         if (inMemoryOnly()) {
-            return;
+            throw new IOException("in-memory-only config");
         }
         io().save(this, filePath());
     }
 
     default void read() throws IOException {
-        if (inMemoryOnly() || !Files.exists(filePath())) {
+        if (inMemoryOnly()) {
+            throw new IOException("in-memory-only config");
+        }
+        if (!Files.exists(filePath())) {
             return;
         }
         io().read(this, filePath());

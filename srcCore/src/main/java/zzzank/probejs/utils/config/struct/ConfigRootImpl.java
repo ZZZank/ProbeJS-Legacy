@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 @Accessors(fluent = true, makeFinal = true)
 public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
     private final ConfigIO io;
-    private final Path filePath;
+    private Path filePath;
 
     public ConfigRootImpl(ConfigIO io, Path path) {
         this(LinkedHashMap::new, new ConfigProperties(), io, path);
@@ -33,5 +33,9 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
         super("", provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
         this.filePath = path;
+    }
+
+    public void setFilePath(Path filePath) {
+        this.filePath = filePath;
     }
 }

@@ -1,9 +1,7 @@
 package zzzank.probejs;
 
 import lombok.val;
-import zzzank.probejs.features.forge_scan.BuiltinScanners;
 import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.ProbeText;
 import zzzank.probejs.utils.config.binding.InputIgnoredBinding;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
 import zzzank.probejs.utils.config.serde.gson.GsonSerdeFactory;
@@ -12,7 +10,6 @@ import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 import zzzank.probejs.utils.config.struct.ConfigRootImpl;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -26,19 +23,8 @@ public interface ProbeConfig {
             io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
             io.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
         }),
-        ProbePaths.SETTINGS_JSON
+        null // initialize later
     );
-
-    static ProbeText refresh() {
-        try {
-            INSTANCE.read();
-            INSTANCE.save();
-            return ProbeText.pjs("config_refreshed");
-        } catch (IOException e) {
-            ProbeJS.LOGGER.error("Unable to refresh config", e);
-            return ProbeText.literal("Unable to refresh config: " + e);
-        }
-    }
 
     static boolean configVersionMisMatched() {
         val binding = (InputIgnoredBinding<Integer>) configVersion.binding();
@@ -113,14 +99,6 @@ public interface ProbeConfig {
         .bindDefault(1)
         .comment("""
             how deep should ProbeJS Legacy dive into defined values in `global`""")
-        .buildAutoSave();
-    ConfigEntry<BuiltinScanners> classScanner = INSTANCE.define("Class Scanner")
-        .bindDefault(BuiltinScanners.EVENTS)
-        .comment("""
-            can be one of these:
-            NONE -> no class scanner
-            EVENTS (default) -> scan all forge event subclasses
-            FULL -> scan all classes recorded by ForgeModLoader""")
         .buildAutoSave();
     ConfigEntry<List<String>> fullScanMods = INSTANCE.define("Mods with forced Full Scanning")
         .bindDefault(CollectUtils.ofList("minecraft"))
