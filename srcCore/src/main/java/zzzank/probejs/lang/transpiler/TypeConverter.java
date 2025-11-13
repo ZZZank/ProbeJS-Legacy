@@ -37,8 +37,9 @@ public class TypeConverter {
     }
 
     public BaseType convertTypeExcluding(TypeDescriptor descriptor, TypeRedirect excludedRedirect) {
+        Objects.requireNonNull(excludedRedirect);
         for (val redirect : typeRedirects) {
-            if (redirect != excludedRedirect && redirect.test(descriptor, this)) {
+            if (!excludedRedirect.equals(redirect) && redirect.test(descriptor, this)) {
                 return redirect.apply(descriptor, this);
             }
         }

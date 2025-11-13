@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.code.type;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
@@ -33,40 +32,18 @@ public interface Types {
     JSTupleType EMPTY_ARRAY = Types.tuple().build();
     JSObjectType EMPTY_OBJECT = Types.object().build();
 
-    /**
-     * Returns a literal type of the input if it's something OK in TS,
-     * otherwise, any will be returned.
-     *
-     * @param content a string, number or boolean
-     * @deprecated selecting this method overload means that your 'content' actually cannot be converted to JS literal
-     * , and only 'any' will be returned
-     */
-    @Deprecated
-    static JSPrimitiveType literal(Object content) {
-        return content instanceof String
-            || content instanceof Number
-            || content instanceof Boolean
-            || content instanceof Character
-            ? primitive(ProbeJS.GSON.toJson(content))
-            : ANY;
-    }
-
-    @HideFromJS
     static JSPrimitiveType literal(String content) {
         return primitive(ProbeJS.GSON.toJson(content));
     }
 
-    @HideFromJS
     static JSPrimitiveType literal(Number content) {
         return primitive(ProbeJS.GSON.toJson(content));
     }
 
-    @HideFromJS
     static JSPrimitiveType literal(Boolean content) {
         return primitive(ProbeJS.GSON.toJson(content));
     }
 
-    @HideFromJS
     static JSPrimitiveType literal(Character content) {
         return primitive(ProbeJS.GSON.toJson(content));
     }

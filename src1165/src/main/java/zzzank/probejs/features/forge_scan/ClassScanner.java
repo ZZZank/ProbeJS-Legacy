@@ -37,9 +37,9 @@ public class ClassScanner {
     public static @NotNull List<Class<?>> scanMods(Collection<String> modids) {
         return modids.stream()
             .map(Platform::getMod)
-            .map(mod -> {
+            .flatMap(mod -> {
                 try {
-                    return mod.getFilePath().toFile();
+                    return mod.getFilePaths().stream().map(Path::toFile);
                 } catch (Exception e) {
                     ProbeJS.LOGGER.error("unable to locate file for mod '{}'", mod.getModId(), e);
                     return null;
