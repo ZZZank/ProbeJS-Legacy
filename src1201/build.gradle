@@ -31,7 +31,7 @@ plugins {
 apply from: '../gradle/scripts/helpers.gradle'
 
 String TARGET_JAVA = "17"
-boolean USE_JVMDG = false
+boolean USE_JVMDG = true
 String RESOURCE_PACK_FORMAT = "16"
 String FORGE_VERSION = "47.3.0"
 String LOADER_VERSION_RANGE = "[47,)"

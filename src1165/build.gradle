@@ -31,7 +31,7 @@ plugins {
 apply from: '../gradle/scripts/helpers.gradle'
 
 String TARGET_JAVA = "8"
-boolean USE_JVMDG = propertyBool('use_jvmdowngrader')
+boolean USE_JVMDG = true
 String RESOURCE_PACK_FORMAT = "6"
 String FORGE_VERSION = "36.2.39"
 String LOADER_VERSION_RANGE = "[36,)"
