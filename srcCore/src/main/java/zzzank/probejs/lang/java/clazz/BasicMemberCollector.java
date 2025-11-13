@@ -46,7 +46,7 @@ public class BasicMemberCollector implements MemberCollector {
 
     @Override
     public Stream<MethodInfo> methods() {
-        return rawMethods().map(method -> new MethodInfo(clazz, method, typeReplacement));
+        return rawMethods().map(method -> new MethodInfo(method, RemapperBridge.remapMethod(clazz, method), typeReplacement));
     }
 
     protected @NotNull Stream<Method> rawMethods() {
@@ -58,7 +58,7 @@ public class BasicMemberCollector implements MemberCollector {
 
     @Override
     public Stream<FieldInfo> fields() {
-        return rawFields().map(f -> new FieldInfo(clazz, f));
+        return rawFields().map(f -> new FieldInfo(f, RemapperBridge.remapField(clazz, f)));
     }
 
     protected @NotNull Stream<Field> rawFields() {

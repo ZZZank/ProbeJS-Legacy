@@ -13,10 +13,6 @@ public class FieldInfo extends AnnotationHolder {
     public final TypeDescriptor type;
     public final FieldAttributes attributes;
 
-    public FieldInfo(Class<?> from, Field field) {
-        this(field, RemapperBridge.remapField(from, field));
-    }
-
     public FieldInfo(Field field, String name) {
         super(field.getAnnotations());
         this.name = name;
