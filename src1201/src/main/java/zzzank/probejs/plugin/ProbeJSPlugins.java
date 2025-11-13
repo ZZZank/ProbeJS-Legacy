@@ -1,0 +1,105 @@
+package zzzank.probejs.plugin;
+
+import dev.latvian.mods.rhino.util.HideFromJS;
+import lombok.val;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
+import zzzank.probejs.ProbeJS;
+import zzzank.probejs.docs.*;
+import zzzank.probejs.docs.assignments.*;
+import zzzank.probejs.docs.bindings.Bindings;
+import zzzank.probejs.docs.events.*;
+import zzzank.probejs.lang.transpiler.ProbeTranspiler;
+import zzzank.probejs.lang.transpiler.Transpiler;
+import zzzank.probejs.lang.transpiler.TypeConverter;
+import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
+import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
+import zzzank.probejs.lang.transpiler.transformation.TransformerSequence;
+import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.GameUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+
+/**
+ * @author ZZZank
+ */
+public class ProbeJSPlugins {
+
+    private static final List<ProbeJSPlugin> ALL = CollectUtils.ofList(
+        //type
+        new RegistryTypes(),
+        new SpecialTypes(),
+        new Primitives(),
+        new JavaPrimitives(),
+        new RecipeTypes(),
+        new WorldTypes(),
+        new EnumTypes(),
+        new KubeWrappers(),
+        new FunctionalInterfaces(),
+        new TypeRedirecting(),
+        //binding
+        new Bindings(),
+        new LoadClassFn(),
+        //event
+        new ForgeEvents(),
+        new KubeEvents(),
+        new RecipeEvents(),
+        new RegistryEvents(),
+        new TagEvents(),
+        //misc
+        new KubeJSDenied(),
+        new GlobalClasses(),
+        new ParamFix(),
+        new Snippets(),
+        new SimulateOldTyping(),
+        // js event
+        new BuiltinProbeJSPlugin()
+    );
+
+    public static void register(@NotNull ProbeJSPlugin @NotNull ... plugins) {
+        for (val plugin : plugins) {
+            ALL.add(Objects.requireNonNull(plugin));
+        }
+    }
+
+    public static void remove(Class<? extends ProbeJSPlugin> pluginType) {
+        ALL.removeIf(pluginType::isInstance);
+    }
+
+    @Contract(pure = true)
+    public static @NotNull @UnmodifiableView List<ProbeJSPlugin> getAll() {
+        return Collections.unmodifiableList(ALL);
+    }
+
+    @HideFromJS
+    public static void forEachPlugin(@NotNull Consumer<@NotNull ProbeJSPlugin> action) {
+        Objects.requireNonNull(action);
+        for (val plugin : ALL) {
+            try {
+                action.accept(plugin);
+            } catch (Exception e) {
+                ProbeJS.LOGGER.error("Error happened when applying ProbeJS plugin: {}", plugin.getClass().getName());
+                GameUtils.logThrowable(e);
+            }
+        }
+    }
+
+    public static Transpiler buildTranspiler() {
+        var transpiler = new ProbeTranspiler(new TypeConverter());
+        forEachPlugin(plugin -> {
+            plugin.addPredefinedTypes(transpiler.typeConverter);
+            plugin.denyTypes(transpiler);
+        });
+        return transpiler;
+    }
+
+    public static ClassTransformer buildClassTransformer(Transpiler transpiler) {
+        val registration = new ClassTransformerRegistration(transpiler);
+        forEachPlugin(plugin -> plugin.registerClassTransformer(registration));
+        return new TransformerSequence(registration.getRegistered().toArray(new ClassTransformer[0]));
+    }
+}

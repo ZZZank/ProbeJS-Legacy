@@ -1,0 +1,22 @@
+{
+    "package": "zzzank.probejs.mixins",
+    "required": true,
+    "target": "@env(DEFAULT)",
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "MixinLootTable",
+        "MixinRecipeManager",
+        "MixinScriptManager",
+        "integration.KubeJSForgeEventRedirection",
+        "integration.ScopeSupportMixin"
+    ],
+    "server": [],
+    "client": [
+        "AccessTextureAtlas",
+        "AccessTextureManager"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

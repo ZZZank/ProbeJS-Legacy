@@ -19,9 +19,13 @@ public class MethodInfo extends TypeVariableHolder {
     public final MethodAttributes attributes;
 
     public MethodInfo(Class<?> from, Method method, Map<VariableType, TypeDescriptor> typeRemapper) {
+        this(method, RemapperBridge.remapMethod(from, method), typeRemapper);
+    }
+
+    public MethodInfo(Method method, String name, Map<VariableType, TypeDescriptor> typeRemapper) {
         super(method.getTypeParameters(), method.getAnnotations());
         this.attributes = new MethodAttributes(method);
-        this.name = RemapperBridge.remapMethod(from, method);
+        this.name = name;
         this.params = CollectUtils.mapToList(method.getParameters(), ParamInfo::new);
         this.returnType = TypeAdapter.getTypeDescription(method.getAnnotatedReturnType());
 

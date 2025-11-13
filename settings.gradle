@@ -9,4 +9,4 @@ pluginManagement {
     }
 }
 
-include("srcCore", "src1165")
+include("srcCore", "src1165", "src1201")

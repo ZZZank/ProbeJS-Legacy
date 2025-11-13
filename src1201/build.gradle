@@ -30,12 +30,12 @@ plugins {
 
 apply from: '../gradle/scripts/helpers.gradle'
 
-String TARGET_JAVA = "8"
-boolean USE_JVMDG = propertyBool('use_jvmdowngrader')
-String RESOURCE_PACK_FORMAT = "6"
-String FORGE_VERSION = "36.2.39"
-String LOADER_VERSION_RANGE = "[36,)"
-String MC_VERSION = "1.16.5"
+String TARGET_JAVA = "17"
+boolean USE_JVMDG = false
+String RESOURCE_PACK_FORMAT = "16"
+String FORGE_VERSION = "47.3.0"
+String LOADER_VERSION_RANGE = "[47,)"
+String MC_VERSION = "1.20.1"
 String MC_RANGE = "[$MC_VERSION,${nextMCVersion(MC_VERSION)})"
 
 apply from: '../gradle/scripts/custom_tasks.gradle'
@@ -125,10 +125,7 @@ dependencies {
 
     minecraft("com.mojang:minecraft:${MC_VERSION}")
 
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.16.5:2022.03.06")
-    })
+    mappings(loom.officialMojangMappings())
 
     forge("net.minecraftforge:forge:${MC_VERSION}-${FORGE_VERSION}")
 }
