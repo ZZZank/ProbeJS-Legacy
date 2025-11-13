@@ -40,7 +40,8 @@ repositories {
 }
 
 dependencies {
-    modApi("curse.maven:rhizo-1003287:$rhizo_cf_id")
+    // 3.6.5
+    modApi("curse.maven:rhizo-1003287:6354880")
     modApi("me.shedaniel:architectury-forge:1.32.68")
     modApi("curse.maven:kubejs-238086:3647098") {
         exclude([group: 'dev.latvian.mods', module: 'rhino-forge'])

@@ -29,9 +29,17 @@ plugins {
 }
 
 apply from: '../gradle/scripts/helpers.gradle'
+
+String TARGET_JAVA = "8"
+String RESOURCE_PACK_FORMAT = "6"
+String FORGE_VERSION = "36.2.39"
+String LOADER_VERSION_RANGE = "[36,)"
+String MC_VERSION = "1.16.5"
+String MC_RANGE = "[$MC_VERSION,${nextMCVersion(MC_VERSION)})"
+
 apply from: '../gradle/scripts/custom_tasks.gradle'
 
-def javaTarget = JavaVersion.toVersion(propertyString("target_java_version"))
+def javaTarget = JavaVersion.toVersion(TARGET_JAVA)
 println("Target Java version is set to: ${javaTarget.majorVersion}")
 
 if (propertyBool('use_jvmdowngrader')) {
@@ -40,7 +48,7 @@ if (propertyBool('use_jvmdowngrader')) {
 }
 
 base {
-    archivesName = "${propertyString('archives_base_name')}-${propertyString('minecraft_version')}"
+    archivesName = "${propertyString('archives_base_name')}-${MC_VERSION}"
 }
 
 version = propertyString('mod_version')
@@ -114,29 +122,14 @@ configurations.configureEach {
 dependencies {
     shade(project(":srcCore"))
 
-    def mc_ver = propertyString("minecraft_version")
-    def forge_ver = propertyString("forge_version")
+    minecraft("com.mojang:minecraft:${MC_VERSION}")
 
-    // to change the versions see the gradle.properties file
-    minecraft("com.mojang:minecraft:${mc_ver}")
+    mappings(loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.16.5:2022.03.06")
+    })
 
-    def mappingType = propertyString("mapping_type")
-    if (mappingType == "official") {
-        mappings(loom.officialMojangMappings())
-    } else if (mappingType == 'parchment') {
-        mappings(loom.layered {
-            officialMojangMappings()
-            parchment("org.parchmentmc.data:parchment-${parchment_version}")
-        })
-    } else if (mappingType == 'yarn') {
-        mappings("net.fabricmc:yarn:${yarn_version}:v2")
-    } else if (mappingType == 'custom') {
-        mappings(propertyString('custom_mapping'))
-    } else {
-        throw new IllegalArgumentException("mapping type '${mappingType}' not one of: official, parchment, yarn, custom")
-    }
-
-    forge("net.minecraftforge:forge:${mc_ver}-${forge_ver}")
+    forge("net.minecraftforge:forge:${MC_VERSION}-${FORGE_VERSION}")
 }
 
 apply(from: 'dependencies.gradle')
@@ -155,16 +148,16 @@ processResources {
     filesMatching(filters) {
         it.expand(
             "version": propertyString('mod_version'),
-            "forge_version": propertyString('forge_version'),
-            "loader_version_range": propertyString('loader_version_range'),
+            "forge_version": FORGE_VERSION,
+            "loader_version_range": LOADER_VERSION_RANGE,
             "license": propertyString('license'),
             "mod_id": propertyString('mod_id'),
             "mod_display_name": propertyString('mod_display_name'),
             "mod_author": propertyString('mod_author'),
             "mod_description": propertyString('mod_description'),
-            "minecraft_version": propertyString('minecraft_version'),
-            "required_minecraft_range": propertyString('required_minecraft_range'),
-            "resource_pack_format": propertyString('resource_pack_format')
+            "minecraft_version": MC_VERSION,
+            "required_minecraft_range": MC_RANGE,
+            "resource_pack_format": RESOURCE_PACK_FORMAT
         )
     }
 }

@@ -47,9 +47,9 @@ if (propertyBool('publish_to_curseforge')) {
         // noinspection GroovyAssignabilityCheck
         project {
             id = propertyString('curseforge_project_id')
-            addGameVersion "Java ${target_java_version}"
+            addGameVersion "Java ${TARGET_JAVA}"
             addGameVersion 'Forge'
-            addGameVersion propertyString('minecraft_version')
+            addGameVersion MC_VERSION
             releaseType = propertyString('release_type')
             if (!propertyBool('publish_with_changelog')) {
                 changelog = parserChangelog()
@@ -77,7 +77,7 @@ if (propertyBool('publish_to_modrinth')) {
         versionNumber = propertyString('mod_version')
         versionType = propertyString('release_type')
         uploadFile = tasks.remapJar
-        gameVersions = [propertyString('minecraft_version')]
+        gameVersions = [MC_VERSION]
         loaders = ['forge']
         debugMode = propertyBool('modrinth_debug')
         if (!propertyBool('publish_with_changelog')) {
