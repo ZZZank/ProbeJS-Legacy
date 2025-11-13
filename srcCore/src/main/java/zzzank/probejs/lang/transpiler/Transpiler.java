@@ -1,11 +1,9 @@
 package zzzank.probejs.lang.transpiler;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.Asser;
 
 import java.util.*;
@@ -13,13 +11,9 @@ import java.util.*;
 /**
  * Converts a Clazz into a TypeScriptFile ready for dump.
  */
-public class Transpiler {
+public abstract class Transpiler {
     public final TypeConverter typeConverter;
     public final Set<ClassPath> rejectedClasses = new HashSet<>();
-
-    public Transpiler() {
-        this(new TypeConverter());
-    }
 
     public Transpiler(TypeConverter typeConverter) {
         this.typeConverter = Asser.tNotNull(typeConverter, "typeConverter");
@@ -30,10 +24,7 @@ public class Transpiler {
     }
 
     public Map<ClassPath, TypeScriptFile> dump(Collection<Clazz> clazzes) {
-        val transpiler = new ClassTranspiler(
-            typeConverter,
-            ProbeJSPlugins.buildClassTransformer(this)
-        );
+        val transpiler = createClassTranspiler();
         Map<ClassPath, TypeScriptFile> result = new HashMap<>();
 
         for (val clazz : clazzes) {
@@ -51,7 +42,9 @@ public class Transpiler {
         return result;
     }
 
+    protected abstract ClassTranspiler createClassTranspiler();
+
     public boolean isRejected(Clazz clazz) {
-        return rejectedClasses.contains(clazz.classPath) || clazz.hasAnnotation(HideFromJS.class);
+        return rejectedClasses.contains(clazz.classPath);
     }
 }

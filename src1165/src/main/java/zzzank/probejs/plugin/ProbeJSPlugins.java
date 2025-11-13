@@ -13,7 +13,9 @@ import zzzank.probejs.docs.events.ForgeEvents;
 import zzzank.probejs.docs.events.KubeEvents;
 import zzzank.probejs.docs.recipes.RecipeEvents;
 import zzzank.probejs.docs.recipes.doc.BuiltinRecipeDocs;
+import zzzank.probejs.lang.transpiler.ProbeTranspiler;
 import zzzank.probejs.lang.transpiler.Transpiler;
+import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.transpiler.transformation.TransformerSequence;
@@ -95,7 +97,7 @@ public class ProbeJSPlugins {
     }
 
     public static Transpiler buildTranspiler() {
-        var transpiler = new Transpiler();
+        var transpiler = new ProbeTranspiler(new TypeConverter());
         forEachPlugin(plugin -> {
             plugin.addPredefinedTypes(transpiler.typeConverter);
             plugin.denyTypes(transpiler);
