@@ -1,7 +1,7 @@
 package zzzank.probejs.api.dump;
 
-import org.apache.commons.io.FileUtils;
 import zzzank.probejs.api.output.TSFileWriter;
+import zzzank.probejs.utils.DirectoryDeletingFileVisitor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +16,7 @@ public interface TSDump {
 
     default void clearFiles() throws IOException {
         if (Files.exists(writeTo()) && Files.isDirectory(writeTo())) {
-            FileUtils.deleteDirectory(writeTo().toFile());
+            Files.walkFileTree(writeTo(), new DirectoryDeletingFileVisitor());
         }
     }
 
