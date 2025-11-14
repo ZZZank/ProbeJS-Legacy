@@ -236,13 +236,11 @@ public interface Types {
         return format("%s /* %s */", type, Types.primitive(comment));
     }
 
-    static WithFormatType ternary(String symbol, BaseType extend, BaseType ifTrue, BaseType ifFalse) {
-        return format(
-            "%s extends %s ? %s : %s",
-            Types.primitive(symbol),
-            extend.contextShield(BaseType.FormatType.VARIABLE),
-            Asser.tNotNull(ifTrue, "ifTrue"),
-            Asser.tNotNull(ifFalse, "ifFalse")
-        );
+    static TSTernaryType ternary(String symbol, BaseType extend, BaseType ifTrue, BaseType ifFalse) {
+        return new TSTernaryType(symbol, extend, ifTrue, ifFalse);
+    }
+
+    static TSKeyofType keyof(BaseType inner) {
+        return new TSKeyofType(inner);
     }
 }
