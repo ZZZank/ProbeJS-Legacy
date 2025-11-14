@@ -102,6 +102,4 @@ shadowJar {
     // here you can relocate packages, for example:
 //    relocate("io.github.classgraph", "zzzank.probejs.shaded.classgraph")
     // User Guide from the Shadow plugin itself: https://gradleup.com/shadow/
-
-    configurations = [project.configurations.shade]
 }
