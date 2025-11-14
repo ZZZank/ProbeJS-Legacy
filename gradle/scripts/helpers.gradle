@@ -9,6 +9,7 @@ ext.assertProperty = this.&assertProperty as MethodClosure
 ext.assertSubProperties = this.&assertSubProperties as MethodClosure
 ext.setDefaultProperty = this.&setDefaultProperty as MethodClosure
 ext.assertEnvironmentVariable = this.&assertEnvironmentVariable as MethodClosure
+ext.nextMCVersion = this.&nextMCVersion as MethodClosure
 
 String propertyString(String key) {
     return $property(key).toString()

@@ -10,7 +10,6 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.Cast;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +26,7 @@ public class JSLambdaType extends BaseType {
     public final BaseType returnType;
 
     @Override
-    public ImportInfos getImportInfos(@Nonnull @NotNull FormatType type) {
+    public ImportInfos getImportInfos(@NotNull FormatType type) {
         return ImportInfos.of(returnType.getImportInfos(type))
             .fromCodes(params.stream().map(p -> p.type), paramFormatType(type));
     }

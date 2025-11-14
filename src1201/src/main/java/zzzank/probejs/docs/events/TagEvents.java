@@ -14,7 +14,7 @@ import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.NameUtils;
+import zzzank.probejs.utils.GameUtils;
 
 public class TagEvents implements ProbeJSPlugin {
     public static final ClassPath TAG_EVENT = ClassPath.fromRaw("moe.wolfgirl.probejs.generated.TagEventProbe");
@@ -44,7 +44,7 @@ public class TagEvents implements ProbeJSPlugin {
                 continue;
             }
 
-            val typeName = SpecialTypes.dot(NameUtils.registryName(key));
+            val typeName = SpecialTypes.dot(GameUtils.registryName(key));
             val tagName = typeName + "Tag";
             val extraName = key.location().getNamespace().equals("minecraft")
                 ? key.location().getPath()

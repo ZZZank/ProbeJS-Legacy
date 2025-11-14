@@ -6,8 +6,8 @@ import dev.architectury.platform.Platform;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbeJS;
+import zzzank.probejs.ProbeJSMod;
 import zzzank.probejs.utils.ReflectUtils;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ public class ClassScanner {
 
     public static List<Class<?>> scanForge() {
         val allScanData = ModList.get().getAllScanData();
-        val scanner = ProbeConfig.classScanner.get();
+        val scanner = ProbeJSMod.CONFIG_CLASS_SCANNER.get();
         return scanner.scan(
                 allScanData
                     .stream()

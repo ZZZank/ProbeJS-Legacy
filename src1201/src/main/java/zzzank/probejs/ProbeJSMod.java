@@ -1,6 +1,6 @@
 package zzzank.probejs;
 
-import me.shedaniel.architectury.platform.forge.EventBuses;
+import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import zzzank.probejs.features.forge_scan.BuiltinScanners;
