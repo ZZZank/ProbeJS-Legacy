@@ -19,19 +19,13 @@ import java.util.Collections;
  * @author ZZZank
  */
 public class GlobalClasses implements ProbeJSPlugin {
-    public static final JSPrimitiveType CLASS_PATH = Types.primitive("ClassPath");
-    public static final JSPrimitiveType JAVA_CLASS_PATH = Types.primitive("JavaClassPath");
-    public static final JSPrimitiveType TS_CLASS_PATH = Types.primitive("TSClassPath");
     public static final JSPrimitiveType GLOBAL_CLASSES = Types.primitive("GlobalClasses");
-    public static final JSPrimitiveType LOAD_CLASSES = Types.primitive("LoadClass");
+    public static final JSPrimitiveType LOAD_CLASS = Types.primitive("LoadClass");
     public static final TSClassType J_CLASS = Types.type(ClassPath.fromRaw("zzzank.probejs.docs.duck.JClass"));
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        val converter = scriptDump.transpiler.typeConverter;
-
-        val T = Types.generic("T", CLASS_PATH);
-        val TRaw = Types.generic("T");
+        val T = Types.generic("T");
 
         val paths = Types.object();
         for (val clazz : scriptDump.recordedClasses) {
@@ -43,25 +37,24 @@ public class GlobalClasses implements ProbeJSPlugin {
             paths.member(path.getTSPath(), typeOf);
         }
 
-        val classPathTemplate = Types.primitive(String.format("`%s${string}`", ClassPath.TS_PATH_PREFIX));
         scriptDump.addGlobal(
             "load_class",
+            // export type GlobalClasses = { ... }
             Statements.type(GLOBAL_CLASSES.content, paths.build())
                 .typeFormat(BaseType.FormatType.RETURN)
                 .build(),
-            new TypeDecl(CLASS_PATH.content, Types.STRING.and(Types.primitive("keyof GlobalClasses"))),
-            new TypeDecl(JAVA_CLASS_PATH.content, TSUtilityType.exclude(CLASS_PATH, classPathTemplate)),
-            new TypeDecl(TS_CLASS_PATH.content, TSUtilityType.extract(CLASS_PATH, classPathTemplate)),
-            Statements.type("AttachJClass", TRaw.and(J_CLASS.withParams(TSUtilityType.instanceType(TRaw))))
-                .symbolVariables(Collections.singletonList(TRaw))
+            // type AttachJClass<T> = T & JClass<InstanceType<T>>
+            Statements.type("AttachJClass", T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
+                .symbolVariables(Collections.singletonList(T))
                 .exportDecl(false)
                 .build(),
+            // export type LoadClass<T> = T extends (keyof GlobalClasses) ? AttachJClass<GlobalClasses[T]> : never
             new TypeDecl(
-                LOAD_CLASSES.content,
+                LOAD_CLASS.content,
                 Collections.singletonList(T),
                 Types.ternary(
-                    T.symbol,
-                    T.extend,
+                    "T",
+                    Types.keyof(GLOBAL_CLASSES),
                     Types.format("AttachJClass<%s[T]>", GLOBAL_CLASSES),
                     Types.NEVER
                 )

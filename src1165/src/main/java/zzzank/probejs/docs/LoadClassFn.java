@@ -16,7 +16,7 @@ public class LoadClassFn implements ProbeJSPlugin {
     public void addGlobals(ScriptDump scriptDump) {
         val javaFn = Statements
             .func("java")
-            .variable(Types.generic("T", Types.primitive("ClassPath")))
+            .variable(Types.generic("T"))
             .param("classPath", Types.generic("T"))
             .returnType(Types.primitive("LoadClass").withParams("T"))
             .build();

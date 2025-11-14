@@ -6,6 +6,7 @@ import lombok.val;
 import net.minecraftforge.eventbus.api.Event;
 import zzzank.probejs.docs.GlobalClasses;
 import zzzank.probejs.features.kubejs.BindingFilter;
+import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.ts.FunctionDeclaration;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
@@ -30,8 +31,12 @@ public class ForgeEvents implements ProbeJSPlugin {
             TSUtilityType.instanceType(Types.primitive("T"))
         )
             .build();
+        val javaClassPath = TSUtilityType.exclude(
+            Types.keyof(GlobalClasses.GLOBAL_CLASSES),
+            Types.primitive(String.format("`%s${string}`", ClassPath.TS_PATH_PREFIX))
+        );
         val stringArgOnEvent = buildOnForgeEvent(
-            Types.generic("T", GlobalClasses.JAVA_CLASS_PATH),
+            Types.generic("T", javaClassPath),
             TSUtilityType.instanceType(
                 TSUtilityType.extract(
                     Types.format("%s[T]", GlobalClasses.GLOBAL_CLASSES),
@@ -41,7 +46,7 @@ public class ForgeEvents implements ProbeJSPlugin {
         )
             .build();
 
-        scriptDump.addGlobal("forge_events", classArgOnEvent, stringArgOnEvent);
+        scriptDump.addGlobal("forge_events", classArgOnEvent, javaClassPath, stringArgOnEvent);
     }
 
     private static FunctionDeclaration.Builder buildOnForgeEvent(TSVariableType variableT, TSParamType eventType) {

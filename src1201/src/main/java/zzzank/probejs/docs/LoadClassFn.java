@@ -42,10 +42,11 @@ public class LoadClassFn implements ProbeJSPlugin {
         }
         for (val method : decl.methods) {
             if ("loadClass".equals(method.name) || "tryLoadClass".equals(method.name)) {
-                val t = Types.generic("T", GlobalClasses.CLASS_PATH);
+                // loadClass<T>(className: T): LoadClass<T>
+                val t = Types.generic("T");
                 method.variableTypes.add(t);
                 method.params.get(0).type = t;
-                method.returnType = GlobalClasses.LOAD_CLASSES.withParams(t);
+                method.returnType = GlobalClasses.LOAD_CLASS.withParams(t);
             }
         }
     }
