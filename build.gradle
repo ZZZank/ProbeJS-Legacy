@@ -1,5 +1,5 @@
 plugins {
-    id('com.github.johnrengelman.shadow').version('8.1.1')
+    id('com.gradleup.shadow').version('9.2.2')
     id('idea')
 }
 
@@ -31,7 +31,7 @@ configurations.configureEach {
 
 subprojects {
     apply(plugin: "java")
-    apply(plugin: "com.github.johnrengelman.shadow")
+    apply(plugin: "com.gradleup.shadow")
 
     configurations {
         shade
@@ -39,6 +39,10 @@ subprojects {
     }
 
     assemble.dependsOn(shadowJar)
+
+    shadowJar {
+        configurations = [project.configurations.shade]
+    }
 
     dependencies {
         def vers = propertyString("lombok_version")
