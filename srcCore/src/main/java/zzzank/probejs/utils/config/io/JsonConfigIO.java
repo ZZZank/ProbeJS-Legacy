@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
     public static final String DEFAULT_VALUE_KEY = "$default";
     public static final String VALUE_KEY = "$value";
-    public static final String COMMENTS_KEY = "$comment";
+    public static final String COMMENTS_KEY = "//";
 
     public static final ConfigProperty<ConfigSerde<JsonElement, ?>> PROP_SERDE =
         ConfigProperty.register("json_io_serde", null);
