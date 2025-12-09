@@ -190,5 +190,11 @@ String parserChangelog() {
 
 processResources.dependsOn(generateMixinJson, generateAccessWidenerBase)
 
+tasks.register("buildAndCollect", Copy.class) {
+    from(tasks.remapJar.archiveFile)
+    into(rootProject.layout.buildDirectory.file("libs/${propertyString("mod_version")}"))
+    dependsOn("build")
+}
+
 apply(from: 'publishing.gradle')
 apply(from: 'extra.gradle')
