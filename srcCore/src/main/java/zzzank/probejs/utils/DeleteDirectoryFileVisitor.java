@@ -12,7 +12,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 /**
  * @author ZZZank
  */
-public class DirectoryDeletingFileVisitor extends SimpleFileVisitor<Path> {
+public class DeleteDirectoryFileVisitor extends SimpleFileVisitor<Path> {
     @NotNull
     @Override
     public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attrs) throws IOException {

@@ -5,11 +5,11 @@ plugins {
 
 apply from: 'gradle/scripts/helpers.gradle'
 
-def props = project.properties
-def sysProps = System.getProperties()
+final props = project.properties
+final sysProps = System.getProperties()
 
 if (project.hasProperty("run_number")) {
-    println("On GitHub runs #${props.run_number}")
+    println("On GitHub runs #${props['run_number']}")
 }
 println("Gradle running on Java: ${ -> sysProps['java.version']} | JVM: ${ -> sysProps['java.vm.version']} | Vendor: ${ -> sysProps['java.vendor']} | Architecture: ${ -> sysProps['os.arch']}")
 

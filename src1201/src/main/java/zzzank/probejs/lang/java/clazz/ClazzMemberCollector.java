@@ -53,7 +53,7 @@ public class ClazzMemberCollector implements MemberCollector {
         return members.getAccessibleMethods(KubeJS.getStartupScriptManager().context, false)
             .stream()
             .filter(m -> !m.method.isSynthetic())
-            .filter(m -> filterInherited(m.method, clazz))
+            .filter(m -> BasicMemberCollector.filterInherited(m.method, clazz))
             .sorted(Comparator.comparing(m -> m.name))
             .map(info -> new MethodInfo(info.method, info.name, typeReplacement));
     }
@@ -66,30 +66,5 @@ public class ClazzMemberCollector implements MemberCollector {
             .filter(info -> info.field.getDeclaringClass() == this.clazz)
             .map(info -> new FieldInfo(info.field, info.name))
             .sorted(Comparator.comparing(f -> f.name));
-    }
-
-    public static final Predicate<AnnotatedElement> NO_HIDE_FROM_JS =
-        element -> !element.isAnnotationPresent(HideFromJS.class);
-
-    static boolean filterInherited(Method method, Class<?> clazz) {
-        if (clazz.isInterface() || method.getDeclaringClass().isInterface()) {
-            // interface method is TS cannot be inherited
-            return true;
-        } else if (method.getDeclaringClass() != clazz) {
-            // declared by super, and no override
-            return false;
-        }
-        var parent = clazz.getSuperclass();
-        while (parent != null) {
-            try {
-                val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
-                // If there is one, return type from "this class" is the same as or the subclass of "super class"
-                return !method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
-            } catch (NoSuchMethodException ignored) {
-            }
-            parent = parent.getSuperclass();
-        }
-        // no such method in super -> unique method, keep it
-        return true;
     }
 }

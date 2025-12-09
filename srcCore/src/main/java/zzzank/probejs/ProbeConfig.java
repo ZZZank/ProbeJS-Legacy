@@ -26,11 +26,6 @@ public interface ProbeConfig {
         null // initialize later
     );
 
-    static boolean configVersionMisMatched() {
-        val binding = (InputIgnoredBinding<Integer>) configVersion.binding();
-        return binding.receivedInput().intValue() != binding.get().intValue();
-    }
-
     ConfigEntry<Integer> configVersion = INSTANCE.define("configVersion")
         .bind(name -> new InputIgnoredBinding<>(4, Integer.class, name))
         .comment(String.format("""
