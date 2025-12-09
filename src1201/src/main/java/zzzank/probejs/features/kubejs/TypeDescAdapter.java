@@ -1,4 +1,4 @@
-package zzzank.probejs.features.kesseractjs;
+package zzzank.probejs.features.kubejs;
 
 import dev.latvian.mods.kubejs.typings.desc.*;
 import lombok.val;
@@ -7,8 +7,8 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.js.JSJoinedType;
 import zzzank.probejs.lang.typescript.code.type.ts.TSParamType;
+import zzzank.probejs.utils.CollectUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,15 +28,17 @@ public class TypeDescAdapter {
             case 0 -> List.of();
             case 1 -> List.of(convertType(descJSs[0]));
             case 2 -> List.of(convertType(descJSs[0]), convertType(descJSs[1]));
-            default -> Arrays.stream(descJSs).map(TypeDescAdapter::convertType).toList();
+            default -> CollectUtils.mapToList(descJSs, TypeDescAdapter::convertType);
         };
     }
 
     public static BaseType convertType(TypeDescJS typeDesc) {
         if (typeDesc instanceof ArrayDescJS(TypeDescJS component)) {
             return convertType(component).asArray();
+
         } else if (typeDesc instanceof FixedArrayDescJS(TypeDescJS[] types)) {
             return Types.join(",", "[", "]", convertTypes(types));
+
         } else if (typeDesc instanceof GenericDescJS(TypeDescJS base, TypeDescJS[] params)) {
             if (base instanceof PrimitiveDescJS(String value) && value.equals("Map")) {
                 if (params.length != 2) {
@@ -48,16 +50,18 @@ public class TypeDescAdapter {
                     valueType::getImportInfos
                 );
             }
-
             return new TSParamType(convertType(base), convertTypes(params));
+
         } else if (typeDesc instanceof ObjectDescJS(java.util.List<ObjectDescJS.Entry> types)) {
             val builder = Types.object();
             for (val type : types) {
                 builder.member(type.key(), type.optional(), convertType(type.value()));
             }
             return builder.build();
+
         } else if (typeDesc instanceof OrDescJS(TypeDescJS[] types)) {
             return new JSJoinedType.Union(convertTypes(types));
+
         } else if (typeDesc instanceof PrimitiveDescJS(String value)) {
             if (value.startsWith(PROBEJS_PREFIX)) {
                 val className = RemapperBridge.unmapClass(value.substring(PROBEJS_PREFIX.length()));
@@ -70,6 +74,6 @@ public class TypeDescAdapter {
             return Types.primitive(value);
         }
 
-        throw new RuntimeException("Unknown TypeDescJS");
+        throw new RuntimeException("Unknown TypeDescJS: " + typeDesc);
     }
 }

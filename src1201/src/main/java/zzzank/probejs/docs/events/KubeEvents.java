@@ -4,7 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
 import lombok.val;
-import zzzank.probejs.features.kesseractjs.TypeDescAdapter;
+import zzzank.probejs.features.kubejs.TypeDescAdapter;
 import zzzank.probejs.features.kubejs.BindingFilter;
 import zzzank.probejs.features.kubejs.EventJSFilter;
 import zzzank.probejs.lang.transpiler.TypeConverter;

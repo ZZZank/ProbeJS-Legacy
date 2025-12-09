@@ -9,7 +9,7 @@ import dev.latvian.mods.kubejs.recipe.schema.minecraft.SpecialRecipeSchema;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
-import zzzank.probejs.features.kesseractjs.TypeDescAdapter;
+import zzzank.probejs.features.kubejs.TypeDescAdapter;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.java.clazz.ClassPath;
