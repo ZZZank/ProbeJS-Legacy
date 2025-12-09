@@ -42,8 +42,6 @@ repositories {
 dependencies {
     modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
 
-    shade('org.java-websocket:Java-WebSocket:1.5.6')
-
     // additional dependencies can be specified using loom's regular format
     // specifying a "mod" dependency (like modImplementation or modApi)
     // will cause loom to remap the file to your specified mappings
@@ -96,9 +94,6 @@ dependencies {
 
 shadowJar {
     archiveClassifier.set("dev-shadow")
-
-    relocate("org.java_websocket", "zzzank.probejs.shaded.java_websocket")
-    relocate("org.slf4j", "zzzank.probejs.shaded.slf4j")
     // here you can relocate packages, for example:
 //    relocate("io.github.classgraph", "zzzank.probejs.shaded.classgraph")
     // User Guide from the Shadow plugin itself: https://gradleup.com/shadow/
