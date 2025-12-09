@@ -5,7 +5,6 @@
   "mixins": [
     "AccessForgeRegistryManager",
     "AccessItemTypes",
-    "MixinConsole",
     "MixinEventJS",
     "MixinEventsJS",
     "MixinLootTable",

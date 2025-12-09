@@ -1,6 +1,5 @@
 package zzzank.probejs;
 
-import lombok.val;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.binding.InputIgnoredBinding;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
@@ -44,18 +43,6 @@ public interface ProbeConfig {
         .comment("""
             enable or disable ProbeJS Legacy
             note that `require()` function in script are always available""")
-        .buildAutoSave();
-    ConfigEntry<Boolean> interactive = INSTANCE.define("interactive")
-        .bindReadOnly(false)
-        .comment("""
-            use with ProbeJS VSCode Extension.
-            Disabled due to many breaking changes from KubeJS/ProbeJS from higher version""")
-        .buildAutoSave();
-    ConfigEntry<Integer> interactivePort = INSTANCE.define("interactivePort")
-        .bindReadOnly(7796)
-        .comment("""
-            use with ProbeJS VSCode Extension.
-            Disabled due to many breaking changes from KubeJS/ProbeJS from higher version""")
         .buildAutoSave();
     ConfigEntry<Long> modHash = INSTANCE.define("modHash")
         .bindDefault(-1L)

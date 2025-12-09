@@ -8,25 +8,18 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import zzzank.probejs.features.bridge.ProbeServer;
 import zzzank.probejs.lang.linter.Linter;
 import zzzank.probejs.utils.GameUtils;
 import zzzank.probejs.utils.ProbeText;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
-import java.net.UnknownHostException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -85,18 +78,6 @@ public class GameEvents {
                     )
                 )
         );
-
-        if (ProbeConfig.interactive.get() && GlobalStates.SERVER == null) {
-            try {
-                GlobalStates.SERVER = new ProbeServer(ProbeConfig.interactivePort.get());
-                GlobalStates.SERVER.start();
-            } catch (UnknownHostException e) {
-                throw new RuntimeException(e);
-            }
-            sendMsg.accept(
-                ProbeText.pjs("interactive", ProbeConfig.interactivePort.get())
-            );
-        }
     }
 
     @SubscribeEvent
@@ -186,28 +167,6 @@ public class GameEvents {
                     })
                 )
         );
-    }
-
-    @SubscribeEvent
-    public static void rightClickedBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getSide() == LogicalSide.SERVER) {
-            GlobalStates.LAST_RIGHTCLICKED = event.getPos();
-        }
-    }
-
-    @SubscribeEvent
-    public static void rightClickedEntity(PlayerInteractEvent.EntityInteract event) {
-        if (event.getSide() == LogicalSide.SERVER) {
-            GlobalStates.LAST_ENTITY = event.getTarget();
-        }
-    }
-
-    @SubscribeEvent
-    public static void changedDimension(EntityTravelToDimensionEvent event) {
-        if (event.getEntity() instanceof Player player && !(player instanceof FakePlayer)) {
-            GlobalStates.LAST_RIGHTCLICKED = null;
-            GlobalStates.LAST_ENTITY = null;
-        }
     }
 }
 

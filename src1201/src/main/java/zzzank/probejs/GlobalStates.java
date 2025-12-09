@@ -5,11 +5,8 @@ import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.client.resources.language.LanguageManager;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.inventory.InventoryMenu;
-import zzzank.probejs.features.bridge.ProbeServer;
 import zzzank.probejs.mixins.AccessTextureAtlas;
 import zzzank.probejs.mixins.AccessTextureManager;
 
@@ -21,12 +18,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GlobalStates {
-    public static ProbeServer SERVER;
-
     public static final Set<String> MIXIN_LANG_KEYS = new HashSet<>();
     public static final Set<String> RECIPE_IDS = new HashSet<>();
     public static final Set<String> LOOT_TABLES = new HashSet<>();
-    public static long ERROR_TIMESTAMP = 0;
 
     public static final Supplier<Set<String>> LANG_KEYS = () -> {
         Set<String> keys;
@@ -66,8 +60,4 @@ public class GlobalStates {
             .collect(Collectors.toSet());
 
     public static final Supplier<Collection<String>> MODS = Platform::getModIds;
-
-    // For probing stuffs
-    public static BlockPos LAST_RIGHTCLICKED = null;
-    public static Entity LAST_ENTITY = null;
 }
