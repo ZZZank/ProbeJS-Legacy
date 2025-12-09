@@ -1,5 +1,5 @@
 plugins {
-    id('java')
+    id('java-library')
 }
 
 repositories {
@@ -7,11 +7,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly('org.jetbrains:annotations:25.0.0')
+    api('org.jetbrains:annotations:25.0.0')
 
     // IDEA said 2.8.0 has vulnerabilities
-    compileOnly('com.google.code.gson:gson:2.8.9')
-    compileOnly("org.apache.logging.log4j:log4j-api:2.15.0")
+    api('com.google.code.gson:gson:2.8.9')
+    api("org.apache.logging.log4j:log4j-api:2.15.0")
 }
 
 java {

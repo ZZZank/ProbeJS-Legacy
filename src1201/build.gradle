@@ -118,6 +118,7 @@ configurations.configureEach {
 
 dependencies {
     shade(project(":srcCore"))
+    shade(project(":srcCommon"))
 
     minecraft("com.mojang:minecraft:${MC_VERSION}")
 
