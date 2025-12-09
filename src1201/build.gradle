@@ -15,15 +15,12 @@
 //
 //
 
-import org.jetbrains.changelog.Changelog;
-
 plugins {
     id('dev.architectury.loom').version('1.10-SNAPSHOT')
     id('maven-publish')
     id('idea')
     id('com.matthewprenger.cursegradle').version('1.4.0').apply(false) //only used for CF publishing
     id('com.modrinth.minotaur').version('2.+').apply(false)            //only used for Modrinth publishing
-    id('org.jetbrains.changelog').version('2.2.0')
     id('xyz.wagyourtail.jvmdowngrader').version("${jvmdowngrader_version}").apply(false)
 }
 
@@ -172,20 +169,6 @@ if (USE_JVMDG) {
     assemble.dependsOn(shadeDowngradedApi)
 } else {
     assemble.dependsOn(shadowJar)
-}
-
-String parserChangelog() {
-    if (!file('CHANGELOG.md').exists()) {
-        throw new GradleException('publish_with_changelog is true, but CHANGELOG.md does not exist in the workspace!')
-    }
-    String parsedChangelog = changelog.renderItem(
-        changelog.get(propertyString('mod_version')).withHeader(false).withEmptySections(false),
-        Changelog.OutputType.MARKDOWN
-    )
-    if (parsedChangelog.isEmpty()) {
-        throw new GradleException('publish_with_changelog is true, but the changelog for the latest version is empty!')
-    }
-    return parsedChangelog
 }
 
 processResources.dependsOn(generateMixinJson, generateAccessWidenerBase)
