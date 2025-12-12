@@ -138,10 +138,7 @@ public class ClassRegistry {
         var lastPath = ClassPath.EMPTY;
         try (val writer = Files.newBufferedWriter(path)) {
             for (val classPath : classPaths) {
-                val commonPartsCount = classPath.getCommonPartsCount(lastPath);
-                val copy = new ArrayList<>(classPath.getParts());
-                Collections.fill(copy.subList(0, commonPartsCount), "");
-                writer.write(String.join(".", copy));
+                writer.write(classPath.toDiff(lastPath));
                 writer.write('\n');
                 lastPath = classPath;
             }
@@ -154,15 +151,8 @@ public class ClassRegistry {
         }
         var lastPath = ClassPath.EMPTY;
         try (val reader = Files.newBufferedReader(path)) {
-            for (val className : (Iterable<String>) reader.lines()::iterator) {
-                val parts = className.split("\\.");
-                for (int i = 0; i < parts.length; i++) {
-                    if (!parts[i].isEmpty()) {
-                        break;
-                    }
-                    parts[i] = lastPath.getPart(i);
-                }
-                val classPath = ClassPath.fromRaw(String.join(".", parts));
+            for (val diffLine : (Iterable<String>) reader.lines()::iterator) {
+                val classPath = lastPath.fromDiff(diffLine);
                 if (!this.foundClasses.containsKey(classPath)) {
                     try {
                         val c = Class.forName(
@@ -176,7 +166,7 @@ public class ClassRegistry {
                     } catch (Throwable ex) {
                         ProbeJS.LOGGER.error(
                             "Error when loading class '{}' from cache file: {}",
-                            className,
+                            diffLine,
                             ex.toString()
                         );
                     }

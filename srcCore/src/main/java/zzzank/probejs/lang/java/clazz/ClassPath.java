@@ -115,28 +115,39 @@ public final class ClassPath implements Comparable<ClassPath> {
     }
 
     @Override
-    public int compareTo(final @NotNull ClassPath another) {
-        val sizeThis = parts.length;
-        val sizeOther = another.parts.length;
-        val sizeCompare = Integer.min(sizeOther, sizeThis);
-
-        val common = getCommonPartsCount(another);
-        if (common == sizeCompare) { //
-            return Integer.compare(sizeThis, sizeOther);
-        }
-        return parts[common].compareTo(another.parts[common]);
+    public int compareTo(final @NotNull ClassPath other) {
+        return Arrays.compare(this.parts, other.parts);
     }
 
     public int getCommonPartsCount(final @NotNull ClassPath another) {
-        val sizeThis = parts.length;
-        val sizeOther = another.parts.length;
-        val sizeCompare = Integer.min(sizeOther, sizeThis);
+        val sizeCompare = Integer.min(parts.length, another.parts.length);
         for (int i = 0; i < sizeCompare; i++) {
             if (!parts[i].equals(another.parts[i])) {
                 return i;
             }
         }
         return sizeCompare;
+    }
+
+    /// Convert `this` Classpath object to diff represented in [String].
+    public String toDiff(ClassPath base) {
+        var diff = this.parts.clone();
+        var commonPartsCount = this.getCommonPartsCount(base);
+        Arrays.fill(diff, 0, commonPartsCount, "");
+        return String.join(".", diff);
+    }
+
+    /// Convert `diff` string back to ClassPath object, with `this` being the base
+    public ClassPath fromDiff(String diff) {
+        var parts = diff.split("\\.");
+        for (var i = 0; i < parts.length; i++) {
+            if (parts[i].isEmpty()) {
+                parts[i] = this.parts[i];
+            } else {
+                break;
+            }
+        }
+        return new ClassPath(parts);
     }
 
     public boolean equals(final Object o) {
