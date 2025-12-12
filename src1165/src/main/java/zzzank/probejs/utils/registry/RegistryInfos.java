@@ -1,6 +1,5 @@
 package zzzank.probejs.utils.registry;
 
-import lombok.experimental.UtilityClass;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryManager;
@@ -15,15 +14,26 @@ import java.util.Set;
 /**
  * @author ZZZank
  */
-@UtilityClass
 public final class RegistryInfos {
     /**
      * not using {@link net.minecraft.resources.ResourceKey} as key, because ResourceKey for registries
      * will always use {@link net.minecraft.core.Registry#ROOT_REGISTRY_NAME} as its parent
      */
-    private Map<ResourceLocation, RegistryInfo> ALL = new HashMap<>();
+    private static Map<ResourceLocation, RegistryInfo> ALL = new HashMap<>();
 
-    public void refresh() {
+    public static @NotNull Collection<RegistryInfo> values() {
+        return ALL.values();
+    }
+
+    public static Set<ResourceLocation> keys() {
+        return ALL.keySet();
+    }
+
+    public static Map<ResourceLocation, RegistryInfo> all() {
+        return ALL;
+    }
+
+    public static void refresh() {
         ALL = new HashMap<>();
         for (val entry : ((AccessForgeRegistryManager) RegistryManager.FROZEN).getRegistries().entrySet()) {
             ALL.put(entry.getKey(), new RegistryInfo(entry.getValue()));
@@ -33,15 +43,7 @@ public final class RegistryInfos {
         }
     }
 
-    public @NotNull Collection<RegistryInfo> values() {
-        return ALL.values();
-    }
-
-    public Set<ResourceLocation> keys() {
-        return ALL.keySet();
-    }
-
-    public Map<ResourceLocation, RegistryInfo> all() {
-        return ALL;
+    private RegistryInfos() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

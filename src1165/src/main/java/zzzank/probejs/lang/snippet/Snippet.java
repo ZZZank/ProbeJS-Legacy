@@ -1,7 +1,6 @@
 package zzzank.probejs.lang.snippet;
 
 import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
 import lombok.val;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -11,10 +10,7 @@ import zzzank.probejs.lang.snippet.parts.*;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Snippet {
 
@@ -95,7 +91,7 @@ public class Snippet {
 
     public JsonObject compile() {
         // Reindex everything
-        Set<Integer> indexes = new IntArraySet(256);
+        Set<Integer> existedIndexes = new HashSet<>(256);
         List<Enumerable> toBeIndexed = new ArrayList<>(64);
 
         for (List<SnippetPart> parts : allParts) {
@@ -104,7 +100,7 @@ public class Snippet {
                     if (enumerable.enumeration == -1) {
                         toBeIndexed.add(enumerable);
                     } else {
-                        indexes.add(enumerable.enumeration);
+                        existedIndexes.add(enumerable.enumeration);
                     }
                 }
             }
@@ -112,7 +108,7 @@ public class Snippet {
 
         int start = 1;
         for (Enumerable enumerable : toBeIndexed) {
-            while (indexes.contains(start)) start++;
+            while (existedIndexes.contains(start)) start++;
             enumerable.enumeration = start;
             start++;
         }
@@ -128,7 +124,7 @@ public class Snippet {
 
 
         // Append the $0 at the end if no other end is found
-        if (!indexes.contains(0)) {
+        if (!existedIndexes.contains(0)) {
             int last = lines.size() - 1;
             lines.set(last, lines.get(last) + "$0");
         }

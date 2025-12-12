@@ -12,7 +12,7 @@ import zzzank.probejs.features.kubejs.ScriptTransformer;
  * @author ZZZank
  */
 @Mixin(value = ScriptFile.class, remap = false)
-abstract class ScopeSupportMixin implements Comparable<ScriptFile> {
+public abstract class ScopeSupportMixin implements Comparable<ScriptFile> {
 
     @Redirect(method = "load", at = @At(value = "INVOKE", target = "Ldev/latvian/mods/rhino/Context;evaluateString(Ldev/latvian/mods/rhino/Scriptable;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/Object;"))
     public Object preEvalProcess(

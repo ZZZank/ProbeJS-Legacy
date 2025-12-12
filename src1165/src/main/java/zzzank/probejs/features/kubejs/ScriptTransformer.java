@@ -66,10 +66,11 @@ public class ScriptTransformer {
         for (val statement : root.getStatements()) {
             // declaring
             if (!(statement instanceof VariableDeclaration declaration)) {
+                // let a = ... , b = ... ,
                 continue;
             }
             for (val variable : declaration.getVariables()) {
-                // used require()
+                // a = require("some_string_literal")
                 if (variable.getInitializer() instanceof FunctionCall call
                     && call.getTarget() instanceof Name name
                     && name.getIdentifier().equals("require")
