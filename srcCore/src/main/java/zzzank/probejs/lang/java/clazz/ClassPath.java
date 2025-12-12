@@ -3,8 +3,6 @@ package zzzank.probejs.lang.java.clazz;
 import lombok.ToString;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.utils.CollectUtils;
 
@@ -99,11 +97,6 @@ public final class ClassPath implements Comparable<ClassPath> {
     /// @return mapped, '/' split path with name prefix '$' for native class
     public String getTSPath() {
         return TS_PATH_PREFIX + getConcatenated("/");
-    }
-
-    @Nullable
-    public Clazz toClazz(ClassRegistry registry) {
-        return registry.foundClasses.get(this);
     }
 
     public List<String> getPackage() {

@@ -10,7 +10,6 @@ import zzzank.probejs.lang.typescript.code.type.js.*;
 import zzzank.probejs.lang.typescript.code.type.ts.*;
 import zzzank.probejs.lang.typescript.code.type.utility.*;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
-import zzzank.probejs.utils.Asser;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -164,7 +163,7 @@ public interface Types {
 
     static JSTypeOfType typeOf(BaseType classType) {
         if (classType instanceof TSClassType cType) {
-            val clazz = cType.classPath.toClazz(ClassRegistry.REGISTRY);
+            val clazz = ClassRegistry.REGISTRY.foundClasses.get(cType.classPath);
             if (clazz != null && clazz.isInterface()) {
                 classType = staticType(cType.classPath);
             }
