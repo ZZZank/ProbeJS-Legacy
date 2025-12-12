@@ -36,20 +36,14 @@ class ModJarClassScanner {
     private final JarFile file;
     private final List<String> mixinPackages;
 
-    ModJarClassScanner(JarFile modJar) {
+    ModJarClassScanner(JarFile modJar) throws IOException {
         this.file = modJar;
 
-        try {
-            var mixinConfigsAt = modJar.getManifest()
-                .getMainAttributes()
-                .getValue("MixinConfigs");
-            if (mixinConfigsAt == null) {
-                mixinConfigsAt = "";
-            }
-            this.mixinPackages = readMixinPackages(modJar, mixinConfigsAt.split(","));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        var mixinConfigsAt = modJar.getManifest()
+            .getMainAttributes()
+            .getValue("MixinConfigs");
+        var mixinConfigs = mixinConfigsAt == null ? new String[0] : mixinConfigsAt.split(",");
+        this.mixinPackages = readMixinPackages(modJar, mixinConfigs);
     }
 
     /**
