@@ -7,11 +7,11 @@ repositories {
 }
 
 dependencies {
-    api('org.jetbrains:annotations:25.0.0')
+    compileOnlyApi('org.jetbrains:annotations:25.0.0')
 
     // IDEA said 2.8.0 has vulnerabilities
-    api('com.google.code.gson:gson:2.8.9')
-    api("org.apache.logging.log4j:log4j-api:2.15.0")
+    compileOnlyApi('com.google.code.gson:gson:2.8.9')
+    compileOnlyApi("org.apache.logging.log4j:log4j-api:2.15.0")
 }
 
 java {
