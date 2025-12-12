@@ -12,6 +12,7 @@ import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.SharedDump;
+import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.*;
 
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class ProbeDump {
         snippetDump.writeTo(SNIPPET_PATH);
 
         // And schemas
-        schemaDump.fromDocs();
+        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addJsonSchema(schemaDump));
         schemaDump.writeTo(ProbePaths.WORKSPACE_SETTINGS);
         writeVSCodeConfig();
         appendGitIgnore();
