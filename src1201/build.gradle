@@ -26,6 +26,7 @@ plugins {
 
 apply from: '../gradle/scripts/helpers.gradle'
 
+String MOD_ID = "probejs_legacy"
 String TARGET_JAVA = "17"
 boolean USE_JVMDG = true
 String RESOURCE_PACK_FORMAT = "16"
@@ -33,8 +34,6 @@ String FORGE_VERSION = "47.3.0"
 String LOADER_VERSION_RANGE = "[47,)"
 String MC_VERSION = "1.20.1"
 String MC_RANGE = "[$MC_VERSION,${nextMCVersion(MC_VERSION)})"
-
-apply from: '../gradle/scripts/custom_tasks.gradle'
 
 def javaTarget = JavaVersion.toVersion(TARGET_JAVA)
 println("Target Java version is set to: ${javaTarget.majorVersion}")
@@ -74,8 +73,7 @@ loom {
     if (propertyBool('use_access_widener')) {
         def f = file("src/main/resources/${propertyString('access_widener_name')}.accesswidener")
         if (!f.exists()) {
-            logger.warn("Configured AccessWidener not found, force generating")
-            fnGenerateAccessWidenerBase()
+            logger.error("Configured AccessWidener not found")
         }
         accessWidenerPath = f
     }
@@ -146,7 +144,7 @@ processResources {
             "forge_version": FORGE_VERSION,
             "loader_version_range": LOADER_VERSION_RANGE,
             "license": propertyString('license'),
-            "mod_id": propertyString('mod_id'),
+            "mod_id": MOD_ID,
             "mod_display_name": propertyString('mod_display_name'),
             "mod_author": propertyString('mod_author'),
             "mod_description": propertyString('mod_description'),
@@ -171,8 +169,6 @@ if (USE_JVMDG) {
 } else {
     assemble.dependsOn(shadowJar)
 }
-
-processResources.dependsOn(generateMixinJson, generateAccessWidenerBase)
 
 tasks.register("buildAndCollect", Copy.class) {
     from(tasks.remapJar.archiveFile)
