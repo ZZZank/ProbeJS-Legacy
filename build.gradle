@@ -91,9 +91,11 @@ subprojects {
     }
 
     tasks.register("printArchiveClassifiers") {
-        for (final def task in tasks) {
-            if (task instanceof AbstractArchiveTask) {
-                println("task=${task.name}, archiveClassifier=${task.archiveClassifier.get()}")
+        it.doFirst {
+            for (final def task in tasks) {
+                if (task instanceof AbstractArchiveTask) {
+                    println("task=${task.name}, archiveClassifier=${task.archiveClassifier.get()}")
+                }
             }
         }
     }
