@@ -6,6 +6,7 @@ import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.MemberCollector;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.ReflectUtils;
 
 import java.io.IOException;
@@ -149,9 +150,10 @@ public class ClassRegistry {
         if (!Files.exists(path)) {
             return;
         }
-        var lastPath = ClassPath.EMPTY;
+
         try (val reader = Files.newBufferedReader(path)) {
-            for (val diffLine : (Iterable<String>) reader.lines()::iterator) {
+            var lastPath = ClassPath.EMPTY;
+            for (val diffLine : CollectUtils.iterate(reader.lines())) {
                 val classPath = lastPath.fromDiff(diffLine);
                 if (!this.foundClasses.containsKey(classPath)) {
                     try {

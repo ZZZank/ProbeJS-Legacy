@@ -10,14 +10,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 @ToString
 public final class ClassPath implements Comparable<ClassPath> {
     public static final ClassPath EMPTY = new ClassPath(new String[0]);
 
     public static final String TS_PATH_PREFIX = "packages/";
-    public static final Pattern SPLIT = Pattern.compile("\\.");
 
     private final String[] parts;
 
@@ -29,12 +27,12 @@ public final class ClassPath implements Comparable<ClassPath> {
         if (className == null || className.isEmpty()) {
             throw new IllegalArgumentException("'className' is " + (className == null ? "null" : "empty"));
         }
-        return new ClassPath(SPLIT.split(className));
+        return new ClassPath(className.split("\\."));
     }
 
     public static ClassPath fromJava(final @NotNull Class<?> clazz) {
         val name = RemapperBridge.remapClass(Objects.requireNonNull(clazz));
-        val parts = SPLIT.split(name);
+        val parts = name.split("\\.");
         parts[parts.length - 1] = "$" + parts[parts.length - 1];
         return new ClassPath(parts);
     }
@@ -112,20 +110,10 @@ public final class ClassPath implements Comparable<ClassPath> {
         return Arrays.compare(this.parts, other.parts);
     }
 
-    public int getCommonPartsCount(final @NotNull ClassPath another) {
-        val sizeCompare = Integer.min(parts.length, another.parts.length);
-        for (int i = 0; i < sizeCompare; i++) {
-            if (!parts[i].equals(another.parts[i])) {
-                return i;
-            }
-        }
-        return sizeCompare;
-    }
-
     /// Convert `this` Classpath object to diff represented in [String].
     public String toDiff(ClassPath base) {
         var diff = this.parts.clone();
-        var commonPartsCount = this.getCommonPartsCount(base);
+        var commonPartsCount = CollectUtils.countCommonPrefix(this.parts, base.parts);
         Arrays.fill(diff, 0, commonPartsCount, "");
         return String.join(".", diff);
     }

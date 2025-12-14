@@ -76,31 +76,6 @@ public interface CollectUtils {
         return new HashMap<>(calcMapExpectedSize(expectedSize));
     }
 
-    @Nullable
-    static <T> T anyIn(Iterable<T> iterable) {
-        val iterator = iterable.iterator();
-        return iterator.hasNext() ? iterator.next() : null;
-    }
-
-    @Nullable
-    static <T> T anyIn(Stream<T> stream) {
-        return stream.findAny().orElse(null);
-    }
-
-    static <T> Iterator<T> enumToItr(Enumeration<T> enumeration) {
-        return new Iterator<>() {
-            @Override
-            public boolean hasNext() {
-                return enumeration.hasMoreElements();
-            }
-
-            @Override
-            public T next() {
-                return enumeration.nextElement();
-            }
-        };
-    }
-
     static <E> Set<E> identityHashSet() {
         return Collections.newSetFromMap(new IdentityHashMap<>());
     }
@@ -109,11 +84,41 @@ public interface CollectUtils {
         return Collections.newSetFromMap(new IdentityHashMap<>(expectedMaxSize));
     }
 
-    static <T> Iterable<T> iterate(Enumeration<T> enumeration) {
-        return () -> enumToItr(enumeration);
+    static <T> Iterable<T> iterate(Iterator<T> iterator) {
+        Asser.tNotNull(iterator, "iterator");
+        return () -> iterator;
     }
 
     static <T> Iterable<T> iterate(Stream<T> stream) {
-        return stream::iterator;
+        return Objects.requireNonNull(stream)::iterator;
+    }
+
+    static <T> int countCommonPrefix(Iterable<T> a, Iterable<T> b) {
+        var iteratorA = a.iterator();
+        var iteratorB = b.iterator();
+
+        int common = 0;
+        while (iteratorA.hasNext() && iteratorB.hasNext()) {
+            if (Objects.equals(iteratorA.next(), iteratorB.next())) {
+                common++;
+            } else {
+                break;
+            }
+        }
+        return common;
+    }
+
+    static <T> int countCommonPrefix(T[] a, T[] b) {
+        int sizeCompare = Integer.min(a.length, b.length);
+
+        int common = 0;
+        for (var i = 0; i < sizeCompare; i++) {
+            if (Objects.equals(a[i], b[i])) {
+                common++;
+            } else {
+                break;
+            }
+        }
+        return common;
     }
 }
