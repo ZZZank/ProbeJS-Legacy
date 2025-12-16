@@ -32,46 +32,6 @@ public class RegistryTypes implements ProbeJSPlugin {
     public static final String TAG_FIELD = "probejsInternal$$Tag";
     public static final String OF_TYPE_DECL = "T extends { %s: infer U } ? U : never";
 
-    public static final String SPECIAL_TAG_OF = SpecialTypes.dot("TagOf");
-    public static final String SPECIAL_LITERAL_OF = SpecialTypes.dot("LiteralOf");
-
-    @Override
-    public void assignType(ScriptDump scriptDump) {
-        List<BaseType> registryNames = new ArrayList<>();
-
-        for (val info : RegistryInfos.values()) {
-            val key = info.resourceKey();
-            val typeName = GameUtils.registryName(key);
-            scriptDump.assignType(
-                info.objectBaseType(),
-                Types.primitive(SpecialTypes.dot(typeName))
-            );
-            registryNames.add(Types.literal(key.location().toString()));
-        }
-
-        // ResourceKey<T> to Special.LiteralOf<T>
-        scriptDump.assignType(
-            ResourceKey.class,
-            Types.primitive(SPECIAL_LITERAL_OF).withParams("T")
-        );
-        //Registries (why?)
-        scriptDump.assignType(Registry.class, Types.or(registryNames.toArray(new BaseType[0])));
-        assignRegistryType(scriptDump, ResourceKey.class, SPECIAL_LITERAL_OF, "T");
-        //TagKey<T> to Special.TagOf<T>
-//        scriptDump.assignType(Tag.class, Types.parameterized(Types.primitive("Special.TagOf"), Types.generic("T")));
-        assignRegistryType(scriptDump, Tag.class, SPECIAL_TAG_OF, "T");
-
-    }
-
-    private static void assignRegistryType(ScriptDump scriptDump, Class<?> type, String literalType, String symbol) {
-        scriptDump.assignType(type, Types.primitive(literalType).withParams(symbol));
-        scriptDump.assignType(
-            type,
-            Types.type(type).withParams(Types.generic(symbol))
-                .contextShield(BaseType.FormatType.RETURN)
-        );
-    }
-
     @Override
     public void addGlobals(ScriptDump scriptDump) {
         val special = new Wrapped.Namespace(SpecialTypes.NAMESPACE);
@@ -80,7 +40,6 @@ public class RegistryTypes implements ProbeJSPlugin {
         for (val info : RegistryInfos.values()) {
             createTypes(special, info, enabled);
         }
-//        createTypes(special, new RegistryInfo(Registry.REGISTRY), enabled);
 
         // Expose LiteralOf<T> and TagOf<T>
         val literalOf = new TypeDecl("LiteralOf<T>", Types.primitive(String.format(OF_TYPE_DECL, LITERAL_FIELD)));
@@ -160,12 +119,11 @@ public class RegistryTypes implements ProbeJSPlugin {
 
         val classes = new HashSet<Class<?>>();
         for (val info : RegistryInfos.values()) {
-
             classes.add(info.objectBaseType());
 
             for (var entry : info.entries()) { //don't use val, lombok is not smart enough to infer types here
                 val location = entry.getKey().location().toString();
-                if (filter.matcher(location).matches()) {
+                if (filter.matcher(location).find()) {
                     classes.add(entry.getValue().getClass());
                 }
             }
