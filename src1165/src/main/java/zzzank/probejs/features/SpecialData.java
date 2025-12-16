@@ -1,4 +1,4 @@
-package zzzank.probejs;
+package zzzank.probejs.features;
 
 import lombok.val;
 import me.shedaniel.architectury.platform.Platform;
@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class GlobalStates {
+public class SpecialData {
     public static final Supplier<Set<String>> RECIPE_IDS = () -> ServerLifecycleHooks.getCurrentServer()
         .getRecipeManager()
         .getRecipeIds()

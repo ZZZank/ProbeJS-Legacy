@@ -2,7 +2,7 @@ package zzzank.probejs.docs.assignments;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.GlobalStates;
+import zzzank.probejs.features.SpecialData;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
@@ -30,23 +30,23 @@ public class SpecialTypes implements ProbeJSPlugin {
 
         // We define special types regardless of script type
         // because types might be sent to other scripts
-        defineLiteralTypes(special, "LangKey", GlobalStates.LANG_KEYS.get());
-        defineLiteralTypes(special, "RecipeId", GlobalStates.RECIPE_IDS.get());
-        defineLiteralTypes(special, "LootTable", GlobalStates.LOOT_TABLES.get());
-        defineLiteralTypes(special, "RawTexture", GlobalStates.RAW_TEXTURES.get());
-        defineLiteralTypes(special, "Texture", GlobalStates.TEXTURES.get());
-        defineLiteralTypes(special, "Mod", GlobalStates.MODS.get());
+        defineLiteralTypes(special, "LangKey", SpecialData.LANG_KEYS.get());
+        defineLiteralTypes(special, "RecipeId", SpecialData.RECIPE_IDS.get());
+        defineLiteralTypes(special, "LootTable", SpecialData.LOOT_TABLES.get());
+        defineLiteralTypes(special, "RawTexture", SpecialData.RAW_TEXTURES.get());
+        defineLiteralTypes(special, "Texture", SpecialData.TEXTURES.get());
+        defineLiteralTypes(special, "Mod", SpecialData.MODS.get());
 
         scriptDump.addGlobal("special_types", special);
     }
 
     @Override
     public void addVSCodeSnippets(SnippetDump dump) {
-        defineLiteralSnippets(dump, "lang_key", GlobalStates.LANG_KEYS.get());
-        defineLiteralSnippets(dump, "recipe_id", GlobalStates.RECIPE_IDS.get());
-        defineLiteralSnippets(dump, "loot_table", GlobalStates.LOOT_TABLES.get());
-        defineLiteralSnippets(dump, "texture", GlobalStates.TEXTURES.get());
-        defineLiteralSnippets(dump, "mod", GlobalStates.MODS.get());
+        defineLiteralSnippets(dump, "lang_key", SpecialData.LANG_KEYS.get());
+        defineLiteralSnippets(dump, "recipe_id", SpecialData.RECIPE_IDS.get());
+        defineLiteralSnippets(dump, "loot_table", SpecialData.LOOT_TABLES.get());
+        defineLiteralSnippets(dump, "texture", SpecialData.TEXTURES.get());
+        defineLiteralSnippets(dump, "mod", SpecialData.MODS.get());
     }
 
     private static void defineLiteralTypes(Wrapped.Namespace special, String symbol, Collection<String> literals) {

@@ -1,7 +1,7 @@
 package zzzank.probejs.docs;
 
 import net.minecraft.core.registries.Registries;
-import zzzank.probejs.GlobalStates;
+import zzzank.probejs.features.SpecialData;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.snippet.parts.Variable;
 import zzzank.probejs.plugin.ProbeJSPlugin;
@@ -31,7 +31,7 @@ public class Snippets implements ProbeJSPlugin {
             .prefix("#requires")
             .description("Creates the file header for `requires`.")
             .literal("// requires: ")
-            .choices(GlobalStates.MODS.get());
+            .choices(SpecialData.MODS.get());
 
         dump.snippet("itemstack")
             .prefix("#itemstack")
