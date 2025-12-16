@@ -26,7 +26,6 @@ plugins {
 
 apply from: '../gradle/scripts/helpers.gradle'
 
-String MOD_ID = "probejs_legacy"
 String TARGET_JAVA = "17"
 boolean USE_JVMDG = true
 String RESOURCE_PACK_FORMAT = "16"
@@ -144,7 +143,7 @@ processResources {
             "forge_version": FORGE_VERSION,
             "loader_version_range": LOADER_VERSION_RANGE,
             "license": propertyString('license'),
-            "mod_id": MOD_ID,
+            "mod_id": propertyString('mod_id'),
             "mod_display_name": propertyString('mod_display_name'),
             "mod_author": propertyString('mod_author'),
             "mod_description": propertyString('mod_description'),
