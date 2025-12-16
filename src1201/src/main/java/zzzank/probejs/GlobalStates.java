@@ -10,28 +10,19 @@ import net.minecraft.world.inventory.InventoryMenu;
 import zzzank.probejs.mixins.AccessTextureAtlas;
 import zzzank.probejs.mixins.AccessTextureManager;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GlobalStates {
-    public static final Set<String> MIXIN_LANG_KEYS = new HashSet<>();
     public static final Set<String> RECIPE_IDS = new HashSet<>();
     public static final Set<String> LOOT_TABLES = new HashSet<>();
 
     public static final Supplier<Set<String>> LANG_KEYS = () -> {
-        Set<String> keys;
-        synchronized (MIXIN_LANG_KEYS) {
-            keys = new HashSet<>(MIXIN_LANG_KEYS);
-        }
         val mc = Minecraft.getInstance();
-        val manager = mc.getLanguageManager();
-        val english = manager.getLanguage(LanguageManager.DEFAULT_LANGUAGE_CODE);
+        val english = mc.getLanguageManager().getLanguage(LanguageManager.DEFAULT_LANGUAGE_CODE);
         if (english == null) {
-            return keys;
+            return Set.of();
         }
 
         val clientLanguage = ClientLanguage.loadFrom(
@@ -39,8 +30,7 @@ public class GlobalStates {
             Collections.singletonList(english.name()),
             english.bidirectional()
         );
-        keys.addAll(clientLanguage.getLanguageData().keySet());
-        return keys;
+        return clientLanguage.getLanguageData().keySet();
     };
 
     public static final Supplier<Set<String>> RAW_TEXTURES = () ->

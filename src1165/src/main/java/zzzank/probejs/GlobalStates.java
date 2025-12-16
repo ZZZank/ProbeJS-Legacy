@@ -17,29 +17,21 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GlobalStates {
-
-    public static final Set<String> MIXIN_LANG_KEYS = new HashSet<>();
     public static final Set<String> RECIPE_IDS = new HashSet<>();
     public static final Set<String> LOOT_TABLES = new HashSet<>();
 
     public static final Supplier<Set<String>> LANG_KEYS = () -> {
-        Set<String> keys;
-        synchronized (MIXIN_LANG_KEYS) {
-            keys = new HashSet<>(MIXIN_LANG_KEYS);
-        }
         val mc = Minecraft.getInstance();
-        val manager = mc.getLanguageManager();
-        val english = manager.getLanguage("en_us");
+        val english = mc.getLanguageManager().getLanguage("en_us");
         if (english == null) {
-            return keys;
+            return Set.of();
         }
 
         val clientLanguage = ClientLanguage.loadFrom(
             mc.getResourceManager(),
             Collections.singletonList(english)
         );
-        keys.addAll(clientLanguage.getLanguageData().keySet());
-        return keys;
+        return clientLanguage.getLanguageData().keySet();
     };
 
     public static final Supplier<Set<String>> RAW_TEXTURES = () ->
