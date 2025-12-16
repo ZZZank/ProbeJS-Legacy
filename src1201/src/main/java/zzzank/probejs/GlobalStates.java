@@ -7,6 +7,8 @@ import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.storage.loot.LootDataType;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import zzzank.probejs.mixins.AccessTextureAtlas;
 import zzzank.probejs.mixins.AccessTextureManager;
 
@@ -15,8 +17,18 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GlobalStates {
-    public static final Set<String> RECIPE_IDS = new HashSet<>();
-    public static final Set<String> LOOT_TABLES = new HashSet<>();
+    public static final Supplier<Set<String>> RECIPE_IDS = () -> ServerLifecycleHooks.getCurrentServer()
+        .getRecipeManager()
+        .getRecipeIds()
+        .filter(id -> !id.getPath().startsWith("kjs_"))
+        .map(Objects::toString)
+        .collect(Collectors.toSet());
+    public static final Supplier<Set<String>> LOOT_TABLES = () -> ServerLifecycleHooks.getCurrentServer()
+        .getLootData()
+        .getKeys(LootDataType.TABLE)
+        .stream()
+        .map(Objects::toString)
+        .collect(Collectors.toSet());
 
     public static final Supplier<Set<String>> LANG_KEYS = () -> {
         val mc = Minecraft.getInstance();

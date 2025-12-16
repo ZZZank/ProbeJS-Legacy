@@ -7,9 +7,7 @@
     "AccessItemTypes",
     "MixinEventJS",
     "MixinEventsJS",
-    "MixinLootTable",
     "MixinRecipeEventJS",
-    "MixinRecipeManager",
     "MixinScriptManager",
     "integration.KubeJSForgeEventRedirection",
     "integration.ScopeSupportMixin"

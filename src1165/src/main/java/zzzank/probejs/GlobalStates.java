@@ -6,19 +6,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import zzzank.probejs.mixins.AccessTextureAtlas;
 import zzzank.probejs.mixins.AccessTextureManager;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GlobalStates {
-    public static final Set<String> RECIPE_IDS = new HashSet<>();
-    public static final Set<String> LOOT_TABLES = new HashSet<>();
+    public static final Supplier<Set<String>> RECIPE_IDS = () -> ServerLifecycleHooks.getCurrentServer()
+        .getRecipeManager()
+        .getRecipeIds()
+        .filter(id -> !id.getPath().startsWith("kjs_"))
+        .map(Objects::toString)
+        .collect(Collectors.toSet());
+    public static final Supplier<? extends Collection<String>> LOOT_TABLES = () -> ServerLifecycleHooks.getCurrentServer()
+        .getLootTables()
+        .getIds()
+        .stream()
+        .map(Objects::toString)
+        .toList();
 
     public static final Supplier<Set<String>> LANG_KEYS = () -> {
         val mc = Minecraft.getInstance();

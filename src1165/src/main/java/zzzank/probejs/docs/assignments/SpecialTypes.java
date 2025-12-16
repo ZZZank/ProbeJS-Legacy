@@ -31,8 +31,8 @@ public class SpecialTypes implements ProbeJSPlugin {
         // We define special types regardless of script type
         // because types might be sent to other scripts
         defineLiteralTypes(special, "LangKey", GlobalStates.LANG_KEYS.get());
-        defineLiteralTypes(special, "RecipeId", GlobalStates.RECIPE_IDS);
-        defineLiteralTypes(special, "LootTable", GlobalStates.LOOT_TABLES);
+        defineLiteralTypes(special, "RecipeId", GlobalStates.RECIPE_IDS.get());
+        defineLiteralTypes(special, "LootTable", GlobalStates.LOOT_TABLES.get());
         defineLiteralTypes(special, "RawTexture", GlobalStates.RAW_TEXTURES.get());
         defineLiteralTypes(special, "Texture", GlobalStates.TEXTURES.get());
         defineLiteralTypes(special, "Mod", GlobalStates.MODS.get());
@@ -43,8 +43,8 @@ public class SpecialTypes implements ProbeJSPlugin {
     @Override
     public void addVSCodeSnippets(SnippetDump dump) {
         defineLiteralSnippets(dump, "lang_key", GlobalStates.LANG_KEYS.get());
-        defineLiteralSnippets(dump, "recipe_id", GlobalStates.RECIPE_IDS);
-        defineLiteralSnippets(dump, "loot_table", GlobalStates.LOOT_TABLES);
+        defineLiteralSnippets(dump, "recipe_id", GlobalStates.RECIPE_IDS.get());
+        defineLiteralSnippets(dump, "loot_table", GlobalStates.LOOT_TABLES.get());
         defineLiteralSnippets(dump, "texture", GlobalStates.TEXTURES.get());
         defineLiteralSnippets(dump, "mod", GlobalStates.MODS.get());
     }
