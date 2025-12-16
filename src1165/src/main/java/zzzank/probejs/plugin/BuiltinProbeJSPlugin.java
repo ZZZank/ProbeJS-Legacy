@@ -63,7 +63,7 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     @Override
     public void registerClassTransformer(ClassTransformerRegistration registration) {
         if (ProbeConfig.autoParamRename.get()) {
-            registration.register(new AutoParamRename());
+            registration.register(new AutoParamRename(AutoParamRename.MATCH_ARG_N));
         }
         if (RhizoState.RETURNS_SELF_ANNOTATION) {
             registration.register(new RhizoReturnsSelf());

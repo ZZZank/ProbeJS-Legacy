@@ -17,16 +17,27 @@ import zzzank.probejs.lang.typescript.code.member.ParamDecl;
 import zzzank.probejs.utils.NameUtils;
 
 import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
+ * @see #autoParamName(TypeDescriptor, int)
  * @author ZZZank
  */
 public class AutoParamRename implements ClassTransformer {
 
     public static final Pattern MATCH_ARG_N = Pattern.compile("^arg(\\d+)$");
-    public static final Pattern MATCH_FIELD = Pattern.compile("^field_[0-9]+_[a-zA-Z]+_?$");
-    public static final Pattern MATCH_METHOD = Pattern.compile("^func_[0-9]+_[a-zA-Z]+_?$");
+
+    private final Predicate<String> matching;
+
+    public AutoParamRename(Pattern matching) {
+        this.matching = matching.asPredicate();
+    }
+
+    public AutoParamRename(Predicate<String> matching) {
+        this.matching = Objects.requireNonNull(matching);
+    }
 
     @Override
     public void transformMethod(Clazz clazz, MethodInfo methodInfo, MethodDecl methodDecl) {
@@ -48,8 +59,8 @@ public class AutoParamRename implements ClassTransformer {
         }
     }
 
-    public static void autoRename(ParamDecl param, TypeDescriptor typeDesc, int index) {
-        if (MATCH_ARG_N.matcher(param.name).matches()) {
+    private void autoRename(ParamDecl param, TypeDescriptor typeDesc, int index) {
+        if (this.matching.test(param.name)) {
             val autoName = autoParamName(typeDesc, index);
             if (autoName != null) {
                 param.name = autoName;

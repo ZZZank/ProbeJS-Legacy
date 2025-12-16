@@ -1,7 +1,6 @@
 package zzzank.probejs.lang.transpiler.transformation.impl;
 
 import lombok.val;
-import org.apache.commons.lang3.mutable.MutableInt;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
@@ -24,15 +23,15 @@ public class InjectHybrid implements ClassTransformer {
         if (!clazz.isInterface()) {
             return;
         }
-        val count = new MutableInt(0);
+        val count = new int[]{0};
         val hybrid = classDecl.methods
             .stream()
             .filter(method -> !method.isStatic)
             .filter(method -> method.isAbstract)
-            .peek(c -> count.add(1))
+            .peek(c -> count[0]++)
             .findFirst()
             .orElse(null);
-        if (count.getValue() != 1 || hybrid == null) {
+        if (count[0] != 1) {
             return;
         }
         classDecl.bodyCode.add(Types.format(
