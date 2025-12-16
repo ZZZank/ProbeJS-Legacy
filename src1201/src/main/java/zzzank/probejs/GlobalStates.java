@@ -27,7 +27,7 @@ public class GlobalStates {
 
         val clientLanguage = ClientLanguage.loadFrom(
             mc.getResourceManager(),
-            Collections.singletonList(english.name()),
+            List.of(LanguageManager.DEFAULT_LANGUAGE_CODE),
             english.bidirectional()
         );
         return clientLanguage.getLanguageData().keySet();
