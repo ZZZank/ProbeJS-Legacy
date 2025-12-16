@@ -24,7 +24,7 @@ public abstract class MixinLootTable {
         }
         for (val resourceLocations : collectedElements.values()) {
             for (val resourceLocation : resourceLocations.keySet()) {
-                GlobalStates.LOOT_TABLES.add(resourceLocations.toString());
+                GlobalStates.LOOT_TABLES.add(resourceLocation.toString());
             }
         }
     }
