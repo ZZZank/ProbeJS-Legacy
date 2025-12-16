@@ -13,8 +13,14 @@ public interface Asser {
         }
     }
 
+    static void f(boolean condition, String errorMessage) {
+        if (condition) {
+            throw new AssertionError(errorMessage);
+        }
+    }
+
     static String nullMessage(String name) {
-        return "'" + name + "' must not be null";
+        return String.format("'%s' is null", name);
     }
 
     @NotNull

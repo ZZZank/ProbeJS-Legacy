@@ -1,18 +1,13 @@
 package zzzank.probejs.utils;
 
 import com.google.gson.JsonObject;
-import dev.latvian.kubejs.KubeJSPaths;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -53,42 +48,5 @@ public class FileUtils {
             writer.setIndent("    ");
             ProbeJS.GSON_WRITER.toJson(merged, JsonObject.class, writer);
         }
-    }
-
-    @Nullable
-    public static Path parseSourcePath(String name) {
-        if (!name.contains(":")) {
-            return null;
-        }
-        String[] parts = name.split(":", 2);
-        Path base = switch (parts[0]) {
-            case "client_scripts" -> KubeJSPaths.CLIENT_SCRIPTS;
-            case "server_scripts" -> KubeJSPaths.SERVER_SCRIPTS;
-            case "startup_scripts" -> KubeJSPaths.STARTUP_SCRIPTS;
-            default -> null;
-        };
-        if (base == null) {
-            return null;
-        }
-        return base.resolve(parts[1]);
-    }
-
-    public static long transferTo(InputStream in, OutputStream out) throws IOException {
-        Objects.requireNonNull(in, "in");
-        Objects.requireNonNull(out, "out");
-        long transferred = 0;
-        byte[] buffer = new byte[16384];
-        int read;
-        while ((read = in.read(buffer, 0, 16384)) >= 0) {
-            out.write(buffer, 0, read);
-            if (transferred < Long.MAX_VALUE) {
-                try {
-                    transferred = Math.addExact(transferred, read);
-                } catch (ArithmeticException ignore) {
-                    transferred = Long.MAX_VALUE;
-                }
-            }
-        }
-        return transferred;
     }
 }
