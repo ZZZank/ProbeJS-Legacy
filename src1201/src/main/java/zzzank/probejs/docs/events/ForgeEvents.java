@@ -28,13 +28,13 @@ public class ForgeEvents implements ProbeJSPlugin {
 
         for (val method : classDecl.methods) {
             if (method.name.equals("onEvent")) {
-                method.variableTypes.add(Types.generic("T", Types.typeMaybeGeneric(Event.class)));
+                method.variableTypes.add(Types.generic("T", Types.type(Event.class)));
                 method.params.get(0).type = GlobalClasses.J_CLASS.withParams("T");
                 method.params.get(1).type = Types.lambda()
                     .param("event", Types.primitive("T"))
                     .build();
             } else if (method.name.equals("onGenericEvent")) {
-                method.variableTypes.add(Types.generic("T", Types.typeMaybeGeneric(GenericEvent.class)));
+                method.variableTypes.add(Types.generic("T", Types.type(GenericEvent.class)));
                 method.params.get(0).type = GlobalClasses.J_CLASS.withParams("T");
                 method.params.get(1).type = GlobalClasses.J_CLASS.withParams(Types.ANY);
                 method.params.get(2).type = Types.lambda()

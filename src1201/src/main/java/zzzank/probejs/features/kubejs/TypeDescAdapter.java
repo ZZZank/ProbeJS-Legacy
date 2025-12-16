@@ -66,7 +66,7 @@ public class TypeDescAdapter {
             if (value.startsWith(PROBEJS_PREFIX)) {
                 val className = RemapperBridge.unmapClass(value.substring(PROBEJS_PREFIX.length()));
                 try {
-                    return Types.typeMaybeGeneric(Class.forName(className));
+                    return Types.type(Class.forName(className));
                 } catch (Throwable e) {
                     throw new RuntimeException(e);
                 }

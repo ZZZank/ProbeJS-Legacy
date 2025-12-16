@@ -86,7 +86,7 @@ public class KubeEvents implements ProbeJSPlugin {
             builder.param("extra", extraType);
         }
         val callback = Types.lambda()
-            .param("event", Types.typeMaybeGeneric(handler.eventType.get()))
+            .param("event", Types.type(handler.eventType.get()))
             .build();
         builder.param("handler", callback);
         return builder.build();

@@ -99,14 +99,14 @@ public class RegistryEvents implements ProbeJSPlugin {
             if (extra.equals("basic")) {
                 builder.method(
                     "create", method -> method
-                        .returnType(Types.typeMaybeGeneric(type.builderClass()))
+                        .returnType(Types.type(type.builderClass()))
                         .param("name", Types.STRING)
                 );
             }
 
             builder.method(
                 "create", method -> method
-                    .returnType(Types.typeMaybeGeneric(type.builderClass()))
+                    .returnType(Types.type(type.builderClass()))
                     .param("name", Types.STRING)
                     .param("type", Types.literal(extra))
             );

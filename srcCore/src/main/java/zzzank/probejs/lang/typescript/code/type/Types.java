@@ -131,20 +131,7 @@ public interface Types {
         return new TSVariableType(symbol, extendOn, defaultTo);
     }
 
-    static BaseType typeMaybeGeneric(Class<?> clazz) {
-        var typeParameters = clazz.getTypeParameters();
-        if (typeParameters.length == 0) {
-            return type(clazz);
-        }
-
-        return parameterized(type(clazz), Collections.nCopies(typeParameters.length, ANY));
-    }
-
-    /**
-     * You should ensure that this Class does not have type parameters.
-     * <br>
-     * Otherwise, use typeMaybeGeneric
-     */
+    /// Note: By default {@link zzzank.probejs.lang.transpiler.ClassTranspiler} will give type variables on class a default value, so there's usually no need of handling generic param fallback manually
     static TSClassType type(Class<?> clazz) {
         return type(ClassPath.fromJava(clazz));
     }
