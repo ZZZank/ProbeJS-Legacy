@@ -1,10 +1,8 @@
 package zzzank.probejs.features;
 
-import lombok.val;
 import dev.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.ClientLanguage;
-import net.minecraft.client.resources.language.LanguageManager;
+import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.storage.loot.LootDataType;
@@ -30,20 +28,7 @@ public class SpecialData {
         .map(Objects::toString)
         .collect(Collectors.toSet());
 
-    public static final Supplier<Set<String>> LANG_KEYS = () -> {
-        val mc = Minecraft.getInstance();
-        val english = mc.getLanguageManager().getLanguage(LanguageManager.DEFAULT_LANGUAGE_CODE);
-        if (english == null) {
-            return Set.of();
-        }
-
-        val clientLanguage = ClientLanguage.loadFrom(
-            mc.getResourceManager(),
-            List.of(LanguageManager.DEFAULT_LANGUAGE_CODE),
-            english.bidirectional()
-        );
-        return clientLanguage.getLanguageData().keySet();
-    };
+    public static final Supplier<Set<String>> LANG_KEYS = () -> Language.getInstance().getLanguageData().keySet();
 
     public static final Supplier<Set<String>> RAW_TEXTURES = () ->
         ((AccessTextureManager) Minecraft.getInstance().getTextureManager())

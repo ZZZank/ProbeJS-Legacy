@@ -1,9 +1,8 @@
 package zzzank.probejs.features;
 
-import lombok.val;
 import me.shedaniel.architectury.platform.Platform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.ClientLanguage;
+import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
@@ -21,26 +20,14 @@ public class SpecialData {
         .filter(id -> !id.getPath().startsWith("kjs_"))
         .map(Objects::toString)
         .collect(Collectors.toSet());
-    public static final Supplier<? extends Collection<String>> LOOT_TABLES = () -> ServerLifecycleHooks.getCurrentServer()
+    public static final Supplier<Set<String>> LOOT_TABLES = () -> ServerLifecycleHooks.getCurrentServer()
         .getLootTables()
         .getIds()
         .stream()
         .map(Objects::toString)
-        .toList();
+        .collect(Collectors.toSet());
 
-    public static final Supplier<Set<String>> LANG_KEYS = () -> {
-        val mc = Minecraft.getInstance();
-        val english = mc.getLanguageManager().getLanguage("en_us");
-        if (english == null) {
-            return Set.of();
-        }
-
-        val clientLanguage = ClientLanguage.loadFrom(
-            mc.getResourceManager(),
-            Collections.singletonList(english)
-        );
-        return clientLanguage.getLanguageData().keySet();
-    };
+    public static final Supplier<Set<String>> LANG_KEYS = () -> Language.getInstance().getLanguageData().keySet();
 
     public static final Supplier<Set<String>> RAW_TEXTURES = () ->
         ((AccessTextureManager) Minecraft.getInstance().getTextureManager())
