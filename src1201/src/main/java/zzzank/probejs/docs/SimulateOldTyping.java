@@ -33,7 +33,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
         for (val clazz : scriptDump.recordedClasses) {
             val path = clazz.classPath;
-            if (!path.getSimpleName().startsWith("$") || transpiler.isRejected(clazz)) {
+            if (transpiler.isRejected(clazz)) {
                 continue;
             }
 

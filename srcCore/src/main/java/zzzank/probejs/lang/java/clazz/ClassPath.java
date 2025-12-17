@@ -25,10 +25,6 @@ public final class ClassPath implements Comparable<ClassPath> {
         return new ClassPath(c.getName(), remapped.split("\\."));
     }
 
-    public static ClassPath ofRemapped(String remapped, UnaryOperator<String> unmapper) {
-        return new ClassPath(unmapper.apply(remapped), remapped.split("\\."));
-    }
-
     private final String className;
     private final String[] remapped;
 
@@ -69,8 +65,10 @@ public final class ClassPath implements Comparable<ClassPath> {
         return this.className.isEmpty() ? getRemappedName() : this.className;
     }
 
+    /// Similar to [Class#getSimpleName()]. For non-artificial [ClassPath], there will be an additional '$' prefix
     public String getSimpleName() {
-        return this.remapped[this.remapped.length - 1];
+        var name = this.remapped[this.remapped.length - 1];
+        return isArtificial() ? name : '$' + name;
     }
 
     public boolean isArtificial() {

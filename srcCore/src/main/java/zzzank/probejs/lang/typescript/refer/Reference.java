@@ -38,8 +38,4 @@ public final class Reference {
             ProbeJS.GSON.toJson(info.path.getFirstValidPath())
         );
     }
-
-    public String getOriginalName() {
-        return info.path.getSimpleName();
-    }
 }
