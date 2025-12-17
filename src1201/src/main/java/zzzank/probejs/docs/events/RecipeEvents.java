@@ -61,6 +61,9 @@ public class RecipeEvents implements ProbeJSPlugin {
         for (val entry : RecipeNamespace.getAll().entrySet()) {
             val namespaceId = entry.getKey();
             val namespace = entry.getValue();
+            if (namespace.isEmpty()) {
+                continue;
+            }
 
             val builder = Types.object();
 
