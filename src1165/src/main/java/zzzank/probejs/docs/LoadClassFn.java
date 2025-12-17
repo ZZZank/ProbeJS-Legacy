@@ -14,10 +14,12 @@ public class LoadClassFn implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
+        // "T extends string" because we want T to capture the string literal
+        var t = Types.generic("T", Types.STRING);
         val javaFn = Statements
             .func("java")
-            .variable(Types.generic("T"))
-            .param("classPath", Types.generic("T"))
+            .variable(t)
+            .param("classPath", t)
             .returnType(Types.primitive("LoadClass").withParams("T"))
             .build();
 
