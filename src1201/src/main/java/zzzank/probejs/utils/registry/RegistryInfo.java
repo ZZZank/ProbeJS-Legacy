@@ -48,6 +48,6 @@ public class RegistryInfo implements Comparable<RegistryInfo> {
 
     public Class<?> objectBaseType() {
         val info = dev.latvian.mods.kubejs.registry.RegistryInfo.MAP.get(resKey);
-        return info == null ? null : info.objectBaseClass;
+        return info != null && info.autoWrap ? info.objectBaseClass : null;
     }
 }
