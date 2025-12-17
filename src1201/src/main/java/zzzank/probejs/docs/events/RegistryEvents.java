@@ -31,11 +31,10 @@ public class RegistryEvents implements ProbeJSPlugin {
         val groupNamespace = new Wrapped.Namespace("StartupEvents");
         for (val entry : RegistryInfo.MAP.entrySet()) {
             val key = entry.getKey();
+            val rl = key.location();
 
-            val registryPath = getRegistryClassPath(key.location().getNamespace(), key.location().getPath());
-            val extraName = key.location().getNamespace().equals("minecraft") ?
-                key.location().getPath() :
-                key.location().toString();
+            val registryPath = getRegistryClassPath(rl.getNamespace(), rl.getPath());
+            val extraName = rl.getNamespace().equals("minecraft") ? rl.getPath() : rl.toString();
 
             val declaration = Statements.func("registry")
                 .param("extra", Types.literal(extraName))
@@ -119,8 +118,7 @@ public class RegistryEvents implements ProbeJSPlugin {
     public Set<Class<?>> provideJavaClass(ScriptDump scriptDump) {
         return RegistryInfo.MAP.values()
             .stream()
-            .map(value -> value.types.values())
-            .flatMap(Collection::stream)
+            .flatMap(value -> value.types.values().stream())
             .map(BuilderType::builderClass)
             .collect(Collectors.toSet());
     }

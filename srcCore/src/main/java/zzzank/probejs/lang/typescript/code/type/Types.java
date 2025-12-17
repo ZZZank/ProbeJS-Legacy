@@ -205,27 +205,16 @@ public interface Types {
         return new JSObjectType.Builder();
     }
 
-    static TSOptionalType optional(BaseType type) {
-        return new TSOptionalType(type);
+    static JSObjectType.Builder object(Map<? extends CharSequence, ? extends BaseType> properties) {
+        var builder = new JSObjectType.Builder();
+        for (var entry : properties.entrySet()) {
+            builder.member(entry.getKey().toString(), entry.getValue());
+        }
+        return builder;
     }
 
-    static BaseType filter(BaseType type, Predicate<BaseType> typePredicate) {
-        if (type instanceof JSJoinedType.Union union) {
-            return Types.or(
-                union.types.stream()
-                    .filter((t) -> !typePredicate.test(t))
-                    .map((t) -> filter(t, typePredicate))
-                    .toList()
-            );
-        } else if (type instanceof JSJoinedType.Intersection intersection) {
-            return Types.and(
-                intersection.types.stream()
-                    .filter((t) -> !typePredicate.test(t))
-                    .map((t) -> filter(t, typePredicate))
-                    .toList()
-            );
-        }
-        return type;
+    static TSOptionalType optional(BaseType type) {
+        return new TSOptionalType(type);
     }
 
     static WithFormatType format(String format, BaseType... types) {

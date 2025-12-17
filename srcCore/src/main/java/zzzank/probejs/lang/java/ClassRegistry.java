@@ -152,17 +152,14 @@ public class ClassRegistry {
             return;
         }
 
+        var classLoader = ClassRegistry.class.getClassLoader();
         try (val reader = Files.newBufferedReader(path)) {
             var lastPath = ClassPath.EMPTY;
             for (val diffLine : CollectUtils.iterate(reader.lines())) {
                 val classPath = lastPath.fromDiff(diffLine, RemapperBridge::unmapClass);
                 if (!this.foundClasses.containsKey(classPath)) {
                     try {
-                        val c = Class.forName(
-                            classPath.getOriginalName(),
-                            false,
-                            ClassRegistry.class.getClassLoader()
-                        );
+                        val c = Class.forName(classPath.getOriginalName(), false, classLoader);
                         if (!ProbeConfig.publicClassOnly.get() || Modifier.isPublic(c.getModifiers())) {
                             addClass(c);
                         }
