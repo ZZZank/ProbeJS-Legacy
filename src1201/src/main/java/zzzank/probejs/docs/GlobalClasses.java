@@ -30,11 +30,7 @@ public class GlobalClasses implements ProbeJSPlugin {
         val paths = Types.object();
         for (val clazz : scriptDump.recordedClasses) {
             val path = clazz.classPath;
-            val typeOf = Types.typeOf(clazz.classPath);
-            //original
-            paths.member(clazz.getOriginal().getName(), typeOf);
-            //probejs style import
-            paths.member(path.getFirstValidPath(), typeOf);
+            paths.member(path.getOriginalName(), Types.typeOf(path));
         }
 
         scriptDump.addGlobal(

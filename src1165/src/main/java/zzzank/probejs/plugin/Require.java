@@ -6,6 +6,7 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.java.remap.RemapperBridge;
 
 public class Require extends BaseFunction {
     private final ScriptManager manager;
@@ -23,19 +24,17 @@ public class Require extends BaseFunction {
             ));
         }
         String name;
-        if (args.length == 0 || !(name = args[0].toString()).startsWith(ClassPath.TS_PATH_PREFIX)) {
+        if (args.length == 0 || (name = args[0].toString()).startsWith("./")) {
             return new RequireWrapper(null, Undefined.instance);
         }
-        val path = ClassPath.fromTS(name);
 
         try {
-            return new RequireWrapper(path, manager.loadJavaClass(scope, new String[]{name}));
+            var loaded = manager.loadJavaClass(scope, new String[]{name});
+            var path = ClassPath.ofJava(loaded.getClassObject());
+            return new RequireWrapper(path, loaded);
         } catch (Exception ignored) {
-            manager.type.console.error(String.format(
-                "Class '%s' not found, returning undefined value",
-                path.getRemappedName()
-            ));
-            return new RequireWrapper(path, Undefined.instance);
+            manager.type.console.error(String.format("Class '%s' not found, returning undefined value", name));
+            return new RequireWrapper(null, Undefined.instance);
         }
     }
 

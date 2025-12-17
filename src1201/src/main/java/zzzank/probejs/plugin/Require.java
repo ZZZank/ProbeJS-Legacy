@@ -3,7 +3,6 @@ package zzzank.probejs.plugin;
 import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import lombok.val;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 
@@ -23,19 +22,17 @@ public class Require extends BaseFunction {
             ));
         }
         String name;
-        if (args.length == 0 || !(name = args[0].toString()).startsWith(ClassPath.TS_PATH_PREFIX)) {
+        if (args.length == 0 || (name = args[0].toString()).startsWith("./")) {
             return new RequireWrapper(null, Undefined.instance);
         }
-        val path = ClassPath.fromTS(name);
 
         try {
-            return new RequireWrapper(path, manager.loadJavaClass(name, true));
+            var loaded = manager.loadJavaClass(name, true);
+            var path = ClassPath.ofJava(loaded.getClassObject());
+            return new RequireWrapper(path, loaded);
         } catch (Exception ignored) {
-            manager.scriptType.console.error(String.format(
-                "Class '%s' not found, returning undefined value",
-                path.getRemappedName()
-            ));
-            return new RequireWrapper(path, Undefined.instance);
+            manager.scriptType.console.error(String.format("Class '%s' not found, returning undefined value", name));
+            return new RequireWrapper(null, Undefined.instance);
         }
     }
 
