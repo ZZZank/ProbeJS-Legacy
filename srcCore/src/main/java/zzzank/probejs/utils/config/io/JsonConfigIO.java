@@ -61,7 +61,7 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
             }
             val valueInConfig = entryInConfig.get(VALUE_KEY);
             if (valueInConfig == null) {
-                continue;
+                continue; // default value, skip
             }
             val serde = getSerde(entry);
             entry.set(Cast.to(serde.deserialize(valueInConfig)));
@@ -87,14 +87,16 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
 
             val entryJson = new JsonObject();
 
-            entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(Cast.to(entry.binding().getDefault())));
-            entryJson.add(VALUE_KEY, serde.serialize(Cast.to(entry.get())));
             val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
             switch (comments.size()) {
                 case 0 -> {
                 }
                 case 1 -> entryJson.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
                 default -> entryJson.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
+            }
+            entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(Cast.to(entry.binding().getDefault())));
+            if (!entry.get().equals(entry.getDefault())) {
+                entryJson.add(VALUE_KEY, serde.serialize(Cast.to(entry.get())));
             }
 
             writeTo.add(name, entryJson);
