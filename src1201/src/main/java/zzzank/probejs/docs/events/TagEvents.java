@@ -17,8 +17,8 @@ import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.GameUtils;
 
 public class TagEvents implements ProbeJSPlugin {
-    public static final ClassPath TAG_EVENT = ClassPath.ofArtificial("moe.wolfgirl.probejs.generated.TagEventProbe");
-    public static final ClassPath TAG_WRAPPER = ClassPath.ofArtificial("moe.wolfgirl.probejs.generated.TagWrapperProbe");
+    public static final ClassPath TAG_EVENT = ClassPath.ofArtificial("zzzank.probejs.generated.TagEventProbe");
+    public static final ClassPath TAG_WRAPPER = ClassPath.ofArtificial("zzzank.probejs.generated.TagWrapperProbe");
 
     // Create TagEventProbe<T, I> and TagWrapperProbe<T, I>
     // Generate string overrides for all registry types

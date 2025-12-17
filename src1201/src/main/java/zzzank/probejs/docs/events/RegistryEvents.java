@@ -82,7 +82,7 @@ public class RegistryEvents implements ProbeJSPlugin {
     }
 
     private static ClassPath getRegistryClassPath(String namespace, String location) {
-        return ClassPath.ofArtificial("moe.wolfgirl.probejs.generated.registry.%s.%s".formatted(
+        return ClassPath.ofArtificial("zzzank.probejs.generated.registry.%s.%s".formatted(
             namespace,
             NameUtils.rlToTitle(location)
         ));

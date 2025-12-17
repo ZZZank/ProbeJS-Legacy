@@ -21,7 +21,7 @@ import java.util.Collections;
 public class GlobalClasses implements ProbeJSPlugin {
     public static final JSPrimitiveType GLOBAL_CLASSES = Types.primitive("GlobalClasses");
     public static final JSPrimitiveType LOAD_CLASS = Types.primitive("LoadClass");
-    public static final TSClassType J_CLASS = Types.type(ClassPath.ofArtificial("zzzank.probejs.docs.duck.JClass"));
+    public static final TSClassType J_CLASS = Types.type(ClassPath.ofArtificial("zzzank.probejs.generated.JClass"));
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
