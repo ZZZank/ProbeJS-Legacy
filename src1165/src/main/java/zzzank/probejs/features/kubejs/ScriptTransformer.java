@@ -78,7 +78,7 @@ public class ScriptTransformer {
                     && call.getArguments().get(0) instanceof StringLiteral literal
                 ) {
                     requireCounts++;
-                    if (!literal.getValue().startsWith(ClassPath.TS_PATH_PREFIX)) {
+                    if (literal.getValue().startsWith("./")) {
                         // not java package, likely to be cross file imports, cut it
                         cuts.add(new int[]{
                             statement.getPosition(), statement.getPosition() + statement.getLength()

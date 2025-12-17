@@ -31,12 +31,8 @@ public class ForgeEvents implements ProbeJSPlugin {
             TSUtilityType.instanceType(Types.primitive("T"))
         )
             .build();
-        val javaClassPath = TSUtilityType.exclude(
-            Types.keyof(GlobalClasses.GLOBAL_CLASSES),
-            Types.primitive(String.format("`%s${string}`", ClassPath.TS_PATH_PREFIX))
-        );
         val stringArgOnEvent = buildOnForgeEvent(
-            Types.generic("T", javaClassPath),
+            Types.generic("T", Types.keyof(GlobalClasses.GLOBAL_CLASSES)),
             TSUtilityType.instanceType(
                 TSUtilityType.extract(
                     Types.format("%s[T]", GlobalClasses.GLOBAL_CLASSES),
@@ -46,7 +42,7 @@ public class ForgeEvents implements ProbeJSPlugin {
         )
             .build();
 
-        scriptDump.addGlobal("forge_events", classArgOnEvent, javaClassPath, stringArgOnEvent);
+        scriptDump.addGlobal("forge_events", classArgOnEvent, stringArgOnEvent);
     }
 
     private static FunctionDeclaration.Builder buildOnForgeEvent(TSVariableType variableT, TSParamType eventType) {
