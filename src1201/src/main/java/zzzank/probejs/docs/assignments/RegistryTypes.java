@@ -60,7 +60,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         // Also holder
         scriptDump.assignType(Holder.class, TYPE_SPECIAL_LITERAL_OF.withParams("T"));
         // Registries (why?)
-        scriptDump.assignType(Registry.class, Types.or(registryNames.toArray(BaseType[]::new)));
+        scriptDump.assignType(Registry.class, Types.or(registryNames));
         // TagKey<T> to Special.TagOf<T>
         scriptDump.assignType(TagKey.class, TYPE_SPECIAL_TAG_OF.withParams("T"));
     }
@@ -95,7 +95,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         val key = info.resourceKey();
 
         val types = resolveAll
-            ? Types.or(info.objectIds().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
+            ? Types.orEnumLike(info.objectIds(), false)
             : Types.STRING;
         val typeName = GameUtils.registryName(key);
 
@@ -103,11 +103,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         special.addCode(typeDecl);
 
         val tagTypes = resolveAll
-            ? Types.or(
-            info.tagIds()
-                .map(ResourceLocation::toString)
-                .map(Types::literal)
-                .toArray(BaseType[]::new))
+            ? Types.orEnumLike(info.tagIds(), false)
             : Types.STRING;
         val tagName = typeName + "Tag";
 

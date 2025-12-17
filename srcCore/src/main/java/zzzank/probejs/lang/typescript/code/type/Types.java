@@ -10,11 +10,13 @@ import zzzank.probejs.lang.typescript.code.type.js.*;
 import zzzank.probejs.lang.typescript.code.type.ts.*;
 import zzzank.probejs.lang.typescript.code.type.utility.*;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.NameUtils;
 
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface Types {
     JSPrimitiveType ANY = primitive("any");
@@ -81,6 +83,18 @@ public interface Types {
 
     static BaseType or(Collection<? extends BaseType> types) {
         return types.isEmpty() ? NEVER : new JSJoinedType.Union(types);
+    }
+
+    static BaseType orEnumLike(Collection<?> objects, boolean lowerCase) {
+        return orEnumLike(objects.stream(), lowerCase);
+    }
+
+    static BaseType orEnumLike(Stream<?> objects, boolean lowerCase) {
+        var stream = objects.map(Object::toString);
+        if (lowerCase) {
+            stream = stream.map(NameUtils.LOWER_CASE);
+        }
+        return or(stream.map(Types::literal).toList());
     }
 
     static JSJoinedType join(CharSequence delimiter, BaseType... types) {

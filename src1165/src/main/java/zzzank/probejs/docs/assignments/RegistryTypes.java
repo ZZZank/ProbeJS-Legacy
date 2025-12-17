@@ -58,7 +58,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         val key = info.resourceKey();
 
         val types = resolveAll
-            ? Types.or(info.objectIds().map(ResourceLocation::toString).map(Types::literal).toArray(BaseType[]::new))
+            ? Types.orEnumLike(info.objectIds(), false)
             : Types.STRING;
         val typeName = GameUtils.registryName(key);
 

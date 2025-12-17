@@ -82,20 +82,10 @@ public class KubeWrappers implements ProbeJSPlugin {
             .member("nbt", true, Types.or(Primitives.CHAR_SEQUENCE, Types.EMPTY_OBJECT))
             .build());
 
-        scriptDump.assignType(MaterialJS.class, Types.or(MaterialListJS.INSTANCE.map.keySet()
-            .stream()
-            .map(NameUtils.LOWER_CASE)
-            .map(Types::literal)
-            .toArray(BaseType[]::new))
-        );
+        scriptDump.assignType(MaterialJS.class, Types.orEnumLike(MaterialListJS.INSTANCE.map.keySet(), true));
         scriptDump.assignType(
             ItemType.class,
-            Types.or(AccessItemTypes.getMAP()
-                .keySet()
-                .stream()
-                .map(NameUtils.LOWER_CASE)
-                .map(Types::literal)
-                .toArray(BaseType[]::new))
+            Types.orEnumLike(AccessItemTypes.getMAP().keySet(), true)
         );
 
         //unwrap
