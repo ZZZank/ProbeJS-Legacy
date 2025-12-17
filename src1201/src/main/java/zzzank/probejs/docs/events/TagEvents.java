@@ -17,8 +17,8 @@ import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.GameUtils;
 
 public class TagEvents implements ProbeJSPlugin {
-    public static final ClassPath TAG_EVENT = ClassPath.fromRaw("moe.wolfgirl.probejs.generated.TagEventProbe");
-    public static final ClassPath TAG_WRAPPER = ClassPath.fromRaw("moe.wolfgirl.probejs.generated.TagWrapperProbe");
+    public static final ClassPath TAG_EVENT = ClassPath.ofArtificial("moe.wolfgirl.probejs.generated.TagEventProbe");
+    public static final ClassPath TAG_WRAPPER = ClassPath.ofArtificial("moe.wolfgirl.probejs.generated.TagWrapperProbe");
 
     // Create TagEventProbe<T, I> and TagWrapperProbe<T, I>
     // Generate string overrides for all registry types
@@ -71,7 +71,7 @@ public class TagEvents implements ProbeJSPlugin {
 
         val wrapperType = Types.type(TAG_WRAPPER);
 
-        val tagEventProbe = Statements.clazz(TAG_EVENT.getName())
+        val tagEventProbe = Statements.clazz(TAG_EVENT.getSimpleName())
             .superClass(Types.type(TagEventJS.class))
             .typeVariables("T", "I")
             .method(
@@ -89,7 +89,7 @@ public class TagEvents implements ProbeJSPlugin {
             .build();
         files.requestOrCreate(TAG_EVENT).addCodes(tagEventProbe);
 
-        val tagWrapperProbe = Statements.clazz(TAG_WRAPPER.getName())
+        val tagWrapperProbe = Statements.clazz(TAG_WRAPPER.getSimpleName())
             .superClass(Types.type(TagWrapper.class))
             .typeVariables("T", "I")
             .method(

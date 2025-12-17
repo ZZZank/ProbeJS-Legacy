@@ -20,7 +20,7 @@ public abstract class Transpiler {
     }
 
     public void reject(Class<?> clazz) {
-        rejectedClasses.add(ClassPath.fromJava(clazz));
+        rejectedClasses.add(ClassPath.ofJava(clazz));
     }
 
     public Map<ClassPath, TypeScriptFile> dump(Collection<Clazz> clazzes) {

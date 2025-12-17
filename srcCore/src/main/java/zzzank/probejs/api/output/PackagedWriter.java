@@ -32,8 +32,8 @@ public class PackagedWriter extends AbstractWriter {
     @Override
     public void accept(@NotNull TypeScriptFile file) {
         val cPath = file.path;
-        val fileName = cPath.getParts().size() > minPackageCount
-            ? String.join(".", cPath.getParts().subList(0, minPackageCount))
+        val fileName = cPath.viewParts().size() > minPackageCount
+            ? String.join(".", cPath.viewParts().subList(0, minPackageCount))
             : fallbackFileName;
         packaged.computeIfAbsent(fileName, k -> new ArrayList<>())
             .add(file);

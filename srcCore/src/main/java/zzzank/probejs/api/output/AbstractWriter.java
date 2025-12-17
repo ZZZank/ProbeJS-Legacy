@@ -50,7 +50,7 @@ public abstract class AbstractWriter implements TSFileWriter {
     protected void writeFile(TypeScriptFile file, Writer writer) throws IOException {
         if (this.writeAsModule) {
             writer.write("declare module ");
-            writer.write(ProbeJS.GSON.toJson(file.path.getTSPath()));
+            writer.write(ProbeJS.GSON.toJson(file.path.getFirstValidPath()));
             writer.write(" {\n");
             file.write(writer);
             writer.write("}\n");

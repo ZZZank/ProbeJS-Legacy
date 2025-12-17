@@ -9,7 +9,6 @@ import dev.latvian.mods.kubejs.script.ScriptManager;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbePaths;
 import zzzank.probejs.api.dump.*;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -110,7 +109,7 @@ public class ScriptDump extends MultiDump {
     }
 
     public void assignType(Class<?> classPath, BaseType type) {
-        assignType(ClassPath.fromJava(classPath), null, type);
+        assignType(ClassPath.ofJava(classPath), null, type);
     }
 
     public void assignType(ClassPath classPath, BaseType type) {
@@ -118,7 +117,7 @@ public class ScriptDump extends MultiDump {
     }
 
     public void assignType(Class<?> classPath, String name, BaseType type) {
-        assignType(ClassPath.fromJava(classPath), name, type);
+        assignType(ClassPath.ofJava(classPath), name, type);
     }
 
     public void assignType(ClassPath classPath, String name, BaseType type) {
@@ -132,7 +131,7 @@ public class ScriptDump extends MultiDump {
     public void addGlobal(String identifier, Collection<String> excludedNames, Code... content) {
         val file = globalDump.globals.computeIfAbsent(
             identifier,
-            (k) -> new TypeScriptFile(ClassPath.fromRaw(k))
+            (k) -> new TypeScriptFile(ClassPath.ofArtificial(k))
         );
 
         for (val excluded : excludedNames) {
@@ -175,8 +174,8 @@ public class ScriptDump extends MultiDump {
             // declare global {
             //     type Type_ = ExportedType
             // }
-            val globalSymbol = classPath.getName() + "_";
-            val exportedSymbol = ImportType.TYPE.fmt(classPath.getName());
+            val globalSymbol = classPath.getSimpleName() + "_";
+            val exportedSymbol = ImportType.TYPE.fmt(classPath.getSimpleName());
 
             val exportedType = Types.type(classPath)
                 .withPossibleParams(classDecl.variableTypes)

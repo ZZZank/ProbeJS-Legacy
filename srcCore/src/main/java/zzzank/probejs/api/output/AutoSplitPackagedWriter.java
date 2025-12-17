@@ -96,7 +96,7 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
 
         val spread = new HashMap<String, List<TypeScriptFile>>();
         for (val file : files) {
-            val parts = file.path.getParts();
+            val parts = file.path.viewParts();
             val fileName = String.join(".", parts.subList(0, Integer.min(packageCount, parts.size() - 1)));
             spread.computeIfAbsent(fileName, ignored -> new ArrayList<>())
                 .add(file);

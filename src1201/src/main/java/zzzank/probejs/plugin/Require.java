@@ -33,7 +33,7 @@ public class Require extends BaseFunction {
         } catch (Exception ignored) {
             manager.scriptType.console.error(String.format(
                 "Class '%s' not found, returning undefined value",
-                path.getJavaStylePath()
+                path.getRemappedName()
             ));
             return new RequireWrapper(path, Undefined.instance);
         }
@@ -51,12 +51,12 @@ public class Require extends BaseFunction {
 
         @Override
         public String getClassName() {
-            return path.getJavaStylePath();
+            return path.getRemappedName();
         }
 
         @Override
         public Object get(Context cx, String name, Scriptable start) {
-            if (path == null || name.equals(path.getName())) {
+            if (path == null || name.equals(path.getSimpleName())) {
                 return clazz;
             }
             return super.get(cx, name, start);

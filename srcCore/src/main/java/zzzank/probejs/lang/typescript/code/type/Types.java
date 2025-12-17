@@ -147,7 +147,7 @@ public interface Types {
 
     /// Note: By default {@link zzzank.probejs.lang.transpiler.ClassTranspiler} will give type variables on class a default value, so there's usually no need of handling generic param fallback manually
     static TSClassType type(Class<?> clazz) {
-        return type(ClassPath.fromJava(clazz));
+        return type(ClassPath.ofJava(clazz));
     }
 
     static TSClassType type(ClassPath classPath) {
@@ -155,7 +155,7 @@ public interface Types {
     }
 
     static JSTypeOfType typeOf(Class<?> clazz) {
-        return typeOf(ClassPath.fromJava(clazz));
+        return typeOf(ClassPath.ofJava(clazz));
     }
 
     static JSTypeOfType typeOf(ClassPath classPath) {

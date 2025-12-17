@@ -21,7 +21,7 @@ import java.util.Collections;
 public class GlobalClasses implements ProbeJSPlugin {
     public static final JSPrimitiveType GLOBAL_CLASSES = Types.primitive("GlobalClasses");
     public static final JSPrimitiveType LOAD_CLASS = Types.primitive("LoadClass");
-    public static final TSClassType J_CLASS = Types.type(ClassPath.fromRaw("zzzank.probejs.docs.duck.JClass"));
+    public static final TSClassType J_CLASS = Types.type(ClassPath.ofArtificial("zzzank.probejs.docs.duck.JClass"));
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
@@ -34,7 +34,7 @@ public class GlobalClasses implements ProbeJSPlugin {
             //original
             paths.member(clazz.getOriginal().getName(), typeOf);
             //probejs style import
-            paths.member(path.getTSPath(), typeOf);
+            paths.member(path.getFirstValidPath(), typeOf);
         }
 
         scriptDump.addGlobal(
@@ -64,7 +64,7 @@ public class GlobalClasses implements ProbeJSPlugin {
 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
-        val jClassDecl = Statements.clazz(J_CLASS.classPath.getName())
+        val jClassDecl = Statements.clazz(J_CLASS.classPath.getSimpleName())
             .abstractClass()
             .typeVariables("T")
             .field("prototype", Types.NULL)

@@ -31,7 +31,7 @@ public class BeaningTest {
         val transpiler = ProbeJSPlugins.buildTranspiler();
 
         val files = transpiler.dump(classRegistry.getFoundClasses());
-        val classDecl = files.get(ClassPath.fromJava(type))
+        val classDecl = files.get(ClassPath.ofJava(type))
             .findCode(ClassDecl.class)
             .orElseThrow();
 

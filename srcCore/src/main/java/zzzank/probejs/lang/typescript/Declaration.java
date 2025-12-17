@@ -38,7 +38,7 @@ public class Declaration {
     }
 
     private String computeSymbol(ClassPath path) {
-        val original = path.getName();
+        val original = path.getSimpleName();
         //try original, then try template
         var deduped = original;
         int counter = 0;

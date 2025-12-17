@@ -39,14 +39,14 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
         ClassDecl decl;
         if (clazz.isInterface()) {
             decl = new InterfaceDecl(
-                clazz.classPath.getName(),
+                clazz.classPath.getSimpleName(),
                 superClass == Types.ANY ? null : superClass,
                 interfaces,
                 variableTypes
             );
         } else {
             decl = new ClassDecl(
-                clazz.classPath.getName(),
+                clazz.classPath.getSimpleName(),
                 superClass == Types.ANY ? null : superClass,
                 interfaces,
                 variableTypes

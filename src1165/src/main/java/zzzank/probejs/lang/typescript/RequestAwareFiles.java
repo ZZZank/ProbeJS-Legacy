@@ -26,7 +26,7 @@ public class RequestAwareFiles {
     }
 
     public TypeScriptFile request(Class<?> clazz) {
-        return request(ClassPath.fromJava(clazz));
+        return request(ClassPath.ofJava(clazz));
     }
 
     public <T extends Code> T requestCode(Class<?> clazz, Class<T> codeType) {

@@ -1,7 +1,5 @@
 package zzzank.probejs.lang.java.clazz;
 
-import lombok.ToString;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.utils.CollectUtils;
@@ -10,132 +8,113 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.UnaryOperator;
 
-@ToString
+/**
+ * @author ZZZank
+ */
 public final class ClassPath implements Comparable<ClassPath> {
-    public static final ClassPath EMPTY = new ClassPath(new String[0]);
+    public static final ClassPath EMPTY = new ClassPath("", new String[0]);
 
-    public static final String TS_PATH_PREFIX = "packages/";
-
-    private final String[] parts;
-
-    private ClassPath(String[] parts) {
-        this.parts = parts;
+    public static ClassPath ofArtificial(String name) {
+        return new ClassPath("", name.split("\\."));
     }
 
-    public static @NotNull ClassPath fromRaw(final String className) {
-        if (className == null || className.isEmpty()) {
-            throw new IllegalArgumentException("'className' is " + (className == null ? "null" : "empty"));
-        }
-        return new ClassPath(className.split("\\."));
+    public static ClassPath ofJava(Class<?> c) {
+        var remapped = RemapperBridge.remapClass(c);
+        return new ClassPath(c.getName(), remapped.split("\\."));
     }
 
-    public static ClassPath fromJava(final @NotNull Class<?> clazz) {
-        val name = RemapperBridge.remapClass(Objects.requireNonNull(clazz));
-        val parts = name.split("\\.");
-        parts[parts.length - 1] = "$" + parts[parts.length - 1];
-        return new ClassPath(parts);
+    public static ClassPath ofRemapped(String remapped, UnaryOperator<String> unmapper) {
+        return new ClassPath(unmapper.apply(remapped), remapped.split("\\."));
     }
 
-    public static ClassPath fromTS(final @NotNull String typeScriptPath) {
-        if (!typeScriptPath.startsWith(TS_PATH_PREFIX)) {
-            throw new IllegalArgumentException(String.format("path '%s' is not ProbeJS TS path", typeScriptPath));
-        }
-        val name = typeScriptPath.substring(TS_PATH_PREFIX.length());
-        return new ClassPath(name.split("/"));
+    private final String className;
+    private final String[] remapped;
+
+    private ClassPath(String className, String[] remapped) {
+        this.className = className;
+        this.remapped = remapped;
     }
 
-    public String getPart(final int index) {
-        return parts[index];
+    public List<String> viewParts() {
+        return Collections.unmodifiableList(Arrays.asList(remapped));
     }
 
-    public List<String> getParts() {
-        return Collections.unmodifiableList(Arrays.asList(this.parts));
+    public String getPart(int index) {
+        return this.remapped[index];
     }
 
-    public int getPartsCount() {
-        return parts.length;
+    public int countParts() {
+        return this.remapped.length;
     }
 
-    public String getName() {
-        return parts[parts.length - 1];
+    public List<String> viewPackage() {
+        return viewParts().subList(0, this.remapped.length - 1);
     }
 
-    /// @see Class#getSimpleName()
-    public String getJavaName() {
-        val name = getName();
-        return name.startsWith("$") ? name.substring(1) : name;
+    public String getRemappedName() {
+        return String.join(".", this.remapped);
     }
 
-    public String getConcatenated(final String sep) {
-        return String.join(sep, parts);
-    }
-
-    /// mapped, '.' split path with name prefix '$' for native class
-    public String getDirectPath() {
-        return getConcatenated(".");
-    }
-
-    /// @return mapped, `.` split path without name prefix '$' for native class
-    public String getJavaStylePath() {
-        val copy = CollectUtils.ofList(parts);
-        val last = parts[parts.length - 1];
-        if (last.startsWith("$")) {
-            copy.set(parts.length - 1, last.substring(1));
-        }
-        return String.join(".", copy);
-    }
-
-    /// unmapped, `.` split path without name prefix '$' for native class
+    /// @return The full class name if this class path represents a Java class, or an empty string if this class path is artificial.
     /// @see Class#getName()
-    public String getJavaPath() {
-        return RemapperBridge.unmapClass(getJavaStylePath());
+    /// @see #getFirstValidPath()
+    public String getOriginalName() {
+        return this.className;
     }
 
-    /// @return mapped, '/' split path with name prefix '$' for native class
-    public String getTSPath() {
-        return TS_PATH_PREFIX + getConcatenated("/");
+    /// [#getOriginalName()] if its result is not empty, [#getRemappedName()] otherwise
+    public String getFirstValidPath() {
+        return this.className.isEmpty() ? getRemappedName() : this.className;
     }
 
-    public List<String> getPackage() {
-        return getParts().subList(0, this.parts.length - 1);
+    public String getSimpleName() {
+        return this.remapped[this.remapped.length - 1];
     }
 
-    public String getConcatenatedPackage(final String sep) {
-        return String.join(sep, getPackage());
+    public boolean isArtificial() {
+        return this.className.isEmpty();
     }
 
     @Override
-    public int compareTo(final @NotNull ClassPath other) {
-        return Arrays.compare(this.parts, other.parts);
+    public int compareTo(@NotNull ClassPath other) {
+        return Arrays.compare(this.remapped, other.remapped);
     }
 
-    /// Convert `this` Classpath object to diff represented in [String].
-    public String toDiff(ClassPath base) {
-        var diff = this.parts.clone();
-        var commonPartsCount = CollectUtils.countCommonPrefix(this.parts, base.parts);
+    public String toDiff(final @NotNull ClassPath base) {
+        var commonPartsCount = CollectUtils.countCommonPrefix(this.remapped, base.remapped);
+        var diff = this.remapped.clone();
         Arrays.fill(diff, 0, commonPartsCount, "");
         return String.join(".", diff);
     }
 
-    /// Convert `diff` string back to ClassPath object, with `this` being the base
-    public ClassPath fromDiff(String diff) {
-        var parts = diff.split("\\.");
-        for (var i = 0; i < parts.length; i++) {
-            if (parts[i].isEmpty()) {
-                parts[i] = this.parts[i];
+    public ClassPath fromDiff(String diff, UnaryOperator<String> unmapper) {
+        var remapped = diff.split("\\.");
+        for (int i = 0; i < remapped.length; i++) {
+            if (remapped[i].isEmpty()) {
+                remapped[i] = this.remapped[i];
             } else {
                 break;
             }
         }
-        return new ClassPath(parts);
+        return new ClassPath(unmapper.apply(String.join(".", remapped)), remapped);
     }
 
     public boolean equals(final Object o) {
-        return o instanceof ClassPath other && Arrays.equals(this.parts, other.parts);
+        return o instanceof ClassPath other && Objects.equals(this.className, other.className);
     }
 
     public int hashCode() {
-        return Arrays.hashCode(this.parts);
+        return className.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        if (isArtificial()) {
+            return String.format("ClassPath[%s]", getRemappedName());
+        } else {
+            return String.format("ClassPath[%s->%s]", getOriginalName(), getRemappedName());
+        }
     }
 }

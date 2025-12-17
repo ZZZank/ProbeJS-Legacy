@@ -4,7 +4,6 @@ import lombok.val;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.level.Level;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -92,7 +91,7 @@ public class RegistryTypes implements ProbeJSPlugin {
         ResourceKey<? extends Registry<?>> key,
         Class<?> baseClass
     ) {
-        val typeScriptFile = files.globalFiles().get(ClassPath.fromJava(baseClass));
+        val typeScriptFile = files.globalFiles().get(ClassPath.ofJava(baseClass));
         if (typeScriptFile == null) {
             return;
         }

@@ -32,7 +32,7 @@ import java.util.Set;
 public class RecipeEvents implements ProbeJSPlugin {
     public static final Map<String, ResourceLocation> SHORTCUTS = new HashMap<>();
     public static final ClassPath DOCUMENTED_RECIPES =
-        ClassPath.fromRaw("zzzank.probejs.generated.DocumentedRecipes");
+        ClassPath.ofArtificial("zzzank.probejs.generated.DocumentedRecipes");
 
     static {
         SHORTCUTS.put("shaped", new ResourceLocation("kubejs", "shaped"));
@@ -56,7 +56,7 @@ public class RecipeEvents implements ProbeJSPlugin {
 
         // Generate recipe schema classes
         // Also generate the documented recipe class containing all stuffs from everywhere
-        val documentedRecipes = Statements.clazz(DOCUMENTED_RECIPES.getName());
+        val documentedRecipes = Statements.clazz(DOCUMENTED_RECIPES.getSimpleName());
 
         for (val entry : RecipeNamespace.getAll().entrySet()) {
             val namespaceId = entry.getKey();
@@ -123,7 +123,7 @@ public class RecipeEvents implements ProbeJSPlugin {
     }
 
     private static ClassPath getSchemaClassPath(String namespace, String id) {
-        return ClassPath.fromRaw("zzzank.probejs.generated.schema.%s.%s".formatted(
+        return ClassPath.ofArtificial("zzzank.probejs.generated.schema.%s.%s".formatted(
             namespace, NameUtils.rlToTitle(id)
         ));
     }

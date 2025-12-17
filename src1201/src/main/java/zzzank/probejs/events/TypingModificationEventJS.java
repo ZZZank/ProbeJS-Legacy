@@ -20,7 +20,7 @@ public class TypingModificationEventJS extends ScriptEventJS {
     public void modify(Class<?> clazz, Consumer<TypeScriptFile> modifier) {
         val ts = files.request(clazz);
         if (ts == null) {
-            getScriptType().console.errorf("Class with path '%s' not found, skipping", ClassPath.fromJava(clazz).getName());
+            getScriptType().console.errorf("Class with path '%s' not found, skipping", ClassPath.ofJava(clazz).getSimpleName());
             return;
         }
         modifier.accept(ts);

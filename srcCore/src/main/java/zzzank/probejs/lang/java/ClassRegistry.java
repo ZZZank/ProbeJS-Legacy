@@ -6,6 +6,7 @@ import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.MemberCollector;
+import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.ReflectUtils;
 
@@ -42,11 +43,11 @@ public class ClassRegistry {
     }
 
     public Clazz addClass(Class<?> c) {
-        return addClassImpl(c, ClassPath.fromJava(c));
+        return addClassImpl(c, ClassPath.ofJava(c));
     }
 
     public Clazz addClass(ClassPath path) {
-        return addClassImpl(ReflectUtils.classOrNull(path.getJavaPath(), ProbeJS.LOGGER::error), path);
+        return addClassImpl(ReflectUtils.classOrNull(path.getOriginalName(), ProbeJS.LOGGER::error), path);
     }
 
     /**
@@ -154,11 +155,11 @@ public class ClassRegistry {
         try (val reader = Files.newBufferedReader(path)) {
             var lastPath = ClassPath.EMPTY;
             for (val diffLine : CollectUtils.iterate(reader.lines())) {
-                val classPath = lastPath.fromDiff(diffLine);
+                val classPath = lastPath.fromDiff(diffLine, RemapperBridge::unmapClass);
                 if (!this.foundClasses.containsKey(classPath)) {
                     try {
                         val c = Class.forName(
-                            classPath.getJavaPath(),
+                            classPath.getOriginalName(),
                             false,
                             ClassRegistry.class.getClassLoader()
                         );

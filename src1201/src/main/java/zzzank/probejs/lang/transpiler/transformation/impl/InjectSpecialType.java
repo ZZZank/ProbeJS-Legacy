@@ -30,7 +30,7 @@ public class InjectSpecialType implements ClassTransformer {
     public static final Set<ClassPath> NO_WRAPPING = new HashSet<>();
 
     static {
-        NO_WRAPPING.add(ClassPath.fromJava(ResourceKey.class));
+        NO_WRAPPING.add(ClassPath.ofJava(ResourceKey.class));
     }
 
     public static void modifyWrapping(ParamDecl param) {

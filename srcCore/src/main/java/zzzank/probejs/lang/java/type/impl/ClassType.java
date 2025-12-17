@@ -16,7 +16,7 @@ public final class ClassType extends TypeDescriptor {
     public ClassType(Class<?> type) {
         super(type.getAnnotations());
         clazz = type;
-        classPath = ClassPath.fromJava(clazz);
+        classPath = ClassPath.ofJava(clazz);
     }
 
     @Override

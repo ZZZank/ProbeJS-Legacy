@@ -69,7 +69,7 @@ public class RegistryEvents implements ProbeJSPlugin {
         }
 
         // Let createCustom to use Supplier<T> instead of object
-        val registryEvent = files.request(ClassPath.fromJava(RegistryEventJS.class));
+        val registryEvent = files.request(ClassPath.ofJava(RegistryEventJS.class));
         val eventClass = registryEvent.findCode(ClassDecl.class).orElse(null);
         if (eventClass == null) {
             return;
@@ -82,7 +82,7 @@ public class RegistryEvents implements ProbeJSPlugin {
     }
 
     private static ClassPath getRegistryClassPath(String namespace, String location) {
-        return ClassPath.fromRaw("moe.wolfgirl.probejs.generated.registry.%s.%s".formatted(
+        return ClassPath.ofArtificial("moe.wolfgirl.probejs.generated.registry.%s.%s".formatted(
             namespace,
             NameUtils.rlToTitle(location)
         ));

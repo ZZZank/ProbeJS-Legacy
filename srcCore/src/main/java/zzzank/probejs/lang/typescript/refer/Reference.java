@@ -21,7 +21,7 @@ public final class Reference {
      * in 'import { ... } from ...' format
      */
     public String getImportStatement() {
-        val original = info.path.getName();
+        val original = info.path.getSimpleName();
 
         final Function<ImportType, String> nameMapper = original.equals(deduped)
             ? type -> type.fmt(original)
@@ -35,11 +35,11 @@ public final class Reference {
         return String.format(
             "import { %s } from %s",
             names,
-            ProbeJS.GSON.toJson(info.path.getTSPath())
+            ProbeJS.GSON.toJson(info.path.getFirstValidPath())
         );
     }
 
     public String getOriginalName() {
-        return info.path.getName();
+        return info.path.getSimpleName();
     }
 }
