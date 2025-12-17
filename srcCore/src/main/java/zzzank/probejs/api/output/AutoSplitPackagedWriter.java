@@ -4,7 +4,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.Asser;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -41,19 +41,9 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
         int splitThreshold,
         String fallbackFileName
     ) {
-        if (minPackageCount <= 0) {
-            throw new IllegalArgumentException(
-                "'minPackageCount' must be a positive number, but got " + minPackageCount);
-        }
-        if (maxPackageCount < minPackageCount) {
-            throw new IllegalArgumentException(
-                "'maxPackageCount' must be no less than 'minPackageCount', but got max " + maxPackageCount + " and min "
-                    + minPackageCount);
-        }
-        if (splitThreshold <= 0) {
-            throw new IllegalArgumentException(
-                "'splitThreshold' must be a positive number, but got " + splitThreshold);
-        }
+        Asser.f(minPackageCount <= 0, "minPackageCount <= 0");
+        Asser.f(maxPackageCount < minPackageCount, "maxPackageCount < minPackageCount");
+        Asser.f(splitThreshold <= 0, "splitThreshold <= 0");
         this.minPackageCount = minPackageCount;
         this.fallbackFileName = fallbackFileName;
         this.maxPackageCount = maxPackageCount;
@@ -104,12 +94,11 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
             return Collections.singletonMap(entry.getKey(), files);
         }
 
-        val mapper = CollectUtils.<String, List<TypeScriptFile>>ignoreInput(ArrayList::new);
         val spread = new HashMap<String, List<TypeScriptFile>>();
         for (val file : files) {
             val parts = file.path.getParts();
             val fileName = String.join(".", parts.subList(0, Integer.min(packageCount, parts.size() - 1)));
-            spread.computeIfAbsent(fileName, mapper)
+            spread.computeIfAbsent(fileName, ignored -> new ArrayList<>())
                 .add(file);
         }
 

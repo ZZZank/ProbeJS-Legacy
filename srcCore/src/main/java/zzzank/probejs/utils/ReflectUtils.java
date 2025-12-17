@@ -65,7 +65,7 @@ public interface ReflectUtils {
     }
 
     static Class<?> classOrNull(String name) {
-        return classOrNull(name, null);
+        return classOrNull(name, ReflectUtils.class.getClassLoader(), false, null);
     }
 
     static boolean classExist(String name) {

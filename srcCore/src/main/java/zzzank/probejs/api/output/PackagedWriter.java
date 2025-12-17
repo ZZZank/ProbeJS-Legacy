@@ -4,6 +4,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.utils.Asser;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -23,9 +24,7 @@ public class PackagedWriter extends AbstractWriter {
     protected int accepted = 0;
 
     public PackagedWriter(int minPackageCount, String fallbackFileName) {
-        if (minPackageCount <= 0) {
-            throw new IllegalArgumentException("'minPackageCount' must be a positive number");
-        }
+        Asser.f(minPackageCount <= 0, "minPackageCount <= 0");
         this.minPackageCount = minPackageCount;
         this.fallbackFileName = fallbackFileName;
     }
