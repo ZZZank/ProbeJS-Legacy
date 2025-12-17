@@ -102,11 +102,16 @@ public final class ClassPath implements Comparable<ClassPath> {
     }
 
     public boolean equals(final Object o) {
-        return o instanceof ClassPath other && Objects.equals(this.className, other.className);
+        if (o instanceof ClassPath other) {
+            return isArtificial()
+                ? Arrays.equals(remapped, other.remapped)
+                : Objects.equals(className, other.className);
+        }
+        return false;
     }
 
     public int hashCode() {
-        return className.hashCode();
+        return isArtificial() ? Arrays.hashCode(remapped) : className.hashCode();
     }
 
     @Override
