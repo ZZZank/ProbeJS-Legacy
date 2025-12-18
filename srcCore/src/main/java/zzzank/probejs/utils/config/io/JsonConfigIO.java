@@ -107,9 +107,7 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
             default -> entryJson.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
         }
         entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(entry.binding().getDefault()));
-        if (!entry.get().equals(entry.getDefault())) {
-            entryJson.add(VALUE_KEY, serde.serialize(entry.get()));
-        }
+        entryJson.add(VALUE_KEY, serde.serialize(entry.get()));
         return entryJson;
     }
 }
