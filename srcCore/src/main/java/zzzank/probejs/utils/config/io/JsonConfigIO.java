@@ -6,11 +6,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
 import zzzank.probejs.utils.Asser;
-import zzzank.probejs.utils.Cast;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.struct.ConfigCategory;
+import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 import java.io.Reader;
@@ -51,21 +51,24 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
     private void readCategory(ConfigCategory category, JsonObject config) {
         for (val entry : category.get().values()) {
             val name = entry.name();
-            val entryInConfig = config.getAsJsonObject(name);
-            if (entryInConfig == null) {
+            val jsonEntry = config.getAsJsonObject(name);
+            if (jsonEntry == null) {
                 continue;
             }
             if (entry.isCategory()) {
-                readCategory(entry.asCategory(), entryInConfig);
+                readCategory(entry.asCategory(), jsonEntry);
                 continue;
             }
-            val valueInConfig = entryInConfig.get(VALUE_KEY);
-            if (valueInConfig == null) {
-                continue; // default value, skip
-            }
-            val serde = getSerde(entry);
-            entry.set(Cast.to(serde.deserialize(valueInConfig)));
+            readValue(entry, jsonEntry);
         }
+    }
+
+    private <T> void readValue(ConfigEntry<T> entry, JsonObject jsonEntry) {
+        var jsonValue = jsonEntry.get(VALUE_KEY);
+        if (jsonValue == null) {
+            return; // default value, skip
+        }
+        entry.set(getSerde(entry).deserialize(jsonValue));
     }
 
     @Override
@@ -83,25 +86,30 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
                 continue;
             }
 
-            val serde = getSerde(entry);
+            var jsonEntry = generateJsonEntry(entry);
 
-            val entryJson = new JsonObject();
-
-            val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
-            switch (comments.size()) {
-                case 0 -> {
-                }
-                case 1 -> entryJson.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
-                default -> entryJson.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
-            }
-            entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(Cast.to(entry.binding().getDefault())));
-            if (!entry.get().equals(entry.getDefault())) {
-                entryJson.add(VALUE_KEY, serde.serialize(Cast.to(entry.get())));
-            }
-
-            writeTo.add(name, entryJson);
+            writeTo.add(name, jsonEntry);
         }
 
         return writeTo;
+    }
+
+    private <T> JsonObject generateJsonEntry(ConfigEntry<T> entry) {
+        val serde = getSerde(entry);
+
+        val entryJson = new JsonObject();
+
+        val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
+        switch (comments.size()) {
+            case 0 -> {
+            }
+            case 1 -> entryJson.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
+            default -> entryJson.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
+        }
+        entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(entry.binding().getDefault()));
+        if (!entry.get().equals(entry.getDefault())) {
+            entryJson.add(VALUE_KEY, serde.serialize(entry.get()));
+        }
+        return entryJson;
     }
 }
