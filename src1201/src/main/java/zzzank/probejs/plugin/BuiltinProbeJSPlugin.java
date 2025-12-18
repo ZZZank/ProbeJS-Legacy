@@ -4,6 +4,7 @@ import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ClassFilter;
+import dev.latvian.mods.rhino.NativeJavaClass;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.events.*;
 import zzzank.probejs.features.rhizo.RhizoState;
@@ -13,6 +14,10 @@ import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistratio
 import zzzank.probejs.lang.transpiler.transformation.impl.*;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
+import zzzank.probejs.mixins.AccessScriptManager;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin {
 
@@ -84,5 +89,15 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     @Override
     public void addVSCodeSnippets(SnippetDump dump) {
         ProbeEvents.SNIPPETS.post(new SnippetGenerationEventJS(dump));
+    }
+
+    @Override
+    public Set<Class<?>> provideJavaClass(ScriptDump scriptDump) {
+        return ((AccessScriptManager) scriptDump.manager).getJavaClassCache()
+            .values()
+            .stream()
+            .flatMap(e -> e.left().stream())
+            .map(NativeJavaClass::getClassObject)
+            .collect(Collectors.toSet());
     }
 }

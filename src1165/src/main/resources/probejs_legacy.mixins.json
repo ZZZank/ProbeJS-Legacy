@@ -5,10 +5,10 @@
   "mixins": [
     "AccessForgeRegistryManager",
     "AccessItemTypes",
+    "AccessScriptManager",
     "MixinEventJS",
     "MixinEventsJS",
     "MixinRecipeEventJS",
-    "MixinScriptManager",
     "integration.KubeJSForgeEventRedirection",
     "integration.ScopeSupportMixin"
   ],
