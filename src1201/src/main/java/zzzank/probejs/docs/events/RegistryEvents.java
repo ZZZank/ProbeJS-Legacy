@@ -7,6 +7,7 @@ import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceKey;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
@@ -56,13 +57,14 @@ public class RegistryEvents implements ProbeJSPlugin {
         if (scriptDump.scriptType != ScriptType.STARTUP) {
             return;
         }
+        var typeConverter = scriptDump.transpiler.typeConverter;
 
         for (val entry : RegistryInfo.MAP.entrySet()) {
             val key = entry.getKey();
             val info = entry.getValue();
 
             val registryPath = getRegistryClassPath(key.location().getNamespace(), key.location().getPath());
-            val registryClass = generateRegistryClass(key, info);
+            val registryClass = generateRegistryClass(key, info, typeConverter);
 
             files.requestOrCreate(registryPath).addCodes(registryClass);
         }
@@ -87,9 +89,16 @@ public class RegistryEvents implements ProbeJSPlugin {
         ));
     }
 
-    private static ClassDecl generateRegistryClass(ResourceKey<?> key, RegistryInfo<?> info) {
+    private static ClassDecl generateRegistryClass(
+        ResourceKey<?> key,
+        RegistryInfo<?> info,
+        TypeConverter typeConverter
+    ) {
         val builder = Statements.clazz(NameUtils.rlToTitle(key.location().getPath()))
-            .superClass(Types.parameterized(Types.type(RegistryEventJS.class), Types.type(info.objectBaseClass)));
+            .superClass(Types.parameterized(
+                Types.type(RegistryEventJS.class),
+                typeConverter.convertType(info.objectBaseClass)
+            ));
 
         for (val entry : info.types.entrySet()) {
             val extra = entry.getKey();
