@@ -24,7 +24,6 @@ import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.FileUtils;
 import zzzank.probejs.utils.JsonUtils;
-import zzzank.probejs.utils.MapBuilder;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -212,24 +211,24 @@ public class ScriptDump extends MultiDump {
     public void writeJSConfig(Path path) throws IOException {
         val config = (JsonObject) JsonUtils.parseObject(
             Map.of(
-                "compilerOptions", MapBuilder.<String, Object>ofHash()
-                    .put("module", "commonjs")
-                    .put("moduleResolution", "classic")
-                    .put("isolatedModules", true)
-                    .put("composite", true)
-                    .put("incremental", true)
-                    .put("allowJs", true)
-                    .put("target", "ES2015")
-                    .put("lib", List.of("ES5", "ES2015"))
-                    .put("rootDir", ".")
-                    .put("types", Stream.of(filesDump, globalDump, parent)
+                "compilerOptions", Map.ofEntries(
+                    Map.entry("module", "commonjs"),
+                    Map.entry("moduleResolution", "classic"),
+                    Map.entry("isolatedModules", true),
+                    Map.entry("composite", true),
+                    Map.entry("incremental", true),
+                    Map.entry("allowJs", true),
+                    Map.entry("target", "ES2015"),
+                    Map.entry("lib", List.of("ES5", "ES2015")),
+                    Map.entry("rootDir", "."),
+                    Map.entry("types", Stream.of(filesDump, globalDump, parent)
                         .map(TSDumpBase::writeTo)
                         .map(p -> FileUtils.relativePathStr(scriptPath, p))
                         .toList()
-                    )
-                    .put("skipLibCheck", true)
-                    .put("skipDefaultLibCheck", true)
-                    .build(),
+                    ),
+                    Map.entry("skipLibCheck", true),
+                    Map.entry("skipDefaultLibCheck", true)
+                ),
                 "include", List.of("./**/*.js")
             )
         );
