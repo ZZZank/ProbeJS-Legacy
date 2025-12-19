@@ -3,6 +3,7 @@ package zzzank.probejs.lang.transpiler;
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
+import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.utils.Asser;
 
@@ -11,7 +12,7 @@ import java.util.*;
 /**
  * Converts a Clazz into a TypeScriptFile ready for dump.
  */
-public abstract class Transpiler {
+public class Transpiler {
     public final TypeConverter typeConverter;
     public final Set<ClassPath> rejectedClasses = new HashSet<>();
 
@@ -42,7 +43,9 @@ public abstract class Transpiler {
         return result;
     }
 
-    protected abstract ClassTranspiler createClassTranspiler();
+    protected ClassTranspiler createClassTranspiler() {
+        return new ClassTranspiler(typeConverter, ClassTransformer.NO_OP);
+    }
 
     public boolean isRejected(Clazz clazz) {
         return rejectedClasses.contains(clazz.classPath);

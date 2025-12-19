@@ -14,6 +14,7 @@ import zzzank.probejs.lang.typescript.code.member.MethodDecl;
  * file to respect some stuffs.
  */
 public interface ClassTransformer {
+    ClassTransformer NO_OP = new ClassTransformer() {};
 
     default void transform(Clazz clazz, ClassDecl classDecl) {
     }
