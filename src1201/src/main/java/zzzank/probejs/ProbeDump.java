@@ -30,7 +30,7 @@ public class ProbeDump {
     public static final Path CLASS_CACHE = ProbePaths.PROBE.resolve("classes.txt");
     public static final Path EVENT_CACHE = ProbePaths.PROBE.resolve("kube_event.json");
 
-    final SharedDump sharedDump = new SharedDump(ProbePaths.PROBE.resolve("shared"));
+    final SharedDump sharedDump = new SharedDump(ProbePaths.PROBE.resolve("shared"), ProbeJSPlugins.buildTranspiler());
     final SchemaDump schemaDump = new SchemaDump();
     final SnippetDump snippetDump = new SnippetDump();
     final Collection<ScriptDump> scriptDumps = new ArrayList<>();
