@@ -24,7 +24,7 @@ public interface RecipeDocUtil {
     TSArrayType STACK_N = STACK.asArray();
     TSClassType INGR = Types.type(IngredientJS.class);
     TSArrayType INGR_N = Types.array(INGR);
-    JSObjectType STR2INGR = Types.object().literalMember("[x in string]", INGR).build();
+    JSObjectType STR2INGR = Types.object().rawNameMember("[x in string]", INGR).build();
     TSArrayType STR_N = Types.array(Primitives.CHAR_SEQUENCE);
 
     static TSClassType classType(String className) {

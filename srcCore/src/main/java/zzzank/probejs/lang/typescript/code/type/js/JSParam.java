@@ -27,8 +27,8 @@ public class JSParam {
         );
     }
 
-    public static class Literal extends JSParam {
-        public Literal(String name, boolean optional, BaseType type) {
+    public static class RawName extends JSParam {
+        public RawName(String name, boolean optional, BaseType type) {
             super(name, optional, type);
         }
 

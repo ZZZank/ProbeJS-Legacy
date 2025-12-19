@@ -29,8 +29,8 @@ public class ValueTypes {
         Boolean.class, Boolean.TYPE
     ));
 
-    public static final BaseType BARE_BONE_MAP = Types.object().literalMember("[key: string]", Types.ANY).build();
-    public static final BaseType BARE_BONE_LIST = Types.object().literalMember("[index: number]", Types.ANY).build();
+    public static final BaseType BARE_BONE_MAP = Types.object().rawNameMember("[key: string]", Types.ANY).build();
+    public static final BaseType BARE_BONE_LIST = Types.object().rawNameMember("[index: number]", Types.ANY).build();
 
     static {
         //shortcut

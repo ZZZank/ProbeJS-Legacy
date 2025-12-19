@@ -32,7 +32,7 @@ public class JavaPrimitives implements ProbeJSPlugin {
         scriptDump.assignType(List.class, Types.generic("E").asArray());
         scriptDump.assignType(
             Map.class,
-            Types.object().literalMember("[key: string]", Types.generic("V")).build()
+            Types.object().rawNameMember("[key: string]", Types.generic("V")).build()
         );
         scriptDump.assignType(Iterable.class, Types.generic("T").asArray());
         scriptDump.assignType(Collection.class, Types.generic("E").asArray());
