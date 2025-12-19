@@ -33,8 +33,8 @@ public class TSTernaryType extends BaseType {
             "%s extends %s ? %s : %s",
             symbol,
             extend.contextShield(FormatType.VARIABLE).line(declaration, formatType),
-            ifTrue.format(declaration, formatType),
-            ifFalse.format(declaration, formatType)
+            ifTrue.line(declaration, formatType),
+            ifFalse.line(declaration, formatType)
         );
     }
 }
