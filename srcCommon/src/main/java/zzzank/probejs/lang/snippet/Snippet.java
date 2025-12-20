@@ -1,20 +1,13 @@
 package zzzank.probejs.lang.snippet;
 
 import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
 import lombok.val;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import zzzank.probejs.ProbeJS;
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.snippet.parts.*;
 import zzzank.probejs.utils.JsonUtils;
-import zzzank.probejs.utils.registry.RegistryInfos;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Snippet {
 
@@ -63,9 +56,12 @@ public class Snippet {
         return this;
     }
 
-
     public Snippet choices(Collection<String> choices) {
         return choices(-1, choices);
+    }
+
+    public Snippet choices(Stream<String> choices) {
+        return choices(-1, choices.toList());
     }
 
     public Snippet choices(int enumeration, Collection<String> choices) {
@@ -80,42 +76,12 @@ public class Snippet {
         return this;
     }
 
-    public <T> Snippet registry(ResourceKey<Registry<T>> key) {
-        val registry = RegistryInfos.all().get(key.location());
-        if (registry == null) {
-            ProbeJS.LOGGER.error("no registry info found for key {}, skipping", key.location());
-            return this;
-        }
-        return choices(registry.objectIds().map(ResourceLocation::toString).toList());
-    }
-
     private List<SnippetPart> getRecent() {
         return allParts.get(allParts.size() - 1);
     }
 
     public JsonObject compile() {
-        // Reindex everything
-        Set<Integer> indexes = new IntArraySet(256);
-        List<Enumerable> toBeIndexed = new ArrayList<>(64);
-
-        for (List<SnippetPart> parts : allParts) {
-            for (SnippetPart part : parts) {
-                if (part instanceof Enumerable enumerable) {
-                    if (enumerable.enumeration == -1) {
-                        toBeIndexed.add(enumerable);
-                    } else {
-                        indexes.add(enumerable.enumeration);
-                    }
-                }
-            }
-        }
-
-        int start = 1;
-        for (Enumerable enumerable : toBeIndexed) {
-            while (indexes.contains(start)) start++;
-            enumerable.enumeration = start;
-            start++;
-        }
+        var indexes = reindexEnumerable();
 
         List<String> lines = new ArrayList<>();
         for (List<SnippetPart> parts : allParts) {
@@ -143,6 +109,32 @@ public class Snippet {
         if (description != null) object.addProperty("description", description);
 
         return object;
+    }
+
+    private @NotNull Set<Integer> reindexEnumerable() {
+        Set<Integer> indexes = new HashSet<>();
+        List<Enumerable> toBeIndexed = new ArrayList<>();
+
+        for (List<SnippetPart> parts : allParts) {
+            for (SnippetPart part : parts) {
+                if (part instanceof Enumerable enumerable) {
+                    if (enumerable.enumeration == -1) {
+                        toBeIndexed.add(enumerable);
+                    } else {
+                        indexes.add(enumerable.enumeration);
+                    }
+                }
+            }
+        }
+
+        int start = 1;
+        for (Enumerable enumerable : toBeIndexed) {
+            while (indexes.contains(start)) start++;
+            enumerable.enumeration = start;
+            start++;
+        }
+
+        return indexes;
     }
 
     public List<String> getPrefixes() {

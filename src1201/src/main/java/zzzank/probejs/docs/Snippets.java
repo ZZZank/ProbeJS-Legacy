@@ -5,6 +5,7 @@ import zzzank.probejs.features.SpecialData;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.snippet.parts.Variable;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.Arrays;
 
@@ -39,7 +40,7 @@ public class Snippets implements ProbeJSPlugin {
             .literal("\"")
             .tabStop(1, "1")
             .literal("x ")
-            .registry(Registries.ITEM)
+            .choices(RegistryInfos.get(Registries.ITEM).objectIds().map(Object::toString))
             .literal("\"");
     }
 

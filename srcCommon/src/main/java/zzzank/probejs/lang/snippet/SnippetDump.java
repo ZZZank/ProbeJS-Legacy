@@ -3,7 +3,6 @@ package zzzank.probejs.lang.snippet;
 import com.google.gson.JsonObject;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.plugin.ProbeJSPlugins;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,10 +20,6 @@ public class SnippetDump {
         val snippet = new Snippet(name);
         snippets.add(snippet);
         return snippet;
-    }
-
-    public void fromDocs() {
-        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addVSCodeSnippets(this));
     }
 
     public void writeTo(Path path) throws IOException {

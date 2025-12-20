@@ -2,7 +2,9 @@ package zzzank.probejs.utils.registry;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -46,5 +48,9 @@ public final class RegistryInfos {
 
     public Map<ResourceLocation, RegistryInfo> all() {
         return ALL;
+    }
+
+    public RegistryInfo get(ResourceKey<? extends Registry<?>> key) {
+        return ALL.get(key.location());
     }
 }

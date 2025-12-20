@@ -79,7 +79,7 @@ public class ProbeDump {
         report(ProbeText.pjs("dump.start").green());
 
         // Create the snippets
-        snippetDump.fromDocs();
+        ProbeJSPlugins.forEachPlugin(plugin1 -> plugin1.addVSCodeSnippets(snippetDump));
         snippetDump.writeTo(SNIPPET_PATH);
 
         // And schemas

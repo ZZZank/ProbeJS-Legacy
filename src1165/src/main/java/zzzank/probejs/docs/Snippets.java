@@ -1,10 +1,12 @@
 package zzzank.probejs.docs;
 
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.features.SpecialData;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.snippet.parts.Variable;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.Arrays;
 
@@ -39,7 +41,7 @@ public class Snippets implements ProbeJSPlugin {
             .literal("\"")
             .tabStop(1, "1")
             .literal("x ")
-            .registry(Registry.ITEM_REGISTRY)
+            .choices(RegistryInfos.get(Registry.ITEM_REGISTRY).objectIds().map(ResourceLocation::toString))
             .literal("\"");
     }
 

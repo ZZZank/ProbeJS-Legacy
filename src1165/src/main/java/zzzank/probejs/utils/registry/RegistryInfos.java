@@ -1,6 +1,8 @@
 package zzzank.probejs.utils.registry;
 
 import lombok.val;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryManager;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,10 @@ public final class RegistryInfos {
 
     public static Map<ResourceLocation, RegistryInfo> all() {
         return ALL;
+    }
+
+    public static RegistryInfo get(ResourceKey<? extends Registry<?>> key) {
+        return ALL.get(key.location());
     }
 
     public static void refresh() {

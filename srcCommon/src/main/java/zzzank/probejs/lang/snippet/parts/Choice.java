@@ -13,6 +13,6 @@ public class Choice extends Enumerable {
     @Override
     public String format() {
         String choiceString = choices.stream().map(s -> s.replace(",", "\\,")).collect(Collectors.joining(","));
-        return String.format("${%d|%s|}",enumeration, choiceString);
+        return String.format("${%d|%s|}", enumeration, choiceString);
     }
 }
