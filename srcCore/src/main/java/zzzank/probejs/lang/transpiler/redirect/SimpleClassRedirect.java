@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.transpiler.redirect;
 
-import com.google.common.collect.ImmutableSet;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.ClassType;
 import zzzank.probejs.lang.transpiler.TypeConverter;
@@ -22,12 +21,12 @@ public final class SimpleClassRedirect implements TypeRedirect {
     private final Function<ClassType, BaseType> mapper;
 
     public SimpleClassRedirect(Class<?> target, Function<ClassType, BaseType> mapper) {
-        this.targets = ImmutableSet.of(target);
+        this.targets = Set.of(target);
         this.mapper = Objects.requireNonNull(mapper);
     }
 
     public SimpleClassRedirect(Collection<Class<?>> targets, Function<ClassType, BaseType> mapper) {
-        this.targets = ImmutableSet.copyOf(targets);
+        this.targets = Set.copyOf(targets);
         this.mapper = Objects.requireNonNull(mapper);
     }
 

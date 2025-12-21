@@ -1,7 +1,5 @@
 package zzzank.probejs.lang.transpiler.redirect;
 
-import com.google.common.collect.ImmutableSet;
-import lombok.val;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.ClassType;
 import zzzank.probejs.lang.transpiler.TypeConverter;
@@ -22,18 +20,18 @@ public class InheritableClassRedirect implements TypeRedirect {
     private Map.Entry<TypeDescriptor, Class<?>> MATCH_CACHE = null;
 
     public InheritableClassRedirect(Class<?> target, Function<Class<?>, BaseType> mapper) {
-        targets = Collections.singleton(target);
+        targets = Set.of(target);
         this.mapper = Objects.requireNonNull(mapper);
     }
 
     public InheritableClassRedirect(Collection<Class<?>> targets, Function<Class<?>, BaseType> mapper) {
-        this.targets = ImmutableSet.copyOf(targets);
+        this.targets = Set.copyOf(targets);
         this.mapper = mapper;
     }
 
     @Override
     public BaseType apply(TypeDescriptor typeDesc, TypeConverter converter) {
-        val cache = MATCH_CACHE; // only get field once for safe concurrency
+        var cache = MATCH_CACHE; // only get field once for safe concurrency
         if (cache != null && cache.getKey() == typeDesc) {
             return mapper.apply(cache.getValue());
         }
