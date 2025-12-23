@@ -20,6 +20,11 @@ public class FieldInfo extends AnnotationHolder {
         this.attributes = new FieldAttributes(field);
     }
 
+    @Override
+    public String toString() {
+        return String.format("FieldInfo(%s: %s)", name, type);
+    }
+
     public static class FieldAttributes {
         public final boolean isFinal;
         public final boolean isStatic;

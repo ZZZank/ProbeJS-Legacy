@@ -15,7 +15,7 @@ import java.util.Map;
 public class MethodInfo extends TypeVariableHolder {
     public final String name;
     public final List<ParamInfo> params;
-    public TypeDescriptor returnType;
+    public final TypeDescriptor returnType;
     public final MethodAttributes attributes;
 
     public MethodInfo(Method method, String name, Map<VariableType, TypeDescriptor> typeRemapper) {
@@ -23,12 +23,16 @@ public class MethodInfo extends TypeVariableHolder {
         this.attributes = new MethodAttributes(method);
         this.name = name;
         this.params = CollectUtils.mapToList(method.getParameters(), ParamInfo::new);
-        this.returnType = TypeAdapter.getTypeDescription(method.getAnnotatedReturnType());
+        this.returnType = TypeAdapter.getTypeDescription(method.getAnnotatedReturnType()).consolidate(typeRemapper);
 
         for (var param : this.params) {
             param.type = param.type.consolidate(typeRemapper);
         }
-        this.returnType = returnType.consolidate(typeRemapper);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("MethodInfo(%s%s: %s)", name, params, returnType);
     }
 
     public static class MethodAttributes {
