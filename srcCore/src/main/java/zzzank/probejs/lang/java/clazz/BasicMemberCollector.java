@@ -76,15 +76,16 @@ public class BasicMemberCollector implements MemberCollector {
             // declared by super, and no override
             return false;
         }
-        var parent = clazz.getSuperclass();
-        while (parent != null) {
-            try {
+        try {
+            var parent = clazz.getSuperclass();
+            if (parent != null) {
+                // example: this method is `String next()`, while parent method is `CharSequence next()`
+                // or: `T next()`, while parent method is `Object next()`
                 val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
-                // If there is one, return type from "this class" is the same as or the subclass of "super class"
-                return !method.getGenericReturnType().equals(parentMethod.getGenericReturnType());
-            } catch (NoSuchMethodException ignored) {
+                return !Objects.equals(method.getGenericReturnType(), parentMethod.getGenericReturnType());
             }
-            parent = parent.getSuperclass();
+        } catch (NoSuchMethodException ignored) {
+            // fall through
         }
         // no such method in super -> unique method, keep it
         return true;
