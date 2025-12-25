@@ -20,8 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -123,23 +122,15 @@ public class ProbeDump {
         reporters.add(sharedDump);
 
         val index = new AtomicInteger();
-        val executor = new ForkJoinPool(
-            4,
-            pool -> {
-                val thread = new ForkJoinWorkerThread(pool) {
-                };
-                thread.setName("ProbeDumpWorker-" + index.getAndIncrement());
-                return thread;
-            },
-            null,
-            false
+        val executor = Executors.newCachedThreadPool(
+            runnable -> new Thread(runnable, "ProbeDumpWorker-" + index.getAndIncrement())
         );
 
         // monitor
         executor.submit(() -> {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     if (reporters.isEmpty()) {
                         report(ProbeText.pjs("dump.end"));
                         return;
