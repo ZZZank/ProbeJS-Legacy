@@ -12,7 +12,7 @@ import java.util.Collections;
 /**
  * @author ZZZank
  */
-public class TSFilesDump extends TSDumpBase {
+public class TSFilesDump extends TSDumpBase implements TSDump.FolderDump {
     public Collection<TypeScriptFile> files = Collections.emptyList();
 
     public TSFilesDump(Path writeTo) {

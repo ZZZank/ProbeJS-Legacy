@@ -208,7 +208,7 @@ public class ScriptDump extends MultiDump {
         return filesToModify;
     }
 
-    public void writeJSConfig(Path path) throws IOException {
+    public void writeJSConfig(TSDump dump) throws IOException {
         val config = (JsonObject) JsonUtils.parseObject(
             Map.of(
                 "compilerOptions", Map.ofEntries(
@@ -232,7 +232,7 @@ public class ScriptDump extends MultiDump {
                 "include", List.of("./**/*.js")
             )
         );
-        FileUtils.writeMergedConfig(path, config, Predicates.alwaysTrue());
+        FileUtils.writeMergedConfig(dump.writeTo(), config, Predicates.alwaysTrue());
     }
 
     public void dump() throws IOException {

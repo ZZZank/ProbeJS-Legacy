@@ -51,9 +51,9 @@ public class ProbeDump {
         ClassRegistry.REGISTRY.addClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
 
         report(ProbeText.pjs("dump.cleaning"));
-        sharedDump.clearFiles();
+        sharedDump.cleanOldDumps();
         for (ScriptDump scriptDump : scriptDumps) {
-            scriptDump.clearFiles();
+            scriptDump.cleanOldDumps();
             report(ProbeText.pjs("removed_script", scriptDump.scriptType.toString()));
         }
 

@@ -1,6 +1,7 @@
 package zzzank.probejs.api.dump;
 
 import zzzank.probejs.api.output.TSFileWriter;
+import zzzank.probejs.utils.Asser;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,12 +12,20 @@ import java.util.stream.Stream;
  */
 public class CustomDump implements TSDump {
     private final Path path;
-    private final IOAction action;
+    private final DumpAction openAction;
+    private final DumpAction dumpAction;
+    private final DumpAction cleanAction;
     private volatile boolean running = false;
 
-    public CustomDump(Path path, IOAction action) {
-        this.path = path;
-        this.action = action;
+    public CustomDump(Path path, DumpAction openAction, DumpAction dumpAction, DumpAction cleanAction) {
+        this.path = Asser.tNotNull(path, "path");
+        this.openAction = Asser.tNotNull(openAction, "openAction");
+        this.dumpAction = Asser.tNotNull(dumpAction, "dumpAction");
+        this.cleanAction = Asser.tNotNull(cleanAction, "cleanAction");
+    }
+
+    public CustomDump(Path path, DumpAction dumpAction) {
+        this(path, DumpAction.NO_OP, dumpAction, DumpAction.NO_OP);
     }
 
     @Override
@@ -25,13 +34,23 @@ public class CustomDump implements TSDump {
     }
 
     @Override
+    public void open() throws IOException {
+        openAction.run(this);
+    }
+
+    @Override
     public void dump() throws IOException {
         running = true;
         try {
-            action.run(path);
+            dumpAction.run(this);
         } finally {
             running = false;
         }
+    }
+
+    @Override
+    public void cleanOldDumps() throws IOException {
+        this.cleanAction.run(this);
     }
 
     @Override
@@ -44,7 +63,9 @@ public class CustomDump implements TSDump {
         return Stream.empty();
     }
 
-    public interface IOAction {
-        void run(Path target) throws IOException;
+    public interface DumpAction {
+        DumpAction NO_OP = d -> {};
+
+        void run(TSDump dump) throws IOException;
     }
 }

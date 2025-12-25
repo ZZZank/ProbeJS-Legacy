@@ -30,7 +30,7 @@ public abstract class TSDumpBase implements TSDump {
     public void dump() throws IOException {
         running = true;
         try {
-            ensureFolder();
+            open();
             dumpImpl();
         } catch (IOException io) {
             throw io;

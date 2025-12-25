@@ -41,9 +41,23 @@ public class MultiDump implements TSDump {
     }
 
     @Override
+    public void open() throws IOException {
+        for (var dump : dumps) {
+            dump.open();
+        }
+    }
+
+    @Override
     public void dump() throws IOException {
         for (val tsDump : dumps) {
             tsDump.dump();
+        }
+    }
+
+    @Override
+    public void cleanOldDumps() throws IOException {
+        for (var dump : dumps) {
+            dump.cleanOldDumps();
         }
     }
 

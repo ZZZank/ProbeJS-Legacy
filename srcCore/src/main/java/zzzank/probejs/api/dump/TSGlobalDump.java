@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author ZZZank
  */
-public class TSGlobalDump extends TSDumpBase {
+public class TSGlobalDump extends TSDumpBase implements TSDump.FolderDump {
     public final Map<String, TypeScriptFile> globals = new HashMap<>();
 
     public TSGlobalDump(Path writeTo) {
