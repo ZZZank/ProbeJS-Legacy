@@ -1,7 +1,6 @@
 package zzzank.probejs;
 
 import zzzank.probejs.utils.CollectUtils;
-import zzzank.probejs.utils.config.binding.InputIgnoredBinding;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
 import zzzank.probejs.utils.config.serde.gson.GsonSerdeFactory;
 import zzzank.probejs.utils.config.serde.gson.PatternSerde;
@@ -26,17 +25,10 @@ public interface ProbeConfig {
     );
 
     ConfigEntry<Integer> configVersion = INSTANCE.define("configVersion")
-        .bind(name -> new InputIgnoredBinding<>(4, Integer.class, name))
-        .comment(String.format("""
-            welcome to ProbeJS Legacy config file
-            remember to use '/probejs refresh_config' to refresh your config after changing config values
-            sub-entry and keys: comments->'%s', current values->'%s', default values->'%s'
-            
-            comments and default values are provided, but not modifiable, changes to them will not be kept
-            for changing certain config value, change sub-entry whose key is '%s'""",
-            JsonConfigIO.COMMENTS_KEY, JsonConfigIO.VALUE_KEY, JsonConfigIO.DEFAULT_VALUE_KEY,
-            JsonConfigIO.VALUE_KEY
-        ))
+        .bindDefault(4)
+        .comment("""
+            Welcome to ProbeJS Legacy config file
+            Use '/probejs refresh_config' to refresh your config after changing config values""")
         .build();
     ConfigEntry<Boolean> enabled = INSTANCE.define("enabled")
         .bindDefault(true)
