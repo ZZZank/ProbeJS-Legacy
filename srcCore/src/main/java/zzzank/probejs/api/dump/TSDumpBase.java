@@ -44,6 +44,7 @@ public abstract class TSDumpBase implements TSDump {
 
     @Override
     public Stream<TSFileWriter> writers() {
-        return Stream.of(writer);
+        var writer = this.writer;
+        return writer == null ? Stream.empty() : Stream.of(writer);
     }
 }

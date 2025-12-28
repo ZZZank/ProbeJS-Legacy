@@ -100,4 +100,14 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
             .map(NativeJavaClass::getClassObject)
             .collect(Collectors.toSet());
     }
+
+    @Override
+    public void addChildDump(ScriptDump scriptDump) {
+        scriptDump.addChild(scriptDump.filesDump);
+        scriptDump.addChild(scriptDump.globalDump);
+        scriptDump.addChild(scriptDump.jsConfigDump);
+
+        var jsConfigDump = scriptDump.jsConfigDump;
+        jsConfigDump.addTypingProvider(scriptDump.filesDump, scriptDump.globalDump);
+    }
 }

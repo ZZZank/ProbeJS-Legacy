@@ -102,4 +102,7 @@ public interface ProbeJSPlugin {
 
     default void registerClassTransformer(ClassTransformerRegistration registration) {
     }
+
+    default void addChildDump(ScriptDump scriptDump) {
+    }
 }

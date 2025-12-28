@@ -1,9 +1,7 @@
 package zzzank.probejs.lang.typescript;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.gson.JsonObject;
 import dev.latvian.kubejs.KubeJSPaths;
 import dev.latvian.kubejs.script.ScriptManager;
 import dev.latvian.kubejs.script.ScriptType;
@@ -11,6 +9,7 @@ import lombok.val;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import zzzank.probejs.ProbePaths;
 import zzzank.probejs.api.dump.*;
+import zzzank.probejs.dump.JSConfigDump;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -22,15 +21,12 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
-import zzzank.probejs.utils.FileUtils;
-import zzzank.probejs.utils.JsonUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * Controls a dump. A dump is made of a script type, and is responsible for
@@ -77,6 +73,7 @@ public class ScriptDump extends MultiDump {
 
     public final TSFilesDump filesDump;
     public final TSGlobalDump globalDump;
+    public final JSConfigDump jsConfigDump;
 
     public ScriptDump(SharedDump parent, ScriptType type, Path scriptPath, Predicate<Clazz> classFilter) {
         super(ProbePaths.PROBE.resolve(type.name));
@@ -88,9 +85,9 @@ public class ScriptDump extends MultiDump {
         this.scriptPath = scriptPath;
 
         this.accept = classFilter;
-        this.filesDump = addChild("packages", TSFilesDump::new);
-        this.globalDump = addChild("global", TSGlobalDump::new);
-        addChild(new CustomDump(scriptPath.resolve("jsconfig.json"), this::writeJSConfig));
+        this.filesDump = new TSFilesDump(writeTo().resolve("packages"));
+        this.globalDump = new TSGlobalDump(writeTo().resolve("global"));
+        this.jsConfigDump = new JSConfigDump(scriptPath.resolve("jsconfig.json"), scriptPath);
     }
 
     public void acceptClasses(Collection<Clazz> classes) {
@@ -208,35 +205,9 @@ public class ScriptDump extends MultiDump {
         return filesToModify;
     }
 
-    public void writeJSConfig(TSDump dump) throws IOException {
-        val config = (JsonObject) JsonUtils.parseObject(
-            Map.of(
-                "compilerOptions", Map.ofEntries(
-                    Map.entry("module", "commonjs"),
-                    Map.entry("moduleResolution", "classic"),
-                    Map.entry("isolatedModules", true),
-                    Map.entry("composite", true),
-                    Map.entry("incremental", true),
-                    Map.entry("allowJs", true),
-                    Map.entry("target", "ES2015"),
-                    Map.entry("lib", List.of("ES5", "ES2015")),
-                    Map.entry("rootDir", "."),
-                    Map.entry("types", Stream.of(filesDump, globalDump, parent)
-                        .map(TSDumpBase::writeTo)
-                        .map(p -> FileUtils.relativePathStr(scriptPath, p))
-                        .toList()
-                    ),
-                    Map.entry("skipLibCheck", true),
-                    Map.entry("skipDefaultLibCheck", true)
-                ),
-                "include", List.of("./**/*.js")
-            )
-        );
-        FileUtils.writeMergedConfig(dump.writeTo(), config, Predicates.alwaysTrue());
-    }
-
     @Override
     public void dump() throws IOException {
+        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addChildDump(this));
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
         val files = loadClasses();
