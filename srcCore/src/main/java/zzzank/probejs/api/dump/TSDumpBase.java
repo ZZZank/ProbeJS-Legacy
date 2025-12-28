@@ -32,10 +32,6 @@ public abstract class TSDumpBase implements TSDump {
         try {
             open();
             dumpImpl();
-        } catch (IOException io) {
-            throw io;
-        } catch (Exception e) {
-            throw (e instanceof RuntimeException runtime ? runtime : new RuntimeException(e));
         } finally {
             running = false;
         }

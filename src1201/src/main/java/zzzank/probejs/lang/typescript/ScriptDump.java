@@ -235,11 +235,11 @@ public class ScriptDump extends MultiDump {
         FileUtils.writeMergedConfig(dump.writeTo(), config, Predicates.alwaysTrue());
     }
 
+    @Override
     public void dump() throws IOException {
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
-        val files = loadClasses();
-        filesDump.files = files.globalFiles().values();
+        filesDump.files = loadClasses().globalFiles().values();
 
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
 

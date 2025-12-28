@@ -14,12 +14,11 @@ import java.util.stream.Stream;
 /**
  * @author ZZZank
  */
-public class MultiDump implements TSDump {
-    private final Path base;
+public class MultiDump extends TSDumpBase {
     private final List<TSDump> dumps = new ArrayList<>();
 
     public MultiDump(Path base) {
-        this.base = base;
+        super(null, base);
     }
 
     public <T extends TSDump> T addChild(T dump) {
@@ -27,17 +26,16 @@ public class MultiDump implements TSDump {
         return dump;
     }
 
-    public <T extends TSDump> T addChild(String relativePath, Function<Path, T> dump) {
-        return addChild(dump.apply(base.resolve(relativePath)));
+    public <T extends TSDump> T addChild(String relativePath, Function<? super Path, T> dump) {
+        return addChild(dump.apply(writeTo.resolve(relativePath)));
+    }
+
+    public <T extends TSDump> T addChild(Path relativePath, Function<? super Path, T> dump) {
+        return addChild(dump.apply(writeTo.resolve(relativePath)));
     }
 
     public List<TSDump> dumps() {
         return Collections.unmodifiableList(dumps);
-    }
-
-    @Override
-    public Path writeTo() {
-        return base;
     }
 
     @Override
@@ -48,7 +46,7 @@ public class MultiDump implements TSDump {
     }
 
     @Override
-    public void dump() throws IOException {
+    public void dumpImpl() throws IOException {
         for (val tsDump : dumps) {
             tsDump.dump();
         }
@@ -59,11 +57,6 @@ public class MultiDump implements TSDump {
         for (var dump : dumps) {
             dump.cleanOldDumps();
         }
-    }
-
-    @Override
-    public boolean running() {
-        return dumps.stream().anyMatch(TSDump::running);
     }
 
     @Override

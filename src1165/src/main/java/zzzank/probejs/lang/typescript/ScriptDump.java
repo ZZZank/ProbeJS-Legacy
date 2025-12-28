@@ -235,6 +235,7 @@ public class ScriptDump extends MultiDump {
         FileUtils.writeMergedConfig(dump.writeTo(), config, Predicates.alwaysTrue());
     }
 
+    @Override
     public void dump() throws IOException {
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 

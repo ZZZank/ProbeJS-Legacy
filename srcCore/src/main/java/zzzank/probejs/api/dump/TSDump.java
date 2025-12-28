@@ -16,6 +16,7 @@ public interface TSDump {
 
     void cleanOldDumps() throws IOException;
 
+    /// Internal
     void open() throws IOException;
 
     void dump() throws IOException;
