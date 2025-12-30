@@ -37,6 +37,10 @@ public class RequestAwareFiles {
         return got.findCodeNullable(codeType);
     }
 
+    public boolean isRequested(ClassPath path) {
+        return requested.contains(path);
+    }
+
     public void unRequest(ClassPath path) {
         requested.remove(path);
     }
