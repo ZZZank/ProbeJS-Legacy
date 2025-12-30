@@ -48,6 +48,7 @@ public class ClassScanner {
                 }
             })
             .filter(Objects::nonNull)
+            .distinct()
             .map(ModJarClassScanner::scanFile)
             .flatMap(Collection::stream)
             .toList();
