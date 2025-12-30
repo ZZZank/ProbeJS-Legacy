@@ -8,10 +8,8 @@ import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class JsonUtils {
-    private static final Pattern MATCH_TRAILING = Pattern.compile(",(?!\\s*?[{\\[\"'\\w])");
 
     public static JsonArray asStringArray(Collection<String> array) {
         JsonArray jsonArray = new JsonArray();
@@ -33,19 +31,9 @@ public class JsonUtils {
         } else if (obj instanceof Character c) {
             return new JsonPrimitive(c);
         } else if (obj instanceof List<?> list) {
-            val jsonArray = new JsonArray();
-            for (val o : list) {
-                jsonArray.add(parseObject(o));
-            }
-            return jsonArray;
+            return parseObject(list);
         } else if (obj instanceof Map<?, ?> map) {
-            val object = new JsonObject();
-            for (val entry : map.entrySet()) {
-                val key = entry.getKey();
-                val value = entry.getValue();
-                object.add(String.valueOf(key), parseObject(value));
-            }
-            return object;
+            return parseObject(map);
         } else if (obj.getClass().isArray()) {
             val length = Array.getLength(obj);
             val jsonArray = new JsonArray();
@@ -57,45 +45,86 @@ public class JsonUtils {
         return JsonNull.INSTANCE;
     }
 
-    public static Object deserializeObject(JsonElement jsonElement) {
-        if (jsonElement instanceof JsonPrimitive primitive) {
-            return primitive.isBoolean() ? primitive.getAsBoolean()
-                : primitive.isString() ? primitive.getAsString()
-                    : primitive.isNumber() ? primitive.getAsNumber()
-                        : null;
-        } else if (jsonElement instanceof JsonArray array) {
-            val deserialized = new ArrayList<>();
-            for (val element : array) {
-                deserialized.add(deserializeObject(element));
-            }
-            return deserialized;
-        } else if (jsonElement instanceof JsonObject object) {
-            val deserialized = new HashMap<>();
-            for (val entry : object.entrySet()) {
-                val s = entry.getKey();
-                deserialized.put(s, deserializeObject(object.get(s)));
-            }
-            return deserialized;
+    public static JsonArray parseObject(List<?> list) {
+        val jsonArray = new JsonArray();
+        for (val o : list) {
+            jsonArray.add(parseObject(o));
+        }
+        return jsonArray;
+    }
+
+    public static JsonObject parseObject(Map<?, ?> map) {
+        val object = new JsonObject();
+        for (val entry : map.entrySet()) {
+            val key = entry.getKey();
+            val value = entry.getValue();
+            object.add(String.valueOf(key), parseObject(value));
+        }
+        return object;
+    }
+
+    public static Object deserializeObject(JsonElement json) {
+        if (json.isJsonPrimitive()) {
+            return deserializeObject(json.getAsJsonPrimitive());
+        } else if (json.isJsonArray()) {
+            return deserializeObject(json.getAsJsonArray());
+        } else if (json.isJsonObject()) {
+            return deserializeObject(json.getAsJsonObject());
         }
 
         return null;
     }
 
-    public static <T extends JsonElement> T deepCopy(T elem) {
-        if (elem.isJsonObject()) {
-            val result = new JsonObject();
-            for (val entry : elem.getAsJsonObject().entrySet()) {
-                result.add(entry.getKey(), deepCopy(entry.getValue()));
-            }
-            return (T) result;
-        } else if (elem.isJsonArray()) {
-            val result = new JsonArray();
-            for (val element : elem.getAsJsonArray()) {
-                result.add(deepCopy(element));
-            }
-            return (T) result;
+    public static Object deserializeObject(JsonPrimitive json) {
+        if (json.isBoolean()) {
+            return json.getAsBoolean();
+        } else if (json.isString()) {
+            return json.getAsString();
+        } else if (json.isNumber()) {
+            return json.getAsNumber();
         }
-        return elem;
+        return null;
+    }
+
+    public static List<Object> deserializeObject(JsonArray json) {
+        val deserialized = new ArrayList<>(json.size());
+        for (val element : json) {
+            deserialized.add(deserializeObject(element));
+        }
+        return deserialized;
+    }
+
+    public static Map<String, Object> deserializeObject(JsonObject json) {
+        val deserialized = new HashMap<String, Object>(json.size());
+        for (val entry : json.entrySet()) {
+            deserialized.put(entry.getKey(), deserializeObject(entry.getValue()));
+        }
+        return deserialized;
+    }
+
+    public static <T extends JsonElement> T deepCopy(T json) {
+        if (json.isJsonObject()) {
+            return (T) deepCopy(json.getAsJsonObject());
+        } else if (json.isJsonArray()) {
+            return (T) deepCopy(json.getAsJsonArray());
+        }
+        return json;
+    }
+
+    public static JsonObject deepCopy(JsonObject json) {
+        val result = new JsonObject();
+        for (val entry : json.entrySet()) {
+            result.add(entry.getKey(), deepCopy(entry.getValue()));
+        }
+        return result;
+    }
+
+    public static JsonArray deepCopy(JsonArray json) {
+        val result = new JsonArray(json.size());
+        for (val element : json) {
+            result.add(element);
+        }
+        return result;
     }
 
     public static JsonElement mergeJsonRecursively(JsonElement base, JsonElement toMerge) {

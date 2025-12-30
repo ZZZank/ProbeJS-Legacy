@@ -1,6 +1,5 @@
 package zzzank.probejs;
 
-import com.google.gson.JsonObject;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.api.dump.TSDump;
@@ -193,7 +192,7 @@ public class ProbeDump {
     }
 
     private void writeVSCodeConfig() throws IOException {
-        val config = (JsonObject) JsonUtils.parseObject(Map.of(
+        val config = JsonUtils.parseObject(Map.of(
             "json.schemas", List.of(
                 Map.of(
                     "fileMatch", List.of("/recipe_schemas/*.json"),
