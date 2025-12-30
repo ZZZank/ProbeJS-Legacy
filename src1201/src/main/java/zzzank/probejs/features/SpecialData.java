@@ -32,7 +32,7 @@ public class SpecialData {
 
     public static final Supplier<Set<String>> RAW_TEXTURES = () ->
         ((AccessTextureManager) Minecraft.getInstance().getTextureManager())
-            .byPath()
+            .getByPath()
             .keySet()
             .stream()
             .map(ResourceLocation::toString)
@@ -40,7 +40,7 @@ public class SpecialData {
 
     public static final Supplier<Set<String>> TEXTURES = () ->
         ((AccessTextureAtlas) Minecraft.getInstance().getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS))
-            .texturesByName()
+            .getTexturesByName()
             .keySet()
             .stream()
             .map(ResourceLocation::toString)
