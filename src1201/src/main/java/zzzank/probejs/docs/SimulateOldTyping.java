@@ -24,10 +24,6 @@ public class SimulateOldTyping implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        if (!ProbeConfig.simulateOldTyping.get()) {
-            return;
-        }
-
         val transpiler = scriptDump.transpiler;
         val namespace = new Wrapped.Namespace("Internal");
 

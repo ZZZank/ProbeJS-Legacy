@@ -165,17 +165,8 @@ public class ScriptDump extends MultiDump {
                 entry.setValue(output);
             }
 
-            // Add all assignable types
-            // type ExportedType = ConvertibleTypes
-            // declare global {
-            //     type Type_ = ExportedType
-            // }
-            val globalSymbol = classPath.getSimpleName() + "_";
             val exportedSymbol = ImportType.TYPE.fmt(classPath.getSimpleName());
 
-            val exportedType = Types.type(classPath)
-                .withPossibleParams(classDecl.variableTypes)
-                .contextShield(BaseType.FormatType.INPUT);
             val thisType = Types.type(classPath)
                 .withPossibleParams(classDecl.variableTypes)
                 .contextShield(BaseType.FormatType.RETURN);
@@ -191,15 +182,11 @@ public class ScriptDump extends MultiDump {
                 }
             }
 
+            // type SomeType$$Type = SomeType | SomeConvertibles | ... ;
             val typeConvertible = new TypeDecl(exportedSymbol, classDecl.variableTypes, Types.or(allTypes));
             typeConvertible.addComment("""
-                Class-specific type exported by ProbeJS, use global `{Type}_` types for convenience unless there's a naming conflict.""");
-            val typeGlobal = new Wrapped.Global();
-            typeGlobal.addCode(new TypeDecl(globalSymbol, classDecl.variableTypes, exportedType));
-            typeGlobal.addComment("""
-                Global type exported for convenience, use class-specific types if there's a naming conflict.""");
+                Use `Internal.{Type}` and `Internal.{Type}_` for referencing this type in JS file""");
             output.addCode(typeConvertible);
-            output.addCode(typeGlobal);
         }
 
         return filesToModify;

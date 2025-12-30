@@ -96,11 +96,6 @@ public interface ProbeConfig {
         .comment("""
             automatically rename `arg123`-like names into some more human readable names""")
         .buildAutoSave();
-    ConfigEntry<Boolean> simulateOldTyping = INSTANCE.define("Simulate Old Typing")
-        .bindDefault(true)
-        .comment("""
-            Generate `Internal` namespace to simulate old typing structure before ProbeJS Legacy 4""")
-        .buildAutoSave();
     ConfigEntry<Boolean> fieldAsBeaning = INSTANCE.define("Field As Beaning")
         .bindDefault(true)
         .comment("""
