@@ -1,7 +1,6 @@
 package zzzank.probejs.utils;
 
 import lombok.val;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -120,5 +119,13 @@ public interface CollectUtils {
             }
         }
         return common;
+    }
+
+    static <K, E> Function<K, ArrayList<E>> computeArrayList() {
+        return k -> new ArrayList<>();
+    }
+
+    static <K, E> Function<K, ArrayList<E>> computeArrayList3() {
+        return k -> new ArrayList<>(3);
     }
 }

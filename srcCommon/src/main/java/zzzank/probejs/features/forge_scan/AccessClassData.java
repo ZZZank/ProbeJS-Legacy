@@ -4,8 +4,6 @@ import lombok.val;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.utils.GameUtils;
-import zzzank.probejs.utils.ShouldNotHappenException;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -22,20 +20,20 @@ public class AccessClassData {
 
     static {
         val lookup = MethodHandles.lookup();
-        val c = ModFileScanData.ClassData.class;
         try {
-            var f = c.getDeclaredField("clazz");
+            var f = ModFileScanData.ClassData.class.getDeclaredField("clazz");
             f.setAccessible(true);
             accessClazz = lookup.unreflectGetter(f);
-            f = c.getDeclaredField("parent");
+
+            f = ModFileScanData.ClassData.class.getDeclaredField("parent");
             f.setAccessible(true);
             accessParent = lookup.unreflectGetter(f);
-            f = c.getDeclaredField("interfaces");
+
+            f = ModFileScanData.ClassData.class.getDeclaredField("interfaces");
             f.setAccessible(true);
             accessInterfaces = lookup.unreflectGetter(f);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            ProbeJS.LOGGER.error("accessing '{}' failed", ModFileScanData.ClassData.class);
-            GameUtils.logThrowable(e);
+            ProbeJS.LOGGER.error("accessing '{}' failed", ModFileScanData.ClassData.class, e);
             throw new IllegalStateException();
         }
     }
@@ -46,12 +44,11 @@ public class AccessClassData {
         this.raw = raw;
     }
 
-    //    @SneakyThrows
     public Type clazz() {
         try {
             return (Type) accessClazz.invoke(raw);
         } catch (Throwable e) {
-            throw new ShouldNotHappenException(e);
+            throw new AssertionError(e);
         }
     }
 
@@ -63,7 +60,7 @@ public class AccessClassData {
         try {
             return (Type) accessParent.invoke(raw);
         } catch (Throwable e) {
-            throw new ShouldNotHappenException(e);
+            throw new AssertionError(e);
         }
     }
 
@@ -76,7 +73,7 @@ public class AccessClassData {
         try {
             return (Set<Type>) accessInterfaces.invoke(raw);
         } catch (Throwable e) {
-            throw new ShouldNotHappenException(e);
+            throw new AssertionError(e);
         }
     }
 }

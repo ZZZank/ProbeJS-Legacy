@@ -1,6 +1,7 @@
 package zzzank.probejs;
 
 import me.shedaniel.architectury.platform.forge.EventBuses;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import zzzank.probejs.features.forge_scan.BuiltinScanners;
@@ -24,6 +25,8 @@ public class ProbeJSMod {
 
     public ProbeJSMod() {
         EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+
+        BuiltinScanners.PREDEFINED_BASECLASS.add(Event.class.getName());
 
         ((ConfigRootImpl) ProbeConfig.INSTANCE).setFilePath(ProbePaths.SETTINGS_JSON);
         try {

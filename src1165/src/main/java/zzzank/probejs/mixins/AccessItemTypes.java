@@ -4,7 +4,6 @@ import dev.latvian.kubejs.item.custom.ItemType;
 import dev.latvian.kubejs.item.custom.ItemTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-import zzzank.probejs.utils.ShouldNotHappenException;
 
 import java.util.Map;
 
@@ -16,6 +15,6 @@ public interface AccessItemTypes {
 
     @Accessor
     static Map<String, ItemType> getMAP() {
-        throw new ShouldNotHappenException("mixin method called");
+        throw new AssertionError("raw mixin method called");
     }
 }
