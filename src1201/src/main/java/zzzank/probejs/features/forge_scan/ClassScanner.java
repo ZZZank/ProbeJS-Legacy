@@ -49,7 +49,7 @@ public class ClassScanner {
             })
             .filter(Objects::nonNull)
             .distinct()
-            .map(ModJarClassScanner::scanFile)
+            .map(ModJarClassScanner::scanJar)
             .flatMap(Collection::stream)
             .toList();
     }

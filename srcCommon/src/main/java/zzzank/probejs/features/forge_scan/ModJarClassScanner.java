@@ -1,7 +1,6 @@
 package zzzank.probejs.features.forge_scan;
 
 import com.google.gson.JsonObject;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.ProbeJS;
@@ -21,10 +20,10 @@ import java.util.zip.ZipEntry;
  */
 class ModJarClassScanner {
 
-    public static Set<Class<?>> scanFile(File file) {
-        try (val jarFile = new JarFile(file)) {
-            val modClassesScanner = new ModJarClassScanner(jarFile);
-            val scanned = modClassesScanner.scanClasses();
+    public static Set<Class<?>> scanJar(File file) {
+        try (var jarFile = new JarFile(file)) {
+            var modClassesScanner = new ModJarClassScanner(jarFile);
+            var scanned = modClassesScanner.scanClasses();
             ProbeJS.LOGGER.info("scanned file '{}', contained class count: {}", file.getName(), scanned.size());
             return scanned;
         } catch (Exception e) {
