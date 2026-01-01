@@ -9,6 +9,7 @@ import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
+import zzzank.probejs.lang.typescript.ScriptTypeVisibleDump;
 import zzzank.probejs.lang.typescript.SharedDump;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.*;
@@ -123,39 +124,6 @@ public class ProbeDump {
             runnable -> new Thread(runnable, "ProbeDumpWorker-" + index.getAndIncrement())
         );
 
-        // per script
-        val scriptDumpFutures = scriptDumps.stream()
-            .map(dump -> (Runnable) () -> {
-                dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
-                try {
-                    dump.dump();
-                    report(ProbeText.pjs("dump.dump_finished", dump.scriptType).green());
-                } catch (Throwable e) {
-                    val error = ProbeText.pjs("dump.dump_error", dump.scriptType).red();
-                    report(error);
-                    ProbeJS.LOGGER.error(error.unwrap().getString(), e);
-                } finally {
-                    reporters.remove(dump);
-                }
-            })
-            .map(r -> CompletableFuture.runAsync(r, executor))
-            .toArray(CompletableFuture[]::new);
-
-        // shared
-        CompletableFuture.allOf(scriptDumpFutures)
-            .thenRunAsync(() -> {
-                try {
-                    sharedDump.dump();
-                    report(ProbeText.pjs("dump.dump_finished", "SHARED").green());
-                } catch (Throwable e) {
-                    val error = ProbeText.pjs("dump.dump_error", "SHARED").red();
-                    report(error);
-                    ProbeJS.LOGGER.error(error.unwrap().getString(), e);
-                } finally {
-                    reporters.remove(sharedDump);
-                }
-            }, executor);
-
         // monitor
         executor.submit(() -> {
             while (true) {
@@ -170,6 +138,7 @@ public class ProbeDump {
                         })
                         .collect(Collectors.joining(", "));
                     if (dumpProgress.isEmpty()) {
+                        report(ProbeText.pjs("dump.end"));
                         return;
                     }
                     report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
@@ -179,7 +148,30 @@ public class ProbeDump {
             }
         });
 
+        // per script
+        val scriptDumpFutures = scriptDumps.stream()
+            .map(d -> CompletableFuture.runAsync(createDumpAction(d), executor))
+            .toArray(CompletableFuture[]::new);
+
+        // shared
+        CompletableFuture.allOf(scriptDumpFutures)
+            .thenRunAsync(createDumpAction(sharedDump), executor);
+
         executor.shutdown();
+    }
+
+    private Runnable createDumpAction(ScriptTypeVisibleDump dump) {
+        return () -> {
+            try {
+                dump.open();
+                dump.dump();
+                report(ProbeText.pjs("dump.dump_finished", dump.scriptTypeString()).green());
+            } catch (Throwable e) {
+                val error = ProbeText.pjs("dump.dump_error", dump.scriptTypeString()).red();
+                report(error);
+                ProbeJS.LOGGER.error(error.unwrap().getString(), e);
+            }
+        };
     }
 
     private void writeVSCodeConfig() throws IOException {

@@ -10,6 +10,7 @@ import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
+import zzzank.probejs.lang.typescript.ScriptTypeVisibleDump;
 import zzzank.probejs.lang.typescript.SharedDump;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.*;
@@ -130,10 +131,6 @@ public class ProbeDump {
             while (true) {
                 try {
                     Thread.sleep(2000);
-                    if (reporters.isEmpty()) {
-                        report(ProbeText.pjs("dump.end"));
-                        return;
-                    }
                     val dumpProgress = reporters.stream()
                         .map(dump -> {
                             val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
@@ -141,6 +138,10 @@ public class ProbeDump {
                             return written + "/" + total;
                         })
                         .collect(Collectors.joining(", "));
+                    if (dumpProgress.isEmpty()) {
+                        report(ProbeText.pjs("dump.end"));
+                        return;
+                    }
                     report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -150,44 +151,28 @@ public class ProbeDump {
 
         // per script
         val scriptDumpFutures = scriptDumps.stream()
-            .map(this::createDumpAction)
-            .map(r -> CompletableFuture.supplyAsync(r, executor))
-            .map(r -> r.thenAccept(reporters::remove))
+            .map(d -> CompletableFuture.runAsync(createDumpAction(d), executor))
             .toArray(CompletableFuture[]::new);
 
         // shared
         CompletableFuture.allOf(scriptDumpFutures)
-            .thenRunAsync(
-                () -> {
-                    try {
-                        sharedDump.dump();
-                        report(ProbeText.pjs("dump.dump_finished", "SHARED").green());
-                    } catch (Throwable e) {
-                        val error = ProbeText.pjs("dump.dump_error", "SHARED").red();
-                        report(error);
-                        ProbeJS.LOGGER.error(error.unwrap().getString(), e);
-                    } finally {
-                        reporters.remove(sharedDump);
-                    }
-                }, executor
-            )
+            .thenRunAsync(createDumpAction(sharedDump), executor)
             .join();
 
         executor.shutdown();
     }
 
-    private Supplier<ScriptDump> createDumpAction(ScriptDump dump) {
+    private Runnable createDumpAction(ScriptTypeVisibleDump dump) {
         return () -> {
-            dump.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
             try {
+                dump.open();
                 dump.dump();
-                report(ProbeText.pjs("dump.dump_finished", dump.manager.type).green());
+                report(ProbeText.pjs("dump.dump_finished", dump.scriptTypeString()).green());
             } catch (Throwable e) {
-                val error = ProbeText.pjs("dump.dump_error", dump.manager.type).red();
+                val error = ProbeText.pjs("dump.dump_error", dump.scriptTypeString()).red();
                 report(error);
                 ProbeJS.LOGGER.error(error.unwrap().getString(), e);
             }
-            return dump;
         };
     }
 

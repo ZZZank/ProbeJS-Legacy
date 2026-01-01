@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * @author ZZZank
  */
-public class SharedDump extends TSFilesDump {
+public class SharedDump extends TSFilesDump implements ScriptTypeVisibleDump {
     public final Transpiler transpiler;
     public final Set<ClassPath> denied = new HashSet<>();
 
@@ -23,12 +23,17 @@ public class SharedDump extends TSFilesDump {
     }
 
     @Override
-    protected void dumpImpl() throws IOException {
+    public String scriptTypeString() {
+        return "SHARED";
+    }
+
+    @Override
+    public void open() throws IOException {
         this.files = transpiler.dump(ClassRegistry.REGISTRY.getFoundClasses())
             .values()
             .stream()
             .filter(f -> !denied.contains(f.path))
             .toList();
-        super.dumpImpl();
+        super.open();
     }
 }

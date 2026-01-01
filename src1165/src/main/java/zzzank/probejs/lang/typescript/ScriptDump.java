@@ -9,6 +9,7 @@ import lombok.val;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import zzzank.probejs.ProbePaths;
 import zzzank.probejs.api.dump.*;
+import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -31,7 +32,7 @@ import java.util.function.Predicate;
  * Controls a dump. A dump is made of a script type, and is responsible for
  * maintaining the file structures
  */
-public class ScriptDump extends MultiDump {
+public class ScriptDump extends MultiDump implements ScriptTypeVisibleDump {
     public static final Function<SharedDump, ScriptDump> SERVER_DUMP = (codeDump) -> new ScriptDump(
         codeDump,
         ScriptType.SERVER,
@@ -192,15 +193,22 @@ public class ScriptDump extends MultiDump {
     }
 
     @Override
-    public void dump() throws IOException {
-        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addChildDump(this));
+    public String scriptTypeString() {
+        return this.manager.type.toString();
+    }
+
+    @Override
+    public void open() throws IOException {
+        // prepare data for this dump
+        this.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
-        val files = loadClasses();
-        filesDump.files = files.globalFiles().values();
+        ProbeJSPlugins.forEachPlugin(plugin -> plugin.addChildDump(this));
 
+        // prepare data for child dumps
+        filesDump.files = loadClasses().globalFiles().values();
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addGlobals(this));
 
-        super.dump();
+        super.open();
     }
 }
