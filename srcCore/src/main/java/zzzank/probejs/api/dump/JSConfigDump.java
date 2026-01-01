@@ -7,6 +7,7 @@ import zzzank.probejs.utils.JsonUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author ZZZank
@@ -14,10 +15,18 @@ import java.util.*;
 public class JSConfigDump extends TSDumpBase {
     private final List<TSDump> typingProviders = new ArrayList<>();
     public final Path scriptFolder;
+    public final Predicate<JsonObject> replaceIf;
+
+    public JSConfigDump(Path writeTo, Path scriptFolder, Predicate<JsonObject> replaceIf) {
+        super(null, writeTo);
+        this.scriptFolder = scriptFolder;
+        this.replaceIf = replaceIf;
+    }
 
     public JSConfigDump(Path writeTo, Path scriptFolder) {
         super(null, writeTo);
         this.scriptFolder = scriptFolder;
+        this.replaceIf = json -> true;
     }
 
     public void addTypingProvider(TSDump... dumps) {
@@ -31,7 +40,7 @@ public class JSConfigDump extends TSDumpBase {
     @Override
     protected void dumpImpl() throws IOException {
         var config = provideJsonConfig();
-        FileUtils.writeMergedConfig(writeTo(), config, j -> true);
+        FileUtils.writeMergedConfig(writeTo(), config, replaceIf);
     }
 
     protected JsonObject provideJsonConfig() {

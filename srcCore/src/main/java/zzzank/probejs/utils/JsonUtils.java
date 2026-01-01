@@ -127,39 +127,47 @@ public class JsonUtils {
         return result;
     }
 
-    public static JsonElement mergeJsonRecursively(JsonElement base, JsonElement toMerge) {
-        if (base instanceof JsonObject firstObject && toMerge instanceof JsonObject secondObject) {
-            val result = deepCopy(firstObject);
-            for (val entry : secondObject.entrySet()) {
-                val key = entry.getKey();
-                val value = entry.getValue();
-                if (result.has(key)) {
-                    result.add(key, mergeJsonRecursively(result.get(key), value));
-                } else {
-                    result.add(key, value);
-                }
+    public static JsonObject mergeJsonRecursively(JsonObject base, JsonObject toMerge) {
+        val result = deepCopy(base);
+        for (val entry : toMerge.entrySet()) {
+            val key = entry.getKey();
+            val value = entry.getValue();
+            if (result.has(key)) {
+                result.add(key, mergeJsonRecursively(result.get(key), value));
+            } else {
+                result.add(key, value);
             }
-            return result;
+        }
+        return result;
+    }
+
+    public static JsonArray mergeJsonRecursively(JsonArray base, JsonArray toMerge) {
+        val elements = new ArrayList<JsonElement>();
+        for (val element : base) {
+            elements.add(deepCopy(element));
+        }
+        for (val element : toMerge) {
+            int index = elements.indexOf(element);
+            if (index == -1) {
+                elements.add(element);
+            } else {
+                elements.set(index, mergeJsonRecursively(elements.get(index), element));
+            }
+        }
+        val result = new JsonArray();
+        for (val element : elements) {
+            result.add(element);
+        }
+        return result;
+    }
+
+    public static JsonElement mergeJsonRecursively(JsonElement base, JsonElement toMerge) {
+        if (base.isJsonObject() && toMerge.isJsonObject()) {
+            return mergeJsonRecursively(base.getAsJsonObject(), base.getAsJsonObject());
         }
 
-        if (base instanceof JsonArray firstArray && toMerge instanceof JsonArray secondArray) {
-            val elements = new ArrayList<JsonElement>();
-            for (val element : firstArray) {
-                elements.add(deepCopy(element));
-            }
-            for (val element : secondArray) {
-                int index = elements.indexOf(element);
-                if (index == -1) {
-                    elements.add(element);
-                } else {
-                    elements.set(index, mergeJsonRecursively(elements.get(index), element));
-                }
-            }
-            val result = new JsonArray();
-            for (val element : elements) {
-                result.add(element);
-            }
-            return result;
+        if (base.isJsonArray() && toMerge.isJsonArray()) {
+            return mergeJsonRecursively(base.getAsJsonArray(), toMerge.getAsJsonArray());
         }
 
         return toMerge;
