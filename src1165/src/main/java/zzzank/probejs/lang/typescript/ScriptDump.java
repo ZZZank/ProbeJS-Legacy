@@ -9,7 +9,6 @@ import lombok.val;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import zzzank.probejs.ProbePaths;
 import zzzank.probejs.api.dump.*;
-import zzzank.probejs.dump.JSConfigDump;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.Transpiler;

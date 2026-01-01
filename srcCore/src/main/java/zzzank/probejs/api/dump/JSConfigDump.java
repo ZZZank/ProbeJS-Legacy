@@ -1,7 +1,6 @@
-package zzzank.probejs.dump;
+package zzzank.probejs.api.dump;
 
-import zzzank.probejs.api.dump.TSDump;
-import zzzank.probejs.api.dump.TSDumpBase;
+import com.google.gson.JsonObject;
 import zzzank.probejs.utils.FileUtils;
 import zzzank.probejs.utils.JsonUtils;
 
@@ -31,7 +30,12 @@ public class JSConfigDump extends TSDumpBase {
 
     @Override
     protected void dumpImpl() throws IOException {
-        var config = JsonUtils.parseObject(
+        var config = provideJsonConfig();
+        FileUtils.writeMergedConfig(writeTo(), config, j -> true);
+    }
+
+    protected JsonObject provideJsonConfig() {
+        return JsonUtils.parseObject(
             Map.of(
                 "compilerOptions", Map.ofEntries(
                     Map.entry("module", "commonjs"),
@@ -54,7 +58,6 @@ public class JSConfigDump extends TSDumpBase {
                 "include", List.of("./**/*.js")
             )
         );
-        FileUtils.writeMergedConfig(writeTo(), config, j -> true);
     }
 
     @Override
