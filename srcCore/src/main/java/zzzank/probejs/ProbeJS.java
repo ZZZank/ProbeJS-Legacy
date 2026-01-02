@@ -18,7 +18,6 @@ public class ProbeJS {
         .serializeSpecialFloatingPointValues()
         .setLenient()
         .disableHtmlEscaping()
-        .registerTypeHierarchyAdapter(Path.class, JsonUtils.PathConverter.INSTANCE)
         .create();
     public static final Gson GSON_WRITER = new GsonBuilder()
         .setPrettyPrinting()

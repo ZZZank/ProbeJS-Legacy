@@ -4,9 +4,6 @@ import com.google.gson.*;
 import lombok.val;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class JsonUtils {
@@ -120,7 +117,7 @@ public class JsonUtils {
     }
 
     public static JsonArray deepCopy(JsonArray json) {
-        val result = new JsonArray(json.size());
+        val result = new JsonArray();
         for (val element : json) {
             result.add(element);
         }
@@ -171,32 +168,5 @@ public class JsonUtils {
         }
 
         return toMerge;
-    }
-
-    public enum PathConverter implements JsonDeserializer<Path>, JsonSerializer<Path> {
-        INSTANCE;
-
-        @Override
-        public Path deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return Paths.get(json.getAsString());
-        }
-
-        @Override
-        public JsonElement serialize(Path src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(src.toString());
-        }
-    }
-
-    public static JsonElement errorAsPayload(Throwable throwable) {
-        JsonObject object = new JsonObject();
-
-        object.addProperty("message", throwable.getMessage());
-        JsonArray jsonArray = new JsonArray();
-        for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
-            jsonArray.add(stackTraceElement.toString());
-        }
-        object.add("stackTrace", jsonArray);
-
-        return object;
     }
 }
