@@ -51,6 +51,7 @@ public class ProbeDump {
 
         report(ProbeText.pjs("dump.cleaning"));
         sharedDump.cleanOldDumps();
+        report(ProbeText.pjs("removed_script", sharedDump.pjsDumpName()));
         for (ScriptDump scriptDump : scriptDumps) {
             scriptDump.cleanOldDumps();
             report(ProbeText.pjs("removed_script", scriptDump.pjsDumpName()));
