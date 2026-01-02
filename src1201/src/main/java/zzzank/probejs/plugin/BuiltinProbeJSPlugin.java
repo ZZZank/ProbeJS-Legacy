@@ -108,6 +108,6 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
         scriptDump.addChild(scriptDump.jsConfigDump);
 
         var jsConfigDump = scriptDump.jsConfigDump;
-        jsConfigDump.addTypingProvider(scriptDump.filesDump, scriptDump.globalDump);
+        jsConfigDump.addTypingProvider(scriptDump.filesDump, scriptDump.globalDump, scriptDump.parent);
     }
 }
