@@ -69,7 +69,7 @@ public class ProbeDump {
 
     }
 
-    private void report(ProbeText text) {
+    private synchronized void report(ProbeText text) {
         messageSender.accept(text);
     }
 
@@ -116,7 +116,7 @@ public class ProbeDump {
         ClassRegistry.REGISTRY.writeTo(CLASS_CACHE);
         report(ProbeText.pjs("dump.class_discovered", ClassRegistry.REGISTRY.foundClasses.size()));
 
-        val reporters = Collections.synchronizedList(new ArrayList<TSDump>());
+        val reporters = Collections.synchronizedList(new ArrayList<ProbeNamedDump>());
         reporters.addAll(scriptDumps);
         reporters.add(sharedDump);
 
@@ -126,28 +126,26 @@ public class ProbeDump {
         );
 
         // monitor
-        executor.submit(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(2000);
-                    val dumpProgress = reporters.stream()
-                        .filter(TSDump::running)
-                        .map(dump -> {
-                            val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
-                            val total = dump.writers().mapToInt(TSFileWriter::countAcceptedFiles).sum();
-                            return written + "/" + total;
-                        })
-                        .collect(Collectors.joining(", "));
-                    if (dumpProgress.isEmpty()) {
-                        report(ProbeText.pjs("dump.end"));
-                        return;
-                    }
-                    report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+        var timer = new Timer("ProbeDumpWatcher", true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                val dumpProgress = reporters.stream()
+                    .filter(TSDump::running)
+                    .map(dump -> {
+                        val written = dump.writers().mapToInt(TSFileWriter::countWrittenFiles).sum();
+                        val total = dump.writers().mapToInt(TSFileWriter::countAcceptedFiles).sum();
+                        return String.format("%s[%d/%d]", dump.pjsDumpName(), written, total);
+                    })
+                    .collect(Collectors.joining(", "));
+                if (dumpProgress.isEmpty()) {
+                    report(ProbeText.pjs("dump.end"));
+                    this.cancel();
+                    return;
                 }
+                report(ProbeText.pjs("dump.report_progress").append(ProbeText.literal(dumpProgress).blue()));
             }
-        });
+        }, 2000);
 
         // per script
         val scriptDumpFutures = scriptDumps.stream()
@@ -156,9 +154,11 @@ public class ProbeDump {
 
         // shared
         CompletableFuture.allOf(scriptDumpFutures)
-            .thenRunAsync(createDumpAction(sharedDump), executor);
+            .thenRunAsync(createDumpAction(sharedDump), executor)
+            .join();
 
         executor.shutdown();
+        timer.cancel();
     }
 
     private Runnable createDumpAction(ProbeNamedDump dump) {
