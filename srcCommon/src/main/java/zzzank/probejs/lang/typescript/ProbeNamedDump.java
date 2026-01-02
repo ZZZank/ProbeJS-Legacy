@@ -5,7 +5,7 @@ import zzzank.probejs.api.dump.TSDump;
 /**
  * @author ZZZank
  */
-public interface ScriptTypeVisibleDump extends TSDump {
+public interface ProbeNamedDump extends TSDump {
 
-    String scriptTypeString();
+    String pjsDumpName();
 }

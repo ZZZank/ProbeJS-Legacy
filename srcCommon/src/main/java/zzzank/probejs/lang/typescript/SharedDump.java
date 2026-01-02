@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * @author ZZZank
  */
-public class SharedDump extends TSFilesDump implements ScriptTypeVisibleDump {
+public class SharedDump extends TSFilesDump implements ProbeNamedDump {
     public final Transpiler transpiler;
     public final Set<ClassPath> denied = new HashSet<>();
 
@@ -23,7 +23,7 @@ public class SharedDump extends TSFilesDump implements ScriptTypeVisibleDump {
     }
 
     @Override
-    public String scriptTypeString() {
+    public String pjsDumpName() {
         return "SHARED";
     }
 

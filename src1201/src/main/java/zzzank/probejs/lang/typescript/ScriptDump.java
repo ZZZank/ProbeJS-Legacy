@@ -32,7 +32,7 @@ import java.util.function.Predicate;
  * Controls a dump. A dump is made of a script type, and is responsible for
  * maintaining the file structures
  */
-public class ScriptDump extends MultiDump implements ScriptTypeVisibleDump {
+public class ScriptDump extends MultiDump implements ProbeNamedDump {
     public static final Function<SharedDump, ScriptDump> SERVER_DUMP = (codeDump) -> new ScriptDump(
         codeDump,
         ScriptType.SERVER,
@@ -193,7 +193,7 @@ public class ScriptDump extends MultiDump implements ScriptTypeVisibleDump {
     }
 
     @Override
-    public String scriptTypeString() {
+    public String pjsDumpName() {
         return this.manager.scriptType.toString();
     }
 

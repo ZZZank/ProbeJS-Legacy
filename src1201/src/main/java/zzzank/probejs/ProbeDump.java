@@ -9,7 +9,7 @@ import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.ScriptTypeVisibleDump;
+import zzzank.probejs.lang.typescript.ProbeNamedDump;
 import zzzank.probejs.lang.typescript.SharedDump;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 import zzzank.probejs.utils.*;
@@ -53,7 +53,7 @@ public class ProbeDump {
         sharedDump.cleanOldDumps();
         for (ScriptDump scriptDump : scriptDumps) {
             scriptDump.cleanOldDumps();
-            report(ProbeText.pjs("removed_script", scriptDump.scriptType.toString()));
+            report(ProbeText.pjs("removed_script", scriptDump.pjsDumpName()));
         }
 
 //        SchemaDownloader downloader = new SchemaDownloader();
@@ -160,14 +160,14 @@ public class ProbeDump {
         executor.shutdown();
     }
 
-    private Runnable createDumpAction(ScriptTypeVisibleDump dump) {
+    private Runnable createDumpAction(ProbeNamedDump dump) {
         return () -> {
             try {
                 dump.open();
                 dump.dump();
-                report(ProbeText.pjs("dump.dump_finished", dump.scriptTypeString()).green());
+                report(ProbeText.pjs("dump.dump_finished", dump.pjsDumpName()).green());
             } catch (Throwable e) {
-                val error = ProbeText.pjs("dump.dump_error", dump.scriptTypeString()).red();
+                val error = ProbeText.pjs("dump.dump_error", dump.pjsDumpName()).red();
                 report(error);
                 ProbeJS.LOGGER.error(error.unwrap().getString(), e);
             }
