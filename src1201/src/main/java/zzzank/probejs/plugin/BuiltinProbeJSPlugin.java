@@ -1,6 +1,8 @@
 package zzzank.probejs.plugin;
 
 import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.recipe.schema.RecipeComponentFactoryRegistryEvent;
+import dev.latvian.mods.kubejs.recipe.schema.RegisterRecipeSchemasEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ClassFilter;
@@ -52,6 +54,16 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
         ProbeEvents.MODIFY_DOC.post(new TypingModificationEventJS(files));
+    }
+
+    @Override
+    public void registerRecipeSchemas(RegisterRecipeSchemasEvent event) {
+        ProbeEvents.REGISTER_RECIPE_SCHEMA.post(new RegisterRecipeSchemaEventJS(event));
+    }
+
+    @Override
+    public void registerRecipeComponents(RecipeComponentFactoryRegistryEvent event) {
+        ProbeEvents.REGISTER_RECIPE_COMPONENT_FACTORY.post(new RegisterRecipeComponentFactoryEventJS(event));
     }
 
     @Override

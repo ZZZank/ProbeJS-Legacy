@@ -9,4 +9,6 @@ public interface ProbeEvents {
     EventHandler ASSIGN_TYPE = ProbeEvents.GROUP.client("assignType", () -> TypeAssignmentEventJS.class);
     EventHandler MODIFY_DOC = ProbeEvents.GROUP.client("modifyClass", () -> TypingModificationEventJS.class);
     EventHandler SNIPPETS = ProbeEvents.GROUP.client("snippets", () -> SnippetGenerationEventJS.class);
+    EventHandler REGISTER_RECIPE_SCHEMA = GROUP.server("registerRecipeSchema", () -> RegisterRecipeSchemaEventJS.class);
+    EventHandler REGISTER_RECIPE_COMPONENT_FACTORY = GROUP.server("registerRecipeComponentFactory", () -> RegisterRecipeComponentFactoryEventJS.class);
 }
