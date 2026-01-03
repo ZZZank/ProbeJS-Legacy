@@ -2,8 +2,7 @@ package zzzank.probejs.features.kubejs;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
+import com.google.gson.reflect.TypeToken;
 import lombok.val;
 import zzzank.probejs.ProbeJS;
 
@@ -18,10 +17,12 @@ import java.util.stream.Collectors;
 public final class EventJSInfos {
 
     public static final Map<String, EventJSInfo> KNOWN = new HashMap<>();
-    public static final Codec<Map<String, EventJSInfo>> CODEC = Codec.unboundedMap(Codec.STRING, EventJSInfo.CODEC);
+    @SuppressWarnings("unchecked")
+    public static final TypeToken<Map<String, EventJSInfo>> TYPE_TOKEN = (TypeToken<Map<String, EventJSInfo>>)
+        TypeToken.getParameterized(Map.class, String.class, EventJSInfo.class);
 
     public static Set<Class<?>> provideClasses() {
-        return KNOWN.values().stream().map(EventJSInfo::clazzRaw).collect(Collectors.toSet());
+        return KNOWN.values().stream().map((EventJSInfo info) -> info.clazz).collect(Collectors.toSet());
     }
 
     public static void loadFrom(Path path) {
@@ -33,9 +34,7 @@ public final class EventJSInfos {
             if (obj == null) {
                 return;
             }
-            val decoded = CODEC.parse(JsonOps.INSTANCE, obj)
-                .resultOrPartial(ProbeJS.LOGGER::error)
-                .orElse(Map.of());
+            Map<String, EventJSInfo> decoded = ProbeJS.GSON.fromJson(reader, TYPE_TOKEN.getType());
             KNOWN.putAll(Maps.filterValues(decoded, Objects::nonNull));
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when reading EventJS infos", e);
@@ -44,9 +43,7 @@ public final class EventJSInfos {
 
     public static void writeTo(Path path) {
         try (val writer = Files.newBufferedWriter(path)) {
-            CODEC.encodeStart(JsonOps.INSTANCE, new TreeMap<>(KNOWN))
-                .resultOrPartial(error -> ProbeJS.LOGGER.error("Error when serializing EventJS infos: {}", error))
-                .ifPresent(element -> ProbeJS.GSON_WRITER.toJson(element, writer));
+            ProbeJS.GSON.toJson(new TreeMap<>(KNOWN), TYPE_TOKEN.getType(), writer);
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when writing EventJS infos", e);
         }

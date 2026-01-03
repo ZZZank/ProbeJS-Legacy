@@ -1,8 +1,11 @@
 package zzzank.probejs.utils;
 
 import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import lombok.val;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -168,5 +171,22 @@ public class JsonUtils {
         }
 
         return toMerge;
+    }
+
+    public static class ClassAsNameJsonAdapter extends TypeAdapter<Class<?>> {
+
+        @Override
+        public void write(JsonWriter out, Class<?> value) throws IOException {
+            out.jsonValue(value.getName());
+        }
+
+        @Override
+        public Class<?> read(JsonReader in) throws IOException {
+            try {
+                return Class.forName(in.nextString(), false, ClassAsNameJsonAdapter.class.getClassLoader());
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

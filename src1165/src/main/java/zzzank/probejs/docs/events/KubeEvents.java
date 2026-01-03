@@ -31,7 +31,7 @@ public class KubeEvents implements ProbeJSPlugin {
             for (var entry : EventJSInfos.KNOWN.entrySet()) {
                 val id = entry.getKey();
                 val info = entry.getValue();
-                if (!disabled.contains(id) && info.scriptTypes().contains(scriptType)) {
+                if (!disabled.contains(id) && info.scriptTypes.contains(scriptType)) {
                     events.put(id, entry.getValue());
                 }
             }
@@ -43,10 +43,17 @@ public class KubeEvents implements ProbeJSPlugin {
             val id = entry.getKey();
 
             val decl = declareEventMethod(Types.literal(id), converter, info);
+
             decl.addComment(
-                "@at " + info.scriptTypes().stream().map(type -> type.name).collect(Collectors.joining(", ")),
-                "@cancellable " + (info.cancellable() ? "Yes" : "No")
-            );
+                "@at " + info.scriptTypes.stream().map(Objects::toString).collect(Collectors.joining(", ")));
+            if (info.cancellable == null) {
+                decl.addComment("@cancellable Unknown, this event data is gathered from ProbeJS predefined data");
+            } else if (info.cancellable) {
+                decl.addComment("@cancellable Yes");
+            } else {
+                decl.addComment("@cancellalle No");
+            }
+
             if (!info.sub.isEmpty()) {
                 decl.addComment(String.format(
                     "This event provides sub-event variant, e.g. `%s.%s`",
@@ -61,13 +68,18 @@ public class KubeEvents implements ProbeJSPlugin {
         scriptDump.addGlobal("events", codes.toArray(new Code[0]));
     }
 
-    private static @NotNull FunctionDeclaration declareEventMethod(BaseType id, TypeConverter converter, EventJSInfo info) {
+    private static @NotNull FunctionDeclaration declareEventMethod(
+        BaseType id,
+        TypeConverter converter,
+        EventJSInfo info
+    ) {
         return Statements
             .func("onEvent")
             .param("id", id)
-            .param("handler", Types.lambda()
-                .param("event", converter.convertType(info.clazzRaw()))
-                .build()
+            .param(
+                "handler", Types.lambda()
+                    .param("event", converter.convertType(info.clazz))
+                    .build()
             )
             .build();
     }

@@ -26,12 +26,14 @@ public abstract class MixinEventJS {
         if (!ProbeConfig.enabled.get()) {
             return;
         }
-        val e = EventJSInfos.KNOWN.get(id);
-        if (e == null) {
-            EventJSInfos.KNOWN.put(id, new EventJSInfo(t, (EventJS) (Object) this, sub));
+        var event = (EventJS) (Object) this;
+        var info = EventJSInfos.KNOWN.get(id);
+        if (info == null) {
+            EventJSInfos.KNOWN.put(id, new EventJSInfo(t, event, sub));
         } else {
-            e.scriptTypes().add(t);
-            e.sub = sub;
+            info.scriptTypes.add(t);
+            info.cancellable = event.canCancel();
+            info.sub = sub;
         }
     }
 }

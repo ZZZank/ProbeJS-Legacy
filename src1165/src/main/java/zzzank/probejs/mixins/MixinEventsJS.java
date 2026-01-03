@@ -36,7 +36,8 @@ public abstract class MixinEventsJS {
         if (info == null) {
             EventJSInfos.KNOWN.put(id, new EventJSInfo(type, event, ""));
         } else {
-            info.scriptTypes().add(type);
+            info.scriptTypes.add(type);
+            info.cancellable = event.canCancel();
         }
     }
 }
