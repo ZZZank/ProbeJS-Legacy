@@ -5,7 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.utils.JsonUtils;
 

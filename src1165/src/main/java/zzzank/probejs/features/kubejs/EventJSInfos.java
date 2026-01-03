@@ -56,7 +56,7 @@ public final class EventJSInfos {
     public static void writeTo(Path path) {
         try (val writer = Files.newBufferedWriter(path)) {
             var toWrite = Maps.filterValues(new TreeMap<>(KNOWN), info -> info.cancellable != null);
-            ProbeJS.GSON.toJson(toWrite, TYPE_TOKEN.getType(), writer);
+            ProbeJS.GSON_WRITER.toJson(toWrite, TYPE_TOKEN.getType(), writer);
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when writing EventJS infos", e);
         }
