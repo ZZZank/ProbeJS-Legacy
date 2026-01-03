@@ -1,3 +1,69 @@
+# ProbeJS Legacy 5.2.4 -> 6.0.0
+
+The Simplicity Update
+
+## Breaking Changes for script developer
+
+Breaking changes for script developer:
+
+1. TS style import ("packages/xxx/xxxx/x/X") is removed from ProbeJS Legacy
+
+This means using `require("packages/...")`, `java("packages/...")` or `Java.loadClass("packages/...")` is no longer supported by ProbeJS Legacy. PJSL provides typing matching for the raw class name, and you should always use that as best practice.
+
+Example:
+- 5.2.4 for 1.16.5: `java("packages/net/minecraft/world/item/$ItemStack")`
+- 6.0.0 for 1.16.5: `java("net.minecraft.item.ItemStack")`
+- 5.2.4 for 1.20.1: `java("packages/net/minecraft/world/item/$ItemStack")`
+- 6.0.0 for 1.20.1: `java("net.minecraft.world.item.ItemStack")`
+
+Tip: If you are too lazy to manually replace the class name string, you can just delete that and import again
+
+```js
+// delete this line
+const $ItemStack = java("packages/net/minecraft/world/item/$ItemStack")
+
+// write import name and IDE will provide auto-import
+$ItemStac
+
+// select the approriate import
+const { $ItemStack } = require("net.minecraft.item.ItemStack")
+
+// and optionally, replace "require"
+const $ItemStack = java("net.minecraft.item.ItemStack")
+```
+
+2. Global `$SomeType_` is removed, use `Internal.SomeType_` and `Internal.SomeType` instead
+
+## Notable fix/improvement
+
+- Support for java-like raw usage of generic class
+  - Example: for `List<E>`, you can use `List` directly, and ProbeJS will now infer the variable `E` as type boundary
+- `LoadClass<T>` implementation is changed to prevent constructing large union types for class matching, this can improve IDE performance
+- Integration for ProbeJS VSCode extension is removed
+- More accurate and more performant mixin class check for ModJarClassScanner
+- [1.20.1] fix lang data reading
+- [1.20.1] fix loot table reading
+- Simplify code for reading some Minecraft/KubeJS data, to be less invasive and more performant
+- [1.16.5] disable Registry type assignment because it's simply not a thing on 1.16.5
+- [1.20.1] fix false positive type assignment for some registry
+- [1.20.1] fix `$RegistryEventJS<$Object>` using denied `$Object`
+- Added "old typing removed" message for shared dump
+- [1.16.5] add predefined KubeJS event data, allowing users to see most events without manually triggering it
+
+## Notable changes of ProbeJS Legacy internal
+
+- You can add you own child dump, via `ProbeJSPlugin.addChildDump(...)`
+- ProbeJS Legacy now uses a "unified" project layout, with support for 1.16.5 and 1.20.1 provided in a single git branch, sharing game-independent code infrastructure
+- As a result of this, some methods/classes are moved
+- `ClassPath.toClazz` removed
+- `Types.typeMaybeGeneric` removed, you don't need it anymore (see "Support for java-like raw usage of generic class")
+- Generated type hint classes now all use `zzzank.probejs.generated` package
+- `JSMemberType.Builder.literalMember(...)` -> `rawNameMember`
+  - This will break KesseractJS, but is there anyone actually using it?
+- Codec usages are moved. For 1.16.5, ProbeJS Legacy will use Gson instead of Codec to read/write EventJSInfo
+
+---
+
 # ProbeJS Legacy 5.2.3 -> 5.2.4
 
 fix recipe doc
