@@ -27,7 +27,7 @@ public final class EventJSInfos {
             var types = record.type() != null
                 ? EnumSet.of(ScriptType.STARTUP, record.type())
                 : EnumSet.allOf(ScriptType.class);
-            var info = new EventJSInfo(record.eventClass(), null, types, "");
+            var info = new EventJSInfo(record.eventClass(), null, types, null);
 
             KNOWN.put(record.id(), info);
         }
