@@ -54,7 +54,7 @@ public class KubeEvents implements ProbeJSPlugin {
                 decl.addComment("@cancellalle No");
             }
 
-            if (!info.sub.isEmpty()) {
+            if (info.sub != null) {
                 decl.addComment(String.format(
                     "This event provides sub-event variant, e.g. `%s.%s`",
                     id,

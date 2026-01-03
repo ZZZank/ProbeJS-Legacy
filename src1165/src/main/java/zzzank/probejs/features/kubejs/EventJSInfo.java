@@ -23,7 +23,7 @@ public final class EventJSInfo {
     public Boolean cancellable;
     @SerializedName("type")
     public final EnumSet<ScriptType> scriptTypes;
-    @NotNull
+    @Nullable
     public String sub;
 
     public EventJSInfo(ScriptType type, EventJS event, String sub) {
@@ -34,7 +34,7 @@ public final class EventJSInfo {
         Class<?> clazz,
         @Nullable Boolean cancellable,
         EnumSet<ScriptType> scriptTypes,
-        @NotNull String sub
+        @Nullable String sub
     ) {
         this.clazz = clazz;
         this.cancellable = cancellable;

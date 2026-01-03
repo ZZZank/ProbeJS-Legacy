@@ -177,7 +177,7 @@ public class JsonUtils {
 
         @Override
         public void write(JsonWriter out, Class<?> value) throws IOException {
-            out.jsonValue(value.getName());
+            out.value(value.getName());
         }
 
         @Override
