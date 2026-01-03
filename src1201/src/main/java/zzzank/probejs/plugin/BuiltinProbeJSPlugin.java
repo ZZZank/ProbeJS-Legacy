@@ -57,16 +57,6 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     }
 
     @Override
-    public void registerRecipeSchemas(RegisterRecipeSchemasEvent event) {
-        ProbeEvents.REGISTER_RECIPE_SCHEMA.post(new RegisterRecipeSchemaEventJS(event));
-    }
-
-    @Override
-    public void registerRecipeComponents(RecipeComponentFactoryRegistryEvent event) {
-        ProbeEvents.REGISTER_RECIPE_COMPONENT_FACTORY.post(new RegisterRecipeComponentFactoryEventJS(event));
-    }
-
-    @Override
     public void denyTypes(Transpiler transpiler) {
         transpiler.reject(Object.class);
         transpiler.reject(Void.class);
