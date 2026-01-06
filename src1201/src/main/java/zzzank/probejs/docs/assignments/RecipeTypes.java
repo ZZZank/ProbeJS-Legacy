@@ -5,6 +5,7 @@ import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.recipe.InputReplacement;
 import dev.latvian.mods.kubejs.recipe.OutputReplacement;
+import dev.latvian.mods.kubejs.recipe.ReplacementMatch;
 import dev.latvian.mods.kubejs.recipe.filter.RecipeFilter;
 import dev.latvian.mods.kubejs.recipe.ingredientaction.IngredientActionFilter;
 import net.minecraft.world.item.Item;
@@ -56,6 +57,8 @@ public class RecipeTypes implements ProbeJSPlugin {
 
         scriptDump.assignType(InputReplacement.class, Types.type(InputItem.class));
         scriptDump.assignType(OutputReplacement.class, Types.type(OutputItem.class));
+
+        scriptDump.assignType(ReplacementMatch.class, Types.type(Ingredient.class));
 
         scriptDump.assignType(RecipeFilter.class, Types.primitive("RegExp"));
         scriptDump.assignType(RecipeFilter.class, Types.literal("*"));
