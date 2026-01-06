@@ -31,8 +31,11 @@ import dev.latvian.kubejs.server.ServerEventJS;
 import dev.latvian.kubejs.world.ExplosionEventJS;
 import dev.latvian.kubejs.world.SimpleWorldEventJS;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -43,7 +46,7 @@ public record BuiltinEventRecord(
     String id
 ) {
     /// Collected by scanning lines with `KubeJSEvents.` in KubeJS source files
-    public static final List<BuiltinEventRecord> RECORDS = Arrays.asList(
+    public static final Map<String, BuiltinEventRecord> RECORDS = Stream.of(
         of(OldItemTooltipEventJS.class, ScriptType.CLIENT, "client.item_tooltip"),
         of(GenericLootEventJS.class, ScriptType.SERVER, "generic.loot_tables"),
         of(BlockLootEventJS.class, ScriptType.SERVER, "block.loot_tables"),
@@ -122,7 +125,12 @@ public record BuiltinEventRecord(
         of(SimpleWorldEventJS.class, ScriptType.SERVER, KubeJSEvents.WORLD_TICK),
         of(ExplosionEventJS.Pre.class, null, KubeJSEvents.WORLD_EXPLOSION_PRE),
         of(ExplosionEventJS.Post.class, null, KubeJSEvents.WORLD_EXPLOSION_POST)
-    );
+    ).collect(Collectors.toMap(
+        BuiltinEventRecord::id,
+        Function.identity(),
+        (a, b) -> a,
+        HashMap::new
+    ));
 
     private static BuiltinEventRecord of(Class<?> eventClass, ScriptType type, String id) {
         return new BuiltinEventRecord(eventClass, type, id);

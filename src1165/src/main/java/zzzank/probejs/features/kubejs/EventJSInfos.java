@@ -23,7 +23,7 @@ public final class EventJSInfos {
         TypeToken.getParameterized(Map.class, String.class, EventJSInfo.class);
 
     static {
-        for (var record : BuiltinEventRecord.RECORDS) {
+        for (var record : BuiltinEventRecord.RECORDS.values()) {
             var types = record.type() != null
                 ? EnumSet.of(ScriptType.STARTUP, record.type())
                 : EnumSet.allOf(ScriptType.class);
