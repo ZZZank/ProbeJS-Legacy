@@ -56,6 +56,16 @@ public abstract class JSMemberType extends BaseType {
             return rawNameMember(name, false, type);
         }
 
+        @Deprecated
+        public SELF literalMember(String name, boolean optional, BaseType type) {
+            return rawNameMember(name, optional, type);
+        }
+
+        @Deprecated
+        public SELF literalMember(String name, BaseType type) {
+            return rawNameMember(name, false, type);
+        }
+
         public abstract OUT build();
     }
 }
