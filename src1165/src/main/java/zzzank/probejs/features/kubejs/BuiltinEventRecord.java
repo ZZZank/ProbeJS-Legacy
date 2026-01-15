@@ -40,11 +40,8 @@ import java.util.stream.Stream;
 /**
  * @author ZZZank
  */
-public record BuiltinEventRecord(
-    Class<?> eventClass,
-    ScriptType type,
-    String id
-) {
+public record BuiltinEventRecord(Class<?> eventClass, ScriptType type, String id) {
+
     /// Collected by scanning lines with `KubeJSEvents.` in KubeJS source files
     public static final Map<String, BuiltinEventRecord> RECORDS = Stream.of(
         of(OldItemTooltipEventJS.class, ScriptType.CLIENT, "client.item_tooltip"),
@@ -73,7 +70,6 @@ public record BuiltinEventRecord(
         of(ClientLoggedInEventJS.class, ScriptType.CLIENT, KubeJSEvents.CLIENT_LOGGED_OUT),
         of(PaintEventJS.class, ScriptType.CLIENT, KubeJSEvents.CLIENT_PAINT_WORLD),
         of(PainterUpdatedEventJS.class, ScriptType.CLIENT, KubeJSEvents.CLIENT_PAINTER_UPDATED),
-        of(PainterUpdatedEventJS.class, ScriptType.CLIENT, KubeJSEvents.CLIENT_PAINTER_UPDATED),
         of(ScreenPaintEventJS.class, ScriptType.CLIENT, KubeJSEvents.CLIENT_PAINT_SCREEN),
         of(ItemFoodEatenEventJS.class, ScriptType.SERVER, KubeJSEvents.ITEM_FOOD_EATEN),
         of(CompostablesRecipeEventJS.class, ScriptType.SERVER, KubeJSEvents.RECIPES_COMPOSTABLES),
@@ -89,13 +85,10 @@ public record BuiltinEventRecord(
         of(ItemCraftedEventJS.class, null, KubeJSEvents.ITEM_CRAFTED),
         of(InventoryChangedEventJS.class, null, KubeJSEvents.PLAYER_INVENTORY_CHANGED),
         of(ItemSmeltedEventJS.class, null, KubeJSEvents.ITEM_SMELTED),
-        of(InventoryChangedEventJS.class, null, KubeJSEvents.PLAYER_INVENTORY_CHANGED),
         of(StartupEventJS.class, ScriptType.STARTUP, KubeJSEvents.INIT),
         of(StartupEventJS.class, ScriptType.STARTUP, KubeJSEvents.POSTINIT),
         of(CheckPlayerLoginEventJS.class, ScriptType.SERVER, KubeJSEvents.PLAYER_CHECK_LOGIN),
         of(NetworkEventJS.class, null, KubeJSEvents.PLAYER_DATA_FROM_CLIENT),
-        of(InventoryChangedEventJS.class, null, KubeJSEvents.PLAYER_INVENTORY_CHANGED),
-        of(InventoryChangedEventJS.class, null, KubeJSEvents.PLAYER_INVENTORY_CHANGED),
         of(SimplePlayerEventJS.class, null, KubeJSEvents.PLAYER_LOGGED_IN),
         of(SimplePlayerEventJS.class, null, KubeJSEvents.PLAYER_LOGGED_OUT),
         of(SimplePlayerEventJS.class, null, KubeJSEvents.PLAYER_TICK),
@@ -109,9 +102,6 @@ public record BuiltinEventRecord(
         of(RecipesAfterLoadEventJS.class, ScriptType.SERVER, KubeJSEvents.RECIPES_AFTER_LOAD),
         of(CommandRegistryEventJS.class, ScriptType.SERVER, KubeJSEvents.COMMAND_REGISTRY),
         of(ServerEventJS.class, ScriptType.SERVER, KubeJSEvents.SERVER_LOAD),
-        of(SimpleWorldEventJS.class, null, KubeJSEvents.WORLD_LOAD),
-        of(SimplePlayerEventJS.class, null, KubeJSEvents.PLAYER_LOGGED_OUT),
-        of(SimpleWorldEventJS.class, null, KubeJSEvents.WORLD_UNLOAD),
         of(ServerEventJS.class, ScriptType.SERVER, KubeJSEvents.SERVER_UNLOAD),
         of(ServerEventJS.class, ScriptType.SERVER, KubeJSEvents.SERVER_TICK),
         of(CommandEventJS.class, ScriptType.SERVER, KubeJSEvents.COMMAND_RUN),
@@ -128,7 +118,9 @@ public record BuiltinEventRecord(
     ).collect(Collectors.toMap(
         BuiltinEventRecord::id,
         Function.identity(),
-        (a, b) -> a,
+        (a, b) -> {
+            throw new IllegalArgumentException(String.format("found two record with the same id: %s and %s", a, b));
+        },
         HashMap::new
     ));
 
