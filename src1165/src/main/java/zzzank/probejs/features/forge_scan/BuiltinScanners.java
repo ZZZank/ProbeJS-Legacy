@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 /**
  * @author ZZZank
  */
-public enum BuiltinScanners implements ClassDataScanner {
+public enum BuiltinScanners {
     NONE {
         @Override
         public Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
@@ -60,4 +60,7 @@ public enum BuiltinScanners implements ClassDataScanner {
      * will only be used by {@link BuiltinScanners#EVENTS}
      */
     public static final Set<String> PREDEFINED_BASECLASS = new HashSet<>();
-}
+/**
+     * stream of class data -> class name
+     */
+    public abstract Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream);}
