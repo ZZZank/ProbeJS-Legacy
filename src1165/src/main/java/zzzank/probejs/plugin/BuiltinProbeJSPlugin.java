@@ -89,7 +89,11 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
 
     @Override
     public Set<Class<?>> provideJavaClass(ScriptDump scriptDump) {
-        return ((AccessScriptManager) scriptDump.manager).getJavaClassCache()
+        var classCache = ((AccessScriptManager) scriptDump.manager).getJavaClassCache();
+        if (classCache == null) {
+            return Set.of();
+        }
+        return classCache
             .values()
             .stream()
             .flatMap(Optional::stream)

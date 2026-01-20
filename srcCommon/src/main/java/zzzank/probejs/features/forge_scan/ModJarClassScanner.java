@@ -38,11 +38,17 @@ class ModJarClassScanner {
     ModJarClassScanner(JarFile modJar) throws IOException {
         this.file = modJar;
 
-        var mixinConfigsAt = modJar.getManifest()
-            .getMainAttributes()
-            .getValue("MixinConfigs");
-        var mixinConfigs = mixinConfigsAt == null ? new String[0] : mixinConfigsAt.split(",");
-        this.mixinPackages = readMixinPackages(modJar, mixinConfigs);
+        String[] mixinConfigs = null;
+
+        var manifest = modJar.getManifest();
+        if (manifest != null) {
+            var mixinConfigsAttr = manifest.getMainAttributes().getValue("MixinConfigs");
+            if (mixinConfigsAttr != null) {
+                mixinConfigs = mixinConfigsAttr.split(",");
+            }
+        }
+
+        this.mixinPackages = mixinConfigs != null ? readMixinPackages(modJar, mixinConfigs) : List.of();
     }
 
     /**
