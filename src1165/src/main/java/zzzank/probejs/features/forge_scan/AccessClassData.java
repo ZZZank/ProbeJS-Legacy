@@ -21,7 +21,6 @@ public class AccessClassData {
     static {
         val lookup = MethodHandles.lookup();
         try {
-            lookup.findGetter(ModFileScanData.ClassData.class, "clazz", Type.class);
             var f = ModFileScanData.ClassData.class.getDeclaredField("clazz");
             f.setAccessible(true);
             HANDLE_clazz = lookup.unreflectGetter(f);
