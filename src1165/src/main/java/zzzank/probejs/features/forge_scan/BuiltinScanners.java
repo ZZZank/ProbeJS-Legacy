@@ -20,9 +20,7 @@ public enum BuiltinScanners {
     FULL {
         @Override
         public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
-            return dataStream
-                .map(AccessClassData::new)
-                .map(AccessClassData::className);
+            return dataStream.map(AccessClassData::className);
         }
     },
     EVENTS {
@@ -33,10 +31,9 @@ public enum BuiltinScanners {
             val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
             val toSubClasses = new HashMap<String, List<String>>();
             for (var data : CollectUtils.iterate(dataStream)) {
-                var access = new AccessClassData(data);
                 toSubClasses
-                    .computeIfAbsent(access.parentClassName(), CollectUtils.computeArrayList3())
-                    .add(access.className());
+                    .computeIfAbsent(AccessClassData.parentClassName(data), CollectUtils.computeArrayList3())
+                    .add(AccessClassData.className(data));
             }
 
             while (!queue.isEmpty()) {

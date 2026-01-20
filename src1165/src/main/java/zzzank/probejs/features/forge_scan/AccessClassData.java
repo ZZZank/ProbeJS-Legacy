@@ -1,7 +1,7 @@
 package zzzank.probejs.features.forge_scan;
 
 import lombok.val;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData.ClassData;
 import org.objectweb.asm.Type;
 import zzzank.probejs.ProbeJS;
 
@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * @author ZZZank
  */
-public class AccessClassData {
+public abstract class AccessClassData {
 
     private static final MethodHandle HANDLE_clazz;
     private static final MethodHandle HANDLE_parent;
@@ -21,57 +21,51 @@ public class AccessClassData {
     static {
         val lookup = MethodHandles.lookup();
         try {
-            var f = ModFileScanData.ClassData.class.getDeclaredField("clazz");
+            var f = ClassData.class.getDeclaredField("clazz");
             f.setAccessible(true);
             HANDLE_clazz = lookup.unreflectGetter(f);
 
-            f = ModFileScanData.ClassData.class.getDeclaredField("parent");
+            f = ClassData.class.getDeclaredField("parent");
             f.setAccessible(true);
             HANDLE_parent = lookup.unreflectGetter(f);
 
-            f = ModFileScanData.ClassData.class.getDeclaredField("interfaces");
+            f = ClassData.class.getDeclaredField("interfaces");
             f.setAccessible(true);
             HANDLE_interfaces = lookup.unreflectGetter(f);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            ProbeJS.LOGGER.error("accessing '{}' failed", ModFileScanData.ClassData.class, e);
+            ProbeJS.LOGGER.error("accessing '{}' failed", ClassData.class, e);
             throw new IllegalStateException();
         }
     }
 
-    private final ModFileScanData.ClassData raw;
-
-    public AccessClassData(ModFileScanData.ClassData raw) {
-        this.raw = raw;
-    }
-
-    public Type clazz() {
+    public static Type clazz(ClassData data) {
         try {
-            return (Type) HANDLE_clazz.invoke(raw);
+            return (Type) HANDLE_clazz.invoke(data);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
     }
 
-    public String className() {
-        return clazz().getClassName();
+    public static String className(ClassData data) {
+        return clazz(data).getClassName();
     }
 
-    public Type parent() {
+    public static Type parent(ClassData data) {
         try {
-            return (Type) HANDLE_parent.invoke(raw);
+            return (Type) HANDLE_parent.invoke(data);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
     }
 
-    public String parentClassName() {
-        val p = parent();
+    public static String parentClassName(ClassData data) {
+        val p = parent(data);
         return p == null ? null : p.getClassName();
     }
 
-    public Set<Type> interfaces() {
+    public static Set<Type> interfaces(ClassData data) {
         try {
-            return (Set<Type>) HANDLE_interfaces.invoke(raw);
+            return (Set<Type>) HANDLE_interfaces.invoke(data);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
