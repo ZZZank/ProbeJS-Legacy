@@ -28,7 +28,7 @@ public class ClassScanner {
                     .map(ModFileScanData::getClasses)
                     .flatMap(Collection::stream)
             )
-            .stream()
+            .filter(ReflectUtils.NOT_ARTIFICIAL_CLASS)
             .<Class<?>>map(ReflectUtils::classOrNull)
             .filter(Objects::nonNull)
             .toList();

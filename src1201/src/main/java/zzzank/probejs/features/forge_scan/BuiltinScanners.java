@@ -3,7 +3,6 @@ package zzzank.probejs.features.forge_scan;
 import lombok.val;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.util.*;
@@ -15,24 +14,21 @@ import java.util.stream.Stream;
 public enum BuiltinScanners {
     NONE {
         @Override
-        public Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
-            return Collections.emptyList();
+        public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
+            return Stream.empty();
         }
     },
     FULL {
         @Override
-        public Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
-            val collected = dataStream
+        public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
+            return dataStream
                 .map(ModFileScanData.ClassData::clazz)
-                .map(Type::getClassName)
-                .toList();
-            ProbeJS.LOGGER.debug("FullScan collected {} class names", collected.size());
-            return collected;
+                .map(Type::getClassName);
         }
     },
     EVENTS {
         @Override
-        public Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
+        public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
             val names = new HashSet<>(PREDEFINED_BASECLASS);
 
             val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
@@ -52,8 +48,7 @@ public enum BuiltinScanners {
                 }
             }
 
-            ProbeJS.LOGGER.debug("ForgeEventSubclassOnly collected {} class names", names.size());
-            return names;
+            return names.stream();
         }
     };
 
@@ -65,5 +60,5 @@ public enum BuiltinScanners {
     /**
      * stream of class data -> class name
      */
-    public abstract Collection<String> scan(Stream<ModFileScanData.ClassData> dataStream);
+    public abstract Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream);
 }

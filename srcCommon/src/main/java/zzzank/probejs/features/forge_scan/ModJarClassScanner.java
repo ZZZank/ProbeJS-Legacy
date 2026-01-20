@@ -74,15 +74,7 @@ class ModJarClassScanner {
             .filter(name -> name.endsWith(ReflectUtils.CLASS_SUFFIX))
             .filter(this::notInMixinPackage)
             .map(name -> name.substring(0, name.length() - ReflectUtils.CLASS_SUFFIX.length()).replace("/", "."))
-            .filter(name -> {
-                var lastSep = name.lastIndexOf('$');
-                if (lastSep < 0) {
-                    return true;
-                }
-                var innerName = name.substring(lastSep + 1);
-                // exclude SomeClass$123 (anonymous class)
-                return innerName.isEmpty() || !Character.isDigit(innerName.charAt(0));
-            })
+            .filter(ReflectUtils.NOT_ARTIFICIAL_CLASS)
             .map(ReflectUtils::classOrNull)
             .filter(Objects::nonNull)
             .filter(c -> Modifier.isPublic(c.getModifiers()) || !ProbeConfig.publicClassOnly.get())

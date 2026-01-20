@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * @author ZZZank
@@ -71,4 +72,38 @@ public interface ReflectUtils {
     static boolean classExist(String name) {
         return classOrNull(name) != null;
     }
+
+    static AssertionError unreachable() {
+        return new AssertionError("Unreachable code");
+    }
+
+    static AssertionError unreachable(Throwable cause) {
+        return new AssertionError("Unreachable code", cause);
+    }
+
+    /// For these examples, this method return `true`:
+    /// - `Outer$1`
+    /// - `Outer$123`
+    /// - `Outer$Inner$111`
+    /// - `Outer$1Local`
+    ///
+    /// For these examples, this method return `false`:
+    /// - `Outer`
+    /// - `Outer$`
+    /// - `$Outer`
+    /// - `Outer$Inner`
+    /// - `Outer$Inner123`
+    ///
+    /// @return `true` if there's a number digit after the last `$`, `false` otherwise
+    static boolean isArtificialClass(String className) {
+        var lastSep = className.lastIndexOf('$');
+        if (lastSep < 0) {
+            return false;
+        }
+        var innerName = className.substring(lastSep + 1);
+        return !innerName.isEmpty() && Character.isDigit(innerName.charAt(0));
+    }
+
+    /// return the opposite of [#isArtificialClass(java.lang.String)]
+    Predicate<String> NOT_ARTIFICIAL_CLASS = name -> !isArtificialClass(name);
 }
