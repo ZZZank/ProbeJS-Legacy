@@ -14,24 +14,25 @@ import java.util.Set;
  */
 public class AccessClassData {
 
-    public static final MethodHandle accessClazz;
-    public static final MethodHandle accessParent;
-    public static final MethodHandle accessInterfaces;
+    private static final MethodHandle HANDLE_clazz;
+    private static final MethodHandle HANDLE_parent;
+    private static final MethodHandle HANDLE_interfaces;
 
     static {
         val lookup = MethodHandles.lookup();
         try {
+            lookup.findGetter(ModFileScanData.ClassData.class, "clazz", Type.class);
             var f = ModFileScanData.ClassData.class.getDeclaredField("clazz");
             f.setAccessible(true);
-            accessClazz = lookup.unreflectGetter(f);
+            HANDLE_clazz = lookup.unreflectGetter(f);
 
             f = ModFileScanData.ClassData.class.getDeclaredField("parent");
             f.setAccessible(true);
-            accessParent = lookup.unreflectGetter(f);
+            HANDLE_parent = lookup.unreflectGetter(f);
 
             f = ModFileScanData.ClassData.class.getDeclaredField("interfaces");
             f.setAccessible(true);
-            accessInterfaces = lookup.unreflectGetter(f);
+            HANDLE_interfaces = lookup.unreflectGetter(f);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             ProbeJS.LOGGER.error("accessing '{}' failed", ModFileScanData.ClassData.class, e);
             throw new IllegalStateException();
@@ -46,7 +47,7 @@ public class AccessClassData {
 
     public Type clazz() {
         try {
-            return (Type) accessClazz.invoke(raw);
+            return (Type) HANDLE_clazz.invoke(raw);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
@@ -58,7 +59,7 @@ public class AccessClassData {
 
     public Type parent() {
         try {
-            return (Type) accessParent.invoke(raw);
+            return (Type) HANDLE_parent.invoke(raw);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
@@ -71,7 +72,7 @@ public class AccessClassData {
 
     public Set<Type> interfaces() {
         try {
-            return (Set<Type>) accessInterfaces.invoke(raw);
+            return (Set<Type>) HANDLE_interfaces.invoke(raw);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
