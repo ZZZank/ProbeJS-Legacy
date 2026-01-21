@@ -35,7 +35,7 @@ public class ForgeEvents implements ProbeJSPlugin {
             Types.generic("T", Types.keyof(GlobalClasses.GLOBAL_CLASSES)),
             TSUtilityType.instanceType(
                 TSUtilityType.extract(
-                    Types.format("%s[T]", GlobalClasses.GLOBAL_CLASSES),
+                    GlobalClasses.GLOBAL_CLASSES.arrayAccess("T"),
                     Types.typeOf(Event.class)
                 )
             )

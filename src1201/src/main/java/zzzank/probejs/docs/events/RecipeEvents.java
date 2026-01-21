@@ -112,16 +112,13 @@ public class RecipeEvents implements ProbeJSPlugin {
             if (!(code instanceof BeanDecl.Getter getter)) {
                 continue;
             }
-            val recipeLocation = SHORTCUTS.get(getter.name);
-            if (recipeLocation == null) {
+            val id = SHORTCUTS.get(getter.name);
+            if (id == null) {
                 continue;
             }
-            getter.type = Types.format(
-                "%s[%s][%s]",
-                Types.type(DOCUMENTED_RECIPES),
-                Types.literal(recipeLocation.getNamespace()),
-                Types.literal(recipeLocation.getPath())
-            );
+            getter.type = Types.type(DOCUMENTED_RECIPES)
+                .arrayAccess(id.getNamespace())
+                .arrayAccess(id.getPath());
         }
     }
 

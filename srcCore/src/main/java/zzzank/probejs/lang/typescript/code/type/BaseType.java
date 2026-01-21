@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.type.js.JSJoinedType;
+import zzzank.probejs.lang.typescript.code.type.ts.TSArrayAccessType;
 import zzzank.probejs.lang.typescript.code.type.ts.TSArrayType;
 import zzzank.probejs.lang.typescript.code.type.ts.TSOptionalType;
 import zzzank.probejs.lang.typescript.code.type.ts.TSParamType;
@@ -42,6 +43,14 @@ public abstract class BaseType extends Code {
 
     public TSArrayType asArray() {
         return zzzank.probejs.lang.typescript.code.type.Types.array(this);
+    }
+
+    public TSArrayAccessType arrayAccess(BaseType index) {
+        return new TSArrayAccessType(this, index);
+    }
+
+    public TSArrayAccessType arrayAccess(String index) {
+        return new TSArrayAccessType(this, Types.primitive(index));
     }
 
     public ContextShield<BaseType> contextShield(FormatType formatType) {

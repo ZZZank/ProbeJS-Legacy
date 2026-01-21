@@ -22,6 +22,7 @@ public class GlobalClasses implements ProbeJSPlugin {
     public static final JSPrimitiveType GLOBAL_CLASSES = Types.primitive("GlobalClasses");
     public static final JSPrimitiveType LOAD_CLASS = Types.primitive("LoadClass");
     public static final TSClassType J_CLASS = Types.type(ClassPath.ofArtificial("zzzank.probejs.generated.JClass"));
+    public static final JSPrimitiveType ATTACH_J_CLASS = Types.primitive("AttachJClass");
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
@@ -40,7 +41,7 @@ public class GlobalClasses implements ProbeJSPlugin {
                 .typeFormat(BaseType.FormatType.RETURN)
                 .build(),
             // type AttachJClass<T> = T & JClass<InstanceType<T>>
-            Statements.type("AttachJClass", T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
+            Statements.type(ATTACH_J_CLASS.content, T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
                 .symbolVariables(Collections.singletonList(T))
                 .exportDecl(false)
                 .build(),
@@ -51,7 +52,7 @@ public class GlobalClasses implements ProbeJSPlugin {
                 Types.ternary(
                     "T",
                     Types.keyof(GLOBAL_CLASSES),
-                    Types.format("AttachJClass<%s[T]>", GLOBAL_CLASSES),
+                    ATTACH_J_CLASS.withParams(GLOBAL_CLASSES.arrayAccess(T)),
                     Types.NEVER
                 )
             )
