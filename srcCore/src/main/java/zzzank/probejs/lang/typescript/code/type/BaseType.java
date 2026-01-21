@@ -41,15 +41,18 @@ public abstract class BaseType extends Code {
     }
     // Stuffs for convenience
 
+    /// `{this}[]`
     public TSArrayType asArray() {
         return zzzank.probejs.lang.typescript.code.type.Types.array(this);
     }
 
-    public TSArrayAccessType arrayAccess(BaseType index) {
+    /// `{this}[{index}]`
+    public TSArrayAccessType access(BaseType index) {
         return new TSArrayAccessType(this, index);
     }
 
-    public TSArrayAccessType arrayAccess(String index) {
+    /// `{this}[{index}]`
+    public TSArrayAccessType access(String index) {
         return new TSArrayAccessType(this, Types.primitive(index));
     }
 
@@ -61,18 +64,22 @@ public abstract class BaseType extends Code {
         return Types.importShield(this, imports);
     }
 
+    /// `{this}?`
     public TSOptionalType optional() {
         return Types.optional(this);
     }
 
+    /// `{this}<{param1}, {param2}, {...}>`
     public TSParamType withParams(BaseType... params) {
         return Types.parameterized(this, params);
     }
 
+    /// `{this}<{param1}, {param2}, {...}>`
     public TSParamType withParams(String... params) {
         return Types.parameterized(this, CollectUtils.mapToList(params, Types::primitive));
     }
 
+    /// `{this}<{param1}, {param2}, {...}>`
     public TSParamType withParams(Collection<? extends BaseType> params) {
         return Types.parameterized(this, params);
     }

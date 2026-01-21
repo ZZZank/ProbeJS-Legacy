@@ -117,8 +117,8 @@ public class RecipeEvents implements ProbeJSPlugin {
                 continue;
             }
             getter.type = Types.type(DOCUMENTED_RECIPES)
-                .arrayAccess(id.getNamespace())
-                .arrayAccess(id.getPath());
+                .access(id.getNamespace())
+                .access(id.getPath());
         }
     }
 

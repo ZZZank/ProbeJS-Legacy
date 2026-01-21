@@ -52,7 +52,7 @@ public class GlobalClasses implements ProbeJSPlugin {
                 Types.ternary(
                     "T",
                     Types.keyof(GLOBAL_CLASSES),
-                    ATTACH_J_CLASS.withParams(GLOBAL_CLASSES.arrayAccess(T)),
+                    ATTACH_J_CLASS.withParams(GLOBAL_CLASSES.access(T)),
                     Types.NEVER
                 )
             )

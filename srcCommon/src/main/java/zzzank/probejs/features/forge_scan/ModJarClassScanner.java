@@ -40,6 +40,7 @@ class ModJarClassScanner {
 
         String[] mixinConfigs = null;
 
+        // I don't know why will anyone provide a Jar with no manifest file, but it happens
         var manifest = modJar.getManifest();
         if (manifest != null) {
             var mixinConfigsAttr = manifest.getMainAttributes().getValue("MixinConfigs");

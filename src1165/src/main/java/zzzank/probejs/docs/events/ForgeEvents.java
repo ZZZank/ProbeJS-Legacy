@@ -6,7 +6,6 @@ import lombok.val;
 import net.minecraftforge.eventbus.api.Event;
 import zzzank.probejs.docs.GlobalClasses;
 import zzzank.probejs.features.kubejs.BindingFilter;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.ts.FunctionDeclaration;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
@@ -35,7 +34,7 @@ public class ForgeEvents implements ProbeJSPlugin {
             Types.generic("T", Types.keyof(GlobalClasses.GLOBAL_CLASSES)),
             TSUtilityType.instanceType(
                 TSUtilityType.extract(
-                    GlobalClasses.GLOBAL_CLASSES.arrayAccess("T"),
+                    GlobalClasses.GLOBAL_CLASSES.access("T"),
                     Types.typeOf(Event.class)
                 )
             )
