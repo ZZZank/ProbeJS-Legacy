@@ -174,6 +174,15 @@ public class JsonUtils {
     }
 
     public static class ClassAsNameJsonAdapter extends TypeAdapter<Class<?>> {
+        private final ClassLoader loader;
+
+        public ClassAsNameJsonAdapter(ClassLoader loader) {
+            this.loader = loader;
+        }
+
+        public ClassAsNameJsonAdapter() {
+            this(null);
+        }
 
         @Override
         public void write(JsonWriter out, Class<?> value) throws IOException {
@@ -183,7 +192,8 @@ public class JsonUtils {
         @Override
         public Class<?> read(JsonReader in) throws IOException {
             try {
-                return Class.forName(in.nextString(), false, ClassAsNameJsonAdapter.class.getClassLoader());
+                var loader = this.loader == null ? ClassAsNameJsonAdapter.class.getClassLoader() : this.loader;
+                return Class.forName(in.nextString(), false, loader);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
