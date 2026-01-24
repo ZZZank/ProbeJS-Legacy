@@ -1,3 +1,19 @@
+# ProbeJS Legacy 6.0.0 -> 6.0.1
+
+Skip anonymous class
+
+- Anonymous classes will be skipped when scanning classes in Forge data and mod Jar
+- fix some NPE issue
+    - NPE when there's no `java(...)`/`Java.loadClass(...)` usage in a script type
+    - NPE when a mod in `Mods with forced Full Scanning` config provides no jar manifest
+- [1.16.5] make `BuiltinEventRecord.RECORDS` a mutable map, to allow adding custom event record
+- [1.20.1] add type doc for `ReplacementMatch`
+- [1.16.5] add `JSMemberType.Builder.literalMember(...)` back for backward compat (mostly KesseractJS compat)
+- [1.16.5] remove duplicated event record
+- [1.16.5] make `AccessClassData` a static util class
+
+---
+
 # ProbeJS Legacy 5.2.4 -> 6.0.0
 
 The Simplicity Update
@@ -13,8 +29,8 @@ This means using `require("packages/...")`, `java("packages/...")` or `Java.load
 Example:
 - 5.2.4 for 1.16.5: `java("packages/net/minecraft/world/item/$ItemStack")`
 - 6.0.0 for 1.16.5: `java("net.minecraft.item.ItemStack")`
-- 5.2.4 for 1.20.1: `java("packages/net/minecraft/world/item/$ItemStack")`
-- 6.0.0 for 1.20.1: `java("net.minecraft.world.item.ItemStack")`
+- 5.2.4 for 1.20.1: `Java.loadClass("packages/net/minecraft/world/item/$ItemStack")`
+- 6.0.0 for 1.20.1: `Java.loadClass("net.minecraft.world.item.ItemStack")`
 
 Tip: If you are too lazy to manually replace the class name string, you can just delete that and import again
 
@@ -38,6 +54,7 @@ const $ItemStack = java("net.minecraft.item.ItemStack")
 
 - Support for java-like raw usage of generic class
   - Example: for `List<E>`, you can use `List` directly, and ProbeJS will now infer the variable `E` as type boundary
+- [1.20.1] Fix recipe event support
 - `LoadClass<T>` implementation is changed to prevent constructing large union types for class matching, this can improve IDE performance
 - Integration for ProbeJS VSCode extension is removed
 - More accurate and more performant mixin class check for ModJarClassScanner
