@@ -46,21 +46,12 @@ public abstract class AccessClassData {
         }
     }
 
-    public static String className(ClassData data) {
-        return clazz(data).getClassName();
-    }
-
     public static Type parent(ClassData data) {
         try {
             return (Type) HANDLE_parent.invoke(data);
         } catch (Throwable e) {
             throw new AssertionError(e);
         }
-    }
-
-    public static String parentClassName(ClassData data) {
-        val p = parent(data);
-        return p == null ? null : p.getClassName();
     }
 
     public static Set<Type> interfaces(ClassData data) {

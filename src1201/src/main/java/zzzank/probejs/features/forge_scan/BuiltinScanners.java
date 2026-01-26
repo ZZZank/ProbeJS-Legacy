@@ -34,9 +34,12 @@ public enum BuiltinScanners {
             val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
             val toSubClasses = new HashMap<String, List<String>>();
             for (var data : CollectUtils.iterate(dataStream)) {
-                toSubClasses
-                    .computeIfAbsent(data.parent().getClassName(), CollectUtils.computeArrayList3())
-                    .add(data.clazz().getClassName());
+                var parent = data.parent();
+                if (parent != null) {
+                    toSubClasses
+                        .computeIfAbsent(parent.getClassName(), CollectUtils.computeArrayList3())
+                        .add(data.clazz().getClassName());
+                }
             }
 
             while (!queue.isEmpty()) {

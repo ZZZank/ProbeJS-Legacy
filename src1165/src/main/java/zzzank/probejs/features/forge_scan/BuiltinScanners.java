@@ -2,6 +2,7 @@ package zzzank.probejs.features.forge_scan;
 
 import lombok.val;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import org.objectweb.asm.Type;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.util.*;
@@ -20,7 +21,7 @@ public enum BuiltinScanners {
     FULL {
         @Override
         public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
-            return dataStream.map(AccessClassData::className);
+            return dataStream.map(AccessClassData::clazz).map(Type::getClassName);
         }
     },
     EVENTS {
@@ -31,9 +32,12 @@ public enum BuiltinScanners {
             val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
             val toSubClasses = new HashMap<String, List<String>>();
             for (var data : CollectUtils.iterate(dataStream)) {
-                toSubClasses
-                    .computeIfAbsent(AccessClassData.parentClassName(data), CollectUtils.computeArrayList3())
-                    .add(AccessClassData.className(data));
+                var parent = AccessClassData.parent(data);
+                if (parent != null) {
+                    toSubClasses
+                        .computeIfAbsent(parent.getClassName(), CollectUtils.computeArrayList3())
+                        .add(AccessClassData.clazz(data).getClassName());
+                }
             }
 
             while (!queue.isEmpty()) {
