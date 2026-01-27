@@ -1,3 +1,11 @@
+# ProbeJS Legacy 6.0.1 -> 6.0.2
+
+Fix forge class scanner
+
+- fix NPE due to `ClassData.parent` being `null`
+
+---
+
 # ProbeJS Legacy 6.0.0 -> 6.0.1
 
 Skip anonymous class
