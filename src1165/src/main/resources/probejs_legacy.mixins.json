@@ -8,6 +8,7 @@
     "AccessScriptManager",
     "MixinEventJS",
     "MixinEventsJS",
+    "MixinKubeJS",
     "MixinRecipeEventJS",
     "integration.KubeJSForgeEventRedirection",
     "integration.ScopeSupportMixin"
