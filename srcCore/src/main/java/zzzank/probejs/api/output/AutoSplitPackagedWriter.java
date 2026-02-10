@@ -33,7 +33,6 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
     public final int splitThreshold;
 
     public final String fallbackFileName;
-    protected int accepted = 0;
 
     public AutoSplitPackagedWriter(
         int minPackageCount,
@@ -53,7 +52,6 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
     @Override
     public void accept(@NotNull TypeScriptFile file) {
         packaged.get(null).add(file);
-        accepted += 1;
     }
 
     @Override
@@ -123,13 +121,12 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
 
     @Override
     protected void postWriting() {
-        accepted = 0;
         packaged = Collections.singletonMap(null, new ArrayList<>());
     }
 
     @Override
     public int countAcceptedFiles() {
-        return accepted;
+        return packaged.values().stream().mapToInt(List::size).sum();
     }
 
     @Override
