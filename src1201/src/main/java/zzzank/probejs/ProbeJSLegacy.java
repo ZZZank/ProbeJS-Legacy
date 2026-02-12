@@ -12,7 +12,7 @@ import zzzank.probejs.utils.config.struct.ConfigRootImpl;
 import java.io.IOException;
 
 @Mod(ProbeJS.MOD_ID)
-public class ProbeJSMod {
+public class ProbeJSLegacy {
 
     public static final ConfigEntry<BuiltinScanners> CONFIG_CLASS_SCANNER = ProbeConfig.INSTANCE.define("Class Scanner")
         .bindDefault(BuiltinScanners.EVENTS)
@@ -23,7 +23,7 @@ public class ProbeJSMod {
             FULL -> scan all classes recorded by ForgeModLoader""")
         .buildAutoSave();
 
-    public ProbeJSMod() {
+    public ProbeJSLegacy() {
         EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
 
         BuiltinScanners.PREDEFINED_BASECLASS.add(Event.class.getName());

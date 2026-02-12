@@ -131,7 +131,7 @@ public class GameEvents {
                 .then(Commands.literal("refresh_config")
                     .requires(pjsEnabled.and(spOrOp))
                     .executes(context -> {
-                        sendMsg.accept(context, ProbeJSMod.refreshConfig());
+                        sendMsg.accept(context, ProbeJSLegacy.refreshConfig());
                         return Command.SINGLE_SUCCESS;
                     })
                 )

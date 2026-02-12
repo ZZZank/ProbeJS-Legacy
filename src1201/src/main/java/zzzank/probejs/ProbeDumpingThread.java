@@ -58,7 +58,7 @@ public class ProbeDumpingThread extends Thread {
             );
         }
 
-        messageSender.accept(ProbeJSMod.refreshConfig());
+        messageSender.accept(ProbeJSLegacy.refreshConfig());
         RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper(KubeJS.getClientScriptManager().context) : new RhinoDefault());
         RegistryInfos.refresh();
 
