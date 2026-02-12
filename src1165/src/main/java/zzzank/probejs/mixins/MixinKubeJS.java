@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public abstract class MixinKubeJS {
 
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lme/shedaniel/architectury/platform/Platform;getMods()Ljava/util/Collection;"), require = 0)
-    private static Collection<Mod> deduplicateModFile() {
+    private Collection<Mod> deduplicateModFile() {
         return Platform.getMods()
             .stream()
             .collect(Collectors.toMap(
