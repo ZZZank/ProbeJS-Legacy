@@ -78,16 +78,19 @@ public class BasicMemberCollector implements MemberCollector {
         }
         try {
             var parent = clazz.getSuperclass();
-            if (parent != null) {
-                // example: this method is `String next()`, while parent method is `CharSequence next()`
-                // or: `T next()`, while parent method is `Object next()`
-                val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
-                return !Objects.equals(method.getGenericReturnType(), parentMethod.getGenericReturnType());
+            if (parent == null) {
+                return true;
             }
+            // example1: this method is `String next()`, while parent method is `CharSequence next()`
+            // example2: `T next()`, while parent method is `Object next()`
+            // example3: `XXXIteratorImpl.next()` and `Iterator.next()` (Iterator is interface)
+            // for these examples, method should be kept
+            val parentMethod = parent.getMethod(method.getName(), method.getParameterTypes());
+            return parentMethod.getDeclaringClass().isInterface()
+                   || !Objects.equals(method.getGenericReturnType(), parentMethod.getGenericReturnType());
         } catch (NoSuchMethodException ignored) {
-            // fall through
+            // no such method in parent: unique method, keep it
+            return true;
         }
-        // no such method in super -> unique method, keep it
-        return true;
     }
 }
