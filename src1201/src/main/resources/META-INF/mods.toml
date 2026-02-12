@@ -67,3 +67,8 @@ mandatory = true
 versionRange = "[1605.3.19-build.299,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "probejs"
+mandatory = false
+versionRange = "[0.0.0-IMCOMPATIBLE]"
