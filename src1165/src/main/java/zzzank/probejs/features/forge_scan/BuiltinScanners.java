@@ -1,11 +1,10 @@
 package zzzank.probejs.features.forge_scan;
 
-import lombok.val;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
-import zzzank.probejs.utils.CollectUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -27,25 +26,18 @@ public enum BuiltinScanners {
     EVENTS {
         @Override
         public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
-            val names = new HashSet<>(PREDEFINED_BASECLASS);
+            var names = new HashSet<String>();
 
-            val queue = new ArrayDeque<>(PREDEFINED_BASECLASS);
-            val toSubClasses = new HashMap<String, List<String>>();
-            for (var data : CollectUtils.iterate(dataStream)) {
-                var parent = AccessClassData.parent(data);
-                if (parent != null) {
-                    toSubClasses
-                        .computeIfAbsent(parent.getClassName(), CollectUtils.computeArrayList3())
-                        .add(AccessClassData.clazz(data).getClassName());
-                }
-            }
+            var queue = PREDEFINED_BASECLASS.stream()
+                .map(name -> Type.getObjectType(name.replace('.', '/')))
+                .collect(Collectors.toCollection(ArrayDeque::new));
+            var byParent = dataStream.collect(Collectors.groupingBy(AccessClassData::parent));
 
             while (!queue.isEmpty()) {
-                val parent = queue.pop();
-                names.add(parent);
-                val subClasses = toSubClasses.get(parent);
-                if (subClasses != null) {
-                    queue.addAll(subClasses);
+                var parentType = queue.pop();
+                names.add(parentType.getClassName());
+                for (var subClass : byParent.getOrDefault(parentType, List.of())) {
+                    queue.add(AccessClassData.clazz(subClass));
                 }
             }
 
