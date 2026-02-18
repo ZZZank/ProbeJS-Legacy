@@ -38,18 +38,12 @@ class ModJarClassScanner {
     ModJarClassScanner(JarFile modJar) throws IOException {
         this.file = modJar;
 
-        String[] mixinConfigs = null;
-
         // I don't know why will anyone provide a Jar with no manifest file, but it happens
-        var manifest = modJar.getManifest();
-        if (manifest != null) {
-            var mixinConfigsAttr = manifest.getMainAttributes().getValue("MixinConfigs");
-            if (mixinConfigsAttr != null) {
-                mixinConfigs = mixinConfigsAttr.split(",");
-            }
-        }
-
-        this.mixinPackages = mixinConfigs != null ? readMixinPackages(modJar, mixinConfigs) : List.of();
+        this.mixinPackages = Optional.ofNullable(modJar.getManifest())
+            .map(manifest -> manifest.getMainAttributes().getValue("MixinConfigs"))
+            .map(config -> config.split(","))
+            .map(config -> readMixinPackages(modJar, config))
+            .orElse(List.of());
     }
 
     /**
@@ -60,7 +54,7 @@ class ModJarClassScanner {
     }
 
     /// Note: the element (mixin package) are in class internal name format: `zzzank/probejs/mixins`, not `zzzank.probejs.mixins`
-    private static @NotNull List<String> readMixinPackages(JarFile modJar, String[] mixinConfigsAt) throws IOException {
+    private static @NotNull List<String> readMixinPackages(JarFile modJar, String[] mixinConfigsAt) {
         var mixinPackages = new TreeSet<String>();
         for (var mixinConfigAt : mixinConfigsAt) {
             try (var in = modJar.getInputStream(modJar.getJarEntry(mixinConfigAt))) {
@@ -69,6 +63,10 @@ class ModJarClassScanner {
                     .getAsString()
                     .replace('.', '/');
                 mixinPackages.add(mixinPackage);
+            } catch (IOException e) {
+                // seem to be useless because we're already in-game
+                var fileName = new File(modJar.getName()).getName();
+                ProbeJS.LOGGER.error("Error when trying to read mixin config '{}' from {}, skipping", mixinConfigAt, fileName, e);
             }
         }
         return List.copyOf(mixinPackages);
