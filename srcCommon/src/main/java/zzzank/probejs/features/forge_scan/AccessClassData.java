@@ -1,6 +1,5 @@
 package zzzank.probejs.features.forge_scan;
 
-import lombok.val;
 import net.minecraftforge.forgespi.language.ModFileScanData.ClassData;
 import org.objectweb.asm.Type;
 import zzzank.probejs.ProbeJS;
@@ -19,19 +18,12 @@ public abstract class AccessClassData {
     private static final MethodHandle HANDLE_interfaces;
 
     static {
-        val lookup = MethodHandles.lookup();
         try {
-            var f = ClassData.class.getDeclaredField("clazz");
-            f.setAccessible(true);
-            HANDLE_clazz = lookup.unreflectGetter(f);
+            var lookup = MethodHandles.privateLookupIn(ClassData.class, MethodHandles.lookup());
 
-            f = ClassData.class.getDeclaredField("parent");
-            f.setAccessible(true);
-            HANDLE_parent = lookup.unreflectGetter(f);
-
-            f = ClassData.class.getDeclaredField("interfaces");
-            f.setAccessible(true);
-            HANDLE_interfaces = lookup.unreflectGetter(f);
+            HANDLE_clazz = lookup.findGetter(ClassData.class, "clazz", Type.class);
+            HANDLE_parent = lookup.findGetter(ClassData.class, "parent", Type.class);
+            HANDLE_interfaces = lookup.findGetter(ClassData.class, "interfaces", Set.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             ProbeJS.LOGGER.error("accessing '{}' failed", ClassData.class, e);
             throw new IllegalStateException();
