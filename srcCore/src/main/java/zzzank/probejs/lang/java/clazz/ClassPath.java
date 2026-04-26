@@ -1,6 +1,7 @@
 package zzzank.probejs.lang.java.clazz;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.utils.CollectUtils;
 
@@ -60,7 +61,8 @@ public final class ClassPath implements Comparable<ClassPath> {
         return this.className;
     }
 
-    /// [#getOriginalName()] if its result is not empty, [#getRemappedName()] otherwise
+    /// [#getOriginalName()] if this is not an artificial path, [#getRemappedName()] otherwise
+    /// @see #isArtificial()
     public String getFirstValidPath() {
         return this.className.isEmpty() ? getRemappedName() : this.className;
     }
@@ -71,6 +73,7 @@ public final class ClassPath implements Comparable<ClassPath> {
         return isArtificial() ? name : '$' + name;
     }
 
+    /// @see #ofArtificial(String)
     public boolean isArtificial() {
         return this.className.isEmpty();
     }
@@ -80,6 +83,14 @@ public final class ClassPath implements Comparable<ClassPath> {
         return Arrays.compare(this.remapped, other.remapped);
     }
 
+    /// Compares the two [ClassPath], and create a "diff" that is a dot-joined full path, with common package parts
+    /// replaced by empty string
+    ///
+    /// Example: `"aaa.bbb.CCC".toDiff("aaa.bbb.DDD") == "..CCC"`
+    ///
+    /// For a Java ClassPath, only remapped name will be used for creating diff
+    /// @see #isArtificial()
+    /// @see #fromDiff(String, UnaryOperator)
     public String toDiff(final @NotNull ClassPath base) {
         var commonPartsCount = CollectUtils.countCommonPrefix(this.remapped, base.remapped);
         var diff = this.remapped.clone();
@@ -87,7 +98,15 @@ public final class ClassPath implements Comparable<ClassPath> {
         return String.join(".", diff);
     }
 
-    public ClassPath fromDiff(String diff, UnaryOperator<String> unmapper) {
+    /// Convert diff back to [ClassPath], with the caller ClassPath being the `base`
+    ///
+    /// Example: `"aaa.bbb.CCC".fromDiff("..DDD") == "aaa.bbb.DDD"`
+    ///
+    /// An additional unmapper can be provided to create a Java ClassPath. `null` unmapper is allowed, and the result
+    /// ClassPath will then be artificial
+    /// @see #isArtificial()
+    /// @see #toDiff(ClassPath)
+    public ClassPath fromDiff(String diff, @Nullable UnaryOperator<String> unmapper) {
         var remapped = diff.split("\\.");
         for (int i = 0; i < remapped.length; i++) {
             if (remapped[i].isEmpty()) {
@@ -96,7 +115,8 @@ public final class ClassPath implements Comparable<ClassPath> {
                 break;
             }
         }
-        return new ClassPath(unmapper.apply(String.join(".", remapped)), remapped);
+        var unmapped = unmapper == null ? "" : unmapper.apply(String.join(".", remapped));
+        return new ClassPath(unmapped, remapped);
     }
 
     public boolean equals(final Object o) {
