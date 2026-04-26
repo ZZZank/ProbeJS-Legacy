@@ -12,12 +12,10 @@ import java.util.function.Supplier;
 @UtilityClass
 public class BuiltinResults {
 
-    private static final Supplier<String> SUPPLY_NULL = () -> null;
-
     static final AccessResult<?> NONE = good(null);
 
     public <T> AccessResult<T> good(T value) {
-        return new AccessResultImpl<>(value, ResultType.GOOD, SUPPLY_NULL);
+        return new AccessResultImpl<>(value, ResultType.GOOD, () -> null);
     }
 
     public <T> AccessResult<T> info(T value, Supplier<String> message) {
