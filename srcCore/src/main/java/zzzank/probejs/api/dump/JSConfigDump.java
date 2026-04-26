@@ -1,6 +1,7 @@
 package zzzank.probejs.api.dump;
 
 import com.google.gson.JsonObject;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.FileUtils;
 import zzzank.probejs.utils.JsonUtils;
 
@@ -46,7 +47,7 @@ public class JSConfigDump extends TSDumpBase {
     protected JsonObject provideJsonConfig() {
         return JsonUtils.parseObject(
             Map.of(
-                "compilerOptions", Map.ofEntries(
+                "compilerOptions", CollectUtils.ofLinkedMap(
                     Map.entry("module", "commonjs"),
                     Map.entry("moduleResolution", "classic"),
                     Map.entry("isolatedModules", true),

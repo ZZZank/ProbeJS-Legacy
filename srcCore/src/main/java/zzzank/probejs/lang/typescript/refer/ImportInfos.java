@@ -40,7 +40,7 @@ public class ImportInfos implements Iterable<ImportInfo> {
     }
 
     public static ImportInfos of(@NotNull Collection<ImportInfo> infos) {
-        return new ImportInfos(CollectUtils.ofSizedMap(infos.size())).addAll(infos);
+        return new ImportInfos(HashMap.newHashMap(infos.size())).addAll(infos);
     }
 
     public static ImportInfos of(@NotNull Stream<ImportInfo> infos) {

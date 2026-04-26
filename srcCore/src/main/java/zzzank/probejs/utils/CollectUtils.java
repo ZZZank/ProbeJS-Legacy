@@ -3,6 +3,7 @@ package zzzank.probejs.utils;
 import lombok.val;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -16,22 +17,45 @@ import java.util.stream.Stream;
  */
 public interface CollectUtils {
 
+    static <T> T make(T value, Consumer<? super T> action) {
+        action.accept(value);
+        return value;
+    }
+
     @SafeVarargs
-    static <T> List<T> ofList(T... elements) {
+    static <T> ArrayList<T> ofList(T... elements) {
         val list = new ArrayList<T>(elements.length);
         Collections.addAll(list, elements);
         return list;
     }
 
-    static <T> List<T> ofList(Stream<T> stream) {
+    static <T> ArrayList<T> ofList(Stream<T> stream) {
         return stream.collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @SafeVarargs
+    static <K, V> LinkedHashMap<K, V> ofLinkedMap(Map.Entry<K, V>... entries) {
+        var map = LinkedHashMap.<K, V>newLinkedHashMap(entries.length);
+        for (var entry : entries) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        return map;
+    }
+
+    @SafeVarargs
+    static <K, V> HashMap<K, V> ofMap(Map.Entry<K, V>... entries) {
+        var map = HashMap.<K, V>newHashMap(entries.length);
+        for (var entry : entries) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        return map;
     }
 
     static <K, V> AbstractMap.SimpleImmutableEntry<K, V> ofEntry(K key, V value) {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
-    static <I, O> List<O> mapToList(Collection<I> collection, Function<I, O> mapper) {
+    static <I, O> ArrayList<O> mapToList(Collection<I> collection, Function<I, O> mapper) {
         val l = new ArrayList<O>(collection.size());
         for (I i : collection) {
             l.add(mapper.apply(i));
@@ -48,7 +72,7 @@ public interface CollectUtils {
         return got;
     }
 
-    static <I, O> List<O> mapToList(I[] collection, Function<I, O> mapper) {
+    static <I, O> ArrayList<O> mapToList(I[] collection, Function<I, O> mapper) {
         Objects.requireNonNull(collection);
         Objects.requireNonNull(mapper);
         val l = new ArrayList<O>(collection.length);
@@ -73,14 +97,6 @@ public interface CollectUtils {
 
     static <K, V> HashMap<K, V> ofSizedMap(int expectedSize) {
         return new HashMap<>(calcMapExpectedSize(expectedSize));
-    }
-
-    static <E> Set<E> identityHashSet() {
-        return Collections.newSetFromMap(new IdentityHashMap<>());
-    }
-
-    static <E> Set<E> identityHashSet(int expectedMaxSize) {
-        return Collections.newSetFromMap(new IdentityHashMap<>(expectedMaxSize));
     }
 
     static <T> Iterable<T> iterate(Iterator<T> iterator) {

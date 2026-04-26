@@ -2,6 +2,7 @@ package zzzank.probejs;
 
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
+import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.gson.GsonSerdeFactory;
 import zzzank.probejs.utils.config.serde.gson.PatternSerde;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
@@ -16,12 +17,16 @@ import java.util.regex.Pattern;
  */
 public interface ProbeConfig {
 
-    ConfigRoot INSTANCE = new ConfigRootImpl(
-        JsonConfigIO.make(ProbeJS.GSON_WRITER, io -> {
-            io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
-            io.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
-        }),
-        null // initialize later
+    ConfigRoot INSTANCE = CollectUtils.make(
+        new ConfigRootImpl(
+            CollectUtils.make(
+                new JsonConfigIO(ProbeJS.GSON_WRITER), io -> {
+                    io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
+                    io.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
+                }
+            ),
+            null // initialize later
+        ), root -> root.properties().put(ConfigProperty.AUTO_SAVE, true)
     );
 
     ConfigEntry<Integer> configVersion = INSTANCE.define("configVersion")
