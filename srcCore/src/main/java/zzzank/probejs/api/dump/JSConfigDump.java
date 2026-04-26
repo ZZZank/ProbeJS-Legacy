@@ -48,22 +48,19 @@ public class JSConfigDump extends TSDumpBase {
         return JsonUtils.parseObject(
             Map.of(
                 "compilerOptions", CollectUtils.ofLinkedMap(
-                    Map.entry("module", "commonjs"),
-                    Map.entry("moduleResolution", "classic"),
-                    Map.entry("isolatedModules", true),
-                    Map.entry("composite", true),
-                    Map.entry("incremental", true),
                     Map.entry("allowJs", true),
-                    Map.entry("target", "ES2015"),
-                    Map.entry("lib", List.of("ES5", "ES2015")),
+                    Map.entry("lib", List.of("ES2015")),
+                    Map.entry("module", "nodenext"),
                     Map.entry("rootDir", "."),
-                    Map.entry("types", typingProviders.stream()
-                        .map(TSDump::writeTo)
-                        .map(p -> FileUtils.relativePathStr(scriptFolder, p))
-                        .toList()
-                    ),
+                    Map.entry("skipDefaultLibCheck", true),
                     Map.entry("skipLibCheck", true),
-                    Map.entry("skipDefaultLibCheck", true)
+                    Map.entry("target", "ES2015"),
+                    Map.entry("types",
+                        typingProviders.stream()
+                            .map(TSDump::writeTo)
+                            .map(p -> FileUtils.relativePathStr(scriptFolder, p))
+                            .toList()
+                    )
                 ),
                 "include", List.of("./**/*.js")
             )
