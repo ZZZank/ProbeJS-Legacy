@@ -35,70 +35,70 @@ public interface ProbeConfig {
         .comment("""
             enable or disable ProbeJS Legacy
             note that `require()` function in script are always available""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Long> modHash = INSTANCE.define("modHash")
         .bindDefault(-1L)
         .comment("""
             internal config, used for tracking mod update and modlist change""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Long> registryHash = INSTANCE.define("registryHash")
         .bindDefault(-1L)
         .comment("""
             internal config, used for tracking registry change""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> isolatedScopes = INSTANCE.define("isolatedScopes")
         .bindDefault(true)
         .comment("""
             isolate scripts from different script file with certain exposure,
             used for making scripts actual running situation more in line with your coding""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> complete = INSTANCE.define("complete")
         .bindDefault(true)
         .comment("""
             attach all registry names of each registry type to related JS types, for better code completion
             disabling this can help with performance of your code editor
             snippets for registry names are always available, regardless of this option""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> publicClassOnly = INSTANCE.define("publicClassOnly")
         .bindDefault(false)
         .comment("""
             prevent classes that are not public and not referenced from being scanned""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> resolveGlobal = INSTANCE.define("resolveGlobal")
         .bindDefault(true)
         .comment("""
             resolve defined values in `global`""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Integer> globalResolvingDepth = INSTANCE.define("'global' Resolving Depth")
         .bindDefault(1)
         .comment("""
             how deep should ProbeJS Legacy dive into defined values in `global`""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<List<String>> fullScanMods = INSTANCE.define("Mods with forced Full Scanning")
-        .bindDefault(CollectUtils.ofList("minecraft"))
+        .<List<String>>bindDefault(CollectUtils.ofList("minecraft"))
         .comment("""
             mods described here will have ALL their classes scanned""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> dumpCustomRecipeGenerator = INSTANCE.define("dumpCustomRecipeGenerator")
         .bindDefault(false)
         .comment("""
             KubeJS will generate custom recipe creation method in recipe event, these methods only accept one Json as its arg
             enabling this will allow ProbeJS to dump syntax these JsonSerializer-based recipe creating functions""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Pattern> registryObjectFilter = INSTANCE.define("Registry Object Filter")
         .bindDefault(Pattern.compile("^minecraft:.+$"))
         .comment("""
             a string regex used for filtering registry objects.
             Registry objects whose id matches this pattern will always be dumped by ProbeJS Legacy""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> autoParamRename = INSTANCE.define("Rename Parameter Automatically")
         .bindDefault(true)
         .comment("""
             automatically rename `arg123`-like names into some more human readable names""")
-        .buildAutoSave();
+        .build();
     ConfigEntry<Boolean> fieldAsBeaning = INSTANCE.define("Field As Beaning")
         .bindDefault(true)
         .comment("""
             Convert field to getter/setter if possible, this might help beaning generation be more accurate""")
-        .buildAutoSave();
+        .build();
 }

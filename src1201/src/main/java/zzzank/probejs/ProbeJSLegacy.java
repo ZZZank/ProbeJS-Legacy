@@ -21,7 +21,7 @@ public class ProbeJSLegacy {
             NONE -> no class scanner
             EVENTS (default) -> scan all forge event subclasses
             FULL -> scan all classes recorded by ForgeModLoader""")
-        .buildAutoSave();
+        .build();
 
     public ProbeJSLegacy() {
         EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());

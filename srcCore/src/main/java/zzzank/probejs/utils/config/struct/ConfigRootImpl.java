@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -33,6 +34,11 @@ public class ConfigRootImpl extends ConfigCategoryImpl implements ConfigRoot {
         super("", provider, properties, null);
         this.io = Asser.tNotNull(io, "config io");
         this.filePath = path;
+    }
+
+    @Override
+    public Stream<ConfigCategory> walkParents() {
+        return Stream.empty();
     }
 
     public void setFilePath(Path filePath) {

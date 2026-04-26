@@ -5,8 +5,11 @@ import zzzank.probejs.utils.config.binding.ReadOnlyBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.report.AccessResult;
+import zzzank.probejs.utils.config.report.BuiltinResults;
 
+import java.io.IOException;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -42,7 +45,18 @@ public interface ConfigEntry<T> {
     ConfigBinding<T> binding();
 
     default AccessResult<T> set(T value) {
-        return binding().set(value);
+        var result = binding().set(value);
+        if (result.type() == AccessResult.ResultType.ERROR) {
+            return result;
+        }
+        if (properties().getOrDefault(ConfigProperty.AUTO_SAVE)) {
+            try {
+                getRoot().save();
+            } catch (IOException e) {
+                return BuiltinResults.exception(e);
+            }
+        }
+        return result;
     }
 
     ConfigProperties properties();
@@ -55,6 +69,14 @@ public interface ConfigEntry<T> {
     ///
     /// this method returns `null` when and only when this config entry is a [ConfigRoot]
     ConfigCategory parent();
+
+    default Stream<ConfigCategory> walkParents() {
+        if (isRoot()) {
+            return Stream.empty();
+        }
+        var parent = parent();
+        return Stream.concat(Stream.of(parent), parent.walkParents());
+    }
 
     /// @return `true` if and only if this config entry is a [ConfigCategory]
     default boolean isCategory() {
