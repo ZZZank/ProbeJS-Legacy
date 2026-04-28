@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.code.Code;
+import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.code.ts.FormattedImports;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 
@@ -39,6 +40,9 @@ public class TypeScriptFile {
         codes.add(code);
         for (val info : code.getImportInfos()) {
             declaration.addImport(info);
+        }
+        if (code instanceof DeclarationCode decl) {
+            decl.reportDeclaredNames(this.declaration.excludedNames);
         }
     }
 

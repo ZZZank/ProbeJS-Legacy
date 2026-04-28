@@ -3,19 +3,17 @@ package zzzank.probejs.lang.typescript.code.ts;
 import lombok.val;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
+import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.code.member.ParamDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class FunctionDeclaration extends CommentableCode {
+public class FunctionDeclaration extends CommentableCode implements DeclarationCode {
     public String name;
     public final List<TSVariableType> variableTypes;
     public final List<ParamDecl> params;
@@ -57,6 +55,11 @@ public class FunctionDeclaration extends CommentableCode {
         String tail = String.format(": %s", returnType.line(declaration, BaseType.FormatType.RETURN));
 
         return Collections.singletonList(String.format("%s%s%s", head, body, tail));
+    }
+
+    @Override
+    public void reportDeclaredNames(Set<String> existed) {
+        existed.add(name);
     }
 
     public static class Builder {

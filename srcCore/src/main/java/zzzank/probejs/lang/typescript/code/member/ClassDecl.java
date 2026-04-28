@@ -6,22 +6,20 @@ import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
+import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * The Class name in the ClassDecl must be the name of its corresponding classpath.
  */
-public class ClassDecl extends CommentableCode {
+public class ClassDecl extends CommentableCode implements DeclarationCode {
     public final String name;
     public final List<TSVariableType> variableTypes;
 
@@ -125,6 +123,11 @@ public class ClassDecl extends CommentableCode {
         formatted.addAll(body);
         formatted.addAll(tail);
         return formatted;
+    }
+
+    @Override
+    public void reportDeclaredNames(Set<String> existed) {
+        existed.add(this.name);
     }
 
     public static class Builder {

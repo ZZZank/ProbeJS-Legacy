@@ -79,7 +79,7 @@ public class Bindings implements ProbeJSPlugin {
             val type = entry.getValue();
             codes.add(new VariableDeclaration(symbol, type));
         }
-        scriptDump.addGlobal("bindings", exported.keySet(), codes.toArray(new Code[0]));
+        scriptDump.addGlobal("bindings", codes.toArray(new Code[0]));
     }
 
     @Override

@@ -4,6 +4,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
+import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
@@ -12,11 +13,12 @@ import zzzank.probejs.utils.Asser;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a type declaration.
  */
-public class TypeDecl extends CommentableCode {
+public class TypeDecl extends CommentableCode implements DeclarationCode {
     public boolean exportDecl;
 
     public String name;
@@ -77,6 +79,11 @@ public class TypeDecl extends CommentableCode {
             .append(type.line(declaration, typeFormat))
             .append(";");
         return Collections.singletonList(builder.toString());
+    }
+
+    @Override
+    public void reportDeclaredNames(Set<String> existed) {
+        existed.add(this.name);
     }
 
     public static class Builder {

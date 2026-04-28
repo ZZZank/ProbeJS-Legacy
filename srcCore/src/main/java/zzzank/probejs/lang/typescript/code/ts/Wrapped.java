@@ -4,12 +4,14 @@ import lombok.val;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
+import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public abstract class Wrapped extends CommentableCode {
+public abstract class Wrapped extends CommentableCode implements DeclarationCode {
     public final List<Code> codes = new ArrayList<>();
 
     public void addCode(Code inner) {
@@ -36,6 +38,15 @@ public abstract class Wrapped extends CommentableCode {
 
     public void merge(Wrapped other) {
         this.codes.addAll(other.codes);
+    }
+
+    @Override
+    public void reportDeclaredNames(Set<String> existed) {
+        for (var code : codes) {
+            if (code instanceof DeclarationCode declarationCode) {
+                declarationCode.reportDeclaredNames(existed);
+            }
+        }
     }
 
     public static class Global extends Wrapped {
