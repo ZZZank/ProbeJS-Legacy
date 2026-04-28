@@ -26,7 +26,7 @@ public class ImportType implements Comparable<ImportType> {
 
     public static final ImportType ORIGINAL = register("original", UnaryOperator.identity());
     public static final ImportType STATIC = register("static", s -> s + "$$Static");
-    public static final ImportType TYPE = register("type", s -> s + "$$Type");
+    public static final ImportType TYPE = register("type", s -> s + "_");
 
     public static final List<ImportType> ALL = Collections.unmodifiableList(INDEXED);
 
