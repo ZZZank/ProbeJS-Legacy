@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.DeclarationCode;
-import zzzank.probejs.lang.typescript.code.ts.FormattedImports;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 
 import java.io.IOException;
@@ -28,8 +27,6 @@ public class TypeScriptFile {
             declaration.addImport(ImportInfo.ofDefault(self));
         }
         this.path = self;
-
-        addCode(new FormattedImports(this.path));
     }
 
     public void excludeSymbol(String name) {
@@ -73,6 +70,20 @@ public class TypeScriptFile {
     }
 
     public void write(Writer writer) throws IOException {
+        boolean written = false;
+
+        for (val value : declaration.references.values()) {
+            if (value.info.path.equals(path)) {
+                continue;
+            }
+            writer.write(value.getImportStatement() + "\n");
+            written = true;
+        }
+        if (!written) {
+            writer.write("export {} // Mark the file as a module, do not remove unless there are other import/exports!");
+        }
+
+        writer.write("\n");
         for (val line : format()) {
             writer.write(line);
             writer.write('\n');
