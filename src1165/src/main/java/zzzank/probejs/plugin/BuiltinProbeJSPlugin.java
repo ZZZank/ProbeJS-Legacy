@@ -7,6 +7,7 @@ import dev.latvian.kubejs.util.ClassFilter;
 import dev.latvian.mods.rhino.NativeJavaClass;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.events.*;
+import zzzank.probejs.features.kubejs.BindingFilter;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -99,6 +100,12 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
             .flatMap(Optional::stream)
             .map(NativeJavaClass::getClassObject)
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void denyBindings(BindingFilter filter) {
+        // let TS server infer `global` as `globalThis`
+        filter.denyConstant("global");
     }
 
     @Override

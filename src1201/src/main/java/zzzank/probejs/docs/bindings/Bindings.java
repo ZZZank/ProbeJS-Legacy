@@ -2,8 +2,6 @@ package zzzank.probejs.docs.bindings;
 
 import dev.latvian.mods.rhino.NativeJavaClass;
 import lombok.val;
-import zzzank.probejs.ProbeConfig;
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.features.kubejs.BindingFilter;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.Code;
@@ -55,16 +53,6 @@ public class Bindings implements ProbeJSPlugin {
             }
             val c = entry.getValue();
             exported.put(id, Types.typeOf(converter.convertType(c)));
-        }
-
-        if (ProbeConfig.resolveGlobal.get()) {
-            ResolveGlobal.addGlobals(scriptDump);
-            val oldGlobal = exported.get(ResolveGlobal.NAME);
-            if (oldGlobal != null) {
-                exported.put(ResolveGlobal.NAME, oldGlobal.and(ResolveGlobal.RESOLVED));
-            } else {
-                ProbeJS.LOGGER.error("no 'global' found in bindings, WHAT?");
-            }
         }
 
         val codes = new ArrayList<Code>();

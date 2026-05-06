@@ -69,16 +69,6 @@ public interface ProbeConfig {
         .comment("""
             prevent classes that are not public and not referenced from being scanned""")
         .build();
-    ConfigEntry<Boolean> resolveGlobal = INSTANCE.define("resolveGlobal")
-        .bindDefault(true)
-        .comment("""
-            resolve defined values in `global`""")
-        .build();
-    ConfigEntry<Integer> globalResolvingDepth = INSTANCE.define("'global' Resolving Depth")
-        .bindDefault(1)
-        .comment("""
-            how deep should ProbeJS Legacy dive into defined values in `global`""")
-        .build();
     ConfigEntry<List<String>> fullScanMods = INSTANCE.define("Mods with forced Full Scanning")
         .<List<String>>bindDefault(CollectUtils.ofList("minecraft"))
         .comment("""
