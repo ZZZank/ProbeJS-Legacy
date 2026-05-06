@@ -1,12 +1,11 @@
-# ProbeJS Legacy 6.0.2 -> 6.0.3
+# ProbeJS Legacy 6.0.3 -> 6.0.4
 
-`probejs_legacy` as mod id
+running on TypeScript 6
 
-- Add an icon to ProbeJS Legacy mod file
-- For 1.20.1, the main mod id was accidentally set to `probejs` during 6.0.0 update, which has now been changed back to `probejs_legacy`. For 1.16.5, you can use both `probejs` and `probejs_legacy` to check ProbeJS Legacy
-- [1.20.1] Original ProbeJS will now be marked as incompatible
-- [1.16.5] Fix KubeJS loading plugin multiple times when multiple mods are declared within one mod file
-    - In theory this should be done by KubeJS itself, but KubeJS for 1.16 has long been dead
-- improve filtering for methods that override methods in parent classes
+- fix: issue when running on TypeScript 6
+- fix: mod icon
+- better handling for `o instanceof $SomeClass`, with `$SomeClass` being an interface class
+- clearer naming for convertible type (`$Item$$Type` -> `$Item_`)
+- remove: special handling for `global`
 
 ---
