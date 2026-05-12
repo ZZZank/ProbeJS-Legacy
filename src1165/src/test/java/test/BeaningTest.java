@@ -4,9 +4,11 @@ import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import zzzank.probejs.docs.InjectBeaning;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
@@ -31,6 +33,8 @@ public class BeaningTest {
         val transpiler = ProbeJSPlugins.buildTranspiler();
 
         val files = transpiler.dump(classRegistry.getFoundClasses());
+        new InjectBeaning().modifyFiles(new RequestAwareFiles(files, null));
+
         val classDecl = files.get(ClassPath.ofJava(type))
             .findCode(ClassDecl.class)
             .orElseThrow();
