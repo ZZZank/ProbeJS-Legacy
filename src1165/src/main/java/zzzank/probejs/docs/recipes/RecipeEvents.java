@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
-import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -78,12 +77,6 @@ public class RecipeEvents implements ProbeJSPlugin {
         for (val m : recipeEvent.methods) {
             if (m.params.isEmpty() && m.name.equals("getRecipes")) {
                 m.returnType = DOCUMENTED;
-                break;
-            }
-        }
-        for (val code : recipeEvent.bodyCode) {
-            if (code instanceof BeanDecl.Getter beanDecl && beanDecl.name.equals("recipes")) {
-                beanDecl.type = DOCUMENTED;
                 break;
             }
         }

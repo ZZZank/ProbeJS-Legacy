@@ -17,7 +17,6 @@ import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.lang.transpiler.TypeConverter;
-import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.Types;
@@ -96,13 +95,10 @@ public class RecipeEvents implements ProbeJSPlugin {
         if (recipeEvent == null) {
             return; // What???
         }
-        recipeEvent.methods.stream()
-            .filter(m -> m.params.isEmpty() && m.name.equals("getRecipes"))
-            .findFirst()
-            .ifPresent(methodDecl -> methodDecl.returnType = Types.type(DOCUMENTED_RECIPES));
-        for (Code code : recipeEvent.bodyCode) {
-            if (code instanceof BeanDecl beanDecl && beanDecl.name.equals("recipes")) {
-                beanDecl.type = Types.type(DOCUMENTED_RECIPES);
+        for (var m : recipeEvent.methods) {
+            if (m.params.isEmpty() && m.name.equals("getRecipes")) {
+                m.returnType = Types.type(DOCUMENTED_RECIPES);
+                break;
             }
         }
         recipeEventFile.declaration.addImport(ImportInfo.ofDefault(DOCUMENTED_RECIPES));
