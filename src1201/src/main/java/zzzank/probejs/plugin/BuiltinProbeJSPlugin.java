@@ -84,7 +84,6 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
         registration.register(
             new InjectAnnotation(),
             new InjectArray(),
-            new InjectBeans(ProbeConfig.fieldAsBeaning.get()),
             new InjectSpecialType()
         );
     }

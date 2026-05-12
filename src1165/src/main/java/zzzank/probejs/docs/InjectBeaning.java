@@ -1,42 +1,56 @@
-package zzzank.probejs.lang.transpiler.transformation.impl;
+package zzzank.probejs.docs;
 
 import lombok.val;
-import zzzank.probejs.lang.java.clazz.Clazz;
-import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
+import zzzank.probejs.ProbeConfig;
+import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
+import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.NameUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InjectBeans implements ClassTransformer {
-    public final boolean convertFields;
+/**
+ * @author ZZZank
+ */
+public class InjectBeaning implements ProbeJSPlugin {
 
-    public InjectBeans(boolean convertFields) {
-        this.convertFields = convertFields;
+    /// apply after all modification to method/field has been applied
+    @Override
+    public byte priority() {
+        return -100;
     }
 
     @Override
-    public void transform(Clazz clazz, ClassDecl classDecl) {
-        val usedNames = new HashSet<String>();
-        for (val method : classDecl.methods) {
-            usedNames.add(method.name);
-        }
+    public void modifyFiles(RequestAwareFiles files) {
+        boolean convertFields = ProbeConfig.fieldAsBeaning.get();
 
-        if (convertFields) {
-            fromField(classDecl, usedNames);
-        }
-        for (val field : classDecl.fields) {
-            usedNames.add(field.name);
-        }
+        for (var file : files.globalFiles().values()) {
+            var classDecl = file.findCodeNullable(ClassDecl.class);
+            if (classDecl == null || classDecl.nativeClazz == null) {
+                return;
+            }
 
-        fromMethod(classDecl, usedNames);
+            val usedNames = new HashSet<String>();
+            for (val method : classDecl.methods) {
+                usedNames.add(method.name);
+            }
+
+            if (convertFields) {
+                fromField(classDecl, usedNames);
+            }
+            for (val field : classDecl.fields) {
+                usedNames.add(field.name);
+            }
+
+            fromMethod(classDecl, usedNames);
+        }
     }
 
-    private void fromMethod(ClassDecl classDecl, Set<String> usedNames) {
+    private static void fromMethod(ClassDecl classDecl, Set<String> usedNames) {
         for (val method : classDecl.methods) {
             if (method.isStatic) {
                 continue;
@@ -59,15 +73,14 @@ public class InjectBeans implements ClassTransformer {
         }
     }
 
-    private String extractBeanName(String name, String prefix) {
+    private static String extractBeanName(String name, String prefix) {
         if (name.length() <= prefix.length() || !name.startsWith(prefix)) {
             return null;
         }
-        val beanName = name.substring(prefix.length());
-        return NameUtils.firstLower(beanName);
+        return NameUtils.firstLower(name.substring(prefix.length()));
     }
 
-    private void fromField(ClassDecl clazzDecl, Set<String> excludedNames) {
+    private static void fromField(ClassDecl clazzDecl, Set<String> excludedNames) {
         val keptFields = new ArrayList<FieldDecl>();
         for (val field : clazzDecl.fields) {
             if (field.isStatic || field.isFinal || excludedNames.contains(field.name)) {
