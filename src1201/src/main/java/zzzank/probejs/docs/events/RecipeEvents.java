@@ -13,7 +13,6 @@ import zzzank.probejs.features.kubejs.TypeDescAdapter;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.refer.ImportInfo;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.lang.transpiler.TypeConverter;
@@ -104,17 +103,14 @@ public class RecipeEvents implements ProbeJSPlugin {
         recipeEventFile.declaration.addImport(ImportInfo.ofDefault(DOCUMENTED_RECIPES));
 
         // Make shortcuts valid recipe functions
-        for (val code : recipeEvent.bodyCode) {
-            if (!(code instanceof BeanDecl.Getter getter)) {
-                continue;
-            }
-            val id = SHORTCUTS.get(getter.name);
+        for (val field : recipeEvent.fields) {
+            val id = SHORTCUTS.get(field.name);
             if (id == null) {
                 continue;
             }
-            getter.type = Types.type(DOCUMENTED_RECIPES)
-                .access(id.getNamespace())
-                .access(id.getPath());
+            field.type = Types.type(DOCUMENTED_RECIPES)
+                .access(Types.literal(id.getNamespace()))
+                .access(Types.literal(id.getPath()));
         }
     }
 
