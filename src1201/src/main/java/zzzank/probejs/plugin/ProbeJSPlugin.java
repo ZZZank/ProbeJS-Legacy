@@ -30,6 +30,11 @@ import java.util.Set;
 /// in order to prevent unexpected behavior.
 public interface ProbeJSPlugin {
 
+    /// higher priority -> applied earlier
+    default byte priority() {
+        return 0;
+    }
+
     /// Used to add forcefully-converted types in order to prevent transient types
     /// like boolean / string from showing up.
     /// @see TypeConverter#addTypeRedirect(TypeRedirect)

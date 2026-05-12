@@ -19,9 +19,9 @@ import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformerRegistration;
 import zzzank.probejs.lang.transpiler.transformation.TransformerSequence;
-import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.GameUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -33,41 +33,48 @@ import java.util.stream.Stream;
  */
 public class ProbeJSPlugins {
 
-    private static final List<ProbeJSPlugin> ALL = CollectUtils.ofList(
-        //type
-        new RegistryTypes(),
-        new SpecialTypes(),
-        new Primitives(),
-        new JavaPrimitives(),
-        new RecipeTypes(),
-        new WorldTypes(),
-        new EnumTypes(),
-        new KubeWrappers(),
-        new FunctionalInterfaces(),
-        new TypeRedirecting(),
-        //binding
-        new Bindings(),
-        new LoadClassFn(),
-        //event
-        new KubeEvents(),
-        //      new TagEvents(),
-        new RecipeEvents(),
-        new BuiltinRecipeDocs(),
-        new ForgeEvents(),
-        //misc
-        new KubeJSDenied(),
-        new GlobalClasses(),
-        new ParamFix(),
-        new Snippets(),
-        new SimulateOldTyping(),
-        // js event
-        new BuiltinProbeJSPlugin()
-    );
+    private static final List<ProbeJSPlugin> ALL = new ArrayList<>();
+
+    static {
+        register(
+            //type
+            new RegistryTypes(),
+            new SpecialTypes(),
+            new Primitives(),
+            new JavaPrimitives(),
+            new RecipeTypes(),
+            new WorldTypes(),
+            new EnumTypes(),
+            new KubeWrappers(),
+            new FunctionalInterfaces(),
+            new TypeRedirecting(),
+            //binding
+            new Bindings(),
+            new LoadClassFn(),
+            //event
+            new KubeEvents(),
+            //      new TagEvents(),
+            new RecipeEvents(),
+            new BuiltinRecipeDocs(),
+            new ForgeEvents(),
+            //misc
+            new InjectBeaning(),
+            new KubeJSDenied(),
+            new GlobalClasses(),
+            new ParamFix(),
+            new Snippets(),
+            new SimulateOldTyping(),
+            // js event
+            new BuiltinProbeJSPlugin()
+        );
+    }
 
     public static void register(@NotNull ProbeJSPlugin @NotNull ... plugins) {
         for (val plugin : plugins) {
             ALL.add(Objects.requireNonNull(plugin));
         }
+        // reversed natural order, to make high-priority plugin at the front
+        ALL.sort((p1, p2) -> Byte.compare(p2.priority(), p1.priority()));
     }
 
     public static void remove(Class<? extends ProbeJSPlugin> pluginType) {
