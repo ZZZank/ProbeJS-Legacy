@@ -1,6 +1,5 @@
 package zzzank.probejs.utils;
 
-import lombok.val;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.MethodDecl;
@@ -36,8 +35,5 @@ public class DocUtils {
         BaseType toReplace
     ) {
         applyParam(file, methodFilter, paramIndex, param -> param.type = toReplace);
-        for (val info : toReplace.getImportInfos(BaseType.FormatType.INPUT)) {
-            file.declaration.addImport(info);
-        }
     }
 }

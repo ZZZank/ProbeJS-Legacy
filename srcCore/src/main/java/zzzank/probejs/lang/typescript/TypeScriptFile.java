@@ -35,12 +35,6 @@ public class TypeScriptFile {
 
     public void addCode(Code code) {
         codes.add(code);
-        for (val info : code.getImportInfos()) {
-            declaration.addImport(info);
-        }
-        if (code instanceof DeclarationCode decl) {
-            decl.reportDeclaredNames(this.declaration.excludedNames);
-        }
     }
 
     public void addCodes(Code... codes) {
@@ -54,6 +48,16 @@ public class TypeScriptFile {
     }
 
     public List<String> format() {
+        for (var code : codes) {
+            if (code instanceof DeclarationCode decl) {
+                decl.reportDeclaredNames(this.declaration.excludedNames);
+            }
+        }
+        for (var code : codes) {
+            for (val info : code.getImportInfos()) {
+                declaration.addImport(info);
+            }
+        }
         List<String> formatted = new ArrayList<>();
 
         for (val code : codes) {

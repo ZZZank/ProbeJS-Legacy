@@ -16,6 +16,7 @@ import zzzank.probejs.utils.CollectUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author ZZZank
@@ -76,6 +77,10 @@ public class SimulateOldTyping implements ProbeJSPlugin {
             this.name = name;
 
             return super.formatRaw(declaration);
+        }
+
+        @Override
+        public void reportDeclaredNames(Set<String> existed) {
         }
     }
 }

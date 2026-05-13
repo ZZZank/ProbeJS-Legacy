@@ -100,7 +100,6 @@ public class RecipeEvents implements ProbeJSPlugin {
                 break;
             }
         }
-        recipeEventFile.declaration.addImport(ImportInfo.ofDefault(DOCUMENTED_RECIPES));
 
         // Make shortcuts valid recipe functions
         for (val field : recipeEvent.fields) {
