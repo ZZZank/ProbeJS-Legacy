@@ -59,10 +59,7 @@ public class MethodDecl extends CommentableCode {
         }
         parts.add(ProbeJS.GSON.toJson(name));
 
-        var head = String.join(" ", parts);
-        if (!variableTypes.isEmpty()) {
-            head += TSVariableType.formatGenericParam(variableTypes, declaration);
-        }
+        var head = String.join(" ", parts) + TSVariableType.formatGenericParam(variableTypes, declaration);
 
         // Format body - (a: type, ...)
         val body = ParamDecl.formatParams(params, declaration);

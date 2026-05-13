@@ -12,6 +12,9 @@ import java.util.List;
 
 public class TSVariableType extends BaseType {
     public static String formatGenericParam(List<TSVariableType> types, Declaration declaration) {
+        if (types.isEmpty()) {
+            return "";
+        }
         return Types.join(", ", "<", ">", types).line(declaration, FormatType.VARIABLE);
     }
 

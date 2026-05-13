@@ -32,11 +32,7 @@ public class ConstructorDecl extends CommentableCode {
     @Override
     public List<String> formatRaw(Declaration declaration) {
         // Format head - constructor<T>
-        String head = "constructor";
-
-        if (!variableTypes.isEmpty()) {
-            head += TSVariableType.formatGenericParam(variableTypes, declaration);
-        }
+        String head = "constructor" + TSVariableType.formatGenericParam(variableTypes, declaration);
 
         // Format body - (a: type, ...)
         val body = ParamDecl.formatParams(params, declaration);

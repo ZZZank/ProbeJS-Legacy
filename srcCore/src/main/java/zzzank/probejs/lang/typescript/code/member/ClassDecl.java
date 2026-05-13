@@ -76,10 +76,7 @@ public class ClassDecl extends CommentableCode implements DeclarationCode {
         }
         modifiers.add("class");
 
-        String head = String.join(" ", modifiers) + " " + name;
-        if (!variableTypes.isEmpty()) {
-            head += TSVariableType.formatGenericParam(variableTypes, declaration);
-        }
+        String head = String.join(" ", modifiers) + " " + name + TSVariableType.formatGenericParam(variableTypes, declaration);
         if (superClass != null) {
             head += " extends " + superClass.line(declaration);
         }
