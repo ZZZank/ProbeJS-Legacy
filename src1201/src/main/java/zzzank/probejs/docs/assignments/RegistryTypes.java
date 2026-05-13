@@ -1,12 +1,9 @@
 package zzzank.probejs.docs.assignments;
 
 import lombok.val;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.snippet.SnippetDump;
@@ -20,7 +17,6 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.GameUtils;
-import zzzank.probejs.utils.registry.RegistryInfo;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.*;
@@ -40,7 +36,6 @@ public class RegistryTypes implements ProbeJSPlugin {
 
     @Override
     public void assignType(ScriptDump scriptDump) {
-        List<BaseType> registryNames = new ArrayList<>();
         if (ServerLifecycleHooks.getCurrentServer() == null) {
             return;
         }
@@ -52,17 +47,7 @@ public class RegistryTypes implements ProbeJSPlugin {
             if (assignmentType != null) {
                 scriptDump.assignType(assignmentType, Types.primitive(SpecialTypes.dot(typeName)));
             }
-            registryNames.add(Types.literal(key.location().toString()));
         }
-
-        // ResourceKey<T> to Special.LiteralOf<T>
-        scriptDump.assignType(ResourceKey.class, TYPE_SPECIAL_LITERAL_OF.withParams("T"));
-        // Also holder
-        scriptDump.assignType(Holder.class, TYPE_SPECIAL_LITERAL_OF.withParams("T"));
-        // Registries (why?)
-        scriptDump.assignType(Registry.class, Types.or(registryNames));
-        // TagKey<T> to Special.TagOf<T>
-        scriptDump.assignType(TagKey.class, TYPE_SPECIAL_TAG_OF.withParams("T"));
     }
 
     @Override
@@ -74,9 +59,24 @@ public class RegistryTypes implements ProbeJSPlugin {
         final boolean enabled = ProbeConfig.complete.get();
 
         for (val info : RegistryInfos.values()) {
-            createTypes(special, info, enabled);
+            val key = info.resourceKey();
+
+            val types = enabled
+                ? Types.orEnumLike(info.objectIds(), false)
+                : Types.STRING;
+            val typeName = GameUtils.registryName(key);
+
+            val typeDecl = new TypeDecl(typeName, types);
+            special.addCode(typeDecl);
+
+            val tagTypes = enabled
+                ? Types.orEnumLike(info.tagIds(), false)
+                : Types.STRING;
+            val tagName = typeName + "Tag";
+
+            val tagDecl = new TypeDecl(tagName, tagTypes);
+            special.addCode(tagDecl);
         }
-//        createTypes(special, new RegistryInfo(Registry.REGISTRY), enabled);
 
         // Expose LiteralOf<T> and TagOf<T>
         val literalOf = new TypeDecl("LiteralOf<T>", Types.primitive(String.format(OF_TYPE_DECL, LITERAL_FIELD)));
@@ -85,30 +85,6 @@ public class RegistryTypes implements ProbeJSPlugin {
         special.addCode(tagOf);
 
         scriptDump.addGlobal("registry_type", special);
-    }
-
-    private static void createTypes(
-        Wrapped.Namespace special,
-        RegistryInfo info,
-        boolean resolveAll
-    ) {
-        val key = info.resourceKey();
-
-        val types = resolveAll
-            ? Types.orEnumLike(info.objectIds(), false)
-            : Types.STRING;
-        val typeName = GameUtils.registryName(key);
-
-        val typeDecl = new TypeDecl(typeName, types);
-        special.addCode(typeDecl);
-
-        val tagTypes = resolveAll
-            ? Types.orEnumLike(info.tagIds(), false)
-            : Types.STRING;
-        val tagName = typeName + "Tag";
-
-        val tagDecl = new TypeDecl(tagName, tagTypes);
-        special.addCode(tagDecl);
     }
 
     @Override
@@ -121,7 +97,6 @@ public class RegistryTypes implements ProbeJSPlugin {
                 makeClassModifications(files, key, assignmentType);
             }
         }
-        makeClassModifications(files, BuiltInRegistries.REGISTRY.key(), Registry.class);
     }
 
     private static void makeClassModifications(RequestAwareFiles globalClasses, ResourceKey<? extends Registry<?>> key, Class<?> baseClass) {
