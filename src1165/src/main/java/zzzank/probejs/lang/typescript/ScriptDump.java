@@ -166,7 +166,6 @@ public class ScriptDump extends MultiDump implements ProbeNamedDump {
     public void open() throws IOException {
         // prepare data for this dump
         this.recordedClasses.addAll(Collections2.filter(ClassRegistry.REGISTRY.getFoundClasses(), accept::test));
-        ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addChildDump(this));
 
