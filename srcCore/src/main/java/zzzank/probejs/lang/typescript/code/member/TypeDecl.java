@@ -6,7 +6,6 @@ import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
-import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.Asser;
@@ -72,8 +71,7 @@ public class TypeDecl extends CommentableCode implements DeclarationCode {
         }
         builder.append("type ").append(name);
         if (!symbolVariables.isEmpty()) {
-            builder.append(Types.join(", ", "<", ">", symbolVariables)
-                .line(declaration, BaseType.FormatType.VARIABLE));
+            builder.append(TSVariableType.formatGenericParam(symbolVariables, declaration));
         }
         builder.append(" = ")
             .append(type.line(declaration, typeFormat))

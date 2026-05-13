@@ -8,7 +8,13 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
+import java.util.List;
+
 public class TSVariableType extends BaseType {
+    public static String formatGenericParam(List<TSVariableType> types, Declaration declaration) {
+        return Types.join(", ", "<", ">", types).line(declaration, FormatType.VARIABLE);
+    }
+
     public String symbol;
     public BaseType extend;
     public BaseType defaultTo;

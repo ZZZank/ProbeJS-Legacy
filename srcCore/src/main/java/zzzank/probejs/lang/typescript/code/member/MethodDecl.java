@@ -61,8 +61,7 @@ public class MethodDecl extends CommentableCode {
 
         var head = String.join(" ", parts);
         if (!variableTypes.isEmpty()) {
-            head += Types.join(", ", "<", ">", variableTypes)
-                .line(declaration, BaseType.FormatType.VARIABLE);
+            head += TSVariableType.formatGenericParam(variableTypes, declaration);
         }
 
         // Format body - (a: type, ...)

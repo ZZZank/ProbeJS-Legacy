@@ -35,8 +35,7 @@ public class ConstructorDecl extends CommentableCode {
         String head = "constructor";
 
         if (!variableTypes.isEmpty()) {
-            head += Types.join(", ", "<", ">", variableTypes)
-                .line(declaration, BaseType.FormatType.VARIABLE);
+            head += TSVariableType.formatGenericParam(variableTypes, declaration);
         }
 
         // Format body - (a: type, ...)
