@@ -61,16 +61,16 @@ public abstract class BuiltinDocHelper {
         }
 
         if (convertFields) {
-            fromField(classDecl, usedNames);
+            convertFieldToBeaning(classDecl, usedNames);
         }
         for (val field : classDecl.fields) {
             usedNames.add(field.name);
         }
 
-        fromMethod(classDecl, usedNames);
+        collectMethodBeaning(classDecl, usedNames);
     }
 
-    private static void fromMethod(ClassDecl classDecl, Set<String> usedNames) {
+    private static void collectMethodBeaning(ClassDecl classDecl, Set<String> usedNames) {
         for (val method : classDecl.methods) {
             if (method.isStatic) {
                 continue;
@@ -110,7 +110,7 @@ public abstract class BuiltinDocHelper {
         return NameUtils.firstLower(substring);
     }
 
-    private static void fromField(ClassDecl clazzDecl, Set<String> excludedNames) {
+    private static void convertFieldToBeaning(ClassDecl clazzDecl, Set<String> excludedNames) {
         val keptFields = new ArrayList<FieldDecl>();
         for (val field : clazzDecl.fields) {
             if (field.isStatic || field.isFinal || excludedNames.contains(field.name)) {

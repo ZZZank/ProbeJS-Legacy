@@ -1,6 +1,5 @@
 package zzzank.probejs.docs;
 
-import dev.latvian.mods.kubejs.script.ScriptType;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
@@ -20,10 +19,6 @@ public class InjectBeaning implements ProbeJSPlugin {
 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
-        if (files.scriptDump().scriptType != ScriptType.STARTUP) {
-            // applied once
-            return;
-        }
         boolean convertFields = ProbeConfig.fieldAsBeaning.get();
 
         for (var file : files.globalFiles().values()) {

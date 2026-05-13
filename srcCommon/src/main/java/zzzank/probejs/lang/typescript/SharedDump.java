@@ -1,9 +1,11 @@
 package zzzank.probejs.lang.typescript;
 
+import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.api.dump.TSFilesDump;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.transpiler.Transpiler;
+import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.util.BuiltinDocHelper;
 
 import java.io.IOException;
@@ -36,6 +38,9 @@ public class SharedDump extends TSFilesDump implements ProbeNamedDump {
             .toList();
         for (var file : files) {
             BuiltinDocHelper.injectConvertibleTypeDecl(file, Collections.emptyList());
+
+            boolean convertField = ProbeConfig.fieldAsBeaning.get();
+            file.findCode(ClassDecl.class).ifPresent(classdecl -> BuiltinDocHelper.injectBeaning(classdecl, convertField));
         }
         super.open();
     }
