@@ -1,5 +1,6 @@
 package zzzank.probejs.docs.assignments;
 
+import dev.architectury.fluid.FluidStack;
 import dev.latvian.mods.kubejs.fluid.FluidStackJS;
 import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
@@ -75,7 +76,9 @@ public class RecipeTypes implements ProbeJSPlugin {
             .member("input?", Types.type(InputItem.class))
             .member("output?", Types.type(OutputItem.class))
             .build());
+
         scriptDump.assignType(FluidStackJS.class, Types.type(Fluid.class));
+        scriptDump.assignType(FluidStackJS.class, Types.type(FluidStack.class));
         scriptDump.assignType(FluidStackJS.class, Types.literal("-"));
         scriptDump.assignType(FluidStackJS.class, Types.object()
             .member("fluid", Types.primitive("Special.Fluid"))

@@ -1,7 +1,6 @@
 package zzzank.probejs.docs.assignments;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import dev.latvian.mods.unit.Unit;
@@ -45,15 +44,15 @@ public class JavaPrimitives implements ProbeJSPlugin {
         scriptDump.assignType(JsonPrimitive.class, Types.STRING);
         scriptDump.assignType(JsonPrimitive.class, Types.BOOLEAN);
         scriptDump.assignType(JsonPrimitive.class, Types.NULL);
-        scriptDump.assignType(JsonElement.class, Types.type(JsonObject.class));
-        scriptDump.assignType(JsonElement.class, Types.type(JsonArray.class));
-        scriptDump.assignType(JsonElement.class, Types.type(JsonPrimitive.class));
 
         scriptDump.assignType(Pattern.class, Types.primitive("RegExp"));
         scriptDump.assignType(Unit.class, Types.STRING);
         scriptDump.assignType(Unit.class, Types.NUMBER);
 
         scriptDump.assignType(Duration.class, Types.type(TemporalAmount.class));
+        scriptDump.assignType(TemporalAmount.class, Types.NUMBER);
+        scriptDump.assignType(TemporalAmount.class, Types.primitive("`${number}${'y'|'M'|'d'|'w'|'h'|'m'|'s'|'ms'|'ns'|'t'}`"));
+
         scriptDump.assignType(ResourceLocation.class, Types.STRING);
         scriptDump.assignType(CompoundTag.class, Types.OBJECT);
         scriptDump.assignType(CompoundTag.class, Types.STRING);
