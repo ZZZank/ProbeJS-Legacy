@@ -19,7 +19,9 @@ public class FunctionalInterfaces implements ProbeJSPlugin {
 
             MethodInfo abstractM = null;
             for (val method : recorded.methods) {
-                if (!method.attributes.isAbstract) {
+                if (!method.attributes.isAbstract
+                    || method.attributes.isStatic
+                    || method.attributes.declaringClass == Object.class) {
                     continue;
                 }
                 if (abstractM == null) {

@@ -42,12 +42,14 @@ public class MethodInfo extends TypeVariableHolder {
          */
         public final boolean isDefault;
         public final boolean isAbstract;
+        public final Class<?> declaringClass;
 
         public MethodAttributes(Method method) {
             int modifiers = method.getModifiers();
             this.isStatic = Modifier.isStatic(modifiers);
             this.isDefault = method.isDefault();
             this.isAbstract = Modifier.isAbstract(modifiers);
+            this.declaringClass = method.getDeclaringClass();
         }
     }
 }
