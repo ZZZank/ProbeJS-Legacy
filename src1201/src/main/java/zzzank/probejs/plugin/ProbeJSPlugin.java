@@ -98,10 +98,6 @@ public interface ProbeJSPlugin {
     default void addJsonSchema(SchemaDump dump) {
     }
 
-    /// @param predefined recipe type id -> recipe function
-    default void addPredefinedRecipeDoc(ScriptDump scriptDump, Map<ResourceLocation, JSLambdaType> predefined) {
-    }
-
     default void denyBindings(BindingFilter filter) {
     }
 
