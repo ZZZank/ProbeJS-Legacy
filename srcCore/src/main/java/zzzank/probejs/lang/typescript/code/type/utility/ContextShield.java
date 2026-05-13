@@ -5,11 +5,11 @@ import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
-public class ContextShield<T extends BaseType> extends BaseType {
-    public final T inner;
+public class ContextShield extends BaseType {
+    public final BaseType inner;
     public final FormatType formatType;
 
-    public ContextShield(T inner, FormatType formatType) {
+    public ContextShield(BaseType inner, FormatType formatType) {
         this.inner = inner;
         this.formatType = formatType;
     }

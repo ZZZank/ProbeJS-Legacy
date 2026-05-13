@@ -8,11 +8,11 @@ import zzzank.probejs.lang.typescript.refer.ImportInfos;
 /**
  * @author ZZZank
  */
-public class ImportShield<T extends BaseType> extends BaseType {
-    public final T inner;
+public class ImportShield extends BaseType {
+    public final BaseType inner;
     private final ImportInfos imports;
 
-    public ImportShield(T inner, ImportInfos imports) {
+    public ImportShield(BaseType inner, ImportInfos imports) {
         this.inner = inner;
         this.imports = imports;
     }

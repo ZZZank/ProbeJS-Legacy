@@ -15,7 +15,6 @@ import zzzank.probejs.utils.NameUtils;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Types {
@@ -172,8 +171,11 @@ public interface Types {
         return new JSTypeOfType(classType);
     }
 
-    static <T extends BaseType> ContextShield<T> contextShield(T type, BaseType.FormatType formatType) {
-        return new ContextShield<>(type, formatType);
+    static ContextShield contextShield(BaseType type, BaseType.FormatType formatType) {
+        if (type instanceof ContextShield contextShield) {
+            type = contextShield.inner;
+        }
+        return new ContextShield(type, formatType);
     }
 
     static CustomType custom(
@@ -189,8 +191,11 @@ public interface Types {
         return custom(formatter, (t) -> ImportInfos.of());
     }
 
-    static <T extends BaseType> ImportShield<T> importShield(T type, ImportInfos imports) {
-        return new ImportShield<>(type, imports);
+    static ImportShield importShield(BaseType type, ImportInfos imports) {
+        if (type instanceof ImportShield shield) {
+            type = shield.inner;
+        }
+        return new ImportShield(type, imports);
     }
 
     static StaticType staticType(ClassPath path) {

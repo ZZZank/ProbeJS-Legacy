@@ -56,11 +56,11 @@ public abstract class BaseType extends Code {
         return new TSArrayAccessType(this, Types.primitive(index));
     }
 
-    public ContextShield<BaseType> contextShield(FormatType formatType) {
+    public ContextShield contextShield(FormatType formatType) {
         return Types.contextShield(this, formatType);
     }
 
-    public ImportShield<BaseType> importShield(ImportInfos imports) {
+    public ImportShield importShield(ImportInfos imports) {
         return Types.importShield(this, imports);
     }
 
