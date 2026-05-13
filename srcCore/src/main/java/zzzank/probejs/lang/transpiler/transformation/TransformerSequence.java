@@ -18,7 +18,7 @@ public final class TransformerSequence implements ClassTransformer {
     private final ClassTransformer[] transformers;
 
     public TransformerSequence(ClassTransformer[] transformers) {
-        this.transformers = Asser.tNotNullAll(transformers, "transformers");
+        this.transformers = Asser.tNotNullAll(transformers.clone(), "transformers");
     }
 
     @Override
