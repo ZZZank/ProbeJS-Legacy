@@ -23,8 +23,9 @@ public class InjectTypeDecl implements ProbeJSPlugin {
         for (var entry : scriptDump.convertibles.asMap().entrySet()) {
             var path = entry.getKey();
             var convertibles = entry.getValue();
-            if (!convertibles.isEmpty()) {
-                BuiltinDocHelper.injectConvertibleTypeDecl(files.request(path), convertibles);
+            var file = files.request(path);
+            if (!convertibles.isEmpty() && file != null) {
+                BuiltinDocHelper.injectConvertibleTypeDecl(file, convertibles);
             }
         }
     }
