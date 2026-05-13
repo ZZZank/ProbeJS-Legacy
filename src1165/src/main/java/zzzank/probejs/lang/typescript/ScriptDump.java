@@ -1,6 +1,7 @@
 package zzzank.probejs.lang.typescript;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
 import dev.latvian.kubejs.KubeJSPaths;
 import dev.latvian.kubejs.script.ScriptManager;
@@ -18,8 +19,6 @@ import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
-import zzzank.probejs.lang.typescript.code.type.Types;
-import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
 
 import java.io.IOException;
@@ -88,14 +87,6 @@ public class ScriptDump extends MultiDump implements ProbeNamedDump {
         this.filesDump = new TSFilesDump(writeTo().resolve("packages"));
         this.globalDump = new TSGlobalDump(writeTo().resolve("global"));
         this.jsConfigDump = new JSConfigDump(scriptPath.resolve("jsconfig.json"), scriptPath);
-    }
-
-    public void acceptClasses(Collection<Clazz> classes) {
-        for (Clazz clazz : classes) {
-            if (accept.test(clazz)) {
-                recordedClasses.add(clazz);
-            }
-        }
     }
 
     public Set<Class<?>> retrieveClasses() {
@@ -174,7 +165,7 @@ public class ScriptDump extends MultiDump implements ProbeNamedDump {
     @Override
     public void open() throws IOException {
         // prepare data for this dump
-        this.acceptClasses(ClassRegistry.REGISTRY.getFoundClasses());
+        this.recordedClasses.addAll(Collections2.filter(ClassRegistry.REGISTRY.getFoundClasses(), accept::test));
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.assignType(this));
 
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addChildDump(this));
