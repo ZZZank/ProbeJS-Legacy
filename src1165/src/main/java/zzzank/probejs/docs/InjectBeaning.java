@@ -77,7 +77,17 @@ public class InjectBeaning implements ProbeJSPlugin {
         if (name.length() <= prefix.length() || !name.startsWith(prefix)) {
             return null;
         }
-        return NameUtils.firstLower(name.substring(prefix.length()));
+        var substring = name.substring(prefix.length());
+        if (!Character.isUpperCase(substring.charAt(0))) {
+            // .setter() should not be transformed to .ter
+            return null;
+        }
+        if (substring.length() > 1 && Character.isUpperCase(substring.charAt(1))) {
+            // .isRGB() -> .RGB
+            return substring;
+        }
+        // .getLevel() -> .level
+        return NameUtils.firstLower(substring);
     }
 
     private static void fromField(ClassDecl clazzDecl, Set<String> excludedNames) {
