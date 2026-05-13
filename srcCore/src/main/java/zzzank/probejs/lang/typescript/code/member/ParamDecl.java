@@ -34,16 +34,16 @@ public final class ParamDecl {
         if (varArg) {
             builder.append("...");
         }
-        builder.append(getArgName(i));
+        builder.append(getTSSafeName(i));
         if (optional) {
             builder.append("?");
         }
         return builder.append(": ").append(type.line(declaration, formatType)).toString();
     }
 
-    private String getArgName(int i) {
+    public String getTSSafeName(int paramIndex) {
         if (!NameUtils.isTSIdentifier(name)) {
-            return "arg" + i;
+            return "arg" + paramIndex;
         }
         var out = name;
         while (!NameUtils.isNameSafe(out)) {

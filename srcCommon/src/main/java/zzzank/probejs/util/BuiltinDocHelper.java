@@ -2,10 +2,7 @@ package zzzank.probejs.util;
 
 import lombok.val;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.lang.typescript.code.member.BeanDecl;
-import zzzank.probejs.lang.typescript.code.member.ClassDecl;
-import zzzank.probejs.lang.typescript.code.member.FieldDecl;
-import zzzank.probejs.lang.typescript.code.member.TypeDecl;
+import zzzank.probejs.lang.typescript.code.member.*;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
@@ -79,7 +76,10 @@ public abstract class BuiltinDocHelper {
             if (method.params.size() == 1) {
                 val beanName = extractBeanName(method.name, "set");
                 if (beanName != null && !usedNames.contains(beanName)) {
-                    classDecl.bodyCode.add(new BeanDecl.Setter(beanName, method.params.get(0).type));
+                    var paramDecl = method.params.get(0);
+                    var setter = new BeanDecl.Setter(beanName, paramDecl.type);
+                    setter.paramName = paramDecl.getTSSafeName(0);
+                    classDecl.bodyCode.add(setter);
                 }
             } else if (method.params.isEmpty()) {
                 var beanName = extractBeanName(method.name, "get");

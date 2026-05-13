@@ -59,13 +59,16 @@ public abstract class BeanDecl extends CommentableCode {
     }
 
     public static class Setter extends BeanDecl {
+        @NotNull
+        public String paramName = "value";
+
         public Setter(String name, BaseType type) {
             super(name, type);
         }
 
         @Override
         protected @NotNull String getFormat() {
-            return "set %s(value: %s)";
+            return "set %s(" + paramName + ": %s)";
         }
 
         @Override
