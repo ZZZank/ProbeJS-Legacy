@@ -64,43 +64,45 @@ public class TagEvents implements ProbeJSPlugin {
 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
-        val scriptDump = files.scriptDump();
-        if (scriptDump.scriptType != ScriptType.SERVER) {
+        if (files.scriptDump().scriptType != ScriptType.SERVER) {
             return;
         }
 
         val wrapperType = Types.type(TAG_WRAPPER);
 
+        var T = Types.generic("T");
+        var I = Types.generic("I");
+
         val tagEventProbe = Statements.clazz(TAG_EVENT.getSimpleName())
             .superClass(Types.type(TagEventJS.class))
-            .typeVariables("T", "I")
+            .typeVariables(T, I)
             .method(
                 "add", builder -> builder
-                    .returnType(Types.parameterized(wrapperType, Types.generic("T"), Types.generic("I")))
-                    .param("tag", Types.generic("T"))
-                    .param("filters", Types.generic("I").asArray(), false, true)
+                    .returnType(Types.parameterized(wrapperType, T, I))
+                    .param("tag", T)
+                    .param("filters", I.asArray(), false, true)
             )
             .method(
                 "remove", builder -> builder
-                    .returnType(Types.parameterized(wrapperType, Types.generic("T"), Types.generic("I")))
-                    .param("tag", Types.generic("T"))
-                    .param("filters", Types.generic("I").asArray(), false, true)
+                    .returnType(Types.parameterized(wrapperType, T, I))
+                    .param("tag", T)
+                    .param("filters", I.asArray(), false, true)
             )
             .build();
         files.requestOrCreate(TAG_EVENT).addCodes(tagEventProbe);
 
         val tagWrapperProbe = Statements.clazz(TAG_WRAPPER.getSimpleName())
             .superClass(Types.type(TagWrapper.class))
-            .typeVariables("T", "I")
+            .typeVariables(T, I)
             .method(
                 "add", builder -> builder
                     .returnType(Types.THIS)
-                    .param("filters", Types.generic("I").asArray(), false, true)
+                    .param("filters", I.asArray(), false, true)
             )
             .method(
                 "remove", builder -> builder
                     .returnType(Types.THIS)
-                    .param("filters", Types.generic("I").asArray(), false, true)
+                    .param("filters", I.asArray(), false, true)
             )
             .build();
         files.requestOrCreate(TAG_EVENT).addCodes(tagWrapperProbe);

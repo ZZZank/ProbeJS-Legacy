@@ -38,6 +38,7 @@ public class ProbeJSPlugins {
     static {
         register(
             new InjectTypeDecl(),
+            new InjectBeaning(),
             new TypeRedirecting(),
             //type
             new RegistryTypes(),
@@ -59,7 +60,6 @@ public class ProbeJSPlugins {
             new BuiltinRecipeDocs(),
             new ForgeEvents(),
             //misc
-            new InjectBeaning(),
             new KubeJSDenied(),
             new GlobalClasses(),
             new ParamFix(),
