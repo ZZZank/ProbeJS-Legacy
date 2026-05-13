@@ -56,7 +56,8 @@ public class AutoSplitPackagedWriter extends AbstractWriter {
 
     @Override
     protected void preWriting() {
-        packaged = trySpread(packaged, minPackageCount);
+        var filtered = packaged.get(null).stream().filter(f -> !f.codes.isEmpty()).toList();
+        packaged = trySpread(Collections.singletonMap(null, filtered), minPackageCount);
     }
 
     protected Map<String, List<TypeScriptFile>> trySpread(Map<String, List<TypeScriptFile>> map, int packageCount) {
