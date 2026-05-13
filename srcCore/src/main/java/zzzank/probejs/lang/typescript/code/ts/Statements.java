@@ -6,6 +6,7 @@ import zzzank.probejs.lang.typescript.code.member.ConstructorDecl;
 import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
+import zzzank.probejs.lang.typescript.code.type.Types;
 
 public interface Statements {
     static FunctionDeclaration.Builder func(String name) {
@@ -26,5 +27,9 @@ public interface Statements {
 
     static TypeDecl.Builder type(String name, @NotNull BaseType type) {
         return new TypeDecl.Builder(new TypeDecl(name, type));
+    }
+
+    static TypeDecl.Builder type() {
+        return new TypeDecl.Builder(new TypeDecl(null, Types.NEVER));
     }
 }

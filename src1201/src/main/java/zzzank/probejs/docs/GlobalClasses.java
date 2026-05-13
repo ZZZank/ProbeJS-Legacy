@@ -1,19 +1,17 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
-import zzzank.probejs.lang.typescript.code.type.ts.TSClassType;
 import zzzank.probejs.lang.typescript.code.type.utility.TSUtilityType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author ZZZank
@@ -21,7 +19,7 @@ import java.util.Collections;
 public class GlobalClasses implements ProbeJSPlugin {
     public static final JSPrimitiveType GLOBAL_CLASSES = Types.primitive("GlobalClasses");
     public static final JSPrimitiveType LOAD_CLASS = Types.primitive("LoadClass");
-    public static final TSClassType J_CLASS = Types.type(ClassPath.ofArtificial("zzzank.probejs.generated.JClass"));
+    public static final JSPrimitiveType J_CLASS = Types.primitive("JClass");
     public static final JSPrimitiveType ATTACH_J_CLASS = Types.primitive("AttachJClass");
 
     @Override
@@ -40,8 +38,17 @@ public class GlobalClasses implements ProbeJSPlugin {
             Statements.type(GLOBAL_CLASSES.content, paths.build())
                 .typeFormat(BaseType.FormatType.RETURN)
                 .build(),
+            // export type JClass<T> = { ... }
+            Statements.type()
+                .name(J_CLASS.content)
+                .symbolVariables(List.of(T))
+                .type(Types.object()
+                    .member("__javaObject__", Types.type(Class.class).withParams("T"))
+                    .rawNameMember("[Symbol.hasInstance]", Types.primitive("(o: any) => o is T"))
+                    .build())
+                .build(),
             // type AttachJClass<T> = T & JClass<InstanceType<T>>
-            Statements.type(ATTACH_J_CLASS.content, T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
+            Statements.type(ATTACH_J_CLASS.content, T.and(J_CLASS.contextShield(BaseType.FormatType.RETURN).withParams(TSUtilityType.instanceType(T))))
                 .symbolVariables(Collections.singletonList(T))
                 .exportDecl(false)
                 .build(),
@@ -57,16 +64,5 @@ public class GlobalClasses implements ProbeJSPlugin {
                 )
             )
         );
-    }
-
-    @Override
-    public void modifyFiles(RequestAwareFiles files) {
-        val jClassDecl = Statements.clazz(J_CLASS.classPath.getSimpleName())
-            .abstractClass()
-            .typeVariables("T")
-            .field("__javaObject__", Types.type(Class.class).withParams("T"))
-            .build();
-        jClassDecl.bodyCode.add(Types.primitive("[Symbol.hasInstance]: (o: any) => o is T;"));
-        files.requestOrCreate(J_CLASS.classPath).addCodes(jClassDecl);
     }
 }
