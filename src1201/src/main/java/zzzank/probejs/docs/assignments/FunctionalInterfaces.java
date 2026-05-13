@@ -5,6 +5,7 @@ import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.plugin.ProbeJSPlugin;
+import zzzank.probejs.utils.CollectUtils;
 
 public class FunctionalInterfaces implements ProbeJSPlugin {
 
@@ -35,7 +36,9 @@ public class FunctionalInterfaces implements ProbeJSPlugin {
                 continue;
             }
 
-            val type = Types.lambda().returnType(converter.convertType(abstractM.returnType));
+            val type = Types.lambda()
+                .variableTypes(CollectUtils.mapToList(abstractM.variableTypes, converter::convertVariableType))
+                .returnType(converter.convertType(abstractM.returnType));
             for (val param : abstractM.params) {
                 type.param(param.name, converter.convertType(param.type), false, param.varArgs);
             }

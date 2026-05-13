@@ -1,16 +1,18 @@
 package zzzank.probejs.lang.typescript.code.type.js;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 import zzzank.probejs.lang.typescript.code.member.ParamDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.Cast;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,14 +22,17 @@ import java.util.List;
  * {@code (a: A, b: B) => C$$Type} if format type is {@link zzzank.probejs.lang.typescript.code.type.BaseType.FormatType#INPUT}
  * @author ZZZank
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JSLambdaType extends BaseType {
     public final List<ParamDecl> params;
     public final BaseType returnType;
+    @NotNull
+    public List<TSVariableType> variableTypes = List.of();
 
     @Override
     public ImportInfos getImportInfos(@NotNull FormatType type) {
         return ImportInfos.of(returnType.getImportInfos(type))
+            .fromCodes(variableTypes)
             .fromCodes(params.stream().map(p -> p.type), paramFormatType(type));
     }
 
@@ -43,7 +48,8 @@ public class JSLambdaType extends BaseType {
     public String line(Declaration declaration, FormatType formatType) {
         // (arg0: type, arg1: type...) => returnType
         return String.format(
-            "(%s => %s)",
+            "(%s%s => %s)",
+            TSVariableType.formatGenericParam(this.variableTypes, declaration),
             //when formatType is INPUT, aka this lambda is a param itself, params of this lambda should be concrete
             ParamDecl.formatParams(
                 params,
@@ -90,5 +96,11 @@ public class JSLambdaType extends BaseType {
     }
 
     public static class Builder extends BuilderBase<Builder> {
+        public List<TSVariableType> variableTypes = List.of();
+
+        public Builder variableTypes(Collection<? extends TSVariableType> variableTypes) {
+            this.variableTypes = List.copyOf(variableTypes);
+            return this;
+        }
     }
 }
