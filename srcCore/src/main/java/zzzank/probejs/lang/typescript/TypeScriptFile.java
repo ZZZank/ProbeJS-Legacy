@@ -50,7 +50,7 @@ public class TypeScriptFile {
     public List<String> format() {
         for (var code : codes) {
             if (code instanceof DeclarationCode decl) {
-                decl.reportDeclaredNames(this.declaration.excludedNames);
+                decl.reportDeclaredNames(this.declaration.usedNames);
             }
         }
         for (var code : codes) {
@@ -59,6 +59,19 @@ public class TypeScriptFile {
             }
         }
         List<String> formatted = new ArrayList<>();
+
+        boolean hasImport = false;
+        for (val value : declaration.references.values()) {
+            if (!value.info.path.equals(this.path)) {
+                formatted.add(value.getImportStatement());
+                hasImport = true;
+            }
+        }
+        if (!hasImport) {
+            formatted.add("export {} // Mark the file as a module");
+        }
+
+        formatted.add("");
 
         for (val code : codes) {
             formatted.addAll(code.format(declaration));
@@ -74,20 +87,6 @@ public class TypeScriptFile {
     }
 
     public void write(Writer writer) throws IOException {
-        boolean written = false;
-
-        for (val value : declaration.references.values()) {
-            if (value.info.path.equals(path)) {
-                continue;
-            }
-            writer.write(value.getImportStatement() + "\n");
-            written = true;
-        }
-        if (!written) {
-            writer.write("export {} // Mark the file as a module, do not remove unless there are other import/exports!");
-        }
-
-        writer.write("\n");
         for (val line : format()) {
             writer.write(line);
             writer.write('\n');
