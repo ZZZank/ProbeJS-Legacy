@@ -1,5 +1,6 @@
 package zzzank.probejs.docs.assignments;
 
+import dev.latvian.mods.kubejs.script.ScriptManager;
 import lombok.val;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -34,6 +35,9 @@ public class RegistryTypes implements ProbeJSPlugin {
     public static final String SPECIAL_LITERAL_OF = SpecialTypes.dot("LiteralOf");
     public static final BaseType TYPE_SPECIAL_LITERAL_OF = Types.primitive(SPECIAL_LITERAL_OF);
 
+    /**
+     * @see ScriptManager#load()
+     */
     @Override
     public void assignType(ScriptDump scriptDump) {
         if (ServerLifecycleHooks.getCurrentServer() == null) {

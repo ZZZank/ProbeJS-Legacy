@@ -29,7 +29,7 @@ public class RecipeTypes implements ProbeJSPlugin {
         scriptDump.assignType(ItemStack.class, Types.object()
             .member("item", Types.primitive("Special.Item"))
             .member("count?", Primitives.INTEGER)
-            .member("nbt?", Types.primitive("{}"))
+            .member("nbt?", Types.OBJECT)
             .build());
 
         scriptDump.assignType(Ingredient.class, Types.type(ItemStack.class));

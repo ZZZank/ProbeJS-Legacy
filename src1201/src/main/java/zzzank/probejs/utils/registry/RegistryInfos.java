@@ -8,11 +8,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
+import zzzank.probejs.ProbeJS;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author ZZZank
@@ -21,7 +21,7 @@ import java.util.Set;
 public final class RegistryInfos {
     /**
      * not using {@link net.minecraft.resources.ResourceKey} as key, because ResourceKey for registries
-     * will always use {@link net.minecraft.core.Registry#ROOT_REGISTRY_NAME} as its parent
+     * will always use {@link net.minecraft.core.registries.BuiltInRegistries#ROOT_REGISTRY_NAME} as its parent
      */
     private Map<ResourceLocation, RegistryInfo> ALL = new HashMap<>();
 
@@ -30,12 +30,12 @@ public final class RegistryInfos {
         if (server == null) {
             return;
         }
-        ALL.clear();
-        server.registryAccess()
+        ALL = server.registryAccess()
             .registries()
             .map(RegistryAccess.RegistryEntry::value)
             .map(RegistryInfo::new)
-            .forEach(info -> ALL.put(info.id(), info));
+            .collect(Collectors.toMap(RegistryInfo::id, Function.identity()));
+        ProbeJS.LOGGER.info("Collected {} registries: {}", ALL.size(), ALL.keySet().stream().map(Objects::toString).collect(Collectors.joining(" ")));
     }
 
     public @NotNull Collection<RegistryInfo> values() {

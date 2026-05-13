@@ -44,7 +44,6 @@ public class ProbeJSPlugins {
             new RecipeTypes(),
             new WorldTypes(),
             new EnumTypes(),
-            new KubeWrappers(),
             new FunctionalInterfaces(),
             //binding
             new Bindings(),
