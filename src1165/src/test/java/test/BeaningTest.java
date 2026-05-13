@@ -9,6 +9,8 @@ import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
+import zzzank.probejs.lang.typescript.ScriptDump;
+import zzzank.probejs.lang.typescript.SharedDump;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
@@ -33,7 +35,9 @@ public class BeaningTest {
         val transpiler = ProbeJSPlugins.buildTranspiler();
 
         val files = transpiler.dump(classRegistry.getFoundClasses());
-        new InjectBeaning().modifyFiles(new RequestAwareFiles(files, null));
+        new InjectBeaning().modifyFiles(new RequestAwareFiles(files, ScriptDump.STARTUP_DUMP.apply(new SharedDump(
+            null, transpiler
+        ))));
 
         val classDecl = files.get(ClassPath.ofJava(type))
             .findCode(ClassDecl.class)

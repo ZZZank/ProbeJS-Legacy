@@ -1,5 +1,6 @@
 package zzzank.probejs.docs;
 
+import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
@@ -26,12 +27,19 @@ public class InjectBeaning implements ProbeJSPlugin {
 
     @Override
     public void modifyFiles(RequestAwareFiles files) {
+        if (files.scriptDump().scriptType != ScriptType.STARTUP) {
+            // applied once
+            return;
+        }
         boolean convertFields = ProbeConfig.fieldAsBeaning.get();
 
         for (var file : files.globalFiles().values()) {
+            if (file.path.isArtificial()) {
+                continue;
+            }
             var classDecl = file.findCodeNullable(ClassDecl.class);
-            if (classDecl == null || classDecl.nativeClazz == null) {
-                return;
+            if (classDecl == null) {
+                continue;
             }
 
             val usedNames = new HashSet<String>();
