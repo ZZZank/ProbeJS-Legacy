@@ -4,11 +4,11 @@ import zzzank.probejs.api.dump.TSFilesDump;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.transpiler.Transpiler;
+import zzzank.probejs.util.BuiltinDocHelper;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ZZZank
@@ -34,6 +34,9 @@ public class SharedDump extends TSFilesDump implements ProbeNamedDump {
             .stream()
             .filter(f -> !denied.contains(f.path))
             .toList();
+        for (var file : files) {
+            BuiltinDocHelper.injectConvertibleTypeDecl(file, Collections.emptyList());
+        }
         super.open();
     }
 }

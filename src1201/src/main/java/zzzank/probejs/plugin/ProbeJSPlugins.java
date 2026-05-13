@@ -33,6 +33,8 @@ public class ProbeJSPlugins {
 
     static {
         register(
+            new InjectBeaning(),
+            new TypeRedirecting(),
             //type
             new RegistryTypes(),
             new SpecialTypes(),
@@ -43,7 +45,6 @@ public class ProbeJSPlugins {
             new EnumTypes(),
             new KubeWrappers(),
             new FunctionalInterfaces(),
-            new TypeRedirecting(),
             //binding
             new Bindings(),
             new LoadClassFn(),

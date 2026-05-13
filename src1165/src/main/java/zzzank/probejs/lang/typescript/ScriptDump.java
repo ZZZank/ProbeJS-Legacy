@@ -69,7 +69,7 @@ public class ScriptDump extends MultiDump implements ProbeNamedDump {
 
     public final Set<Clazz> recordedClasses = new HashSet<>();
     private final Predicate<Clazz> accept;
-    private final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
+    public final Multimap<ClassPath, TypeDecl> convertibles = ArrayListMultimap.create();
 
     public final TSFilesDump filesDump;
     public final TSGlobalDump globalDump;
@@ -159,34 +159,8 @@ public class ScriptDump extends MultiDump implements ProbeNamedDump {
             }
 
             if (!requested.contains(classPath)) {
-                val old = output;
-                output = new TypeScriptFile(output.path);
-                output.declaration.excludedNames.addAll(old.declaration.excludedNames);
-                entry.setValue(output);
+                entry.setValue(new TypeScriptFile(output.path));
             }
-
-            val exportedSymbol = ImportType.TYPE.fmt(classPath.getSimpleName());
-
-            val thisType = Types.type(classPath)
-                .withPossibleParams(classDecl.variableTypes)
-                .contextShield(BaseType.FormatType.RETURN);
-
-            val allTypes = new ArrayList<BaseType>();
-            allTypes.add(thisType);
-            for (val typeDecl : convertibles.get(classPath)) {
-                if (typeDecl.name != null) {
-                    output.addCode(typeDecl);
-                    allTypes.add(Types.primitive(typeDecl.name));
-                } else {
-                    allTypes.add(typeDecl.type);
-                }
-            }
-
-            // type SomeType$$Type = SomeType | SomeConvertibles | ... ;
-            val typeConvertible = new TypeDecl(exportedSymbol, classDecl.variableTypes, Types.or(allTypes));
-            typeConvertible.addComment("""
-                Use `Internal.{Type}` and `Internal.{Type}_` for referencing this type in JS file""");
-            output.addCode(typeConvertible);
         }
 
         return filesToModify;
