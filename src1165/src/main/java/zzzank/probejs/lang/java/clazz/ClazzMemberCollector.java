@@ -4,6 +4,7 @@ import dev.latvian.mods.rhino.util.HideFromJS;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
+import zzzank.probejs.lang.java.type.TypeReplacementCollector;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -14,6 +15,22 @@ import java.util.stream.Stream;
  * @author ZZZank
  */
 public class ClazzMemberCollector extends BasicMemberCollector {
+
+    public ClazzMemberCollector() {
+        super();
+    }
+
+    public ClazzMemberCollector(Class<?> clazz, TypeReplacementCollector typeReplacementCollector) {
+        super(clazz, typeReplacementCollector);
+    }
+
+    @Override
+    public MemberCollector reTarget(Class<?> clazz) {
+        if (clazz == this.clazz) {
+            return this;
+        }
+        return new ClazzMemberCollector(clazz, typeReplacementCollector);
+    }
 
     @Override
     protected Stream<Constructor<?>> rawConstructors() {

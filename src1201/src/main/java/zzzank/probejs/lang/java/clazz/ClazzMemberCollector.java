@@ -21,14 +21,16 @@ import java.util.stream.Stream;
  */
 public class ClazzMemberCollector implements MemberCollector {
 
-    private final TypeReplacementCollector typeReplacementCollector = new TypeReplacementCollector();
+    private final Class<?> clazz;
+    private final JavaMembers members;
+    private final TypeReplacementCollector typeReplacementCollector;
+    private final Map<VariableType, TypeDescriptor> typeReplacement;
 
-    private Class<?> clazz;
-    private JavaMembers members;
-    private Map<VariableType, TypeDescriptor> typeReplacement;
+    public ClazzMemberCollector() {
+        this(Object.class, new TypeReplacementCollector());
+    }
 
-    @Override
-    public void accept(Class<?> clazz) {
+    public ClazzMemberCollector(Class<?> clazz, TypeReplacementCollector typeReplacementCollector) {
         this.clazz = clazz;
         val scriptManager = KubeJS.getStartupScriptManager();
         this.members = JavaMembers.lookupClass(
@@ -38,7 +40,18 @@ public class ClazzMemberCollector implements MemberCollector {
             clazz,
             false
         );
+        this.typeReplacementCollector = typeReplacementCollector;
         this.typeReplacement = typeReplacementCollector.getTypeReplacement(clazz);
+    }
+
+    @Override
+    public Class<?> currentTarget() {
+        return clazz;
+    }
+
+    @Override
+    public MemberCollector reTarget(Class<?> clazz) {
+        return new ClazzMemberCollector(clazz, typeReplacementCollector);
     }
 
     @Override

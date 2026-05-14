@@ -60,7 +60,7 @@ public class ClassRegistry {
             return null;
         }
         try {
-            return foundClasses.computeIfAbsent(path, p -> new Clazz(c, p, collector));
+            return foundClasses.computeIfAbsent(path, p -> new Clazz(c, p, collector.reTarget(c)));
         } catch (Throwable ex) {
             ProbeJS.LOGGER.error("Error when trying to add '{}' into class registry", c, ex);
             return null;

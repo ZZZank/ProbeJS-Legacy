@@ -22,17 +22,33 @@ import java.util.stream.Stream;
  * @author ZZZank
  */
 public class BasicMemberCollector implements MemberCollector {
-    private final TypeReplacementCollector typeReplacementCollector = new TypeReplacementCollector();
+    protected final Class<?> clazz;
+    protected final Set<String> names;
+    protected final TypeReplacementCollector typeReplacementCollector;
+    protected final Map<VariableType, TypeDescriptor> typeReplacement;
 
-    private Class<?> clazz;
-    private Set<String> names;
-    private Map<VariableType, TypeDescriptor> typeReplacement;
+    public BasicMemberCollector() {
+        this(Object.class, new TypeReplacementCollector());
+    }
 
-    @Override
-    public void accept(Class<?> clazz) {
+    public BasicMemberCollector(Class<?> clazz, TypeReplacementCollector typeReplacementCollector) {
         this.clazz = clazz;
         this.names = new HashSet<>();
+        this.typeReplacementCollector = typeReplacementCollector;
         this.typeReplacement = typeReplacementCollector.getTypeReplacement(clazz);
+    }
+
+    @Override
+    public Class<?> currentTarget() {
+        return clazz;
+    }
+
+    @Override
+    public MemberCollector reTarget(Class<?> clazz) {
+        if (clazz == this.clazz) {
+            return this;
+        }
+        return new BasicMemberCollector(clazz, typeReplacementCollector);
     }
 
     @Override

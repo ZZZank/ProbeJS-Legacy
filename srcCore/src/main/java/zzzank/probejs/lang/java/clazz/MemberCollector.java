@@ -11,12 +11,15 @@ import java.util.stream.Stream;
  * @author ZZZank
  */
 public interface MemberCollector {
-    MemberCollector BASIC = new BasicMemberCollector();
     MemberCollector DEFAULT = ServiceLoader.load(MemberCollector.class)
         .findFirst()
-        .orElse(BASIC);
+        .orElseGet(BasicMemberCollector::new);
 
-    void accept(Class<?> clazz);
+    Class<?> currentTarget();
+
+    /// Get a new [MemberCollector] that targets the specified `clazz`. A [MemberCollector] instance with no
+    /// [#reTarget(java.lang.Class)] calls should target the [Object] class
+    MemberCollector reTarget(Class<?> clazz);
 
     Stream<ConstructorInfo> constructors();
 
