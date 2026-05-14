@@ -67,6 +67,16 @@ public final class ClassPath implements Comparable<ClassPath> {
         return this.className.isEmpty() ? getRemappedName() : this.className;
     }
 
+    /// @see #getFirstValidPath()
+    public String getFirstValidPackage() {
+        var path = getFirstValidPath();
+        var lastDot = path.lastIndexOf('.');
+        if (lastDot < 0) {
+            return "";
+        }
+        return path.substring(0, lastDot);
+    }
+
     /// Similar to [Class#getSimpleName()]. For non-artificial [ClassPath], there will be an additional '$' prefix
     public String getSimpleName() {
         var name = this.remapped[this.remapped.length - 1];
