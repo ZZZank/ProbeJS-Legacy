@@ -50,7 +50,7 @@ public class JSConfigDump extends TSDumpBase {
                 "compilerOptions", CollectUtils.ofLinkedMap(
                     Map.entry("allowJs", true),
                     Map.entry("lib", List.of("ES2015")),
-                    Map.entry("module", "nodenext"),
+                    Map.entry("module", "commonjs"),
                     Map.entry("rootDir", "."),
                     Map.entry("skipDefaultLibCheck", true),
                     Map.entry("skipLibCheck", true),
