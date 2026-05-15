@@ -45,7 +45,7 @@ public class TagEvents implements ProbeJSPlugin {
             }
 
             val typeName = SpecialTypes.dot(GameUtils.registryName(key));
-            val tagName = typeName + "Tag";
+            val tagName = Types.primitive(typeName.content + "Tag");
             val extraName = key.location().getNamespace().equals("minecraft")
                 ? key.location().getPath()
                 : key.location().toString();

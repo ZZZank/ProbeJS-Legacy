@@ -30,10 +30,8 @@ public class RegistryTypes implements ProbeJSPlugin {
     public static final String TAG_FIELD = "probejsInternal$$Tag";
     public static final String OF_TYPE_DECL = "T extends { %s: infer U } ? U : never";
 
-    public static final String SPECIAL_TAG_OF = SpecialTypes.dot("TagOf");
-    public static final BaseType TYPE_SPECIAL_TAG_OF = Types.primitive(SPECIAL_TAG_OF);
-    public static final String SPECIAL_LITERAL_OF = SpecialTypes.dot("LiteralOf");
-    public static final BaseType TYPE_SPECIAL_LITERAL_OF = Types.primitive(SPECIAL_LITERAL_OF);
+    public static final BaseType SPECIAL_TAG_OF = SpecialTypes.dot("TagOf");
+    public static final BaseType SPECIAL_LITERAL_OF = SpecialTypes.dot("LiteralOf");
 
     /**
      * @see ScriptManager#load()
@@ -49,7 +47,7 @@ public class RegistryTypes implements ProbeJSPlugin {
             val typeName = GameUtils.registryName(key);
             val assignmentType = info.objectBaseType();
             if (assignmentType != null) {
-                scriptDump.assignType(assignmentType, Types.primitive(SpecialTypes.dot(typeName)));
+                scriptDump.assignType(assignmentType, SpecialTypes.dot(typeName));
             }
         }
     }

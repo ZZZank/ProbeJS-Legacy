@@ -109,6 +109,6 @@ public class JavaPrimitives implements ProbeJSPlugin {
 
         scriptDump.assignType(Item.class, Types.type(ItemLike.class));
         // kubejs RegistryInfo.ITEM is marked as `.noAutoWrap()`, with custom logic to restore support
-        scriptDump.assignType(Item.class, Types.primitive(SpecialTypes.dot(GameUtils.registryName(Registries.ITEM))));
+        scriptDump.assignType(Item.class, SpecialTypes.dot(GameUtils.registryName(Registries.ITEM)));
     }
 }

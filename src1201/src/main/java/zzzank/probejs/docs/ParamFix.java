@@ -36,11 +36,7 @@ public class ParamFix implements ProbeJSPlugin {
                 Types.object()
                     .member(
                         "type",
-                        Types.primitive(
-                            SpecialTypes.dot(
-                                GameUtils.registryName(Registries.RECIPE_SERIALIZER)
-                            )
-                        )
+                        SpecialTypes.dot(GameUtils.registryName(Registries.RECIPE_SERIALIZER))
                     )
                     .rawNameMember("[x: string]", Types.ANY)
                     .build()

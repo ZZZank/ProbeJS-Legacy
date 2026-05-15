@@ -10,6 +10,7 @@ import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Wrapped;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
 import java.util.Collection;
@@ -20,8 +21,8 @@ public class SpecialTypes implements ProbeJSPlugin {
     public static final String NAMESPACE = "Special";
 
     @NotNull
-    public static String dot(@NotNull String name) {
-        return NAMESPACE + '.' + Objects.requireNonNull(name);
+    public static JSPrimitiveType dot(@NotNull String name) {
+        return Types.primitive(NAMESPACE + '.' + Objects.requireNonNull(name));
     }
 
     @Override
