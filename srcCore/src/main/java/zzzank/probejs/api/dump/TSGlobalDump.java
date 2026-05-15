@@ -2,8 +2,8 @@ package zzzank.probejs.api.dump;
 
 import lombok.val;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.api.output.PerFileWriter;
 import zzzank.probejs.api.output.TSFileWriter;
+import zzzank.probejs.api.output.TreeGlobalWriter;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public class TSGlobalDump extends TSDumpBase implements TSDump.FolderDump {
     public final Map<String, TypeScriptFile> globals = new HashMap<>();
 
     public TSGlobalDump(Path writeTo) {
-        this(new PerFileWriter().setWithIndex(false).setWriteAsModule(false), writeTo);
+        this(new TreeGlobalWriter().setWriteAsModule(false), writeTo);
     }
 
     public TSGlobalDump(TSFileWriter writer, Path writeTo) {

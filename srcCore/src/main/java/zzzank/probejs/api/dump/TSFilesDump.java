@@ -1,7 +1,7 @@
 package zzzank.probejs.api.dump;
 
-import zzzank.probejs.api.output.AutoSplitPackagedWriter;
 import zzzank.probejs.api.output.TSFileWriter;
+import zzzank.probejs.api.output.TreePackagedWriter;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class TSFilesDump extends TSDumpBase implements TSDump.FolderDump {
     public Collection<TypeScriptFile> files = Collections.emptyList();
 
     public TSFilesDump(Path writeTo) {
-        this(AutoSplitPackagedWriter.defaultSetup(), writeTo);
+        this(new TreePackagedWriter(), writeTo);
     }
 
     public TSFilesDump(TSFileWriter writer, Path writeTo) {
