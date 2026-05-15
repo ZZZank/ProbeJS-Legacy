@@ -16,7 +16,7 @@ public class TreeGlobalWriter extends PerFileWriter {
     @Override
     protected void writeClasses(Path base) throws IOException {
         for (val file : files) {
-            var node = new TreeNode(ClassPath.EMPTY, file.path);
+            var node = new TreeNode(null, ClassPath.EMPTY);
             node.files().add(file);
 
             val filePath = base.resolve(file.path.getRemappedName() + this.suffix);
