@@ -9,6 +9,7 @@ import zzzank.probejs.lang.transpiler.members.Method;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
+import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.utils.CollectUtils;
 
@@ -34,7 +35,10 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
         val superClass = clazz.superClass == null
             ? null
             : converter.convertTypeBuiltin(clazz.superClass);
-        val interfaces = CollectUtils.mapToList(clazz.interfaces, converter::convertType);
+        val interfaces = CollectUtils.mapToList(
+            clazz.interfaces,
+            t -> (BaseType) converter.convertType(t).contextShield(BaseType.FormatType.INTERFACE)
+        );
 
         ClassDecl decl;
         if (clazz.isInterface()) {

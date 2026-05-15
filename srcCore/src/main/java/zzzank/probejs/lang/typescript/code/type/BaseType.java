@@ -121,6 +121,7 @@ public abstract class BaseType extends Code {
     public enum FormatType {
         INPUT,
         RETURN,
-        VARIABLE
+        VARIABLE,
+        INTERFACE
     }
 }

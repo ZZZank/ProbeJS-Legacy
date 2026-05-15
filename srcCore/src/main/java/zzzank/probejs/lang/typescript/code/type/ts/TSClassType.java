@@ -19,6 +19,7 @@ public class TSClassType extends BaseType {
         return ImportInfos.of(switch (type) {
             case RETURN -> ImportInfo.ofOriginal(classPath);
             case INPUT -> ImportInfo.ofType(classPath);
+            case INTERFACE -> ImportInfo.ofStatic(classPath);
             default -> ImportInfo.ofDefault(classPath);
         });
     }
@@ -28,6 +29,9 @@ public class TSClassType extends BaseType {
         val symbol = declaration.getSymbol(classPath);
         if (formatType == FormatType.INPUT) {
             return ImportType.TYPE.fmt(symbol);
+        }
+        if (formatType == FormatType.INTERFACE) {
+            return ImportType.STATIC.fmt(symbol);
         }
         return symbol;
     }

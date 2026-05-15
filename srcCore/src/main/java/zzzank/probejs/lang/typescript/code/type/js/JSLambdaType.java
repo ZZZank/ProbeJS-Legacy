@@ -40,7 +40,7 @@ public class JSLambdaType extends BaseType {
         return switch (formatType) {
             case RETURN -> FormatType.INPUT;
             case INPUT -> FormatType.RETURN;
-            case VARIABLE -> FormatType.VARIABLE;
+            default -> formatType;
         };
     }
 

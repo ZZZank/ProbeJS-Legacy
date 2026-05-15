@@ -31,9 +31,11 @@ public class InterfaceDecl extends ClassDecl {
 
     public ClassDecl createStaticClass() {
         val classDecl = new ClassDecl(
-            ImportType.STATIC.fmt(this.name),
+            this.name,
             null,
-            Collections.singletonList(Types.primitive(this.name).withPossibleParams(variableTypes)),
+            Collections.singletonList(Types.primitive(ImportType.STATIC.fmt(name))
+                .withPossibleParams(variableTypes)
+                .contextShield(BaseType.FormatType.INTERFACE)),
             this.variableTypes
         );
 
@@ -49,8 +51,8 @@ public class InterfaceDecl extends ClassDecl {
             method.isInterface = true;
         }
 
-        // Format head - export interface name<T> extends ... {
-        String head = "export interface " + name + TSVariableType.formatGenericParam(variableTypes, declaration);
+        // Format head - export interface Interf$$Interface<T> extends ... {
+        String head = "export interface " + ImportType.STATIC.fmt(name) + TSVariableType.formatGenericParam(variableTypes, declaration);
         if (!interfaces.isEmpty()) {
             head += " extends " + Types.join(", ", interfaces).line(declaration);
         }
@@ -79,10 +81,6 @@ public class InterfaceDecl extends ClassDecl {
         formatted.addAll(body);
         formatted.addAll(tail);
 
-        // Static methods and fields, adds it even if it's empty, so auto import can still discover it
-        if (this.withStatic) {
-            formatted.addAll(createStaticClass().format(declaration));
-        }
         return formatted;
     }
 }
