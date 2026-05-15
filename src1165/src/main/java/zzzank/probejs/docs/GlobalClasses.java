@@ -42,7 +42,7 @@ public class GlobalClasses implements ProbeJSPlugin {
                 List.of(TREE, NAME),
                 Types.ternary(
                     "NAME",
-                    Types.templateLiteral("${infer PKG}.${infer REST}"),
+                    Types.primitive("`${infer PKG}.${infer REST}`"),
                     // true: PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never
                     Types.ternary(
                         "PKG",
@@ -56,9 +56,9 @@ public class GlobalClasses implements ProbeJSPlugin {
                     // false: `$${NAME}` extends keyof TREE ? TREE[`$${NAME}`] : never
                     Types.format(
                         "%s extends %s ? %s : %s",
-                        Types.templateLiteral("$" + "${NAME}"),
+                        Types.primitive("`$${NAME}`"),
                         Types.keyof(TREE),
-                        TREE.access(Types.templateLiteral("$" + "${NAME}")),
+                        TREE.access(Types.primitive("`$${NAME}`")),
                         Types.NEVER
                     )
                 ),

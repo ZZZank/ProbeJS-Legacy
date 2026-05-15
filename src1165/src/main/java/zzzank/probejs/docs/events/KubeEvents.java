@@ -60,7 +60,7 @@ public class KubeEvents implements ProbeJSPlugin {
                     id,
                     info.sub
                 ));
-                codes.add(declareEventMethod(Types.templateLiteral(id + ".${string}"), converter, info));
+                codes.add(declareEventMethod(Types.primitive("`" + id + ".${string}`"), converter, info));
             }
             codes.add(decl);
         }

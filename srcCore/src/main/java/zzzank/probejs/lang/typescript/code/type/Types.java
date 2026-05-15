@@ -2,7 +2,6 @@ package zzzank.probejs.lang.typescript.code.type;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.Declaration;
@@ -10,6 +9,7 @@ import zzzank.probejs.lang.typescript.code.type.js.*;
 import zzzank.probejs.lang.typescript.code.type.ts.*;
 import zzzank.probejs.lang.typescript.code.type.utility.*;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.NameUtils;
 
 import java.util.*;
@@ -33,23 +33,19 @@ public interface Types {
     JSObjectType EMPTY_OBJECT = Types.object().build();
 
     static JSPrimitiveType literal(String content) {
-        return primitive(ProbeJS.GSON.toJson(content));
+        return primitive(JsonUtils.STRING_TYPE_ADAPTER.toJson(content));
     }
 
     static JSPrimitiveType literal(Number content) {
-        return primitive(ProbeJS.GSON.toJson(content));
+        return primitive(JsonUtils.NUMBER_TYPE_ADAPTER.toJson(content));
     }
 
     static JSPrimitiveType literal(Boolean content) {
-        return primitive(ProbeJS.GSON.toJson(content));
+        return primitive(content.toString());
     }
 
     static JSPrimitiveType literal(Character content) {
-        return primitive(ProbeJS.GSON.toJson(content));
-    }
-
-    static JSPrimitiveType templateLiteral(String content) {
-        return primitive('`' + content + '`');
+        return primitive(JsonUtils.CHAR_TYPE_ADAPTER.toJson(content));
     }
 
     /**

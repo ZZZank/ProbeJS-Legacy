@@ -4,12 +4,16 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import lombok.val;
+import zzzank.probejs.ProbeJS;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
 
 public class JsonUtils {
+    public static final TypeAdapter<String> STRING_TYPE_ADAPTER = ProbeJS.GSON.getAdapter(String.class);
+    public static final TypeAdapter<Number> NUMBER_TYPE_ADAPTER = ProbeJS.GSON.getAdapter(Number.class);
+    public static final TypeAdapter<Character> CHAR_TYPE_ADAPTER = ProbeJS.GSON.getAdapter(Character.class);
 
     public static JsonArray asStringArray(Collection<String> array) {
         JsonArray jsonArray = new JsonArray();
@@ -102,11 +106,11 @@ public class JsonUtils {
         return deserialized;
     }
 
-    public static <T extends JsonElement> T deepCopy(T json) {
+    public static JsonElement deepCopy(JsonElement json) {
         if (json.isJsonObject()) {
-            return (T) deepCopy(json.getAsJsonObject());
+            return deepCopy(json.getAsJsonObject());
         } else if (json.isJsonArray()) {
-            return (T) deepCopy(json.getAsJsonArray());
+            return deepCopy(json.getAsJsonArray());
         }
         return json;
     }
