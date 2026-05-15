@@ -96,7 +96,7 @@ public class TreeIndexFile {
         }
         if (!blockLines.isEmpty()) {
             if (asModule) {
-                formatted.add(String.format("declare %s {", ProbeJS.GSON.toJson(selfName)));
+                formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName)));
             }
             for (var line : blockLines) {
                 formatted.add("    " + line);
