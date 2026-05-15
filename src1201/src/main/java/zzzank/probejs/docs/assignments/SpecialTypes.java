@@ -4,6 +4,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.features.SpecialData;
 import zzzank.probejs.ProbeJS;
+import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
@@ -37,6 +38,13 @@ public class SpecialTypes implements ProbeJSPlugin {
         defineLiteralTypes(special, "RawTexture", SpecialData.RAW_TEXTURES.get());
         defineLiteralTypes(special, "Texture", SpecialData.TEXTURES.get());
         defineLiteralTypes(special, "Mod", SpecialData.MODS.get());
+        defineLiteralTypes(
+            special, "ClassNames",
+            scriptDump.recordedClasses.stream()
+                .map(clazz -> clazz.classPath)
+                .map(ClassPath::getOriginalName)
+                .toList()
+        );
 
         scriptDump.addGlobal("special_types", special);
     }

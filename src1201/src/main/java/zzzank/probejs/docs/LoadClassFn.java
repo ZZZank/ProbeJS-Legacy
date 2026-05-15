@@ -2,6 +2,7 @@ package zzzank.probejs.docs;
 
 import dev.latvian.mods.kubejs.bindings.JavaWrapper;
 import lombok.val;
+import zzzank.probejs.docs.assignments.SpecialTypes;
 import zzzank.probejs.features.kubejs.BindingFilter;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
@@ -42,12 +43,12 @@ public class LoadClassFn implements ProbeJSPlugin {
         }
         for (val method : decl.methods) {
             if ("loadClass".equals(method.name) || "tryLoadClass".equals(method.name)) {
-                // loadClass<T extends string>(className: T): LoadClass<T>
+                // loadClass<T extends Special.ClassNames>(className: T): LoadClass<T>
                 // "T extends string" because we want T to capture the string literal
-                val t = Types.generic("T", Types.STRING);
-                method.variableTypes.add(t);
-                method.params.get(0).type = t;
-                method.returnType = GlobalClasses.LOAD_CLASS.withParams(t);
+                val T = Types.generic("T", SpecialTypes.dot("ClassNames"));
+                method.variableTypes.add(T);
+                method.params.get(0).type = T;
+                method.returnType = GlobalClasses.LOAD_CLASS.withParams(T);
             }
         }
     }

@@ -1,6 +1,7 @@
 package zzzank.probejs.docs;
 
 import lombok.val;
+import zzzank.probejs.docs.assignments.SpecialTypes;
 import zzzank.probejs.features.kubejs.BindingFilter;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
@@ -14,12 +15,11 @@ public class LoadClassFn implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        // "T extends string" because we want T to capture the string literal
-        var t = Types.generic("T", Types.STRING);
+        var T = Types.generic("T", SpecialTypes.dot("ClassNames"));
         val javaFn = Statements
             .func("java")
-            .variable(t)
-            .param("classPath", t)
+            .variable(T)
+            .param("classPath", T)
             .returnType(Types.primitive("LoadClass").withParams("T"))
             .build();
 
