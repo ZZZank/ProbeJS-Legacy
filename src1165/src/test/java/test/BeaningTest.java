@@ -44,6 +44,8 @@ public class BeaningTest {
             .orElseThrow();
 
         var hasMatchingBean = false;
+
+        Assertions.assertEquals(2, classDecl.bodyCode.size());
         for (var code : classDecl.bodyCode) {
             if (code instanceof BeanDecl beanDecl) {
                 switch (beanDecl.name) {

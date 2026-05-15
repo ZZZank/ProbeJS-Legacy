@@ -12,8 +12,7 @@ public class MethodFilteringTest {
 
     @Test
     public void test() {
-        var memberCollector = new BasicMemberCollector();
-        memberCollector.accept(ClazzC.class);
+        var memberCollector = new BasicMemberCollector().reTarget(ClazzC.class);
 
         var methods = memberCollector.methods().toList();
 //        for (var method : methods) {
@@ -21,11 +20,13 @@ public class MethodFilteringTest {
 //        }
 
         var names = methods.stream().map(m -> m.name).toList();
+
         Assertions.assertTrue(names.contains("modifyReturnType"));
         Assertions.assertTrue(names.contains("nonPublicSuper"));
         Assertions.assertTrue(names.contains("implementInterface"));
         Assertions.assertTrue(names.contains("interfaceOnly"));
         Assertions.assertTrue(names.contains("objectOverriddenByGeneric"));
+
         Assertions.assertFalse(names.contains("generic"));
         Assertions.assertFalse(names.contains("bothInterfaceAndAbstract"));
     }
