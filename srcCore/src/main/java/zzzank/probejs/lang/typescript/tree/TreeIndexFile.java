@@ -63,6 +63,7 @@ public class TreeIndexFile {
             .stream()
             .collect(Collectors.groupingBy(ref -> ref.info.path.getFirstValidPackage()));
 
+        boolean hasImport = false;
         for (var entry : grouped.entrySet()) {
             var moduleName = entry.getKey();
             var references = entry.getValue();
@@ -72,9 +73,12 @@ public class TreeIndexFile {
             }
 
             formatted.add(getImportStatement(references, moduleName));
+            hasImport = true;
         }
-        if (!grouped.isEmpty()) {
+        if (hasImport) {
             formatted.add("");
+        } else {
+            formatted.add("export {} // mark the file as module");
         }
 
         // 2. subpackage re-exports
