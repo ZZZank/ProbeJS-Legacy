@@ -1,6 +1,5 @@
 package zzzank.probejs.docs;
 
-import dev.latvian.kubejs.script.ScriptType;
 import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
@@ -26,9 +25,10 @@ public class InjectBeaning implements ProbeJSPlugin {
             if (file.path.isArtificial()) {
                 continue;
             }
-            var classDecl = file.findCodeNullable(ClassDecl.class);
-            if (classDecl != null) {
-                BuiltinDocHelper.injectBeaning(classDecl, convertFields);
+            for (var code : file.codes) {
+                if (code instanceof ClassDecl classDecl) {
+                    BuiltinDocHelper.injectBeaning(classDecl, convertFields);
+                }
             }
         }
     }

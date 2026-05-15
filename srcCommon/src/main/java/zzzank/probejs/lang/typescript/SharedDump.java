@@ -40,7 +40,11 @@ public class SharedDump extends TSFilesDump implements ProbeNamedDump {
             BuiltinDocHelper.injectConvertibleTypeDecl(file, Collections.emptyList());
 
             boolean convertField = ProbeConfig.fieldAsBeaning.get();
-            file.findCode(ClassDecl.class).ifPresent(classdecl -> BuiltinDocHelper.injectBeaning(classdecl, convertField));
+            for (var code : file.codes) {
+                if (code instanceof ClassDecl classDecl) {
+                    BuiltinDocHelper.injectBeaning(classDecl, convertField);
+                }
+            }
         }
         super.open();
     }
