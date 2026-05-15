@@ -13,6 +13,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class TypeScriptFile {
     public final Declaration declaration;
@@ -106,5 +107,11 @@ public class TypeScriptFile {
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Code> Stream<T> findCodes(Class<T> type) {
+        return (Stream<T>) codes.stream()
+            .filter(type::isInstance);
     }
 }

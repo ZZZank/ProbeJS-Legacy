@@ -13,8 +13,11 @@ import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.SharedDump;
 import zzzank.probejs.lang.typescript.code.member.BeanDecl;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
+import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
 import zzzank.probejs.plugin.ProbeJSPlugins;
+
+import java.util.function.Predicate;
 
 /**
  * @author ZZZank
@@ -40,7 +43,9 @@ public class BeaningTest {
         ))));
 
         val classDecl = files.get(ClassPath.ofJava(type))
-            .findCode(ClassDecl.class)
+            .findCodes(ClassDecl.class)
+            .filter(Predicate.not(decl -> decl instanceof InterfaceDecl)) // static class
+            .findFirst()
             .orElseThrow();
 
         var hasMatchingBean = false;
