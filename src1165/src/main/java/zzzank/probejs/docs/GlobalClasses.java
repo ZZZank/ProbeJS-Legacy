@@ -1,16 +1,13 @@
 package zzzank.probejs.docs;
 
-import lombok.val;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
-import zzzank.probejs.lang.typescript.code.type.utility.TSUtilityType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,36 +21,17 @@ public class GlobalClasses implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        val T = Types.generic("T");
-        val TREE = Types.generic("TREE");
-        val NAME = Types.generic("NAME", Types.STRING);
-        val PATH = Types.generic("PATH", Types.STRING);
-
-        val paths = Types.object();
-        for (val clazz : scriptDump.recordedClasses) {
-            val path = clazz.classPath;
-            paths.member(path.getOriginalName(), Types.typeOf(path));
-        }
+        var TREE = Types.generic("TREE");
+        var NAME = Types.generic("NAME", Types.STRING);
+        var PATH = Types.generic("PATH", Types.STRING);
 
         scriptDump.addGlobal(
             "load_class",
-            // export type GlobalClasses = { ... }
-            Statements.type(GLOBAL_CLASSES.content, paths.build())
-                .typeFormat(BaseType.FormatType.RETURN)
-                .build(),
-            // export type JClass<T> = { ... }
+            // export type JClass<T> = abstract new (...args: any) => T
             Statements.type()
                 .name(J_CLASS.content)
-                .symbolVariables(List.of(T))
-                .type(Types.object()
-                    .member("__javaObject__", Types.type(Class.class).withParams("T"))
-                    .rawNameMember("[Symbol.hasInstance]", Types.primitive("(o: any) => o is T"))
-                    .build())
-                .build(),
-            // type AttachJClass<T> = T & JClass<InstanceType<T>>
-            Statements.type(ATTACH_J_CLASS.content, T.and(J_CLASS.withParams(TSUtilityType.instanceType(T))))
-                .symbolVariables(Collections.singletonList(T))
-                .exportDecl(false)
+                .symbolVariables(List.of(Types.generic("T")))
+                .type(Types.primitive("abstract new (...args: any) => T"))
                 .build(),
             // type ResolveClassInTree<TREE, NAME extends string> = NAME extends `${infer PKG}.${infer REST}`
             //     ? PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never

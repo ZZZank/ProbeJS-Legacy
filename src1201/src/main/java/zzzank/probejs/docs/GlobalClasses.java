@@ -1,13 +1,11 @@
 package zzzank.probejs.docs;
 
-import lombok.val;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.js.JSPrimitiveType;
-import zzzank.probejs.lang.typescript.code.type.utility.TSUtilityType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
 
 import java.util.List;
@@ -18,30 +16,20 @@ import java.util.List;
 public class GlobalClasses implements ProbeJSPlugin {
     public static final JSPrimitiveType LOAD_CLASS = Types.primitive("LoadClass");
     public static final JSPrimitiveType J_CLASS = Types.primitive("JClass");
-    public static final JSPrimitiveType ATTACH_J_CLASS = Types.primitive("AttachJClass");
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        val T = Types.generic("T");
-        val TREE = Types.generic("TREE");
-        val NAME = Types.generic("NAME", Types.STRING);
-        val PATH = Types.generic("PATH", Types.STRING);
+        var TREE = Types.generic("TREE");
+        var NAME = Types.generic("NAME", Types.STRING);
+        var PATH = Types.generic("PATH", Types.STRING);
 
         scriptDump.addGlobal(
             "load_class",
-            // export type JClass<T> = { ... }
+            // export type JClass<T> = abstract new (...args: any) => T
             Statements.type()
                 .name(J_CLASS.content)
-                .symbolVariables(List.of(T))
-                .type(Types.object()
-                    .member("__javaObject__", Types.type(Class.class).withParams("T"))
-                    .rawNameMember("[Symbol.hasInstance]", Types.primitive("(o: any) => o is T"))
-                    .build())
-                .build(),
-            // type AttachJClass<T extends abstract new (...args: any) => any> = T & JClass<InstanceType<T>>
-            Statements.type(ATTACH_J_CLASS.content, T.and(J_CLASS.contextShield(BaseType.FormatType.RETURN).withParams(TSUtilityType.instanceType(T))))
-                .symbolVariables(List.of(Types.generic("T", Types.primitive("abstract new (...args: any) => any"))))
-                .exportDecl(false)
+                .symbolVariables(List.of(Types.generic("T")))
+                .type(Types.primitive("abstract new (...args: any) => T"))
                 .build(),
             // type ResolveClassInTree<TREE, NAME extends string> = NAME extends `${infer PKG}.${infer REST}`
             //     ? PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never
@@ -74,15 +62,13 @@ public class GlobalClasses implements ProbeJSPlugin {
                 ),
                 BaseType.FormatType.RETURN
             ),
-            // export type LoadClass<PATH extends string> = AttachJClass<ResolveClassInTree<typeof import("index"), PATH>>;
+            // export type LoadClass<PATH extends string> = ResolveClassInTree<typeof import("index"), PATH>;
             new TypeDecl(
                 LOAD_CLASS.content,
                 List.of(PATH),
-                ATTACH_J_CLASS.withParams(
-                    Types.primitive("ResolveClassInTree").withParams(
-                        Types.primitive("typeof import(\"index\")"),
-                        PATH
-                    )
+                Types.primitive("ResolveClassInTree").withParams(
+                    Types.primitive("typeof import(\"index\")"),
+                    PATH
                 )
             )
         );
