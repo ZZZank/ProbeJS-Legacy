@@ -38,7 +38,7 @@ public class TreePackagedWriter extends AbstractWriter {
             var writeTo = dir.resolve("index" + suffix);
             try (var writer = writerProvider.apply(writeTo)) {
                 var file = new TreeIndexFile(node);
-                for (var line : file.format()) {
+                for (var line : file.format(this.writeAsModule)) {
                     writer.write(line);
                     writer.write('\n');
                 }

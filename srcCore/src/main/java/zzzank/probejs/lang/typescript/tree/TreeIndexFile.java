@@ -36,7 +36,7 @@ public class TreeIndexFile {
         this.node = node;
     }
 
-    public List<String> format() {
+    public List<String> format(boolean asModule) {
         // load codes & import
         var codes = new ArrayList<Code>();
         for (var file : node.files()) {
@@ -95,11 +95,15 @@ public class TreeIndexFile {
             blockLines.addAll(code.format(declaration));
         }
         if (!blockLines.isEmpty()) {
-            formatted.add(String.format("declare %s {", ProbeJS.GSON.toJson(selfName)));
+            if (asModule) {
+                formatted.add(String.format("declare %s {", ProbeJS.GSON.toJson(selfName)));
+            }
             for (var line : blockLines) {
                 formatted.add("    " + line);
             }
-            formatted.add("}");
+            if (asModule) {
+                formatted.add("}");
+            }
         }
 
         return formatted;

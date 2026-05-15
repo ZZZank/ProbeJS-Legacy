@@ -15,7 +15,7 @@ import java.util.List;
  * @author ZZZank
  */
 public class PerFileWriter extends AbstractWriter {
-    private final List<TypeScriptFile> files = new ArrayList<>();
+    protected final List<TypeScriptFile> files = new ArrayList<>();
 
     @Override
     public void accept(@NotNull TypeScriptFile file) {
