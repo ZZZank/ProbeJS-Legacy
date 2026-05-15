@@ -82,7 +82,7 @@ public class TreeIndexFile {
             formatted.add(String.format(
                 "export * as %s from %s",
                 child.getKey(),
-                ProbeJS.GSON.toJson(child.getValue().self().getFirstValidPath())
+                ProbeJS.GSON.toJson(child.getValue().self().getFirstValidPath().replace('.', '/'))
             ));
         }
         if (!node.children().isEmpty()) {
@@ -96,7 +96,7 @@ public class TreeIndexFile {
         }
         if (!blockLines.isEmpty()) {
             if (asModule) {
-                formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName)));
+                formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName.replace('.', '/'))));
             }
             for (var line : blockLines) {
                 formatted.add("    " + line);
@@ -124,7 +124,7 @@ public class TreeIndexFile {
         return String.format(
             "import { %s } from %s",
             String.join(", ", names),
-            ProbeJS.GSON.toJson(moduleName)
+            ProbeJS.GSON.toJson(moduleName.replace('.', '/'))
         );
     }
 }

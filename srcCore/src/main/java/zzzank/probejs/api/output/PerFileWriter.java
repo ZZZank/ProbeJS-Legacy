@@ -3,7 +3,6 @@ package zzzank.probejs.api.output;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
-import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 
 import java.io.IOException;
@@ -22,10 +21,6 @@ public class PerFileWriter extends AbstractWriter {
         this.files.add(file);
     }
 
-    private String filePathOf(ClassPath path) {
-        return path.getRemappedName() + suffix;
-    }
-
     @Override
     protected void postWriting() {
         files.clear();
@@ -39,7 +34,7 @@ public class PerFileWriter extends AbstractWriter {
     @Override
     protected void writeClasses(Path base) throws IOException {
         for (val file : files) {
-            val filePath = base.resolve(filePathOf(file.path));
+            val filePath = base.resolve(file.path.getRemappedName() + suffix);
             try (val writer = writerProvider.apply(filePath)) {
                 writeFile(file, writer);
             }
@@ -52,7 +47,7 @@ public class PerFileWriter extends AbstractWriter {
             for (val file : files) {
                 writer.write(String.format(
                     "/// <reference path=%s />\n",
-                    ProbeJS.GSON.toJson(filePathOf(file.path))
+                    ProbeJS.GSON.toJson(file.path.getRemappedName() + suffix)
                 ));
             }
         }

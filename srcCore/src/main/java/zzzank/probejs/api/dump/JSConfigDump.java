@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -45,6 +46,7 @@ public class JSConfigDump extends TSDumpBase {
     }
 
     protected JsonObject provideJsonConfig() {
+
         return JsonUtils.parseObject(
             Map.of(
                 "compilerOptions", CollectUtils.ofLinkedMap(
@@ -55,14 +57,20 @@ public class JSConfigDump extends TSDumpBase {
                     Map.entry("skipDefaultLibCheck", true),
                     Map.entry("skipLibCheck", true),
                     Map.entry("target", "ES2015"),
-                    Map.entry("types",
-                        typingProviders.stream()
+                    Map.entry("types", List.of()),
+                    Map.entry("paths", Map.of(
+                        "*", typingProviders.stream()
                             .map(TSDump::writeTo)
-                            .map(p -> FileUtils.relativePathStr(scriptFolder, p))
+                            .map(p -> FileUtils.relativePathStr(scriptFolder, p) + "/*")
                             .toList()
-                    )
+                    ))
                 ),
-                "include", List.of("./**/*.js")
+                "include", Stream.concat(
+                    Stream.of("./**/*.js"),
+                    typingProviders.stream()
+                        .map(TSDump::writeTo)
+                        .map(p -> FileUtils.relativePathStr(scriptFolder, p) + "/**/*.d.ts"))
+                    .toList()
             )
         );
     }
