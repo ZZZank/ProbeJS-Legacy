@@ -16,30 +16,44 @@ import zzzank.probejs.utils.config.struct.ConfigRoot;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Collections;
-import java.util.function.Consumer;
 
-/**
- * @author ZZZank
- */
+/// ```json
+/// // config-file.json
+/// {
+///     "entry1": {
+///         "//": "comments here",
+///         "$default": 12,
+///         "$value": 34
+///     },
+///     "entry 2": {
+///         "//": [
+///             "multi-",
+///             "-line comments"
+///         ],
+///         "$default": 56,
+///         "$value": 78
+///     }
+/// }
+/// ```
+/// @author ZZZank
 public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
     public static final String DEFAULT_VALUE_KEY = "$default";
     public static final String VALUE_KEY = "$value";
     public static final String COMMENTS_KEY = "//";
 
-    public static final ConfigProperty<ConfigSerde<JsonElement, ?>> PROP_SERDE =
+    public static final ConfigProperty<ConfigSerde<JsonElement, ?>> SERDE_KEY =
         ConfigProperty.register("json_io_serde", null);
 
     private final Gson gson;
 
-    public static JsonConfigIO make(Gson gson, Consumer<JsonConfigIO> modifier) {
-        val io = new JsonConfigIO(gson);
-        modifier.accept(io);
-        return io;
+    public JsonConfigIO(Gson gson) {
+        super();
+        this.gson = Asser.tNotNull(gson, "gson");
     }
 
-    public JsonConfigIO(Gson gson) {
-        super(PROP_SERDE);
-        this.gson = Asser.tNotNull(gson, "gson");
+    @Override
+    public ConfigProperty<ConfigSerde<JsonElement, ?>> getSerdeKey() {
+        return SERDE_KEY;
     }
 
     @Override

@@ -23,11 +23,10 @@ import java.util.stream.Stream;
  */
 public class PropertiesConfigIO extends SerdeHolder<String> implements ConfigIO {
 
-    public static final ConfigProperty<ConfigSerde<String, ?>> PROP_SERDE =
+    public static final ConfigProperty<ConfigSerde<String, ?>> SERDE_KEY =
         ConfigProperty.register("properties_io_serde", null);
 
     public PropertiesConfigIO() {
-        super(PROP_SERDE);
         addPrimitiveSerde(Byte::valueOf, Byte.class, byte.class);
         addPrimitiveSerde(Short::valueOf, Short.class, short.class);
         addPrimitiveSerde(Integer::valueOf, Integer.class, int.class);
@@ -36,6 +35,11 @@ public class PropertiesConfigIO extends SerdeHolder<String> implements ConfigIO 
         addPrimitiveSerde(Double::valueOf, Double.class, double.class);
         addPrimitiveSerde(s -> s.charAt(0), Character.class, char.class);
         addPrimitiveSerde(Boolean::valueOf, Boolean.class, boolean.class);
+    }
+
+    @Override
+    public ConfigProperty<ConfigSerde<String, ?>> getSerdeKey() {
+        return SERDE_KEY;
     }
 
     @Override

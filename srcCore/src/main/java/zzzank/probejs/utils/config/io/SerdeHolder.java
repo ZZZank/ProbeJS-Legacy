@@ -16,17 +16,17 @@ import java.util.Objects;
  * @author ZZZank
  */
 public abstract class SerdeHolder<I> {
-    private final ConfigProperty<ConfigSerde<I, ?>> property;
     private final List<ConfigSerdeFactory<I>> factories;
 
-    protected SerdeHolder(ConfigProperty<ConfigSerde<I, ?>> property) {
-        this(property, new ArrayList<>());
+    protected SerdeHolder() {
+        this(new ArrayList<>());
     }
 
-    protected SerdeHolder(ConfigProperty<ConfigSerde<I, ?>> property, List<ConfigSerdeFactory<I>> factories) {
-        this.property = property;
+    protected SerdeHolder(List<ConfigSerdeFactory<I>> factories) {
         this.factories = factories;
     }
+
+    public abstract ConfigProperty<ConfigSerde<I, ?>> getSerdeKey();
 
     public <F extends ConfigSerdeFactory<I>> F registerSerdeFactory(F factory) {
         Asser.tNotNull(factory, "factory");
@@ -41,12 +41,15 @@ public abstract class SerdeHolder<I> {
     }
 
     public <T> ConfigSerde<I, T> getSerdeNullable(ConfigEntry<T> entry) {
-        if (entry.properties().has(property)) {
-            return entry.getProp((ConfigProperty<ConfigSerde<I, T>>) (Object) property)
+        if (entry.properties().has(getSerdeKey())) {
+            @SuppressWarnings("unchecked")
+            var key = (ConfigProperty<ConfigSerde<I, T>>) (Object) getSerdeKey();
+
+            return entry.getProp(key)
                 .orElseThrow(() -> new IllegalStateException(String.format(
                     "config entry '%s' has property '%s', but found null property value",
                     entry.path(),
-                    property
+                    getSerdeKey()
                 )));
         }
         val type = entry.binding().getDefaultType();
@@ -56,7 +59,7 @@ public abstract class SerdeHolder<I> {
             .findFirst()
             .orElse(null);
         if (created != null) {
-            entry.properties().put(property, created);
+            entry.properties().put(getSerdeKey(), created);
         }
         return (ConfigSerde<I, T>) created;
     }
