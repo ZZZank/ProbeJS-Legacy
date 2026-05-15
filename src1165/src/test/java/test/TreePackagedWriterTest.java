@@ -57,9 +57,8 @@ public class TreePackagedWriterTest {
         Assertions.assertFalse(simulatedFS.isEmpty());
 
         // java.lang package should have an index file covering our registered classes
-        var langIndex = simulatedFS.get("java/lang/index.d.ts");
-        Assertions.assertNotNull(langIndex, "java/lang/index.d.ts should exist");
-        var content = langIndex.toString();
-        Assertions.assertTrue(content.contains("declare \"java.lang\""));
+        var content = result.get("java/lang/index.d.ts");
+        Assertions.assertNotNull(content, "java/lang/index.d.ts should exist");
+        Assertions.assertTrue(content.contains("declare module \"java/lang\""));
     }
 }
