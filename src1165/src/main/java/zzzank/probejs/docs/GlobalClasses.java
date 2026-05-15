@@ -25,6 +25,9 @@ public class GlobalClasses implements ProbeJSPlugin {
     @Override
     public void addGlobals(ScriptDump scriptDump) {
         val T = Types.generic("T");
+        val TREE = Types.generic("TREE");
+        val NAME = Types.generic("NAME", Types.STRING);
+        val PATH = Types.generic("PATH", Types.STRING);
 
         val paths = Types.object();
         for (val clazz : scriptDump.recordedClasses) {
@@ -52,15 +55,46 @@ public class GlobalClasses implements ProbeJSPlugin {
                 .symbolVariables(Collections.singletonList(T))
                 .exportDecl(false)
                 .build(),
-            // export type LoadClass<T> = T extends (keyof GlobalClasses) ? AttachJClass<GlobalClasses[T]> : never
+            // type ResolveClassInTree<TREE, NAME extends string> = NAME extends `${infer PKG}.${infer REST}`
+            //     ? PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never
+            //     : `$${NAME}` extends keyof TREE ? TREE[`$${NAME}`] : never;
+            new TypeDecl(
+                false,
+                "ResolveClassInTree",
+                List.of(TREE, NAME),
+                Types.ternary(
+                    "NAME",
+                    Types.templateLiteral("${infer PKG}.${infer REST}"),
+                    // true: PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never
+                    Types.ternary(
+                        "PKG",
+                        Types.keyof(TREE),
+                        Types.primitive("ResolveClassInTree").withParams(
+                            TREE.access(Types.primitive("PKG")),
+                            Types.primitive("REST")
+                        ),
+                        Types.NEVER
+                    ),
+                    // false: `$${NAME}` extends keyof TREE ? TREE[`$${NAME}`] : never
+                    Types.format(
+                        "%s extends %s ? %s : %s",
+                        Types.templateLiteral("$" + "${NAME}"),
+                        Types.keyof(TREE),
+                        TREE.access(Types.templateLiteral("$" + "${NAME}")),
+                        Types.NEVER
+                    )
+                ),
+                BaseType.FormatType.INPUT
+            ),
+            // export type LoadClass<PATH extends string> = AttachJClass<ResolveClassInTree<typeof import("index"), PATH>>;
             new TypeDecl(
                 LOAD_CLASS.content,
-                Collections.singletonList(T),
-                Types.ternary(
-                    "T",
-                    Types.keyof(GLOBAL_CLASSES),
-                    ATTACH_J_CLASS.withParams(GLOBAL_CLASSES.access(T)),
-                    Types.NEVER
+                List.of(PATH),
+                ATTACH_J_CLASS.withParams(
+                    Types.primitive("ResolveClassInTree").withParams(
+                        Types.primitive("typeof import(\"index\")"),
+                        PATH
+                    )
                 )
             )
         );
