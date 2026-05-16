@@ -1,6 +1,8 @@
 package zzzank.probejs.utils.config.binding;
 
+import lombok.Getter;
 import lombok.val;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.report.AccessResult;
@@ -9,9 +11,12 @@ import zzzank.probejs.utils.config.report.BuiltinResults;
 /**
  * @author ZZZank
  */
+@Accessors(fluent = true)
 public class RangedBinding<T extends Comparable<T>> extends DefaultBinding<T> {
 
+    @Getter
     private final T min;
+    @Getter
     private final T max;
 
     public RangedBinding(@NotNull T defaultValue, @NotNull Class<T> defaultType, @NotNull String name, @NotNull T min, @NotNull T max) {
