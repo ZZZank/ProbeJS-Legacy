@@ -55,7 +55,6 @@ public class LoadClassFn implements ProbeJSPlugin {
 
     @Override
     public void denyBindings(BindingFilter filter) {
-        filter.denyFunction("java");
         filter.denyFunction("require");
     }
 }

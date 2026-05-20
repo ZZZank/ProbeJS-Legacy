@@ -2,6 +2,7 @@ package zzzank.probejs.features.kubejs;
 
 import dev.latvian.mods.kubejs.typings.desc.*;
 import lombok.val;
+import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
@@ -45,10 +46,7 @@ public class TypeDescAdapter {
                     return Types.ANY;
                 }
                 val valueType = convertType(params[1]);
-                return Types.custom(
-                    (decl, formatType) -> "{[k: string]: %s}".formatted(valueType.line(decl, formatType)),
-                    valueType::getImportInfos
-                );
+                return Types.format("{[k: string]: %s}", valueType);
             }
             return new TSParamType(convertType(base), convertTypes(params));
 
@@ -64,12 +62,10 @@ public class TypeDescAdapter {
 
         } else if (typeDesc instanceof PrimitiveDescJS(String value)) {
             if (value.startsWith(PROBEJS_PREFIX)) {
-                val className = RemapperBridge.unmapClass(value.substring(PROBEJS_PREFIX.length()));
-                try {
-                    return Types.type(Class.forName(className));
-                } catch (Throwable e) {
-                    throw new RuntimeException(e);
-                }
+                return Types.type(ClassPath.EMPTY.fromDiff(
+                    value.substring(PROBEJS_PREFIX.length()),
+                    RemapperBridge::unmapClass
+                ));
             }
             return Types.primitive(value);
         }

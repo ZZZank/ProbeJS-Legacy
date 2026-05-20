@@ -20,8 +20,8 @@ public interface UnsafeFunction<I, O, E extends Throwable> {
         }
     }
 
-    default <O2> UnsafeFunction<I, O2, E> andThen(UnsafeFunction<? super O, O2, E> then) {
+    default <O2> UnsafeFunction<I, O2, E> andThen(UnsafeFunction<? super O, ? extends O2, ? extends E> then) {
         Objects.requireNonNull(then);
-        return (i) -> then.apply(apply(i));
+        return (i) -> then.apply(this.apply(i));
     }
 }

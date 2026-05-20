@@ -11,6 +11,7 @@ import zzzank.probejs.utils.Asser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.function.IntFunction;
 
 /**
  * @author ZZZank
@@ -40,7 +41,7 @@ public class EventJSFilter {
         if (filters.size() == 1) {
             return filters.get(0);
         }
-        val frozen = (BiPredicate<EventGroup, EventHandler>[]) filters.toArray(BiPredicate[]::new);
+        val frozen = filters.toArray((IntFunction<BiPredicate<EventGroup, EventHandler>[]>) BiPredicate[]::new);
         return (eventGroup, eventHandler) -> {
             for (val filter : frozen) {
                 if (filter.test(eventGroup, eventHandler)) {

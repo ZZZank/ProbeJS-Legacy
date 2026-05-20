@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.utils.Asser;
+import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.ReflectUtils;
 import zzzank.probejs.utils.config.binding.RangedBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
@@ -64,13 +65,13 @@ public class SchemaJsonConfigIO extends SerdeHolder<JsonElement> implements Conf
 
     private final Gson gson;
     @Nullable
-    private final Path schemaRelativeToConfig;
+    private final Path schemaRelativeToConfigFolder;
     public final Map<Class<?>, JsonObject> schemaBases = new WeakHashMap<>();
     public final List<Function<Class<?>, JsonObject>> schemaBaseFactories = new ArrayList<>();
 
-    public SchemaJsonConfigIO(Gson gson, @Nullable Path schemaRelativeToConfig) {
+    public SchemaJsonConfigIO(Gson gson, @Nullable Path schemaRelativeToConfigFolder) {
         this.gson = Asser.tNotNull(gson, "gson");
-        this.schemaRelativeToConfig = schemaRelativeToConfig;
+        this.schemaRelativeToConfigFolder = schemaRelativeToConfigFolder;
         schemaBaseFactories.add(this::builtinSchemaBaseFactory);
     }
 
@@ -164,15 +165,15 @@ public class SchemaJsonConfigIO extends SerdeHolder<JsonElement> implements Conf
     public void save(ConfigRoot config, Writer writer) throws IOException {
         var configJson = buildConfigJson(config);
 
-        if (schemaRelativeToConfig != null) {
+        if (schemaRelativeToConfigFolder != null) {
             configJson.getAsJsonObject()
-                .addProperty(SCHEMA_KEY, schemaRelativeToConfig.toString().replace(File.separatorChar, '/'));
+                .addProperty(SCHEMA_KEY, schemaRelativeToConfigFolder.toString().replace(File.separatorChar, '/'));
         }
 
         gson.toJson(configJson, writer);
 
-        if (schemaRelativeToConfig != null && !config.inMemoryOnly()) {
-            val schemaPath = config.filePath().resolveSibling(schemaRelativeToConfig);
+        if (schemaRelativeToConfigFolder != null && !config.inMemoryOnly()) {
+            val schemaPath = config.filePath().resolveSibling(schemaRelativeToConfigFolder);
             Files.createDirectories(schemaPath.getParent());
 
             try (val schemaWriter = Files.newBufferedWriter(schemaPath)) {
@@ -224,16 +225,16 @@ public class SchemaJsonConfigIO extends SerdeHolder<JsonElement> implements Conf
     }
 
     private <T> JsonObject generateSchemaEntry(ConfigEntry<T> entry) {
-        val schemaEntry = new JsonObject();
+        JsonObject schemaEntry;
         val serde = getSerde(entry);
 
         // type-specific schema base (must come first so enum from binding can override)
         val type = entry.binding().getDefaultType();
         val schemaBase = getSchemaBase(type);
         if (schemaBase != null) {
-            for (val baseEntry : schemaBase.entrySet()) {
-                schemaEntry.add(baseEntry.getKey(), baseEntry.getValue());
-            }
+            schemaEntry = JsonUtils.deepCopy(schemaBase);
+        } else {
+            schemaEntry = new JsonObject();
         }
 
         // default value
