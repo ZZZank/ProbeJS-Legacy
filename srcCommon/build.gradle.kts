@@ -1,18 +1,14 @@
 plugins {
-    id("java")
+    java
+    `project-common`
 }
 
 repositories {
     mavenCentral()
     maven {
-        name = 'SpongePowered'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
+        name = "SpongePowered"
+        url = uri("https://repo.spongepowered.org/repository/maven-public/")
     }
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
