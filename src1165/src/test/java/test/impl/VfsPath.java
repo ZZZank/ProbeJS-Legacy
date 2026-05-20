@@ -142,6 +142,10 @@ class VfsPath implements Path {
         if (other.isAbsolute()) {
             return other;
         }
+        if (pathString.isEmpty()) {
+            // `"" + "/" + other` will create an absolute path
+            return other;
+        }
         return new VfsPath(vfs, pathString + "/" + other);
     }
 

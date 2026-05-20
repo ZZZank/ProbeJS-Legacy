@@ -2,18 +2,14 @@ package test;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import test.impl.VirtualFileSystem;
 import zzzank.probejs.api.output.TreePackagedWriter;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.BasicMemberCollector;
 import zzzank.probejs.plugin.ProbeJSPlugins;
-import zzzank.probejs.utils.FileUtils;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.nio.file.Files;
 
 /**
  * @author ZZZank
@@ -34,31 +30,24 @@ public class TreePackagedWriterTest {
 
         var files = transpiler.dump(classRegistry.getFoundClasses());
 
-        var root = Path.of("");
-        var simulatedFS = new TreeMap<String, StringWriter>();
+        var fileSystem = new VirtualFileSystem();
 
+        var root = fileSystem.getPath("");
         var writer = new TreePackagedWriter();
-        writer.setWriterProvider((path) -> simulatedFS.computeIfAbsent(
-            FileUtils.relativePathStr(root, path),
-            ignored -> new StringWriter()
-        ));
 
         files.values().forEach(writer::accept);
 
         writer.write(root);
 
-        var result = simulatedFS.entrySet()
-            .stream()
-            .map(e -> Map.entry(e.getKey(), e.getValue().toString()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        result = new TreeMap<>(result);
-
         // files should have been written
-        Assertions.assertFalse(simulatedFS.isEmpty());
+        Assertions.assertFalse(fileSystem.viewFilePaths().isEmpty());
 
         // java.lang package should have an index file covering our registered classes
-        var content = result.get("java/lang/index.d.ts");
-        Assertions.assertNotNull(content, "java/lang/index.d.ts should exist");
+        var path = fileSystem.getPath("java/lang/index.d.ts");
+        Assertions.assertTrue(Files.exists(path), "java/lang/index.d.ts should exist");
+        var content = Files.readString(path);
         Assertions.assertTrue(content.contains("declare module \"java/lang\""));
+
+        fileSystem.close();
     }
 }

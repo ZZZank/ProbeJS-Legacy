@@ -206,10 +206,3 @@ public class VirtualFileSystem extends FileSystem {
 
     // endregion
 }
-
-// region VfsProvider
-
-// endregion
-// region VfsPath
-
-// endregion
