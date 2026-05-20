@@ -33,6 +33,13 @@ jobs:
     - name: Build the mod
       run: ./gradlew --no-daemon buildAndCollect
 
+    - name: Upload build reports on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: BuildReports-${{ github.ref_name }}
+        path: build/
+
     - uses: actions/upload-artifact@v4
       with:
         name: Artifacts-${{ github.ref_name }}
