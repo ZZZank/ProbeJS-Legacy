@@ -24,11 +24,11 @@ tasks.named<ShadowJar>("shadowJar") {
 }
 
 dependencies {
-    val vers = propertyString("lombok_version")
-    compileOnly("org.projectlombok:lombok:${vers}")
-    annotationProcessor("org.projectlombok:lombok:${vers}")
-    testCompileOnly("org.projectlombok:lombok:${vers}")
-    testAnnotationProcessor("org.projectlombok:lombok:${vers}")
+    val lombokVersion = propertyString("lombok_version")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     if (propertyBool("enable_junit")) {
         testImplementation("org.junit.jupiter:junit-jupiter:${propertyString("junit_version")}")
@@ -39,8 +39,8 @@ dependencies {
 configurations.configureEach {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.ow2.asm") {
-            useVersion("9.6")
-            because("Force ASM to a modern version that supports Java 21")
+            useVersion("9.8")
+            because("Force ASM to a modern version that supports Java 25")
         }
         if (requested.group == "org.lwjgl") {
             useVersion("3.3.3")
