@@ -94,7 +94,7 @@ tasks.processResources {
         mapOf(
             "version" to propertyString("mod_version"),
             "forge_version" to propertyString("forge_version"),
-            "loader_version_range" to propertyString("forge_version_range"),
+            "loader_version_range" to propertyString("loader_version_range"),
             "license" to propertyString("license"),
             "mod_id" to propertyString("mod_id"),
             "mod_display_name" to propertyString("mod_display_name"),
