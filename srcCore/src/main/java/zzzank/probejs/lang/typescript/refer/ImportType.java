@@ -4,21 +4,22 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 /**
  * @author ZZZank
  */
-public class ImportType implements Comparable<ImportType> {
+public final class ImportType implements Comparable<ImportType> {
     private static final Map<String, ImportType> REGISTERED = new HashMap<>();
     private static final List<ImportType> INDEXED = new ArrayList<>();
-    private static int currentIndex = 0;
+    private static final AtomicInteger CURRENT_INDEX = new AtomicInteger();
 
     public static ImportType register(String name, UnaryOperator<String> formatter) {
         if (REGISTERED.containsKey(name)) {
             throw new IllegalArgumentException("key %s already existed");
         }
-        val registered = new ImportType(name, currentIndex++, formatter);
+        val registered = new ImportType(name, CURRENT_INDEX.getAndIncrement(), formatter);
         REGISTERED.put(name, registered);
         INDEXED.add(registered);
         return registered;
