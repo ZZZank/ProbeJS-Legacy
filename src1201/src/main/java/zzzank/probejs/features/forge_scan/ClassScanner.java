@@ -12,6 +12,7 @@ import zzzank.probejs.utils.ReflectUtils;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -42,7 +43,7 @@ public class ClassScanner {
                     return mod.getFilePaths().stream();
                 } catch (Exception e) {
                     ProbeJS.LOGGER.error("unable to locate file for mod '{}'", mod.getModId(), e);
-                    return null;
+                    return Stream.empty();
                 }
             })
             .distinct()

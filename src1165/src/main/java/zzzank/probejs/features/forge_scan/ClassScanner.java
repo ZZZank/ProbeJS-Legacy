@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -36,16 +37,16 @@ public class ClassScanner {
 
     public static @NotNull List<Class<?>> scanMods(Collection<String> modids) {
         return modids.stream()
+            .filter(Platform::isModLoaded)
             .map(Platform::getMod)
             .flatMap(mod -> {
                 try {
-                    return mod.getFilePaths().stream().map(Path::toFile);
+                    return mod.getFilePaths().stream();
                 } catch (Exception e) {
                     ProbeJS.LOGGER.error("unable to locate file for mod '{}'", mod.getModId(), e);
-                    return null;
+                    return Stream.empty();
                 }
             })
-            .filter(Objects::nonNull)
             .distinct()
             .map(ModJarClassScanner::scanJar)
             .flatMap(Collection::stream)
