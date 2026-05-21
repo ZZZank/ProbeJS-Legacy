@@ -51,6 +51,7 @@ public class JSConfigDump extends TSDumpBase {
             Map.of(
                 "compilerOptions", CollectUtils.ofLinkedMap(
                     Map.entry("allowJs", true),
+                    Map.entry("checkJs", false),
                     Map.entry("lib", List.of("ES2015")),
                     Map.entry("module", "commonjs"),
                     Map.entry("rootDir", "."),
