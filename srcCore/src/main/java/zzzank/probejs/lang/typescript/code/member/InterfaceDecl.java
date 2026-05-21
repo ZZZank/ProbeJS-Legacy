@@ -9,6 +9,8 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportType;
+import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.DocUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,36 +53,31 @@ public class InterfaceDecl extends ClassDecl {
             method.isInterface = true;
         }
 
+        var lines = new ArrayList<String>();
+
         // Format head - export interface Interf$$Interface<T> extends ... {
-        String head = "export interface " + ImportType.STATIC.fmt(name) + TSVariableType.formatGenericParam(variableTypes, declaration);
+        String head = "export interface "
+                      + ImportType.STATIC.fmt(name)
+                      + TSVariableType.formatGenericParam(variableTypes, declaration);
         if (!interfaces.isEmpty()) {
             head += " extends " + Types.join(", ", interfaces).line(declaration);
         }
         head += " {";
 
-        // Format body - fields, constructors, methods
-        List<String> body = new ArrayList<>();
+        lines.add(head);
 
-        for (val method : methods) {
-            if (!method.isStatic) {// static method will be in static class
-                body.addAll(method.format(declaration));
-            }
-        }
+        // Format body - fields, constructors, methods
+
+        // static method will be in static class
+        var interfaceMethods = CollectUtils.iterate(methods.stream().filter(m -> !m.isStatic));
+        DocUtils.addIndentedCodes(lines, interfaceMethods, declaration);
         // field (all static) will be in static class
 
-        // tail - }
-        List<String> tail = new ArrayList<>();
-        for (val code : bodyCode) {
-            tail.addAll(code.format(declaration));
-        }
-        tail.add("}\n");
+        DocUtils.addIndentedCodes(lines, bodyCode, declaration);
 
-        // Concatenate them as a whole
-        List<String> formatted = new ArrayList<>();
-        formatted.add(head);
-        formatted.addAll(body);
-        formatted.addAll(tail);
+        // Tail
+        lines.add("}");
 
-        return formatted;
+        return lines;
     }
 }

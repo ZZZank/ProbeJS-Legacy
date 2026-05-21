@@ -8,6 +8,7 @@ import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.lang.typescript.refer.Reference;
+import zzzank.probejs.utils.DocUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -94,19 +95,13 @@ public class TreeIndexFile {
         }
 
         // 3. declare block containing this package's own codes
-        var blockLines = new ArrayList<String>();
-        for (var code : codes) {
-            blockLines.addAll(code.format(declaration));
-        }
-        if (!blockLines.isEmpty()) {
-            if (asModule) {
-                formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName.replace('.', '/'))));
-            }
-            for (var line : blockLines) {
-                formatted.add("    " + line);
-            }
-            if (asModule) {
-                formatted.add("}");
+        if (asModule) {
+            formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName.replace('.', '/'))));
+            DocUtils.addIndentedCodes(formatted, codes, declaration);
+            formatted.add("}");
+        } else {
+            for (var code : codes) {
+                formatted.addAll(code.format(declaration));
             }
         }
 

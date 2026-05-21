@@ -12,6 +12,7 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 import zzzank.probejs.utils.CollectUtils;
+import zzzank.probejs.utils.DocUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -68,6 +69,8 @@ public class ClassDecl extends CommentableCode implements DeclarationCode {
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
+        List<String> lines = new ArrayList<>();
+
         // Format head - export abstract (class / interface) name<T> extends ... implements ... {
         val modifiers = new ArrayList<String>();
         modifiers.add("export");
@@ -85,40 +88,31 @@ public class ClassDecl extends CommentableCode implements DeclarationCode {
         }
         head += " {";
 
+        lines.add(head);
+
         // Format body - fields, constructors, methods
-        List<String> body = new ArrayList<>();
 
-        for (val field : fields) {
-            body.addAll(field.format(declaration));
-        }
+        DocUtils.addIndentedCodes(lines, fields, declaration);
         if (!fields.isEmpty()) {
-            body.add("");
+            lines.add("");
         }
 
-        for (val constructor : constructors) {
-            body.addAll(constructor.format(declaration));
-        }
+        DocUtils.addIndentedCodes(lines, constructors, declaration);
         if (!constructors.isEmpty()) {
-            body.add("");
+            lines.add("");
         }
 
-        for (val method : methods) {
-            body.addAll(method.format(declaration));
+        DocUtils.addIndentedCodes(lines, methods, declaration);
+        if (!methods.isEmpty()) {
+            lines.add("");
         }
 
-        // tail - custom code, }
-        List<String> tail = new ArrayList<>();
-        for (val code : bodyCode) {
-            tail.addAll(code.format(declaration));
-        }
-        tail.add("}");
+        DocUtils.addIndentedCodes(lines, bodyCode, declaration);
 
-        // Concatenate them as a whole
-        List<String> formatted = new ArrayList<>();
-        formatted.add(head);
-        formatted.addAll(body);
-        formatted.addAll(tail);
-        return formatted;
+        // Tail
+        lines.add("}");
+
+        return lines;
     }
 
     @Override

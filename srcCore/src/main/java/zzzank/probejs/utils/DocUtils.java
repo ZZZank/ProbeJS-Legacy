@@ -1,6 +1,8 @@
 package zzzank.probejs.utils;
 
+import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
+import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 import zzzank.probejs.lang.typescript.code.member.ParamDecl;
@@ -35,5 +37,17 @@ public class DocUtils {
         BaseType toReplace
     ) {
         applyParam(file, methodFilter, paramIndex, param -> param.type = toReplace);
+    }
+
+    public static void addIndentedCodes(List<String> target, Iterable<? extends Code> codes, Declaration declaration) {
+        for (var code : codes) {
+            for (var line : code.format(declaration)) {
+                if (line.isEmpty()) {
+                    target.add(line);
+                } else {
+                    target.add("    " + line);
+                }
+            }
+        }
     }
 }

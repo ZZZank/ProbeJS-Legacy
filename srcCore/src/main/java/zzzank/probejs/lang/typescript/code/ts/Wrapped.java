@@ -6,6 +6,7 @@ import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.DeclarationCode;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
+import zzzank.probejs.utils.DocUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,6 @@ public abstract class Wrapped extends CommentableCode implements DeclarationCode
     @Override
     public ImportInfos getImportInfos() {
         return ImportInfos.of().fromCodes(codes);
-    }
-
-    @Override
-    public List<String> formatRaw(Declaration declaration) {
-        val lines = new ArrayList<String>();
-        for (val code : codes) {
-            lines.addAll(code.format(declaration));
-        }
-        return lines;
     }
 
     public boolean isEmpty() {
@@ -52,10 +44,9 @@ public abstract class Wrapped extends CommentableCode implements DeclarationCode
     public static class Global extends Wrapped {
         @Override
         public List<String> formatRaw(Declaration declaration) {
-            val formatted = super.formatRaw(declaration);
-            val lines = new ArrayList<String>(formatted.size() + 2);
+            val lines = new ArrayList<String>();
             lines.add("declare global {");
-            lines.addAll(formatted);
+            DocUtils.addIndentedCodes(lines, codes, declaration);
             lines.add("}");
             return lines;
         }
@@ -70,10 +61,9 @@ public abstract class Wrapped extends CommentableCode implements DeclarationCode
 
         @Override
         public List<String> formatRaw(Declaration declaration) {
-            val formatted = super.formatRaw(declaration);
-            val lines = new ArrayList<String>(formatted.size() + 2);
-            lines.add(String.format("export namespace %s {",nameSpace));
-            lines.addAll(formatted);
+            val lines = new ArrayList<String>();
+            lines.add(String.format("export namespace %s {", nameSpace));
+            DocUtils.addIndentedCodes(lines, codes, declaration);
             lines.add("}");
             return lines;
         }
