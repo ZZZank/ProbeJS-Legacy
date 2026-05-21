@@ -1,8 +1,6 @@
 package zzzank.probejs.lang.typescript.code.type;
 
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.type.js.*;
@@ -158,12 +156,6 @@ public interface Types {
     }
 
     static JSTypeOfType typeOf(BaseType classType) {
-        if (classType instanceof TSClassType cType) {
-            val clazz = ClassRegistry.REGISTRY.foundClasses.get(cType.classPath);
-            if (clazz != null && clazz.isInterface()) {
-                classType = staticType(cType.classPath);
-            }
-        }
         return new JSTypeOfType(classType);
     }
 
@@ -192,10 +184,6 @@ public interface Types {
             type = shield.inner;
         }
         return new ImportShield(type, imports);
-    }
-
-    static StaticType staticType(ClassPath path) {
-        return new StaticType(path);
     }
 
     static JSLambdaType.Builder lambda() {
