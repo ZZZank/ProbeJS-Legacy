@@ -22,17 +22,16 @@ import java.util.zip.ZipEntry;
 class ModJarClassScanner {
 
     public static Set<Class<?>> scanJar(Path path) {
-        return path == null ? Set.of() : scanJar(path.toFile());
-    }
-
-    public static Set<Class<?>> scanJar(File file) {
-        try (var jarFile = new JarFile(file)) {
+        // possible exceptions:
+        // - path.toFile(): UnsupportedOperationException
+        // - IOException: well, IO
+        try (var jarFile = new JarFile(path.toFile())) {
             var modClassesScanner = new ModJarClassScanner(jarFile);
             var scanned = modClassesScanner.scanClasses();
-            ProbeJS.LOGGER.info("scanned file '{}', contained class count: {}", file, scanned.size());
+            ProbeJS.LOGGER.info("scanned file '{}', contained class count: {}", path, scanned.size());
             return scanned;
         } catch (Exception e) {
-            ProbeJS.LOGGER.error("error when scanning file '{}'", file, e);
+            ProbeJS.LOGGER.error("error when scanning file '{}'", path, e);
         }
         return Collections.emptySet();
     }
