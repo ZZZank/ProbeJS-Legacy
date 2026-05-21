@@ -38,7 +38,10 @@ public class FileUtils {
     public static void writeMergedConfig(Path path, JsonObject config, Predicate<JsonObject> replaceIf) throws IOException {
         JsonObject read = null;
         if (Files.exists(path)) {
-            read = ProbeJS.GSON.fromJson(Files.newBufferedReader(path), JsonObject.class);
+            try {
+                read = ProbeJS.GSON.fromJson(Files.newBufferedReader(path), JsonObject.class);
+            } catch (Exception ignored) {
+            }
         }
 
         JsonObject merged;
