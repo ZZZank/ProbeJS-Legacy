@@ -39,7 +39,7 @@ public class BeaningTest {
 
         val files = transpiler.dump(classRegistry.getFoundClasses());
         new InjectBeaning().modifyFiles(new RequestAwareFiles(files, ScriptDump.STARTUP_DUMP.apply(new SharedDump(
-            null, transpiler
+            null, classRegistry, transpiler
         ))));
 
         val classDecl = files.get(ClassPath.ofJava(type))

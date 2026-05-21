@@ -7,6 +7,7 @@ import zzzank.probejs.api.output.TSFileWriter;
 import zzzank.probejs.features.forge_scan.ClassScanner;
 import zzzank.probejs.features.kubejs.EventJSInfos;
 import zzzank.probejs.lang.java.ClassRegistry;
+import zzzank.probejs.lang.java.clazz.ClazzMemberCollector;
 import zzzank.probejs.lang.schema.SchemaDump;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.typescript.ScriptDump;
@@ -30,7 +31,8 @@ public class ProbeDump {
     public static final Path CLASS_CACHE = ProbePaths.PROBE.resolve("classes.txt");
     public static final Path EVENT_CACHE = ProbePaths.PROBE.resolve("kube_event.json");
 
-    final SharedDump sharedDump = new SharedDump(ProbePaths.PROBE.resolve("shared"), ProbeJSPlugins.buildTranspiler());
+    final ClassRegistry classRegistry = new ClassRegistry(new ClazzMemberCollector());
+    final SharedDump sharedDump = new SharedDump(ProbePaths.PROBE.resolve("shared"), classRegistry, ProbeJSPlugins.buildTranspiler());
     final SchemaDump schemaDump = new SchemaDump();
     final SnippetDump snippetDump = new SnippetDump();
     final Collection<ScriptDump> scriptDumps = new ArrayList<>();
@@ -47,8 +49,8 @@ public class ProbeDump {
     private void onModChange() throws IOException {
         // Decompile stuffs - here we scan mod classes even if we don't decompile
         // So we have all classes without needing to decompile
-        ClassRegistry.REGISTRY.addClasses(ClassScanner.scanForge());
-        ClassRegistry.REGISTRY.addClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
+        classRegistry.addClasses(ClassScanner.scanForge());
+        classRegistry.addClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
 
         report(ProbeText.pjs("dump.cleaning"));
         sharedDump.cleanOldDumps();
@@ -108,14 +110,14 @@ public class ProbeDump {
         }
 
         // Fetch classes that will be used in the dump
-        ClassRegistry.REGISTRY.loadFrom(CLASS_CACHE);
+        classRegistry.loadFrom(CLASS_CACHE);
         for (ScriptDump scriptDump : scriptDumps) {
-            ClassRegistry.REGISTRY.addClasses(scriptDump.retrieveClasses());
+            classRegistry.addClasses(scriptDump.retrieveClasses());
         }
 
-        ClassRegistry.REGISTRY.walkClass();
-        ClassRegistry.REGISTRY.writeTo(CLASS_CACHE);
-        report(ProbeText.pjs("dump.class_discovered", ClassRegistry.REGISTRY.foundClasses.size()));
+        classRegistry.walkClass();
+        classRegistry.writeTo(CLASS_CACHE);
+        report(ProbeText.pjs("dump.class_discovered", classRegistry.foundClasses.size()));
 
         val reporters = Collections.synchronizedList(new ArrayList<ProbeNamedDump>());
         reporters.addAll(scriptDumps);

@@ -19,8 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class ClassRegistry {
-    public static final ClassRegistry REGISTRY = new ClassRegistry(MemberCollector.DEFAULT);
-
     public final Map<ClassPath, Clazz> foundClasses = new ConcurrentHashMap<>();
     public final MemberCollector collector;
 

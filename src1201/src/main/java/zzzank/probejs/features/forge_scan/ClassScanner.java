@@ -1,6 +1,5 @@
 package zzzank.probejs.features.forge_scan;
 
-import dev.architectury.platform.Mod;
 import lombok.val;
 import dev.architectury.platform.Platform;
 import net.minecraftforge.fml.ModList;
@@ -34,20 +33,18 @@ public class ClassScanner {
             .toList();
     }
 
-    public static @NotNull List<Class<?>> scanMods(Collection<String> modids) {
-        return modids.stream()
+    public static @NotNull List<Class<?>> scanMods(Collection<String> modIds) {
+        return modIds.stream()
+            .filter(Platform::isModLoaded)
             .map(Platform::getMod)
-            .map(Mod::getFilePaths)
-            .flatMap(Collection::stream)
-            .map(p -> {
+            .flatMap(mod -> {
                 try {
-                    return p.toFile();
+                    return mod.getFilePaths().stream();
                 } catch (Exception e) {
-                    ProbeJS.LOGGER.error("unable to convert path {} to file", p, e);
+                    ProbeJS.LOGGER.error("unable to locate file for mod '{}'", mod.getModId(), e);
                     return null;
                 }
             })
-            .filter(Objects::nonNull)
             .distinct()
             .map(ModJarClassScanner::scanJar)
             .flatMap(Collection::stream)
