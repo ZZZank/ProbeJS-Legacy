@@ -2,6 +2,7 @@ package zzzank.probejs;
 
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
+import zzzank.probejs.utils.config.io.SchemaJsonConfigIO;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 import zzzank.probejs.utils.config.serde.gson.GsonSerdeFactory;
 import zzzank.probejs.utils.config.serde.gson.PatternSerde;
@@ -9,6 +10,9 @@ import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 import zzzank.probejs.utils.config.struct.ConfigRootImpl;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,17 +21,31 @@ import java.util.regex.Pattern;
  */
 public interface ProbeConfig {
 
-    ConfigRoot INSTANCE = CollectUtils.make(
-        new ConfigRootImpl(
-            CollectUtils.make(
-                new JsonConfigIO(ProbeJS.GSON_WRITER), io -> {
-                    io.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
-                    io.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
+    ConfigRoot INSTANCE = createConfigRoot();
+
+    private static ConfigRoot createConfigRoot() {
+        var oldConfigIO = new JsonConfigIO(ProbeJS.GSON_WRITER);
+        oldConfigIO.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
+        oldConfigIO.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
+
+        var configIO = new SchemaJsonConfigIO(ProbeJS.GSON_WRITER, Path.of("./config-schema.json")) {
+            @Override
+            public void read(ConfigRoot config, Reader reader) throws IOException {
+                try {
+                    oldConfigIO.read(config, reader);
+                } catch (RuntimeException e) {
+                    super.read(config, reader);
                 }
-            ),
-            null // initialize later
-        ), root -> root.properties().put(ConfigProperty.AUTO_SAVE, true)
-    );
+            }
+        };
+        configIO.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
+        configIO.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
+
+        var root = new ConfigRootImpl(configIO, null);
+        root.properties().put(ConfigProperty.AUTO_SAVE, true);
+
+        return root;
+    }
 
     ConfigEntry<Integer> configVersion = INSTANCE.define("configVersion")
         .bindDefault(4)
