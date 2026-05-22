@@ -43,7 +43,6 @@ public class LoadClassFn implements ProbeJSPlugin {
         for (val method : decl.methods) {
             if ("loadClass".equals(method.name) || "tryLoadClass".equals(method.name)) {
                 // loadClass<T extends Special.ClassNames>(className: T): LoadClass<T>
-                // "T extends string" because we want T to capture the string literal
                 val T = Types.generic("T", SpecialTypes.dot("ClassNames"));
                 method.variableTypes.add(T);
                 method.params.get(0).type = T;

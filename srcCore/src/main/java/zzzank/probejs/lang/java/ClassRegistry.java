@@ -54,11 +54,11 @@ public class ClassRegistry {
      * fail to pass {@link #classPrefilter(Class)} or exceptions happen
      */
     public Clazz addClassImpl(Class<?> c, ClassPath path) {
-        if (c == null || c.isPrimitive() || c.isSynthetic() || c.isAnonymousClass()) {
+        if (c == null || !classPrefilter(c)) {
             return null;
         }
         try {
-            return foundClasses.computeIfAbsent(path, p -> new Clazz(c, p, collector.reTarget(c)));
+            return foundClasses.computeIfAbsent(path, p -> new Clazz(c, p, collector));
         } catch (Throwable ex) {
             ProbeJS.LOGGER.error("Error when trying to add '{}' into class registry", c, ex);
             return null;
@@ -66,7 +66,7 @@ public class ClassRegistry {
     }
 
     public boolean classPrefilter(Class<?> c) {
-        return ReflectUtils.classExist(c.getName()) && !c.isSynthetic() && !c.isAnonymousClass() && !c.isPrimitive();
+        return !c.isSynthetic() && !c.isAnonymousClass() && !c.isPrimitive();
     }
 
     private Set<Class<?>> retrieveClass(Clazz clazz) {

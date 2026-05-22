@@ -31,18 +31,8 @@ fun Project.nextMCVersion(version: String): String {
     return "${parts[0]}.${parts[1].toInt() + 1}"
 }
 
-fun Project.assertProperty(propertyName: String) {
-    val property = property(propertyName)
-    if (property == null) {
-        throw GradleException("Property $propertyName is not defined!")
-    }
-    if (property is String && property.isEmpty()) {
-        throw GradleException("Property $propertyName is empty!")
-    }
-}
-
 fun Project.setDefaultProperty(propertyName: String, warn: Boolean, defaultValue: Any? = null) {
-    val property = property(propertyName)
+    val property = findProperty(propertyName)
     var exists = true
     if (property == null) {
         exists = false

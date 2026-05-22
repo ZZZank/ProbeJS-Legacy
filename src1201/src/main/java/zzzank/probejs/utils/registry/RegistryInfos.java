@@ -35,7 +35,6 @@ public final class RegistryInfos {
             .map(RegistryAccess.RegistryEntry::value)
             .map(RegistryInfo::new)
             .collect(Collectors.toMap(RegistryInfo::id, Function.identity()));
-        ProbeJS.LOGGER.info("Collected {} registries: {}", ALL.size(), ALL.keySet().stream().map(Objects::toString).collect(Collectors.joining(" ")));
     }
 
     public @NotNull Collection<RegistryInfo> values() {

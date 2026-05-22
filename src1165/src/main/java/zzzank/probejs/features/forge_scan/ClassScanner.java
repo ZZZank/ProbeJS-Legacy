@@ -9,7 +9,6 @@ import zzzank.probejs.ProbeJS;
 import zzzank.probejs.ProbeJSLegacy;
 import zzzank.probejs.utils.ReflectUtils;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;

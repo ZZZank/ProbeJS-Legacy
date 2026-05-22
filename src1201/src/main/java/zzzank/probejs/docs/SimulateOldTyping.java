@@ -2,7 +2,6 @@ package zzzank.probejs.docs;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.ScriptDump;

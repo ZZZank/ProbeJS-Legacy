@@ -30,6 +30,7 @@ public class Clazz extends TypeVariableHolder {
 
         this.classPath = path;
 
+        collector = collector.reTarget(clazz);
         this.constructors = collector.constructors().toList();
         this.methods = collector.methods().toList();
         this.fields = collector.fields().toList();
