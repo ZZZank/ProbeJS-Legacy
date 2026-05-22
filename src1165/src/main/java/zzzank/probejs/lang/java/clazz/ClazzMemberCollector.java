@@ -39,7 +39,7 @@ public class ClazzMemberCollector extends BasicMemberCollector {
 
     @Override
     public Stream<MethodInfo> methods() {
-        return super.methods().sorted(Comparator.comparing(info -> info.name));
+        return super.methods().sorted(MethodInfo.commonComparator());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ClazzMemberCollector extends BasicMemberCollector {
     @Override
     public Stream<FieldInfo> fields() {
         // those not declared by it will be inherited from super
-        return super.fields().sorted(Comparator.comparing(f -> f.name));
+        return super.fields().sorted(FieldInfo.commonComparator());
     }
 
     @Override

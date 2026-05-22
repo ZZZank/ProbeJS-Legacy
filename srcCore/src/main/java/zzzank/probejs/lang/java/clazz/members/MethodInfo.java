@@ -9,10 +9,25 @@ import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 public class MethodInfo extends TypeVariableHolder {
+    /// first compare by [MethodAttributes#isStatic], non-static < static
+    ///
+    /// then compare by [MethodInfo#name]
+    public static Comparator<? super MethodInfo> commonComparator() {
+        return (a, b) -> {
+            var result = Boolean.compare(a.attributes.isStatic, b.attributes.isStatic);
+            if (result != 0) {
+                // prefer static over non-static
+                return -result;
+            }
+            return a.name.compareTo(b.name);
+        };
+    }
+
     public final String name;
     public final List<ParamInfo> params;
     public final TypeDescriptor returnType;
