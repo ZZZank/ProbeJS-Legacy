@@ -24,15 +24,15 @@ public record TreeNode(
 
     /// example:
     /// ```
-    /// Node(parent=null, self=EMPTY, files=[], children={"java": ... , "org": ... , ...})
-    ///     Node(parent=EMPTY, self="java")
-    ///         Node(parent="java", self="java.lang", files=[TypeScriptFile("java.lang.String"), TypeScriptFile("java.lang.Number")])
-    ///         Node(parent="java", self="java.util", files=[...])
-    ///     Node(parent=EMPTY, self="org")
+    /// Node(parent=null, self="*", files=[], children={"java": ... , "org": ... , ...})
+    ///     Node(parent="*", self="java.*")
+    ///         Node(parent="java.*", self="java.lang.*", files=[TypeScriptFile("java.lang.String"), TypeScriptFile("java.lang.Number")])
+    ///         Node(parent="java.*", self="java.util.*", files=[...])
+    ///     Node(parent="*", self="org.*")
     /// ```
-    @VisibleForTesting
     public static TreeNode buildTree(List<TypeScriptFile> files) {
-        var root = new TreeNode(null, ClassPath.EMPTY);
+        var rootSelf = ClassPath.ofArtificial("*");
+        var root = new TreeNode(null, rootSelf);
 
         for (var tsFile : files) {
             var classPath = tsFile.path;
@@ -44,7 +44,7 @@ public record TreeNode(
             var parts = packagePath.viewParts();
 
             var current = root;
-            var parentPath = ClassPath.EMPTY;
+            var parentPath = rootSelf;
             var accumulated = new StringBuilder();
 
             for (var part : parts) {
@@ -53,7 +53,7 @@ public record TreeNode(
                 }
                 accumulated.append(part);
 
-                var selfPath = ClassPath.ofArtificial(accumulated.toString());
+                var selfPath = ClassPath.ofArtificial(accumulated + ".*");
                 var finalParentPath = parentPath;
                 current = current.children().computeIfAbsent(
                     part,
@@ -66,6 +66,10 @@ public record TreeNode(
         }
 
         return root;
+    }
+
+    public static String formatPackage(ClassPath path) {
+        return "java:" + path.getFirstValidPackage().replace('.', '/');
     }
 
     public Stream<TreeNode> stream() {

@@ -15,6 +15,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /// Represents an index.d.ts under a package
+///
+/// Example:
 /// ```
 /// import { A } from "yyy";
 /// export * as subpackage from "xxx.subpackage";
@@ -57,12 +59,12 @@ public class TreeIndexFile {
         }
 
         var formatted = new ArrayList<String>();
-        var selfName = node.self().getFirstValidPath();
+        var selfName = TreeNode.formatPackage(node.self());
 
         // 1. import statements for references outside this package, grouped by module
         var grouped = declaration.references.values()
             .stream()
-            .collect(Collectors.groupingBy(ref -> ref.info.path.getFirstValidPackage()));
+            .collect(Collectors.groupingBy(ref -> TreeNode.formatPackage(ref.info.path)));
 
         boolean hasImport = false;
         for (var entry : grouped.entrySet()) {
@@ -87,7 +89,7 @@ public class TreeIndexFile {
             formatted.add(String.format(
                 "export * as %s from %s",
                 child.getKey(),
-                ProbeJS.GSON.toJson(child.getValue().self().getFirstValidPath().replace('.', '/'))
+                ProbeJS.GSON.toJson(TreeNode.formatPackage(child.getValue().self()))
             ));
         }
         if (!node.children().isEmpty()) {
@@ -95,13 +97,15 @@ public class TreeIndexFile {
         }
 
         // 3. declare block containing this package's own codes
-        if (asModule) {
-            formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName.replace('.', '/'))));
-            DocUtils.addIndentedCodes(formatted, codes, declaration);
-            formatted.add("}");
-        } else {
-            for (var code : codes) {
-                formatted.addAll(code.format(declaration));
+        if (!codes.isEmpty()) {
+            if (asModule) {
+                formatted.add(String.format("declare module %s {", ProbeJS.GSON.toJson(selfName.replace('.', '/'))));
+                DocUtils.addIndentedCodes(formatted, codes, declaration);
+                formatted.add("}");
+            } else {
+                for (var code : codes) {
+                    formatted.addAll(code.format(declaration));
+                }
             }
         }
 
@@ -123,7 +127,7 @@ public class TreeIndexFile {
         return String.format(
             "import { %s } from %s",
             String.join(", ", names),
-            ProbeJS.GSON.toJson(moduleName.replace('.', '/'))
+            ProbeJS.GSON.toJson(moduleName)
         );
     }
 }

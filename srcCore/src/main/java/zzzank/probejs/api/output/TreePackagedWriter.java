@@ -27,7 +27,7 @@ public class TreePackagedWriter extends AbstractWriter {
         var root = TreeNode.buildTree(this.files);
 
         for (var node : root.stream().toList()) {
-            var parts = node.self().viewParts();
+            var parts = node.self().viewPackage();
 
             var dir = base;
             for (var part : parts) {

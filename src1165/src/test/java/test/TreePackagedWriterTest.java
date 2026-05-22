@@ -46,7 +46,7 @@ public class TreePackagedWriterTest {
         var path = fileSystem.getPath("java/lang/index.d.ts");
         Assertions.assertTrue(Files.exists(path), "java/lang/index.d.ts should exist");
         var content = Files.readString(path);
-        Assertions.assertTrue(content.contains("declare module \"java/lang\""));
+        Assertions.assertTrue(content.contains("declare module \"java:java/lang\""));
 
         fileSystem.close();
     }

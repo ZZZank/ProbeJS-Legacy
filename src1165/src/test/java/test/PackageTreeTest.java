@@ -36,19 +36,19 @@ public class PackageTreeTest {
 
         // root
         Assertions.assertNull(tree.parent());
-        Assertions.assertEquals(ClassPath.EMPTY, tree.self());
+        Assertions.assertEquals(ClassPath.ofArtificial("*"), tree.self());
 
         // root -> "java"
         var javaNode = tree.children().get("java");
         Assertions.assertNotNull(javaNode);
-        Assertions.assertEquals(ClassPath.EMPTY, javaNode.parent());
-        Assertions.assertEquals(ClassPath.ofArtificial("java"), javaNode.self());
+        Assertions.assertEquals(ClassPath.ofArtificial("*"), javaNode.parent());
+        Assertions.assertEquals(ClassPath.ofArtificial("java.*"), javaNode.self());
 
         // root -> "java" -> "lang"
         var langNode = javaNode.children().get("lang");
         Assertions.assertNotNull(langNode);
-        Assertions.assertEquals(ClassPath.ofArtificial("java"), langNode.parent());
-        Assertions.assertEquals(ClassPath.ofArtificial("java.lang"), langNode.self());
+        Assertions.assertEquals(ClassPath.ofArtificial("java.*"), langNode.parent());
+        Assertions.assertEquals(ClassPath.ofArtificial("java.lang.*"), langNode.self());
 
         // our 4 classes should be in the java.lang node (walkClass may add more)
         var classNamesInLang = langNode.files().stream()
