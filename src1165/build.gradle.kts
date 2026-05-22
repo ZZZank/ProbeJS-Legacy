@@ -59,6 +59,10 @@ loom {
             convertAccessWideners = true
         }
     }
+
+    mixin {
+        useLegacyMixinAp = true
+    }
 }
 
 dependencies {
