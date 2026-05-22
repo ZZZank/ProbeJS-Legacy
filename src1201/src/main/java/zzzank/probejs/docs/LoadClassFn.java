@@ -23,10 +23,9 @@ public class LoadClassFn implements ProbeJSPlugin {
             .param("name", Types.STRING)
             .returnType(Types.ANY)
             .build();
-        requireFn.addComment(
-            "@deprecated please use `java()` directly, ProbeJS adds TS path support for it.",
-            "@see java"
-        );
+        requireFn.addComment("""
+            @deprecated please use `Java.loadClass(...)` instead
+            """);
 
         scriptDump.addGlobal("java", requireFn);
     }
