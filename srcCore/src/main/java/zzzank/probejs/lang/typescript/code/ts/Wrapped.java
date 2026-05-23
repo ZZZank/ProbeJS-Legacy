@@ -14,9 +14,13 @@ import java.util.Set;
 
 public abstract class Wrapped extends CommentableCode implements DeclarationCode {
     public final List<Code> codes = new ArrayList<>();
+    public boolean withinDeclare = false;
 
     public void addCode(Code inner) {
         this.codes.add(inner);
+        if (inner instanceof Wrapped wrapped) {
+            wrapped.withinDeclare = true;
+        }
     }
 
     @Override
@@ -45,7 +49,7 @@ public abstract class Wrapped extends CommentableCode implements DeclarationCode
         @Override
         public List<String> formatRaw(Declaration declaration) {
             val lines = new ArrayList<String>();
-            lines.add("declare global {");
+            lines.add(withinDeclare ? "global {" : "declare global {");
             DocUtils.addIndentedCodes(lines, codes, declaration);
             lines.add("}");
             return lines;
