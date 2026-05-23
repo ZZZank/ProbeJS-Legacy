@@ -57,7 +57,7 @@ public class InterfaceDecl extends ClassDecl {
 
         // Format head - export interface Interf$$Interface<T> extends ... {
         String head = "export interface "
-                      + ImportType.STATIC.fmt(name)
+                      + (withStatic ? ImportType.STATIC.fmt(name) : name)
                       + TSVariableType.formatGenericParam(variableTypes, declaration);
         if (!interfaces.isEmpty()) {
             head += " extends " + Types.join(", ", interfaces).line(declaration);

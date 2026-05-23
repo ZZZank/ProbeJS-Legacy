@@ -202,17 +202,15 @@ public class ClassDecl extends CommentableCode implements DeclarationCode {
         }
 
         public ClassDecl build() {
-            var decl = isInterface ? new InterfaceDecl(
-                name,
-                superClass,
-                interfaces,
-                variableTypes
-            ) : new ClassDecl(
-                name,
-                superClass,
-                interfaces,
-                variableTypes
-            );
+            ClassDecl decl;
+            if (isInterface) {
+                var interfaceDecl = new InterfaceDecl(name, superClass, interfaces, variableTypes);
+                interfaceDecl.withStatic = false;
+                decl = interfaceDecl;
+            } else {
+                decl = new ClassDecl(name, superClass, interfaces, variableTypes);
+            }
+
             decl.isAbstract = isAbstract;
             decl.methods.addAll(methods);
             decl.fields.addAll(fields);
