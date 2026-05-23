@@ -24,12 +24,17 @@ public class Require extends BaseFunction {
             ));
         }
 
-        String prefix;
-        if (args.length == 0 || (prefix = args[0].toString()).startsWith(".")) {
+        String path;
+        if (args.length == 0) {
             return new RequireWrapper(manager, null);
+        } else {
+            path = args[0].toString();
+            if (!path.startsWith("java:")) {
+                return new RequireWrapper(manager, null);
+            }
         }
 
-        return new RequireWrapper(manager, prefix.replace('/', '.'));
+        return new RequireWrapper(manager, path.substring("java:".length()).replace('/', '.'));
     }
 
     public static class RequireWrapper extends ScriptableObject {
