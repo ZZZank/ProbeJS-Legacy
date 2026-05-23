@@ -157,8 +157,12 @@ public class SchemaJsonConfigIO extends SerdeHolder<JsonElement> implements Conf
                 }
             }
         } else {
-            entry.set(getSerde(entry).deserialize(json));
+            readEntryImpl(entry, json);
         }
+    }
+
+    protected <T> void readEntryImpl(ConfigEntry<T> entry, JsonElement json) {
+        entry.set(getSerde(entry).deserialize(json));
     }
 
     @Override

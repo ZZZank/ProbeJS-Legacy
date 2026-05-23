@@ -1,5 +1,6 @@
 package zzzank.probejs;
 
+import com.google.gson.JsonElement;
 import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.io.JsonConfigIO;
 import zzzank.probejs.utils.config.io.SchemaJsonConfigIO;
@@ -10,8 +11,6 @@ import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRoot;
 import zzzank.probejs.utils.config.struct.ConfigRootImpl;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -24,18 +23,13 @@ public interface ProbeConfig {
     ConfigRoot INSTANCE = createConfigRoot();
 
     private static ConfigRoot createConfigRoot() {
-        var oldConfigIO = new JsonConfigIO(ProbeJS.GSON_WRITER);
-        oldConfigIO.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
-        oldConfigIO.registerDirectSerdeFactory(Pattern.class, PatternSerde.INSTANCE);
-
         var configIO = new SchemaJsonConfigIO(ProbeJS.GSON_WRITER, Path.of("./config-schema.json")) {
             @Override
-            public void read(ConfigRoot config, Reader reader) throws IOException {
-                try {
-                    oldConfigIO.read(config, reader);
-                } catch (RuntimeException e) {
-                    super.read(config, reader);
+            protected <T> void readEntryImpl(ConfigEntry<T> entry, JsonElement json) {
+                if (json.isJsonObject() && json.getAsJsonObject().has(JsonConfigIO.VALUE_KEY)) {
+                    json = json.getAsJsonObject().get(JsonConfigIO.VALUE_KEY);
                 }
+                super.readEntryImpl(entry, json);
             }
         };
         configIO.registerSerdeFactory(new GsonSerdeFactory(ProbeJS.GSON));
