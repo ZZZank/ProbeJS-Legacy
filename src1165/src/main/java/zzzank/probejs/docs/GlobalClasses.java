@@ -70,7 +70,7 @@ public class GlobalClasses implements ProbeJSPlugin {
                 List.of(PATH),
                 ATTACH_J_CLASS.withParams(
                     Types.primitive("ResolveClassInTree").withParams(
-                        Types.primitive("typeof import(\"index\")"),
+                        Types.primitive("typeof import(\"java:index\")"),
                         PATH
                     )
                 )

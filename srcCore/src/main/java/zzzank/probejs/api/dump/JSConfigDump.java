@@ -60,7 +60,7 @@ public class JSConfigDump extends TSDumpBase {
                     Map.entry("target", "ES2015"),
                     Map.entry("types", List.of()),
                     Map.entry("paths", Map.of(
-                        "*", typingProviders.stream()
+                        "java:*", typingProviders.stream()
                             .map(TSDump::writeTo)
                             .map(p -> FileUtils.relativePathStr(scriptFolder, p) + "/*")
                             .toList()
