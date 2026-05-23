@@ -16,10 +16,11 @@ fun Project.propertyStringList(key: String, delimit: String = " "): List<String>
         .map { it.trim() }
         .filter { it.isNotEmpty() }
 
+val MATCH_TEMPLATED = Regex("\\$\\{([^}]+)}")
+
 fun Project.interpolate(value: String): String {
     if (value.contains($$"${")) {
-        val regex = Regex("\\$\\{([^}]+)}")
-        return regex.replace(value) { match ->
+        return MATCH_TEMPLATED.replace(value) { match ->
             findProperty(match.groupValues[1])?.toString() ?: match.value
         }
     }
