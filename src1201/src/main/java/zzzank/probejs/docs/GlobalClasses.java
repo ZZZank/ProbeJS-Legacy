@@ -19,9 +19,10 @@ public class GlobalClasses implements ProbeJSPlugin {
 
     @Override
     public void addGlobals(ScriptDump scriptDump) {
-        var TREE = Types.generic("TREE");
-        var NAME = Types.generic("NAME", Types.STRING);
-        var PATH = Types.generic("PATH", Types.STRING);
+        var dualStringTuple = Types.tuple()
+            .member("head", Types.STRING)
+            .member("tail", Types.STRING)
+            .build();
 
         scriptDump.addGlobal(
             "load_class",
@@ -31,45 +32,45 @@ public class GlobalClasses implements ProbeJSPlugin {
                 .symbolVariables(List.of(Types.generic("T")))
                 .type(Types.primitive("abstract new (...args: any) => T"))
                 .build(),
-            // type ResolveClassInTree<TREE, NAME extends string> = NAME extends `${infer PKG}.${infer REST}`
-            //     ? PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never
-            //     : `$${NAME}` extends keyof TREE ? TREE[`$${NAME}`] : never;
-            new TypeDecl(
-                false,
-                "ResolveClassInTree",
-                List.of(TREE, NAME),
-                Types.ternary(
-                    "NAME",
-                    Types.primitive("`${infer PKG}.${infer REST}`"),
-                    // true: PKG extends keyof TREE ? ResolveClassInTree<TREE[PKG], REST> : never
-                    Types.ternary(
-                        "PKG",
-                        Types.keyof(TREE),
-                        Types.primitive("ResolveClassInTree").withParams(
-                            TREE.access(Types.primitive("PKG")),
-                            Types.primitive("REST")
-                        ),
-                        Types.NEVER
-                    ),
-                    // false: `$${NAME}` extends keyof TREE ? TREE[`$${NAME}`] : never
-                    Types.format(
-                        "%s extends %s ? %s : %s",
-                        Types.primitive("`$${NAME}`"),
-                        Types.keyof(TREE),
-                        TREE.access(Types.primitive("`$${NAME}`")),
-                        Types.NEVER
-                    )
-                ),
-                BaseType.FormatType.RETURN
-            ),
-            // export type LoadClass<PATH extends string> = ResolveClassInTree<typeof import("index"), PATH>;
+            // type JoinPrefix<PREFIX extends string, PARTS extends [string, string]> = [`${PREFIX}.${PARTS[0]}`, PARTS[1]]
+            Statements.type()
+                .name("JoinPrefix")
+                .symbolVariables(
+                    Types.generic("PREFIX", Types.STRING),
+                    Types.generic("PARTS", dualStringTuple)
+                )
+                .type(Types.primitive("[`${PREFIX}.${PARTS[0]}`, PARTS[1]]"))
+                .exportDecl(false)
+                .build(),
+            // type SplitJavaClassPath<T extends string> = T extends `${infer HEAD}.${infer REST}`
+            //    ? JoinPrefix<HEAD, SplitJavaClassPath<REST>>
+            //    : ["", T]
+            Statements.type()
+                .name("SplitJavaClassPath")
+                .symbolVariables(Types.generic("T", Types.STRING))
+                .type(Types.primitive("""
+                    T extends `${infer HEAD}.${infer REST}`
+                        ? JoinPrefix<HEAD, SplitJavaClassPath<REST>>
+                        : ["", T]"""))
+                .exportDecl(false)
+                .build(),
+            // type LoadByModule<MODULES, PARTS extends [string, string]> = PARTS[0] extends keyof MODULES
+            //     ? `$${PARTS[1]}` extends keyof MODULES[PARTS[0]] ? MODULES[PARTS[0]][`$${PARTS[1]}`] : never
+            //     : never
+            Statements.type()
+                .name("LoadByModule")
+                .symbolVariables(Types.generic("MODULES"), Types.generic("PARTS", dualStringTuple))
+                .type(Types.primitive("""
+                    PARTS[0] extends keyof MODULES
+                         ? `$${PARTS[1]}` extends keyof MODULES[PARTS[0]] ? MODULES[PARTS[0]][`$${PARTS[1]}`] : never
+                         : never"""))
+                .exportDecl(false)
+                .build(),
+            // export type LoadClass<T extends string> = LoadByModule<ProbeJS$$KnownModules, SplitJavaClassPath<T>>;
             new TypeDecl(
                 LOAD_CLASS.content,
-                List.of(PATH),
-                Types.primitive("ResolveClassInTree").withParams(
-                    Types.primitive("typeof import(\"java:index\")"),
-                    PATH
-                )
+                List.of(Types.generic("T", Types.STRING)),
+                Types.primitive("LoadByModule<ProbeJS$$KnownModules, SplitJavaClassPath<T>>")
             )
         );
     }

@@ -106,6 +106,10 @@ public class TypeDecl extends CommentableCode implements DeclarationCode {
             return this;
         }
 
+        public Builder symbolVariables(TSVariableType... variableTypes) {
+            return symbolVariables(List.of(variableTypes));
+        }
+
         public Builder type(BaseType type) {
             decl.type = type;
             return this;

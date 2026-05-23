@@ -6,6 +6,10 @@ import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.DeclarationCode;
+import zzzank.probejs.lang.typescript.code.member.BeanDecl;
+import zzzank.probejs.lang.typescript.code.ts.Statements;
+import zzzank.probejs.lang.typescript.code.ts.Wrapped;
+import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.lang.typescript.refer.Reference;
 import zzzank.probejs.utils.DocUtils;
@@ -85,14 +89,19 @@ public class TreeIndexFile {
         }
 
         // 2. subpackage re-exports
+        var knownModule = Statements.clazz("ProbeJS$$KnownModules").interfaceClass().build();
         for (val child : node.children().entrySet()) {
-            formatted.add(String.format(
-                "export * as %s from %s",
-                child.getKey(),
-                ProbeJS.GSON.toJson(TreeNode.formatPackage(child.getValue().self()))
+            var path = child.getValue().self();
+            knownModule.bodyCode.add(new BeanDecl.Getter(
+                path.getFirstValidPackage() + '.',
+                Types.primitive(String.format("typeof import(%s)", ProbeJS.GSON.toJson(TreeNode.formatPackage(path))))
             ));
         }
         if (!node.children().isEmpty()) {
+            var global = new Wrapped.Global();
+            global.addCode(knownModule);
+            formatted.addAll(global.format(declaration));
+
             formatted.add("");
         }
 
