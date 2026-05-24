@@ -46,6 +46,11 @@ public abstract class AccessClassData {
         }
     }
 
+    public static Type parentNullWrapped(ClassData data) {
+        var parent = parent(data);
+        return parent == null ? Type.getType(void.class) : parent;
+    }
+
     public static Set<Type> interfaces(ClassData data) {
         try {
             return (Set<Type>) HANDLE_interfaces.invoke(data);

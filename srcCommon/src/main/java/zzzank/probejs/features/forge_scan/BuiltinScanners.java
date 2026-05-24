@@ -31,7 +31,7 @@ public enum BuiltinScanners {
             var queue = PREDEFINED_BASECLASS.stream()
                 .map(name -> Type.getObjectType(name.replace('.', '/')))
                 .collect(Collectors.toCollection(ArrayDeque::new));
-            var byParent = dataStream.collect(Collectors.groupingBy(AccessClassData::parent));
+            var byParent = dataStream.collect(Collectors.groupingBy(AccessClassData::parentNullWrapped));
 
             while (!queue.isEmpty()) {
                 var parentType = queue.pop();
