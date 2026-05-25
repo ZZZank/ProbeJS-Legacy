@@ -46,6 +46,12 @@ configurations.configureEach {
             useVersion("3.3.3")
             because("Force LWJGL to a modern version that supports Java 21")
         }
+        if (requested.group == "org.apache.commons" && requested.name == "commons-io") {
+            useVersion("2.20.0")
+            // Caused by: java.lang.NoSuchMethodError: 'java.nio.file.attribute.FileTime org.apache.commons.io.file.attribute.FileTimes.fromUnixTime(long)'
+            // https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/file/attribute/FileTimes.html#fromUnixTime(long)
+            because("JVMDG requires FileTimes.fromUnixTime(long), which is added in 2.16.0")
+        }
     }
 }
 
