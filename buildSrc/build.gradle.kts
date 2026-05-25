@@ -14,3 +14,9 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/com.gradleup.shadow/shadow-gradle-plugin
     implementation("com.gradleup.shadow:shadow-gradle-plugin:9.2.2")
 }
+
+configurations.all {
+    resolutionStrategy {
+        force("commons-io:commons-io:2.20.0")
+    }
+}
