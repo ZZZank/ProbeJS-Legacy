@@ -32,7 +32,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build the mod
-      run: ./gradlew --no-daemon buildAndCollect
+      run: ./gradlew --no-daemon buildAndCollect --stacktrace
 
     - name: Upload build reports on failure
       if: failure()
