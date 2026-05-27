@@ -21,12 +21,12 @@ public class TSParamType extends BaseType {
 
     @Override
     public ImportInfos getImportInfos(@NotNull FormatType type) {
-        return ImportInfos.of(baseType.getImportInfos(type)).fromCodes(params, type);
+        return ImportInfos.of(baseType.getImportInfos(type)).fromCodes(params, FormatType.RETURN);
     }
 
     @Override
     public String line(Declaration declaration, FormatType formatType) {
         return baseType.line(declaration, formatType)
-            + Types.join(", ", "<", ">", params).line(declaration, formatType);
+            + Types.join(", ", "<", ">", params).line(declaration, FormatType.RETURN);
     }
 }
