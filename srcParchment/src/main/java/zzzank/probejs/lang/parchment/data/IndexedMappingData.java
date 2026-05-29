@@ -32,23 +32,25 @@ public class IndexedMappingData {
             classes.add(new IndexedClass(classData, indexer));
         }
 
+        indexer.freeze();
+
         indexedDiff = indexer.buildDiffs();
     }
 
     public void restoreAfterDeserialization() {
         this.indexer = new StringIndexer();
 
-        var baseDiff = PrefixDiff.EMPTY;
+        var baseDiff = Diffable.EMPTY;
         for (var diffStr : indexedDiff) {
-            var diff = PrefixDiff.fromString(diffStr);
-            indexer.addOrGetIndex(baseDiff.restore(diff));
+            var diff = baseDiff.restore(diffStr);
+            indexer.addOrGetIndex(diff.toString());
             baseDiff = diff;
         }
     }
 
     public static class IndexedClass {
         /// original name: `com/mojang/blaze3d/audio/OggAudioStream`
-        public int indexedName;
+        public Number indexedName;
         public String javaDoc;
         public List<IndexedMethod> methods;
         public List<IndexedField> fields;
@@ -123,7 +125,7 @@ public class IndexedMappingData {
 
     @JsonAdapter(IndexedParamOrReturn.GsonAdapter.class)
     public static class IndexedParamOrReturn {
-        public int indexedType;
+        public Number indexedType;
         @Nullable
         public String name = null;
         @Nullable
@@ -173,7 +175,7 @@ public class IndexedMappingData {
         /// remapped name
         public String name;
         public String javaDoc;
-        public int indexedType;
+        public Number indexedType;
 
         public IndexedField(MappingDataContainer.FieldData field, StringIndexer indexer) {
             this.indexedType = indexer.addOrGetIndex(Type.getType(field.getDescriptor()).getInternalName());

@@ -3,6 +3,8 @@ package zzzank.probejs.lang.parchment.data;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author ZZZank
@@ -12,20 +14,24 @@ public class StringIndexer {
 
     @EqualsAndHashCode.Include
     private final List<String> byIndex = new ArrayList<>();
-    private final Map<String, Integer> byName = new HashMap<>();
+    private final Map<String, LazyInt> byName = new HashMap<>();
+    private Map<String, Integer> built;
 
-    public int addOrGetIndex(String string) {
-        return byName.computeIfAbsent(
-            string, (str) -> {
-                var result = byIndex.size();
-                byIndex.add(str);
-                return result;
-            }
-        );
+    public Number addOrGetIndex(String string) {
+        if (isFrozen()) {
+            return built.get(string);
+        }
+        return byName.computeIfAbsent(string, s -> {
+            byIndex.add(s);
+            return new LazyInt(() -> getIndex(s));
+        });
     }
 
-    public int getIndex(String string) {
-        return byName.getOrDefault(string, -1);
+    public Integer getIndex(String string) {
+        if (!isFrozen()) {
+            throw new IllegalStateException("not frozen");
+        }
+        return built.get(string);
     }
 
     public String getValue(int index) {
@@ -37,15 +43,33 @@ public class StringIndexer {
     }
 
     public List<String> buildDiffs() {
+        if (!isFrozen()) {
+            throw new IllegalStateException("not frozen");
+        }
         var result = new ArrayList<String>(byIndex.size());
 
-        var baseDiff = PrefixDiff.EMPTY;
+        var base = Diffable.EMPTY;
         for (var string : byIndex) {
-            var diff = baseDiff.toDiff(string);
-            result.add(diff.toString());
-            baseDiff = diff;
+            var path = Diffable.of(string, base.splitBy);
+            result.add(base.toDiff(path));
+            base = path;
         }
 
         return result;
+    }
+
+    public boolean isFrozen() {
+        return built != null;
+    }
+
+    public void freeze() {
+        if (isFrozen()) {
+            throw new IllegalStateException("already frozen");
+        }
+        var toSort = byIndex;
+        toSort.sort(null);
+        built = IntStream.range(0, toSort.size())
+            .mapToObj(i -> Map.entry(toSort.get(i), i))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
