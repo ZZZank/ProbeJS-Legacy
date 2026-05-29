@@ -16,9 +16,7 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
@@ -97,7 +95,9 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
         var result = new ArrayList<TSVariableType>();
 
-        var declared = new HashSet<VariableType>();
+        // when declaring variables, we can assume that they all come from the same class
+        // use TreeSet to improve efficiency in small variable list, and ensure solid performance lower bound at scale
+        var declared = new TreeSet<VariableType>(Comparator.comparing(t -> t.raw().getName()));
         for (var variableType : variableTypes) {
             var bounds = variableType.getDescriptors();
 

@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.tree;
 
-import org.jetbrains.annotations.VisibleForTesting;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
 

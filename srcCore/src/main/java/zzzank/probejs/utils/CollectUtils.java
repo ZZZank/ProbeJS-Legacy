@@ -95,8 +95,8 @@ public interface CollectUtils {
         return (int) Math.ceil(elementCount / loadFactor);
     }
 
-    static <K, V> HashMap<K, V> ofSizedMap(int expectedSize) {
-        return new HashMap<>(calcMapExpectedSize(expectedSize));
+    static <K, V> HashMap<K, V> ofSizedMap(int elementCount) {
+        return new HashMap<>(calcMapExpectedSize(elementCount));
     }
 
     static <T> Iterable<T> iterate(Iterator<T> iterator) {
