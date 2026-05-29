@@ -1,5 +1,6 @@
 package zzzank.probejs.lang.java.type.impl;
 
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 
@@ -7,7 +8,7 @@ import java.lang.reflect.AnnotatedTypeVariable;
 import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class VariableType extends TypeDescriptor {
@@ -40,12 +41,13 @@ public final class VariableType extends TypeDescriptor {
 
     @Override
     public boolean canConsolidate() {
-        return true;
+        return raw.getGenericDeclaration() instanceof Class;
     }
 
     @Override
-    public TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping) {
-        return mapping.getOrDefault(this, this);
+    public TypeDescriptor consolidate(@NotNull Function<VariableType, TypeDescriptor> mapping) {
+        var result = mapping.apply(this);
+        return result != null ? result : this;
     }
 
     @Override

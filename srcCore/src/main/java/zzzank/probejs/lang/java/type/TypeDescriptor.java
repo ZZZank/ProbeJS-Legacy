@@ -1,5 +1,6 @@
 package zzzank.probejs.lang.java.type;
 
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.base.ClassProvider;
 import zzzank.probejs.lang.java.clazz.ClassPath;
@@ -8,6 +9,7 @@ import zzzank.probejs.lang.java.type.impl.VariableType;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,7 +34,11 @@ public abstract class TypeDescriptor extends AnnotationHolder implements ClassPr
 
     public abstract boolean canConsolidate();
 
-    public abstract TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping);
+    public abstract TypeDescriptor consolidate(@NotNull Function<VariableType, TypeDescriptor> mapping);
+
+    public final TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping) {
+        return this.consolidate(mapping::get);
+    }
 
     /**
      * Gets the class paths required to use the type.
@@ -62,10 +68,10 @@ public abstract class TypeDescriptor extends AnnotationHolder implements ClassPr
             super(annotations);
         }
 
-        protected abstract TypeDescriptor consolidateImpl(Map<VariableType, TypeDescriptor> mapping);
+        protected abstract TypeDescriptor consolidateImpl(Function<VariableType, TypeDescriptor> mapping);
 
         @Override
-        public final TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping) {
+        public final TypeDescriptor consolidate(@NotNull Function<VariableType, TypeDescriptor> mapping) {
             if (consolidatable < 0) {
                 consolidatable = (byte) (canConsolidate() ? 1 : 0);
             }

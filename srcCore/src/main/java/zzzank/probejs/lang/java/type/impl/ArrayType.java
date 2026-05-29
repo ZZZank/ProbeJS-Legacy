@@ -9,8 +9,8 @@ import java.lang.reflect.AnnotatedArrayType;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class ArrayType extends TypeDescriptor.MaybeConsolidatable {
@@ -44,7 +44,7 @@ public final class ArrayType extends TypeDescriptor.MaybeConsolidatable {
     }
 
     @Override
-    protected TypeDescriptor consolidateImpl(Map<VariableType, TypeDescriptor> mapping) {
+    protected TypeDescriptor consolidateImpl(Function<VariableType, TypeDescriptor> mapping) {
         return new ArrayType(this.annotations, component.consolidate(mapping));
     }
 

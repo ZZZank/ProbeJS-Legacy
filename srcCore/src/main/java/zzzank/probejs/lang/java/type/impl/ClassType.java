@@ -1,11 +1,12 @@
 package zzzank.probejs.lang.java.type.impl;
 
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class ClassType extends TypeDescriptor {
@@ -30,7 +31,7 @@ public final class ClassType extends TypeDescriptor {
     }
 
     @Override
-    public TypeDescriptor consolidate(Map<VariableType, TypeDescriptor> mapping) {
+    public TypeDescriptor consolidate(@NotNull Function<VariableType, TypeDescriptor> mapping) {
         return this;
     }
 

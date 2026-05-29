@@ -8,7 +8,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class ParamType extends TypeDescriptor.MaybeConsolidatable {
@@ -53,7 +53,7 @@ public final class ParamType extends TypeDescriptor.MaybeConsolidatable {
     }
 
     @Override
-    protected TypeDescriptor consolidateImpl(Map<VariableType, TypeDescriptor> mapping) {
+    protected TypeDescriptor consolidateImpl(Function<VariableType, TypeDescriptor> mapping) {
         return new ParamType(this.base, CollectUtils.mapToList(this.params, t -> t.consolidate(mapping)));
     }
 
