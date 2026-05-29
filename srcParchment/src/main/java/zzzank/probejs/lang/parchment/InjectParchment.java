@@ -3,16 +3,15 @@ package zzzank.probejs.lang.parchment;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
+import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.parchment.data.IndexedMappingData;
 import zzzank.probejs.lang.parchment.data.StringIndexer;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
-import zzzank.probejs.lang.typescript.code.member.ConstructorDecl;
-import zzzank.probejs.lang.typescript.code.member.MethodDecl;
-import zzzank.probejs.lang.typescript.code.member.ParamDecl;
+import zzzank.probejs.lang.typescript.code.CommentableCode;
+import zzzank.probejs.lang.typescript.code.member.*;
 import zzzank.probejs.utils.CollectUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,37 +20,56 @@ import java.util.Map;
  */
 public class InjectParchment implements ClassTransformer {
 
-    private final Map<String, IndexedMappingData.IndexedClass> classes;
-    private final Map<String, Map<String, IndexedMappingData.IndexedMethod>> methodsByClass;
+    private final Map<String, ClassInfo> infos;
 
     public InjectParchment(IndexedMappingData data) {
-        var mapExpectedSize = CollectUtils.calcMapExpectedSize(data.classes.size());
-        this.classes = new HashMap<>(mapExpectedSize);
-        this.methodsByClass = new HashMap<>(mapExpectedSize);
+        this.infos = CollectUtils.ofSizedMap(data.classes.size());
 
         var indexer = data.indexer;
-        for (var clazz : data.classes) {
-            var className = indexer.getValue(clazz.name.intValue()).replace('/', '.');
-            classes.put(className, clazz);
+        for (var indexedClass : data.classes) {
+            var className = indexer.getValue(indexedClass.name.intValue()).replace('/', '.');
 
-            if (clazz.methods != null) {
-                var methodMap = new HashMap<String, IndexedMappingData.IndexedMethod>(clazz.methods.size());
-                for (var method : clazz.methods) {
-                    methodMap.put(reconstructSignature(method, indexer), method);
+            Map<String, IndexedMappingData.IndexedMethod> methods;
+            if (indexedClass.methods != null) {
+                methods = CollectUtils.ofSizedMap(indexedClass.methods.size());
+                for (var method : indexedClass.methods) {
+                    methods.put(reconstructSignature(method, indexer), method);
                 }
-                methodsByClass.put(className, methodMap);
+            } else {
+                methods = Map.of();
             }
+
+            Map<String, IndexedMappingData.IndexedNamedType> fields;
+            if (indexedClass.fields != null) {
+                fields = CollectUtils.ofSizedMap(indexedClass.fields.size());
+                for (var field : indexedClass.fields) {
+                    fields.put(field.name, field);
+                }
+            } else {
+                fields = Map.of();
+            }
+
+            this.infos.put(className, new ClassInfo(indexedClass, methods, fields));
         }
     }
 
     @Nullable
     public IndexedMappingData.IndexedClass getClass(String className) {
-        return classes.get(className);
+        var info = infos.get(className);
+        if (info == null) {
+            return null;
+        }
+        return info.indexed;
     }
 
     @Nullable
     public IndexedMappingData.IndexedMethod getMethod(String className, String signature) {
-        return methodsByClass.getOrDefault(className, Map.of()).get(signature);
+        return infos.getOrDefault(className, ClassInfo.EMPTY).methods.get(signature);
+    }
+
+    @Nullable
+    public IndexedMappingData.IndexedNamedType getField(String className, String fieldName) {
+        return infos.getOrDefault(className, ClassInfo.EMPTY).fields.get(fieldName);
     }
 
     /**
@@ -69,6 +87,12 @@ public class InjectParchment implements ClassTransformer {
             if (name != null && !name.isEmpty()) {
                 declParams.get(i).name = name;
             }
+        }
+    }
+
+    public void applyJavadoc(IndexedMappingData.JavaDocHolder docHolder, CommentableCode commentable) {
+        if (docHolder.doc != null) {
+            commentable.addComment(docHolder.doc);
         }
     }
 
@@ -110,42 +134,54 @@ public class InjectParchment implements ClassTransformer {
     }
 
     @Override
+    public void transform(Clazz clazz, ClassDecl classDecl) {
+        var info = this.infos.get(clazz.classPath.getOriginalName());
+        if (info == null) {
+            return;
+        }
+
+        this.applyJavadoc(info.indexed, classDecl);
+    }
+
+    @Override
+    public void transformField(Clazz clazz, FieldInfo fieldInfo, FieldDecl fieldDecl) {
+        var field = this.getField(clazz.classPath.getOriginalName(), fieldInfo.name);
+        if (field == null) {
+            return;
+        }
+
+        this.applyJavadoc(field, fieldDecl);
+    }
+
+    @Override
     public void transformMethod(Clazz clazz, MethodInfo methodInfo, MethodDecl methodDecl) {
-        var className = getClassName(clazz);
-        if (className == null) {
+        var method = this.getMethod(clazz.classPath.getOriginalName(), MethodSignature.forMethod(methodInfo));
+        if (method == null) {
             return;
         }
 
-        var methodData = this.getMethod(className, MethodSignature.forMethod(methodInfo));
-        if (methodData == null) {
-            return;
-        }
-
-        this.applyParameterNames(methodData, methodDecl.params);
+        this.applyParameterNames(method, methodDecl.params);
+        this.applyJavadoc(method, methodDecl);
     }
 
     @Override
     public void transformConstructor(Clazz clazz, ConstructorInfo constructorInfo, ConstructorDecl constructorDecl) {
-        var className = getClassName(clazz);
-        if (className == null) {
+        var constructor = this.getMethod(clazz.classPath.getOriginalName(), MethodSignature.forConstructor(constructorInfo));
+        if (constructor == null) {
             return;
         }
 
-        var methodData = this.getMethod(className, MethodSignature.forConstructor(constructorInfo));
-        if (methodData == null) {
-            return;
-        }
-
-        this.applyParameterNames(methodData, constructorDecl.params);
+        this.applyParameterNames(constructor, constructorDecl.params);
+        this.applyJavadoc(constructor, constructorDecl);
     }
 
-    private String getClassName(Clazz clazz) {
-        var path = clazz.classPath;
-        var name = path.getOriginalName();
-        // skip artificial ClassPath that has no original name
-        if (name.isEmpty()) {
-            return null;
-        }
-        return name;
+    /// @param methods method signature -> method
+    /// @param fields field name -> field
+    private record ClassInfo(
+        IndexedMappingData.IndexedClass indexed,
+        Map<String, IndexedMappingData.IndexedMethod> methods,
+        Map<String, IndexedMappingData.IndexedNamedType> fields
+    ) {
+        private static final ClassInfo EMPTY = new ClassInfo(null, Map.of(), Map.of());
     }
 }

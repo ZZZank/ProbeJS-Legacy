@@ -2,6 +2,7 @@ package zzzank.probejs.lang.parchment.data;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
+import org.objectweb.asm.Type;
 
 import java.util.List;
 
@@ -31,28 +32,30 @@ public class IndexedMappingData {
         }
     }
 
-    public static class IndexedClass {
-        /// @see StringIndexer#getValue(int)
-        public Number name;
+    public abstract static class JavaDocHolder {
         public String doc;
+    }
+
+    public static class IndexedClass extends JavaDocHolder {
+        /// @see StringIndexer#getValue(int)
+        /// @see Type#getInternalName()
+        public Number name;
         public List<IndexedMethod> methods;
         public List<IndexedNamedType> fields;
     }
 
-    public static class IndexedMethod {
+    public static class IndexedMethod extends JavaDocHolder {
         /// remapped name
         public String name;
-        public String doc;
         /// N parameter type + 1 return type
         public List<IndexedNamedType> desc;
     }
 
     /// field, or param, or return type
     @JsonAdapter(IndexedNamedType.GsonAdapter.class)
-    public static class IndexedNamedType {
+    public static class IndexedNamedType extends JavaDocHolder {
         /// for field, the name is remapped name
         public String name;
-        public String doc;
         /// @see StringIndexer#getValue(int)
         public Number type;
 
