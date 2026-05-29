@@ -88,7 +88,9 @@ class VfsByteChannel implements SeekableByteChannel {
         }
         open = false;
         if (onClose != null) {
-            onClose.accept(data);
+            // data array may be larger than actual written content due to ensureCapacity growth strategy;
+            // trim to position to avoid trailing null bytes corrupting the stored content
+            onClose.accept(position < data.length ? Arrays.copyOf(data, position) : data);
         }
     }
 }

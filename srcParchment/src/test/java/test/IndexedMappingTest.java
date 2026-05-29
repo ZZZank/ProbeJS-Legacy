@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class IndexedMappingTest {
 
-    private static final boolean WRITE_FILE = true;
+    private static final boolean WRITE_FILE = false;
 
     @Test
     public void test() throws Exception {
