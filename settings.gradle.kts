@@ -8,4 +8,4 @@ pluginManagement {
     }
 }
 
-include("srcCore", "srcCommon", "src1165", "src1201")
+include("srcCore", "srcCommon", "src1165", "src1201", "srcParchment")
