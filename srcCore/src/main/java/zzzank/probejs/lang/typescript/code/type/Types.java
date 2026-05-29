@@ -67,7 +67,12 @@ public interface Types {
     }
 
     static BaseType and(Collection<? extends BaseType> types) {
-        return types.isEmpty() ? NEVER : new JSJoinedType.Intersection(types);
+        if (types.isEmpty()) {
+            return ANY;
+        } else if (types.size() == 1) {
+            return types.iterator().next();
+        }
+        return new JSJoinedType.Intersection(types);
     }
 
     static BaseType or(BaseType... types) {
@@ -75,7 +80,12 @@ public interface Types {
     }
 
     static BaseType or(Collection<? extends BaseType> types) {
-        return types.isEmpty() ? NEVER : new JSJoinedType.Union(types);
+        if (types.isEmpty()) {
+            return NEVER;
+        } else if (types.size() == 1) {
+            return types.iterator().next();
+        }
+        return new JSJoinedType.Union(types);
     }
 
     static BaseType orEnumLike(Collection<?> objects, boolean lowerCase) {
