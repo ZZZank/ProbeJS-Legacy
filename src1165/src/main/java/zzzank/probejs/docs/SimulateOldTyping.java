@@ -2,8 +2,8 @@ package zzzank.probejs.docs;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.transpiler.ClassTranspiler;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.ScriptDump;
 import zzzank.probejs.lang.typescript.code.member.TypeDecl;
@@ -12,7 +12,6 @@ import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.utils.CollectUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,10 +37,7 @@ public class SimulateOldTyping implements ProbeJSPlugin {
                 namespace.addCode(new NameInferredTypeDecl(path).setTypeFormat(BaseType.FormatType.RETURN));
                 namespace.addCode(new NameInferredTypeDecl(path));
             } else {
-                val variables = CollectUtils.mapToList(
-                    clazz.variableTypes,
-                    transpiler.typeConverter::convertVariableTypeWithDefault
-                );
+                val variables = ClassTranspiler.convertVariableDeclaration(transpiler.typeConverter, clazz.variableTypes);
                 namespace.addCode(new NameInferredTypeDecl(variables, path).setTypeFormat(BaseType.FormatType.RETURN));
                 namespace.addCode(new NameInferredTypeDecl(variables, path));
             }

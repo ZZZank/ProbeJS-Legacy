@@ -2,7 +2,6 @@ package zzzank.probejs.lang.transpiler;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.Clazz;
-import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.VariableType;
 import zzzank.probejs.lang.java.type.impl.WildType;
 import zzzank.probejs.lang.transpiler.members.Constructor;
@@ -18,7 +17,7 @@ import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.utils.CollectUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
@@ -98,16 +97,20 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
         var result = new ArrayList<TSVariableType>();
 
-        var declared = new HashMap<VariableType, TypeDescriptor>();
+        var declared = new HashSet<VariableType>();
         for (var variableType : variableTypes) {
             var bounds = variableType.getDescriptors();
 
             var converted = converter.convertVariableType(variableType);
-            converted.defaultTo =
-                Types.and(CollectUtils.mapToList(bounds, t -> converter.convertType(t.consolidate(declared))));
+            converted.defaultTo = Types.and(CollectUtils.mapToList(
+                bounds,
+                t -> converter.convertType(
+                    t.consolidate((type) ->
+                        declared.contains(type) ? type : WildType.NO_BOUND))
+            ));
             result.add(converted);
 
-            declared.put(variableType, WildType.NO_BOUND);
+            declared.add(variableType);
         }
 
         return result;
