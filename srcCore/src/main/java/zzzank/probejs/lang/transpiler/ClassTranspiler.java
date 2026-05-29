@@ -2,6 +2,9 @@ package zzzank.probejs.lang.transpiler;
 
 import lombok.val;
 import zzzank.probejs.lang.java.clazz.Clazz;
+import zzzank.probejs.lang.java.type.TypeDescriptor;
+import zzzank.probejs.lang.java.type.impl.VariableType;
+import zzzank.probejs.lang.java.type.impl.WildType;
 import zzzank.probejs.lang.transpiler.members.Constructor;
 import zzzank.probejs.lang.transpiler.members.Converter;
 import zzzank.probejs.lang.transpiler.members.Field;
@@ -11,7 +14,12 @@ import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
+import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.utils.CollectUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
@@ -31,7 +39,7 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
     @Override
     public ClassDecl transpile(Clazz clazz) {
 
-        val variableTypes = CollectUtils.mapToList(clazz.variableTypes, converter::convertVariableTypeWithDefault);
+        val variableTypes = convertVariableDeclaration(converter, clazz.variableTypes);
         val superClass = clazz.superClass == null
             ? null
             : converter.convertTypeBuiltin(clazz.superClass);
@@ -78,5 +86,30 @@ public class ClassTranspiler extends Converter<Clazz, ClassDecl> {
 
         transformer.transform(clazz, decl);
         return decl;
+    }
+
+    public static List<TSVariableType> convertVariableDeclaration(
+        TypeConverter converter,
+        List<VariableType> variableTypes
+    ) {
+        if (variableTypes.isEmpty()) {
+            return List.of();
+        }
+
+        var result = new ArrayList<TSVariableType>();
+
+        var declared = new HashMap<VariableType, TypeDescriptor>();
+        for (var variableType : variableTypes) {
+            var bounds = variableType.getDescriptors();
+
+            var converted = converter.convertVariableType(variableType);
+            converted.defaultTo =
+                Types.and(CollectUtils.mapToList(bounds, t -> converter.convertType(t.consolidate(declared))));
+            result.add(converted);
+
+            declared.put(variableType, WildType.NO_BOUND);
+        }
+
+        return result;
     }
 }

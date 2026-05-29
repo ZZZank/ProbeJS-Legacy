@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class WildType extends TypeDescriptor.MaybeConsolidatable {
+    public static final WildType NO_BOUND = new WildType(NO_ANNOTATION, null);
+
     @Nullable
     public final TypeDescriptor bound;
 

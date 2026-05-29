@@ -68,26 +68,10 @@ public class TypeConverter {
 
     public @NotNull TSVariableType convertVariableType(VariableType variableType) {
         val desc = variableType.getDescriptors();
-        return switch (desc.size()) {
-            case 0 -> Types.generic(variableType.getSymbol());
-            case 1 -> Types.generic(variableType.getSymbol(), convertType(desc.get(0)));
-            default -> Types.generic(
-                variableType.getSymbol(),
-                Types.and(CollectUtils.mapToList(desc, this::convertType))
-            );
-        };
-    }
-
-    public @NotNull TSVariableType convertVariableTypeWithDefault(VariableType variableType) {
-        val desc = variableType.getDescriptors();
-        return switch (desc.size()) {
-            case 0 -> Types.genericAndDefault(variableType.getSymbol(), Types.ANY);
-            case 1 -> Types.genericAndDefault(variableType.getSymbol(), convertType(desc.get(0)));
-            default -> Types.genericAndDefault(
-                variableType.getSymbol(),
-                Types.and(CollectUtils.mapToList(desc, this::convertType))
-            );
-        };
+        return Types.generic(
+            variableType.getSymbol(),
+            Types.and(CollectUtils.mapToList(desc, this::convertType))
+        );
     }
 
     public BaseType convertType(Type javaType) {
