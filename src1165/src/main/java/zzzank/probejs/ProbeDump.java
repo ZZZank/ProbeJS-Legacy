@@ -86,7 +86,6 @@ public class ProbeDump {
         // And schemas
         ProbeJSPlugins.forEachPlugin(plugin -> plugin.addJsonSchema(schemaDump));
         schemaDump.writeTo(ProbePaths.WORKSPACE_SETTINGS);
-        writeVSCodeConfig();
         appendGitIgnore();
 
         report(ProbeText.pjs("dump.snippets_generated"));
@@ -176,18 +175,6 @@ public class ProbeDump {
                 ProbeJS.LOGGER.error(error.unwrap().getString(), e);
             }
         };
-    }
-
-    private void writeVSCodeConfig() throws IOException {
-        val config = JsonUtils.parseObject(Map.of(
-            "json.schemas", List.of(
-                Map.of(
-                    "fileMatch", List.of("/recipe_schemas/*.json"),
-                    "url", "./.vscode/recipe.json"
-                )
-            )
-        ));
-        FileUtils.writeMergedConfig(ProbePaths.VSCODE_JSON, config);
     }
 
     private void appendGitIgnore() throws IOException {
