@@ -14,7 +14,7 @@ import org.parchmentmc.feather.named.Named;
 import org.parchmentmc.feather.util.SimpleVersion;
 import test.impl.VirtualFileSystem;
 import zzzank.probejs.lang.parchment.data.IndexedMappingData;
-import zzzank.probejs.lang.parchment.data.IndexedMappingDataBuilder;
+import test.impl.IndexedMappingDataBuilder;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

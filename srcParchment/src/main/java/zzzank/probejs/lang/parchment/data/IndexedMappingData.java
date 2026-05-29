@@ -2,7 +2,6 @@ package zzzank.probejs.lang.parchment.data;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
-import org.objectweb.asm.Type;
 
 import java.util.List;
 
@@ -12,8 +11,6 @@ import java.util.List;
  * - replace list of Javadoc lines with a single string
  * - parameter and field is now represented by a single string instead of {@link JsonObject}
  * - more?
- * <p>
- * Pure data container — populated via {@link IndexedMappingDataBuilder}.
  *
  * @author ZZZank
  */
@@ -37,8 +34,8 @@ public class IndexedMappingData {
     }
 
     public static class IndexedClass extends JavaDocHolder {
+        /// the raw value should be class internal name
         /// @see StringIndexer#getValue(int)
-        /// @see Type#getInternalName()
         public Number name;
         public List<IndexedMethod> methods;
         public List<IndexedNamedType> fields;
@@ -56,6 +53,7 @@ public class IndexedMappingData {
     public static class IndexedNamedType extends JavaDocHolder {
         /// for field, the name is remapped name
         public String name;
+        /// the raw value should be class internal name
         /// @see StringIndexer#getValue(int)
         public Number type;
 
