@@ -67,6 +67,7 @@ loom {
 dependencies {
     shade(project(":srcCore"))
     shade(project(":srcCommon"))
+    testImplementation(testFixtures(project(":srcCore")))
 
     minecraft("com.mojang:minecraft:${propertyString("mc_version")}")
 

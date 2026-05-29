@@ -12,12 +12,15 @@ import org.parchmentmc.feather.mapping.MappingDataContainer;
 import org.parchmentmc.feather.mapping.VersionedMappingDataContainer;
 import org.parchmentmc.feather.named.Named;
 import org.parchmentmc.feather.util.SimpleVersion;
+import test.impl.VirtualFileSystem;
 import zzzank.probejs.lang.parchment.data.IndexedMappingData;
+import zzzank.probejs.lang.parchment.data.IndexedMappingDataBuilder;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,9 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class IndexedMappingTest {
 
+    private static final boolean WRITE_FILE = true;
+
     @Test
     public void test() throws Exception {
-        // 1. Load parchment-example.json from test resources
         InputStream is = getClass().getResourceAsStream("/parchment-1165.json");
         if (is == null) {
             System.err.print("parchment-example.json not found, exiting");
@@ -38,7 +42,6 @@ public class IndexedMappingTest {
         String json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
         is.close();
 
-        // 2. Parse to MappingDataContainer (same Gson setup as InjectParchment.fromJson)
         Gson gson = new GsonBuilder()
             .disableHtmlEscaping()
             .setPrettyPrinting()
@@ -51,16 +54,21 @@ public class IndexedMappingTest {
         MappingDataContainer container = gson.fromJson(json, VersionedMappingDataContainer.class);
         assertNotNull(container, "Failed to parse MappingDataContainer from JSON");
 
-        // 3. Convert to IndexedMappingData
-        IndexedMappingData indexed = new IndexedMappingData(container);
+        // 3. Convert to IndexedMappingData via builder
+        IndexedMappingData indexed = IndexedMappingDataBuilder.build(container);
 
-        var path = Path.of("./indexed-parchment.json");
+        FileSystem fs = WRITE_FILE ? FileSystems.getDefault() : new VirtualFileSystem();
+        var path = fs.getPath("./indexed-parchment.json");
+
         try (var writer = Files.newBufferedWriter(path)) {
             gson.toJson(indexed, writer);
         }
 
         try (var reader = Files.newBufferedReader(path)) {
-            var restored = new GsonBuilder().disableHtmlEscaping().create().fromJson(reader, IndexedMappingData.class);
+            var restored = new GsonBuilder()
+                .disableHtmlEscaping()
+                .create()
+                .fromJson(reader, IndexedMappingData.class);
             restored.restoreAfterDeserialization();
             assertEquals(indexed.indexer, restored.indexer);
         }

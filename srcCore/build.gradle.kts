@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     `project-common`
+    id("java-test-fixtures")
 }
 
 repositories {

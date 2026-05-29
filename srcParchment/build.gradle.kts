@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation(project(":srcCore"))
+    testImplementation(testFixtures(project(":srcCore")))
 
     val featherVersion = "1.1.0"
     implementation("org.parchmentmc:feather:${featherVersion}")
