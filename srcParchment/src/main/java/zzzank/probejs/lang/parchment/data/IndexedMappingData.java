@@ -2,7 +2,7 @@ package zzzank.probejs.lang.parchment.data;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
-import org.jetbrains.annotations.Nullable;
+import com.google.gson.annotations.SerializedName;
 import org.objectweb.asm.Type;
 import org.parchmentmc.feather.mapping.MappingDataContainer;
 
@@ -50,14 +50,15 @@ public class IndexedMappingData {
 
     public static class IndexedClass {
         /// original name: `com/mojang/blaze3d/audio/OggAudioStream`
+        @SerializedName("name")
         public Number indexedName;
-        public String javaDoc;
+        public String doc;
         public List<IndexedMethod> methods;
-        public List<IndexedField> fields;
+        public List<IndexedNamedType> fields;
 
         public IndexedClass(MappingDataContainer.ClassData classData, StringIndexer indexer) {
             this.indexedName = indexer.addOrGetIndex(classData.getName());
-            this.javaDoc = joinLines(classData.getJavadoc());
+            this.doc = joinLines(classData.getJavadoc());
 
             if (!classData.getMethods().isEmpty()) {
                 this.methods = new ArrayList<>(classData.getMethods().size());
@@ -69,7 +70,10 @@ public class IndexedMappingData {
             if (!classData.getFields().isEmpty()) {
                 this.fields = new ArrayList<>(classData.getFields().size());
                 for (var field : classData.getFields()) {
-                    fields.add(new IndexedField(field, indexer));
+                    var indexed = new IndexedNamedType(Type.getType(field.getDescriptor()), indexer);
+                    indexed.name = field.getName();
+                    indexed.doc = joinLines(field.getJavadoc());
+                    fields.add(indexed);
                 }
             }
         }
@@ -78,22 +82,23 @@ public class IndexedMappingData {
     public static class IndexedMethod {
         /// remapped name
         public String name;
-        public String javaDoc;
+        public String doc;
         /// N parameter type + 1 return type
-        public List<IndexedParamOrReturn> indexedDesc;
+        @SerializedName("desc")
+        public List<IndexedNamedType> indexedDesc;
 
         public IndexedMethod(MappingDataContainer.MethodData method, StringIndexer indexer) {
             this.name = method.getName();
-            this.javaDoc = joinLines(method.getJavadoc());
+            this.doc = joinLines(method.getJavadoc());
 
             var methodType = Type.getMethodType(method.getDescriptor());
 
             var argumentTypes = methodType.getArgumentTypes();
             this.indexedDesc = new ArrayList<>(argumentTypes.length + 1);
             for (var argumentType : argumentTypes) {
-                indexedDesc.add(new IndexedParamOrReturn(argumentType, indexer));
+                indexedDesc.add(new IndexedNamedType(argumentType, indexer));
             }
-            indexedDesc.add(new IndexedParamOrReturn(methodType.getReturnType(), indexer));
+            indexedDesc.add(new IndexedNamedType(methodType.getReturnType(), indexer));
 
             // Map ParameterData bytecode slot index -> indexedDesc argument index
             // Handles: min offset (0=static, 1=instance) + long/double 2-slot gap
@@ -117,45 +122,46 @@ public class IndexedMappingData {
                 for (var parameter : method.getParameters()) {
                     var indexedParam = this.indexedDesc.get(slotToArg[parameter.getIndex() - min]);
                     indexedParam.name = parameter.getName();
-                    indexedParam.javaDoc = parameter.getJavadoc();
+                    indexedParam.doc = parameter.getJavadoc();
                 }
             }
         }
     }
 
-    @JsonAdapter(IndexedParamOrReturn.GsonAdapter.class)
-    public static class IndexedParamOrReturn {
+    /// field, or param, or return type
+    @JsonAdapter(IndexedNamedType.GsonAdapter.class)
+    public static class IndexedNamedType {
+        /// for field, the name is remapped name
+        public String name;
+        public String doc;
+        @SerializedName("type")
         public Number indexedType;
-        @Nullable
-        public String name = null;
-        @Nullable
-        public String javaDoc = null;
 
-        public IndexedParamOrReturn(Type type, StringIndexer indexer) {
+        public IndexedNamedType(Type type, StringIndexer indexer) {
             this.indexedType = indexer.addOrGetIndex(type.getInternalName());
         }
 
-        private IndexedParamOrReturn(String[] parts) {
+        private IndexedNamedType(String[] parts) {
             this.indexedType = Integer.parseInt(parts[0]);
             this.name = parts.length > 1 ? parts[1] : null;
-            this.javaDoc = parts.length > 2 ? parts[2] : null;
+            this.doc = parts.length > 2 ? parts[2] : null;
         }
 
         public static class GsonAdapter
-            implements JsonSerializer<IndexedParamOrReturn>, JsonDeserializer<IndexedParamOrReturn> {
+            implements JsonSerializer<IndexedNamedType>, JsonDeserializer<IndexedNamedType> {
 
             @Override
-            public IndexedParamOrReturn deserialize(
+            public IndexedNamedType deserialize(
                 JsonElement json,
                 java.lang.reflect.Type typeOfT,
                 JsonDeserializationContext context
             ) throws JsonParseException {
-                return new IndexedParamOrReturn(json.getAsString().split(":", 3));
+                return new IndexedNamedType(json.getAsString().split(":", 3));
             }
 
             @Override
             public JsonElement serialize(
-                IndexedParamOrReturn src,
+                IndexedNamedType src,
                 java.lang.reflect.Type typeOfSrc,
                 JsonSerializationContext context
             ) {
@@ -163,24 +169,11 @@ public class IndexedMappingData {
                 if (src.name != null) {
                     builder.append(":").append(src.name);
                 }
-                if (src.javaDoc != null) {
-                    builder.append(":").append(src.javaDoc);
+                if (src.doc != null) {
+                    builder.append(":").append(src.doc);
                 }
                 return new JsonPrimitive(builder.toString());
             }
-        }
-    }
-
-    public static class IndexedField {
-        /// remapped name
-        public String name;
-        public String javaDoc;
-        public Number indexedType;
-
-        public IndexedField(MappingDataContainer.FieldData field, StringIndexer indexer) {
-            this.indexedType = indexer.addOrGetIndex(Type.getType(field.getDescriptor()).getInternalName());
-            this.name = field.getName();
-            this.javaDoc = joinLines(field.getJavadoc());
         }
     }
 
