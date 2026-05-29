@@ -48,7 +48,7 @@ public class StringIndexer {
         }
         var result = new ArrayList<String>(byIndex.size());
 
-        var base = Diffable.EMPTY;
+        var base = Diffable.of("", '/');
         for (var string : byIndex) {
             var path = Diffable.of(string, base.splitBy);
             result.add(base.toDiff(path));

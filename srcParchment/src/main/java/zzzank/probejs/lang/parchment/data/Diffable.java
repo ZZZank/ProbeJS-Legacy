@@ -6,7 +6,6 @@ import java.util.Objects;
  * @author ZZZank
  */
 public class Diffable {
-    public static final Diffable EMPTY = new Diffable(new String[0], '/');
 
     public static Diffable of(String string, char split) {
         return new Diffable(string.split(String.valueOf(split)), split);
