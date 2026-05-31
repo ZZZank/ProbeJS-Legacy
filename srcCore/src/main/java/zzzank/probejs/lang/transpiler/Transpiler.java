@@ -4,8 +4,8 @@ import lombok.val;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
+import zzzank.probejs.lang.typescript.NativeClassFile;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
 import zzzank.probejs.utils.Asser;
 
 import java.util.*;
@@ -36,15 +36,10 @@ public class Transpiler {
 
             val classDecl = transpiler.transpile(clazz);
 
-            val scriptFile = new TypeScriptFile(clazz.classPath);
-            scriptFile.addCode(classDecl);
-            if (classDecl instanceof InterfaceDecl interfaceDecl) {
-                if (interfaceDecl.withStatic) {
-                    scriptFile.addCode(interfaceDecl.createStaticClass());
-                }
-            }
+            val file = new NativeClassFile(clazz.classPath);
+            file.addNativeClass(classDecl);
 
-            result.put(clazz.classPath, scriptFile);
+            result.put(clazz.classPath, file);
         }
 
         return result;

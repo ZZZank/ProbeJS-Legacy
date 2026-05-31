@@ -52,10 +52,6 @@ public abstract class BuiltinDocHelper {
     }
 
     public static void injectBeaning(ClassDecl classDecl, boolean convertFields) {
-        if (classDecl instanceof InterfaceDecl) {
-            return;
-        }
-
         val usedNames = new HashSet<String>();
         for (val method : classDecl.methods) {
             usedNames.add(method.name);
