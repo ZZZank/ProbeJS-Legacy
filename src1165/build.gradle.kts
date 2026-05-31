@@ -103,21 +103,23 @@ tasks.processResources {
         exclude(*configs.toTypedArray())
     }
 
-    expand(
-        mapOf(
-            "version" to propertyString("mod_version"),
-            "forge_version" to propertyString("forge_version"),
-            "loader_version_range" to propertyString("loader_version_range"),
-            "license" to propertyString("license"),
-            "mod_id" to propertyString("mod_id"),
-            "mod_display_name" to propertyString("mod_display_name"),
-            "mod_author" to propertyString("mod_author"),
-            "mod_description" to propertyString("mod_description"),
-            "minecraft_version" to propertyString("mc_version"),
-            "required_minecraft_range" to propertyString("mc_version_range"),
-            "resource_pack_format" to "6"
+    filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
+        expand(
+            mapOf(
+                "version" to propertyString("mod_version"),
+                "forge_version" to propertyString("forge_version"),
+                "loader_version_range" to propertyString("loader_version_range"),
+                "license" to propertyString("license"),
+                "mod_id" to propertyString("mod_id"),
+                "mod_display_name" to propertyString("mod_display_name"),
+                "mod_author" to propertyString("mod_author"),
+                "mod_description" to propertyString("mod_description"),
+                "minecraft_version" to propertyString("mc_version"),
+                "required_minecraft_range" to propertyString("mc_version_range"),
+                "resource_pack_format" to "16"
+            )
         )
-    )
+    }
 }
 
 tasks.named("remapJar", RemapJarTask::class.java) {
