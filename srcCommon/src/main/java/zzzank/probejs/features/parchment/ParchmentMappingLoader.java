@@ -14,9 +14,9 @@ import java.util.Optional;
  */
 public abstract class ParchmentMappingLoader {
 
-    public static IndexedMappingData CACHED;
+    private static volatile IndexedMappingData CACHED;
 
-    public static IndexedMappingData getOrInit(Path path) throws IOException {
+    public static synchronized IndexedMappingData getOrInit(Path path) throws IOException {
         if (CACHED != null) {
             return CACHED;
         }

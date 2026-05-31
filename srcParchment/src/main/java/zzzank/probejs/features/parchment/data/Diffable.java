@@ -33,7 +33,7 @@ public class Diffable {
     }
 
     public Diffable restore(String diff) {
-        var split = diff.split(String.valueOf(this.splitBy));
+        var split = diff.split(String.valueOf(this.splitBy), -1);
 
         for (int i = 0; i < split.length; i++) {
             if (split[i].isEmpty() && i < this.parts.length) {

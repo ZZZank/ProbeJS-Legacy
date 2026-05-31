@@ -3,6 +3,7 @@ package zzzank.probejs.features.parchment.data;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -69,7 +70,7 @@ public class StringIndexer {
         var toSort = byIndex;
         toSort.sort(null);
         built = IntStream.range(0, toSort.size())
-            .mapToObj(i -> Map.entry(toSort.get(i), i))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .boxed()
+            .collect(Collectors.toMap(toSort::get, Function.identity()));
     }
 }
