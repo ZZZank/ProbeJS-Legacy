@@ -1,13 +1,10 @@
 package zzzank.probejs.plugin;
 
 import dev.latvian.mods.kubejs.KubeJSPlugin;
-import dev.latvian.mods.kubejs.recipe.schema.RecipeComponentFactoryRegistryEvent;
-import dev.latvian.mods.kubejs.recipe.schema.RegisterRecipeSchemasEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.util.ClassFilter;
 import dev.latvian.mods.rhino.NativeJavaClass;
-import zzzank.probejs.ProbeConfig;
 import zzzank.probejs.events.*;
 import zzzank.probejs.features.kubejs.BindingFilter;
 import zzzank.probejs.features.rhizo.RhizoState;
@@ -75,9 +72,6 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
 
     @Override
     public void registerClassTransformer(ClassTransformerRegistration registration) {
-        if (ProbeConfig.autoParamRename.get()) {
-            registration.register(new AutoParamRename(AutoParamRename.MATCH_ARG_N));
-        }
         if (RhizoState.RETURNS_SELF_ANNOTATION) {
             registration.register(new RhizoReturnsSelf());
         }

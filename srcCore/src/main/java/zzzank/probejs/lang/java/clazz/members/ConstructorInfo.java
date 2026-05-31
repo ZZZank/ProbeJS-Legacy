@@ -1,9 +1,9 @@
 package zzzank.probejs.lang.java.clazz.members;
 
 import zzzank.probejs.lang.java.base.TypeVariableHolder;
-import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConstructorInfo extends TypeVariableHolder  {
@@ -12,6 +12,10 @@ public class ConstructorInfo extends TypeVariableHolder  {
 
     public ConstructorInfo(Constructor<?> constructor) {
         super(constructor.getTypeParameters(), constructor.getAnnotations());
-        this.params = CollectUtils.mapToList(constructor.getParameters(), ParamInfo::new);
+        var parameters = constructor.getParameters();
+        this.params = new ArrayList<>(parameters.length);
+        for (var i = 0; i < parameters.length; i++) {
+            params.set(i, new ParamInfo(parameters[i], i));
+        }
     }
 }

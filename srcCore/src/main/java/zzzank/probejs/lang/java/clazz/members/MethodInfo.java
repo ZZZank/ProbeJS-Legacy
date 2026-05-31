@@ -1,14 +1,13 @@
 package zzzank.probejs.lang.java.clazz.members;
 
 import zzzank.probejs.lang.java.base.TypeVariableHolder;
-import zzzank.probejs.lang.java.remap.RemapperBridge;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.impl.VariableType;
-import zzzank.probejs.utils.CollectUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +36,14 @@ public class MethodInfo extends TypeVariableHolder {
         super(method.getTypeParameters(), method.getAnnotations());
         this.attributes = new MethodAttributes(method);
         this.name = name;
-        this.params = CollectUtils.mapToList(method.getParameters(), ParamInfo::new);
         this.returnType = TypeAdapter.getTypeDescription(method.getAnnotatedReturnType()).consolidate(typeRemapper);
 
-        for (var param : this.params) {
-            param.type = param.type.consolidate(typeRemapper);
+        var parameters = method.getParameters();
+        this.params = new ArrayList<>();
+        for (var i = 0; i < parameters.length; i++) {
+            var paramInfo = new ParamInfo(parameters[i], i);
+            paramInfo.type = paramInfo.type.consolidate(typeRemapper);
+            this.params.set(i, paramInfo);
         }
     }
 

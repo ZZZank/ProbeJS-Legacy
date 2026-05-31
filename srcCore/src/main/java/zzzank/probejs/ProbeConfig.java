@@ -98,11 +98,6 @@ public interface ProbeConfig {
             a string regex used for filtering registry objects.
             Registry objects whose id matches this pattern will always be dumped by ProbeJS Legacy""")
         .build();
-    ConfigEntry<Boolean> autoParamRename = INSTANCE.define("Rename Parameter Automatically")
-        .bindDefault(true)
-        .comment("""
-            automatically rename `arg123`-like names into some more human readable names""")
-        .build();
     ConfigEntry<Boolean> fieldAsBeaning = INSTANCE.define("Field As Beaning")
         .bindDefault(true)
         .comment("""
