@@ -23,9 +23,12 @@ public class InjectBeaning implements ProbeJSPlugin {
         boolean convertFields = ProbeConfig.fieldAsBeaning.get();
 
         for (var file : files.globalFiles().values()) {
-            if (file instanceof NativeClassFile nativeFile
-                && nativeFile.nativeClass instanceof InterfaceDecl interfaceDecl) {
-                BuiltinDocHelper.injectBeaning(interfaceDecl.getStaticClass(), convertFields);
+            if (file instanceof NativeClassFile nativeFile) {
+                var classDecl = nativeFile.nativeClass;
+                if (classDecl instanceof InterfaceDecl interfaceDecl) {
+                    classDecl = interfaceDecl.getStaticClass();
+                }
+                BuiltinDocHelper.injectBeaning(classDecl, convertFields);
             }
         }
     }

@@ -15,7 +15,7 @@ public class ConstructorInfo extends TypeVariableHolder  {
         var parameters = constructor.getParameters();
         this.params = new ArrayList<>(parameters.length);
         for (var i = 0; i < parameters.length; i++) {
-            params.set(i, new ParamInfo(parameters[i], i));
+            params.add(i, new ParamInfo(parameters[i], i));
         }
     }
 }

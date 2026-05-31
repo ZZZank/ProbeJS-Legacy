@@ -114,4 +114,8 @@ public class TypeScriptFile {
         return (Stream<T>) codes.stream()
             .filter(type::isInstance);
     }
+
+    public NativeClassFile asNative() {
+        return (NativeClassFile) this;
+    }
 }

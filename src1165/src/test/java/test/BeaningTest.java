@@ -42,11 +42,12 @@ public class BeaningTest {
             null, classRegistry, transpiler
         ))));
 
-        val classDecl = files.get(ClassPath.ofJava(type))
-            .findCodes(ClassDecl.class)
-            .filter(Predicate.not(decl -> decl instanceof InterfaceDecl)) // static class
-            .findFirst()
-            .orElseThrow();
+        var classDecl = files.get(ClassPath.ofJava(type))
+            .asNative()
+            .nativeClass;
+        if (classDecl instanceof InterfaceDecl interfaceDecl) {
+            classDecl = interfaceDecl.getStaticClass();
+        }
 
         var hasMatchingBean = false;
 
@@ -69,6 +70,7 @@ public class BeaningTest {
         Assertions.assertTrue(hasMatchingBean);
     }
 
+    @SuppressWarnings("unused")
     interface Interf {
 
         int get();
@@ -80,6 +82,7 @@ public class BeaningTest {
         void setStr(String value);
     }
 
+    @SuppressWarnings("unused")
     static abstract class AbsCls {
 
         public abstract int get();

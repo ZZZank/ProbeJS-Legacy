@@ -43,7 +43,7 @@ public class MethodInfo extends TypeVariableHolder {
         for (var i = 0; i < parameters.length; i++) {
             var paramInfo = new ParamInfo(parameters[i], i);
             paramInfo.type = paramInfo.type.consolidate(typeRemapper);
-            this.params.set(i, paramInfo);
+            this.params.add(i, paramInfo);
         }
     }
 

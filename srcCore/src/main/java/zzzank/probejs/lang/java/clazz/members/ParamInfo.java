@@ -1,7 +1,7 @@
 package zzzank.probejs.lang.java.clazz.members;
 
 import lombok.val;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.java.base.AnnotationHolder;
 import zzzank.probejs.lang.java.type.TypeAdapter;
 import zzzank.probejs.lang.java.type.TypeDescriptor;
@@ -15,23 +15,25 @@ import java.lang.reflect.Parameter;
 import java.util.Locale;
 
 public class ParamInfo extends AnnotationHolder {
+    @NotNull
     public String name;
+    @NotNull
     public TypeDescriptor type;
     public final boolean varArgs;
 
     public ParamInfo(Parameter parameter, int index) {
         super(parameter.getAnnotations());
-        this.name = parameter.isNamePresent() ? parameter.getName() : autoParamName(type, index);
         this.type = TypeAdapter.getTypeDescription(parameter.getAnnotatedType());
+        this.name = parameter.isNamePresent() ? parameter.getName() : autoParamName(type, index);
         this.varArgs = parameter.isVarArgs();
     }
 
-    @Nullable
-    public static String autoParamName(TypeDescriptor type, int index) {
+    @NotNull
+    public static String autoParamName(@NotNull TypeDescriptor type, int index) {
         if (type instanceof ClassType c) {
             val simpleName = c.clazz.getSimpleName();
             if (simpleName.isEmpty()) {
-                return null;
+                return "arg" + index;
             }
             return NameUtils.firstLower(simpleName) + index;
         } else if (type instanceof ArrayType arr) {
@@ -41,7 +43,7 @@ public class ParamInfo extends AnnotationHolder {
         } else if (type instanceof VariableType vari) {
             return vari.getSymbol().toLowerCase(Locale.ROOT) + index;
         }
-        return null;
+        return "arg" + index;
     }
 
     @Override

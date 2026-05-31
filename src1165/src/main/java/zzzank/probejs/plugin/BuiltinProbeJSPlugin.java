@@ -81,7 +81,7 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
                 .findResource("reindexed-parchment.json");
             ParchmentMappingLoader.getTransformerOrInit(path).ifPresent(registration::register);
         } catch (Exception e) {
-            ProbeJS.LOGGER.warn("Unable to load parchment mapping, skipping", e);
+            ProbeJS.LOGGER.warn("Unable to load parchment mapping, skipping: {}", e.toString());
         }
         registration.register(
             new InjectAnnotation(),
