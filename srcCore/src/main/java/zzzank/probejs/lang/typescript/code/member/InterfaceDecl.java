@@ -1,7 +1,5 @@
 package zzzank.probejs.lang.typescript.code.member;
 
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.typescript.Declaration;
@@ -16,11 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Setter
-@Accessors(chain = true)
 public class InterfaceDecl extends ClassDecl {
 
     public boolean withStatic = true;
+    private ClassDecl staticClass = null;
 
     public InterfaceDecl(
         String name,
@@ -31,7 +28,14 @@ public class InterfaceDecl extends ClassDecl {
         super(name, superClass, interfaces, variableTypes);
     }
 
-    public ClassDecl createStaticClass() {
+    public ClassDecl getStaticClass() {
+        if (staticClass == null) {
+            staticClass = createStaticClass();
+        }
+        return staticClass;
+    }
+
+    private ClassDecl createStaticClass() {
         val classDecl = new ClassDecl(
             this.name,
             null,
