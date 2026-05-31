@@ -6,13 +6,13 @@ plugins {
 publisher {
     if (propertyBool("publish_to_modrinth")) {
         apiKeys {
-            System.getenv("MODRINTH_TOKEN")?.let(this::modrinth)
+            System.getenv("MODRINTH_TOKEN")?.let { modrinth(it) }
         }
         modrinthID = propertyString("modrinth_project_id")
     }
     if (propertyBool("publish_to_curseforge")) {
         apiKeys {
-            System.getenv("CURSEFORGE_TOKEN")?.let(this::curseforge)
+            System.getenv("CURSEFORGE_TOKEN")?.let { curseforge(it) }
         }
         curseID = propertyString("curseforge_project_id")
     }
