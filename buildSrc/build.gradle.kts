@@ -13,4 +13,7 @@ dependencies {
 
     // Source: https://mvnrepository.com/artifact/com.gradleup.shadow/shadow-gradle-plugin
     implementation("com.gradleup.shadow:shadow-gradle-plugin:9.2.2")
+
+    // https://github.com/unimined/JvmDowngrader/issues/40#issuecomment-4545707904
+    implementation("commons-io:commons-io:2.22.0")
 }
