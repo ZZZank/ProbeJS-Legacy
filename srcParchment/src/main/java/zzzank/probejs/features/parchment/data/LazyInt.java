@@ -1,4 +1,4 @@
-package zzzank.probejs.lang.parchment.data;
+package zzzank.probejs.features.parchment.data;
 
 import java.util.function.IntSupplier;
 

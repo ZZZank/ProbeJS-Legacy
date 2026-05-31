@@ -13,7 +13,7 @@ import org.parchmentmc.feather.mapping.VersionedMappingDataContainer;
 import org.parchmentmc.feather.named.Named;
 import org.parchmentmc.feather.util.SimpleVersion;
 import test.impl.VirtualFileSystem;
-import zzzank.probejs.lang.parchment.data.IndexedMappingData;
+import zzzank.probejs.features.parchment.data.IndexedMappingData;
 import test.impl.IndexedMappingDataBuilder;
 
 import java.io.InputStream;

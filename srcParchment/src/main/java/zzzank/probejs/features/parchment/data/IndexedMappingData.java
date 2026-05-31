@@ -1,19 +1,17 @@
-package zzzank.probejs.lang.parchment.data;
+package zzzank.probejs.features.parchment.data;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
 
 import java.util.List;
 
-/**
- * To reduce size of result json:
- * - use {@link StringIndexer} to convert class names into integer
- * - replace list of Javadoc lines with a single string
- * - parameter and field is now represented by a single string instead of {@link JsonObject}
- * - more?
- *
- * @author ZZZank
- */
+/// To reduce size of result json:
+/// - use [StringIndexer] to convert class names into integer
+/// - replace list of Javadoc lines with a single string
+/// - parameter and field is now represented by a single string instead of [JsonObject]
+/// - more?
+///
+/// @author ZZZank
 public class IndexedMappingData {
     public List<IndexedClass> classes;
     public List<String> indexedDiff;
@@ -51,7 +49,8 @@ public class IndexedMappingData {
     /// field, or param, or return type
     @JsonAdapter(IndexedNamedType.GsonAdapter.class)
     public static class IndexedNamedType extends JavaDocHolder {
-        /// for field, the name is remapped name
+        /// for field, the name is remapped name, for finding the correct field
+        /// for parameter, the name is for replacing existed name. Index is used for finding param
         public String name;
         /// the raw value should be class internal name
         /// @see StringIndexer#getValue(int)

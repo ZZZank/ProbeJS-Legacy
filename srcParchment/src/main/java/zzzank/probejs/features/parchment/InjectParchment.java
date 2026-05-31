@@ -1,12 +1,12 @@
-package zzzank.probejs.lang.parchment;
+package zzzank.probejs.features.parchment;
 
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.clazz.Clazz;
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
 import zzzank.probejs.lang.java.clazz.members.FieldInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;
-import zzzank.probejs.lang.parchment.data.IndexedMappingData;
-import zzzank.probejs.lang.parchment.data.StringIndexer;
+import zzzank.probejs.features.parchment.data.IndexedMappingData;
+import zzzank.probejs.features.parchment.data.StringIndexer;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.member.*;

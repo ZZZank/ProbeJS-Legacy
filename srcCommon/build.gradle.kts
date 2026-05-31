@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation(project(":srcCore"))
+    implementation(project(":srcParchment"))
 
     // choose 0.8.4 because in 1.16.5 Forge: https://github.com/MinecraftForge/MinecraftForge/blob/b3426008d3c3a256fcfaf9d780682c45ab1d1fdb/build.gradle#L528
     // https://mvnrepository.com/artifact/org.spongepowered/mixin

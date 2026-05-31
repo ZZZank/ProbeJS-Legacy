@@ -1,4 +1,4 @@
-package zzzank.probejs.lang.parchment;
+package zzzank.probejs.features.parchment;
 
 import zzzank.probejs.lang.java.clazz.members.ConstructorInfo;
 import zzzank.probejs.lang.java.clazz.members.MethodInfo;

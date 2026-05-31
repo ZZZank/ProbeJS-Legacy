@@ -5,8 +5,11 @@ import dev.latvian.kubejs.script.BindingsEvent;
 import dev.latvian.kubejs.script.ScriptType;
 import dev.latvian.kubejs.util.ClassFilter;
 import dev.latvian.mods.rhino.NativeJavaClass;
+import net.minecraftforge.fml.ModList;
+import zzzank.probejs.ProbeJS;
 import zzzank.probejs.events.*;
 import zzzank.probejs.features.kubejs.BindingFilter;
+import zzzank.probejs.features.parchment.ParchmentMappingLoader;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.snippet.SnippetDump;
 import zzzank.probejs.lang.transpiler.Transpiler;
@@ -70,6 +73,15 @@ public class BuiltinProbeJSPlugin extends KubeJSPlugin implements ProbeJSPlugin 
     public void registerClassTransformer(ClassTransformerRegistration registration) {
         if (RhizoState.RETURNS_SELF_ANNOTATION) {
             registration.register(new RhizoReturnsSelf());
+        }
+        try {
+            var path = ModList.get()
+                .getModFileById(ProbeJS.MOD_ID)
+                .getFile()
+                .findResource("reindexed-parchment.json");
+            ParchmentMappingLoader.getTransformerOrInit(path).ifPresent(registration::register);
+        } catch (Exception e) {
+            ProbeJS.LOGGER.warn("Unable to load parchment mapping, skipping", e);
         }
         registration.register(
             new InjectAnnotation(),

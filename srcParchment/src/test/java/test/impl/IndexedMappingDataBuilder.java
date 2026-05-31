@@ -2,8 +2,8 @@ package test.impl;
 
 import org.objectweb.asm.Type;
 import org.parchmentmc.feather.mapping.MappingDataContainer;
-import zzzank.probejs.lang.parchment.data.IndexedMappingData;
-import zzzank.probejs.lang.parchment.data.StringIndexer;
+import zzzank.probejs.features.parchment.data.IndexedMappingData;
+import zzzank.probejs.features.parchment.data.StringIndexer;
 
 import java.util.ArrayList;
 import java.util.List;
