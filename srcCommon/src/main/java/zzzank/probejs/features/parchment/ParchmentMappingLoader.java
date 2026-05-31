@@ -26,6 +26,7 @@ public abstract class ParchmentMappingLoader {
         }
         try (var reader = Files.newBufferedReader(path)) {
             CACHED = ProbeJS.GSON.fromJson(reader, IndexedMappingData.class);
+            CACHED.restoreAfterDeserialization();
         }
         return CACHED;
     }
