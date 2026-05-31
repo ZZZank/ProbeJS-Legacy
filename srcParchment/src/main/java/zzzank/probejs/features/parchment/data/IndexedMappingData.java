@@ -13,6 +13,7 @@ import java.util.List;
 ///
 /// @author ZZZank
 public class IndexedMappingData {
+    public String timestamp = null;
     public List<IndexedClass> classes;
     public List<String> indexedDiff;
 
