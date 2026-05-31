@@ -1,4 +1,4 @@
-package zzzank.probejs.docs.assignments;
+package zzzank.probejs.docs;
 
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.plugin.ProbeJSPlugin;
