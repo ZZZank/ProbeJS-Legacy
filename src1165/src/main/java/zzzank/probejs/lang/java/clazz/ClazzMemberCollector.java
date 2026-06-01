@@ -38,19 +38,8 @@ public class ClazzMemberCollector extends BasicMemberCollector {
     }
 
     @Override
-    public Stream<MethodInfo> methods() {
-        return super.methods().sorted(MethodInfo.commonComparator());
-    }
-
-    @Override
     protected @NotNull Stream<Method> rawMethods() {
         return super.rawMethods().filter(NO_HIDE_FROM_JS);
-    }
-
-    @Override
-    public Stream<FieldInfo> fields() {
-        // those not declared by it will be inherited from super
-        return super.fields().sorted(FieldInfo.commonComparator());
     }
 
     @Override

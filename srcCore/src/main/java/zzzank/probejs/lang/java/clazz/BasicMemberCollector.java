@@ -62,7 +62,9 @@ public class BasicMemberCollector implements MemberCollector {
 
     @Override
     public Stream<MethodInfo> methods() {
-        return rawMethods().map(method -> new MethodInfo(method, RemapperBridge.remapMethod(clazz, method), typeReplacement));
+        return rawMethods()
+            .map(method -> new MethodInfo(method, RemapperBridge.remapMethod(clazz, method), typeReplacement))
+            .sorted(MethodInfo.commonComparator());
     }
 
     protected @NotNull Stream<Method> rawMethods() {
@@ -74,16 +76,19 @@ public class BasicMemberCollector implements MemberCollector {
 
     @Override
     public Stream<FieldInfo> fields() {
-        return rawFields().map(f -> new FieldInfo(f, RemapperBridge.remapField(clazz, f)));
+        return rawFields()
+            .map(f -> new FieldInfo(f, RemapperBridge.remapField(clazz, f)))
+            .sorted(FieldInfo.commonComparator());
     }
 
     protected @NotNull Stream<Field> rawFields() {
+        // those not declared by it will be inherited from super
         return Arrays.stream(ReflectUtils.declaredFieldsSafe(clazz))
             .filter(f -> Modifier.isPublic(f.getModifiers()))
             .filter(f -> !names.contains(RemapperBridge.remapField(clazz, f)));
     }
 
-
+    /// @return `false` if there's a method with same signature in superclass
     static boolean filterInherited(Method method, Class<?> clazz) {
         if (clazz.isInterface() || method.getDeclaringClass().isInterface()) {
             // interface method is TS cannot be inherited
