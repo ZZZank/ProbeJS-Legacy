@@ -28,9 +28,12 @@ public abstract class BuiltinDocHelper {
         var allConvertibles = new ArrayList<BaseType>();
         var allTypeDecl = new ArrayList<TypeDecl>();
 
+        var formatType = classDecl.nativeClazz != null && classDecl.nativeClazz.isInterface()
+            ? BaseType.FormatType.INTERFACE
+            : BaseType.FormatType.RETURN;
         allConvertibles.add(Types.type(path)
             .withPossibleParams(classDecl.variableTypes)
-            .contextShield(BaseType.FormatType.RETURN));
+            .contextShield(formatType));
         for (var decl : convertibles) {
             if (decl.name == null) {
                 allConvertibles.add(decl.type);
