@@ -2,7 +2,7 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id("repo-conventions")
-    id("dev.architectury.loom") version "1.14-SNAPSHOT"
+    id("dev.architectury.loom") version "1.17-SNAPSHOT"
     id("idea")
     id("xyz.wagyourtail.jvmdowngrader") version "1.3.6"
     `project-common`

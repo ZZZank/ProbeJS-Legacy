@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.hypherionmc.modutils:modpublisher:2.2.1")
+    api("com.hypherionmc.modutils:modpublisher:2.2.1")
 
     // Source: https://mvnrepository.com/artifact/com.gradleup.shadow/shadow-gradle-plugin
     implementation("com.gradleup.shadow:shadow-gradle-plugin:9.2.2")
