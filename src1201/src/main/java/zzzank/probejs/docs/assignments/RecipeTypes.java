@@ -28,8 +28,8 @@ public class RecipeTypes implements ProbeJSPlugin {
         scriptDump.assignType(ItemStack.class, Types.type(Item.class));
         scriptDump.assignType(ItemStack.class, Types.object()
             .member("item", Types.primitive("Special.Item"))
-            .member("count?", Primitives.INTEGER)
-            .member("nbt?", Types.OBJECT)
+            .member("count", true, Primitives.INTEGER)
+            .member("nbt", true, Types.OBJECT)
             .build());
 
         scriptDump.assignType(Ingredient.class, Types.type(ItemStack.class));
@@ -67,14 +67,14 @@ public class RecipeTypes implements ProbeJSPlugin {
         scriptDump.assignType(RecipeFilter.class, Types.type(RecipeFilter.class).asArray());
 
         scriptDump.assignType(RecipeFilter.class, Types.object()
-            .member("or?", Types.type(RecipeFilter.class))
-            .member("not?", Types.type(RecipeFilter.class))
-            .member("id?", Types.primitive("Special.RecipeId"))
-            .member("type?", Types.primitive("Special.RecipeType"))
-            .member("group?", Types.STRING)
-            .member("mod?", Types.primitive("Special.Mod"))
-            .member("input?", Types.type(InputItem.class))
-            .member("output?", Types.type(OutputItem.class))
+            .member("or", true, Types.type(RecipeFilter.class))
+            .member("not", true, Types.type(RecipeFilter.class))
+            .member("id", true, Types.primitive("Special.RecipeId"))
+            .member("type", true, Types.primitive("Special.RecipeType"))
+            .member("group", true, Types.STRING)
+            .member("mod", true, Types.primitive("Special.Mod"))
+            .member("input", true, Types.type(InputItem.class))
+            .member("output", true, Types.type(OutputItem.class))
             .build());
 
         scriptDump.assignType(FluidStackJS.class, Types.type(Fluid.class));
@@ -82,15 +82,15 @@ public class RecipeTypes implements ProbeJSPlugin {
         scriptDump.assignType(FluidStackJS.class, Types.literal("-"));
         scriptDump.assignType(FluidStackJS.class, Types.object()
             .member("fluid", Types.primitive("Special.Fluid"))
-            .member("amount?", Primitives.INTEGER)
-            .member("nbt?", Types.OBJECT)
+            .member("amount", true, Primitives.INTEGER)
+            .member("nbt", true, Types.OBJECT)
             .build());
 
         scriptDump.assignType(IngredientActionFilter.class, Primitives.INTEGER);
         scriptDump.assignType(IngredientActionFilter.class, Types.type(Ingredient.class));
         scriptDump.assignType(IngredientActionFilter.class, Types.object()
-            .member("item?", Types.type(Ingredient.class))
-            .member("index?", Primitives.INTEGER)
+            .member("item", true, Types.type(Ingredient.class))
+            .member("index", true, Primitives.INTEGER)
             .build());
     }
 
