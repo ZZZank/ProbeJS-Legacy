@@ -9,10 +9,7 @@ import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.utils.NameUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ZZZank
@@ -113,25 +110,20 @@ public abstract class BuiltinDocHelper {
         return NameUtils.firstLower(substring);
     }
 
-    private static void convertFieldToBeaning(ClassDecl clazzDecl, Set<String> excludedNames) {
-        val keptFields = new ArrayList<FieldDecl>();
-        for (val field : clazzDecl.fields) {
+    private static void convertFieldToBeaning(ClassDecl classDecl, Set<String> excludedNames) {
+        var fieldIterator = classDecl.fields.listIterator();
+        while (fieldIterator.hasNext()) {
+            var field = fieldIterator.next();
+
             if (field.isStatic || field.isFinal || excludedNames.contains(field.name)) {
-                keptFields.add(field);
                 continue;
             }
 
-            val getter = new BeanDecl.Getter(field.name, field.type);
-            getter.comments.addAll(field.comments);
-            clazzDecl.bodyCode.add(getter);
+            var newDecl = new BeanFormattedFieldDecl(field.name, field.type);
+            newDecl.comments.addAll(field.comments);
 
-            val setter = new BeanDecl.Setter(field.name, field.type);
-            setter.comments.addAll(field.comments);
-            clazzDecl.bodyCode.add(setter);
-
+            fieldIterator.set(newDecl);
             excludedNames.add(field.name);
         }
-        clazzDecl.fields.clear();
-        clazzDecl.fields.addAll(keptFields);
     }
 }

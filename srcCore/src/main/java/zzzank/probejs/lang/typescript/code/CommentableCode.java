@@ -42,7 +42,7 @@ public abstract class CommentableCode extends Code {
 
     public abstract List<String> formatRaw(Declaration declaration);
 
-    public final List<String> format(Declaration declaration) {
+    public List<String> format(Declaration declaration) {
         if (comments.isEmpty()) {
             return formatRaw(declaration);
         }
