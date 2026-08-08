@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class IndexedMappingGenTest {
 
-    private static final boolean WRITE_FILE = true;
+    private static final boolean WRITE_FILE = false;
 
     /// glad that Parchment is licensed CC0, so we can modify it for smaller file size
     ///
