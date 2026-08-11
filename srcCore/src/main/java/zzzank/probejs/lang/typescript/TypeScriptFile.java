@@ -118,4 +118,9 @@ public class TypeScriptFile {
     public NativeClassFile asNative() {
         return (NativeClassFile) this;
     }
+
+    @Override
+    public String toString() {
+        return String.format("TypeScriptFile[%s]", path);
+    }
 }
