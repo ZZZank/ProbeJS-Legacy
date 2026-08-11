@@ -13,7 +13,7 @@ public interface MemberCollector {
     Class<?> currentTarget();
 
     /// Get a new [MemberCollector] that targets the specified `clazz`. A [MemberCollector] instance with no
-    /// [#reTarget(java.lang.Class)] calls should target the [Object] class
+    /// [#reTarget(Class)] calls should target the [Object] class
     MemberCollector reTarget(Class<?> clazz);
 
     Stream<ConstructorInfo> constructors();

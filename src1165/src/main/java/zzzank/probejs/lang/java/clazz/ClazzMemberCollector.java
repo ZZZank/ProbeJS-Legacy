@@ -2,12 +2,9 @@ package zzzank.probejs.lang.java.clazz;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
 import org.jetbrains.annotations.NotNull;
-import zzzank.probejs.lang.java.clazz.members.FieldInfo;
-import zzzank.probejs.lang.java.clazz.members.MethodInfo;
 import zzzank.probejs.lang.java.type.TypeReplacementCollector;
 
 import java.lang.reflect.*;
-import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 

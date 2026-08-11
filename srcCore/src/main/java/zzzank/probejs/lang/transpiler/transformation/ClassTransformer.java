@@ -9,10 +9,6 @@ import zzzank.probejs.lang.typescript.code.member.ConstructorDecl;
 import zzzank.probejs.lang.typescript.code.member.FieldDecl;
 import zzzank.probejs.lang.typescript.code.member.MethodDecl;
 
-/**
- * Accepts a Clazz and a transpiled TS file, modify the
- * file to respect some stuffs.
- */
 public interface ClassTransformer {
     ClassTransformer NO_OP = new ClassTransformer() {};
 

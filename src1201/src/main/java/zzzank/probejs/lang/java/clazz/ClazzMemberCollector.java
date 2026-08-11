@@ -10,7 +10,6 @@ import zzzank.probejs.lang.java.type.TypeDescriptor;
 import zzzank.probejs.lang.java.type.TypeReplacementCollector;
 import zzzank.probejs.lang.java.type.impl.VariableType;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Stream;
 
