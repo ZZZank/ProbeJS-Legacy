@@ -22,39 +22,23 @@ public abstract class BeanDecl extends CommentableCode {
         this.type = type;
     }
 
-    @Override
-    public ImportInfos getImportInfos() {
-        return type.getImportInfos(getFormatType());
-    }
-
-    @Override
-    public List<String> formatRaw(Declaration declaration) {
-        return Collections.singletonList(String.format(
-            getFormat(),
-            ProbeJS.GSON.toJson(name),
-            type.line(declaration, getFormatType())
-        ));
-    }
-
-    @NotNull
-    protected abstract BaseType.FormatType getFormatType();
-
-    @NotNull
-    protected abstract String getFormat();
-
     public static class Getter extends BeanDecl {
         public Getter(String name, BaseType type) {
             super(name, type);
         }
 
         @Override
-        protected @NotNull String getFormat() {
-            return "get %s(): %s";
+        public List<String> formatRaw(Declaration declaration) {
+            return Collections.singletonList(String.format(
+                "get %s(): %s",
+                ProbeJS.GSON.toJson(name),
+                type.line(declaration, BaseType.FormatType.RETURN)
+            ));
         }
 
         @Override
-        protected BaseType.@NotNull FormatType getFormatType() {
-            return BaseType.FormatType.RETURN;
+        public ImportInfos getImportInfos() {
+            return type.getImportInfos(BaseType.FormatType.RETURN);
         }
     }
 
@@ -67,13 +51,18 @@ public abstract class BeanDecl extends CommentableCode {
         }
 
         @Override
-        protected @NotNull String getFormat() {
-            return "set %s(" + paramName + ": %s)";
+        public List<String> formatRaw(Declaration declaration) {
+            return Collections.singletonList(String.format(
+                "set %s(%s: %s)",
+                ProbeJS.GSON.toJson(name),
+                paramName,
+                type.line(declaration, BaseType.FormatType.INPUT)
+            ));
         }
 
         @Override
-        protected BaseType.@NotNull FormatType getFormatType() {
-            return BaseType.FormatType.INPUT;
+        public ImportInfos getImportInfos() {
+            return type.getImportInfos(BaseType.FormatType.INPUT);
         }
     }
 }
