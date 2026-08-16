@@ -47,7 +47,8 @@ public class InterfaceDecl extends ClassDecl {
 
         classDecl.isAbstract = true;
         classDecl.methods.addAll(this.methods);
-        classDecl.fields.addAll(fields);
+        classDecl.fields.addAll(this.fields);
+        classDecl.bodyCode.addAll(this.bodyCode);
         return classDecl;
     }
 
