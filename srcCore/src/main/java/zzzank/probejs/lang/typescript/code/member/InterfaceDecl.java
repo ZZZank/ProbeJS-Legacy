@@ -40,10 +40,6 @@ public class InterfaceDecl extends ClassDecl {
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
-        for (val method : methods) {
-            method.isInterface = true;
-        }
-
         var lines = new ArrayList<String>();
 
         // Format head - export interface Interf$$Interface<T> extends ... {

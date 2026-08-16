@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.code.member;
 
-import lombok.val;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
@@ -18,7 +17,6 @@ public class MethodDecl extends CommentableCode {
     public String name;
     public boolean isAbstract = false;
     public boolean isStatic = false;
-    public boolean isInterface = false;
     public List<TSVariableType> variableTypes;
     public List<ParamDecl> params;
     public BaseType returnType;
@@ -49,28 +47,21 @@ public class MethodDecl extends CommentableCode {
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
-        // Format head - public static "name"<T, U extends A>
-        val parts = new ArrayList<String>();
-        if (!isInterface) {
-            parts.add("public");
-        }
+        // [static] "name"<T, T2 extends string>(param1: ParamType1): ReturnType [{/** content */}]
+        var result = new StringBuilder();
+
         if (isStatic) {
-            parts.add("static");
+            result.append("static ");
         }
-        parts.add(ProbeJS.GSON.toJson(name));
-
-        var head = String.join(" ", parts) + TSVariableType.formatGenericParam(variableTypes, declaration);
-
-        // Format body - (a: type, ...)
-        val body = ParamDecl.formatParams(params, declaration);
-
-        // Format tail - : returnType {/** content */}
-        String tail = String.format(": %s", returnType.line(declaration, BaseType.FormatType.RETURN));
+        result.append(ProbeJS.GSON.toJson(name));
+        result.append(TSVariableType.formatGenericParam(variableTypes, declaration));
+        result.append(ParamDecl.formatParams(params, declaration));
+        result.append(": ").append(returnType.line(declaration, BaseType.FormatType.RETURN));
         if (content != null) {
-            tail = String.format("%s {/** %s */}", tail, content);
+            result.append(" {/** ").append(content).append(" */}");
         }
 
-        return Collections.singletonList(head + body + tail);
+        return Collections.singletonList(result.toString());
     }
 
     public static class Builder extends ConstructorDecl.BuilderBase<Builder> {
