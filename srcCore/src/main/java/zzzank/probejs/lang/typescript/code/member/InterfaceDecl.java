@@ -30,26 +30,12 @@ public class InterfaceDecl extends ClassDecl {
 
     public ClassDecl getStaticClass() {
         if (staticClass == null) {
-            staticClass = createStaticClass();
+            var classDecl = new InterfaceStaticClassDecl();
+
+            classDecl.isAbstract = true;
+            staticClass = classDecl;
         }
         return staticClass;
-    }
-
-    private ClassDecl createStaticClass() {
-        val classDecl = new ClassDecl(
-            this.name,
-            null,
-            Collections.singletonList(Types.primitive(ImportType.STATIC.fmt(name))
-                .withPossibleParams(variableTypes)
-                .contextShield(BaseType.FormatType.INTERFACE)),
-            this.variableTypes
-        );
-
-        classDecl.isAbstract = true;
-        classDecl.methods.addAll(this.methods);
-        classDecl.fields.addAll(this.fields);
-        classDecl.bodyCode.addAll(this.bodyCode);
-        return classDecl;
     }
 
     @Override
@@ -84,5 +70,27 @@ public class InterfaceDecl extends ClassDecl {
         lines.add("}");
 
         return lines;
+    }
+
+    private class InterfaceStaticClassDecl extends ClassDecl {
+        public InterfaceStaticClassDecl() {
+            super(
+                InterfaceDecl.this.name,
+                null,
+                Collections.singletonList(Types.primitive(ImportType.STATIC.fmt(InterfaceDecl.this.name))
+                    .withPossibleParams(InterfaceDecl.this.variableTypes)
+                    .contextShield(BaseType.FormatType.INTERFACE)),
+                InterfaceDecl.this.variableTypes
+            );
+        }
+
+        @Override
+        public List<String> formatRaw(Declaration declaration) {
+            methods.addAll(InterfaceDecl.this.methods);
+            fields.addAll(InterfaceDecl.this.fields);
+            bodyCode.addAll(InterfaceDecl.this.bodyCode);
+
+            return super.formatRaw(declaration);
+        }
     }
 }
