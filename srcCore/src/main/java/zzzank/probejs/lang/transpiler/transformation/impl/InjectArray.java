@@ -49,19 +49,6 @@ public class InjectArray implements ClassTransformer {
             }
             classDecl.bodyCode.add(Types.format("[index: number]: %s", iterType));
         }
-
-
-        if (isDirectlyImplementing(clazz.getOriginal(), Map.class)) {
-            BaseType valueType = classDecl.methods.stream()
-                .filter(m -> m.name.equals("get") && m.params.size() == 1)
-                .map(m -> m.returnType)
-                .findFirst()
-                .orElse(null);
-            if (valueType == null) {
-                return;
-            }
-            classDecl.bodyCode.add(Types.format("[index: string | number]: %s", valueType));
-        }
     }
 
     private boolean isDirectlyImplementing(Class<?> toExamine, Class<?> target) {
