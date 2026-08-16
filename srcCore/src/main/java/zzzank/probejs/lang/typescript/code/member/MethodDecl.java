@@ -20,7 +20,6 @@ public class MethodDecl extends CommentableCode {
     public List<TSVariableType> variableTypes;
     public List<ParamDecl> params;
     public BaseType returnType;
-    public String content = null;
 
     public MethodDecl(String name, List<TSVariableType> variableTypes, List<ParamDecl> params, BaseType returnType) {
         this.name = name;
@@ -57,9 +56,6 @@ public class MethodDecl extends CommentableCode {
         result.append(TSVariableType.formatGenericParam(variableTypes, declaration));
         result.append(ParamDecl.formatParams(params, declaration));
         result.append(": ").append(returnType.line(declaration, BaseType.FormatType.RETURN));
-        if (content != null) {
-            result.append(" {/** ").append(content).append(" */}");
-        }
 
         return Collections.singletonList(result.toString());
     }

@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.code.member;
 
-import lombok.val;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.type.BaseType;

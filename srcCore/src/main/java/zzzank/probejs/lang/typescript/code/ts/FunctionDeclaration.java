@@ -11,7 +11,6 @@ import zzzank.probejs.lang.typescript.code.type.ts.TSVariableType;
 import zzzank.probejs.lang.typescript.refer.ImportInfos;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class FunctionDeclaration extends CommentableCode implements DeclarationCode {
     public String name;
@@ -39,22 +38,14 @@ public class FunctionDeclaration extends CommentableCode implements DeclarationC
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
-        // Format head - function name<T, U extends A>
-        String head = String.format("function %s", name);
-        if (!variableTypes.isEmpty()) {
-            String variables = variableTypes.stream()
-                .map(type -> type.line(declaration, BaseType.FormatType.VARIABLE))
-                .collect(Collectors.joining(", "));
-            head = String.format("%s<%s>", head, variables);
-        }
+        // function name<T, T2>(param1: ParamType1): ReturnType;
+        String result = "function " + name
+            + TSVariableType.formatGenericParam(this.variableTypes, declaration)
+            + ParamDecl.formatParams(params, declaration)
+            + ": " + returnType.line(declaration, BaseType.FormatType.RETURN)
+            + ";";
 
-        // Format body - (a: type, ...)
-        String body = ParamDecl.formatParams(params, declaration);
-
-        // Format tail - : returnType
-        String tail = String.format(": %s", returnType.line(declaration, BaseType.FormatType.RETURN));
-
-        return Collections.singletonList(String.format("%s%s%s", head, body, tail));
+        return Collections.singletonList(result);
     }
 
     @Override

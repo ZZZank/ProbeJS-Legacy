@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.code.member;
 
-import lombok.val;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -15,7 +14,6 @@ import java.util.*;
 public class ConstructorDecl extends CommentableCode {
     public final List<TSVariableType> variableTypes;
     public final List<ParamDecl> params;
-    public String content = null;
 
     public ConstructorDecl(List<TSVariableType> variableTypes, List<ParamDecl> params) {
         this.variableTypes = variableTypes;
@@ -31,18 +29,12 @@ public class ConstructorDecl extends CommentableCode {
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
-        // Format head - constructor<T>
-        String head = "constructor" + TSVariableType.formatGenericParam(variableTypes, declaration);
+        String result = "constructor"
+            + TSVariableType.formatGenericParam(variableTypes, declaration)
+            + ParamDecl.formatParams(params, declaration)
+            + ";";
 
-        // Format body - (a: type, ...)
-        val body = ParamDecl.formatParams(params, declaration);
-
-        // Format tail - {/** content */}
-        String tail = "";
-        if (content != null) {
-            tail = String.format("%s {/** %s */}", tail, content);
-        }
-        return Collections.singletonList(String.format("%s%s%s", head, body, tail));
+        return Collections.singletonList(result);
     }
 
     public static class BuilderBase<SELF extends BuilderBase<SELF>> {

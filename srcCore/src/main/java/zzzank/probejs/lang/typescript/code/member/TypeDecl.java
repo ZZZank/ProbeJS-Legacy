@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.code.member;
 
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
@@ -65,17 +64,15 @@ public class TypeDecl extends CommentableCode implements DeclarationCode {
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
-        val builder = new StringBuilder();
+        var builder = new StringBuilder();
+
         if (exportDecl) {
             builder.append("export ");
         }
         builder.append("type ").append(name);
-        if (!symbolVariables.isEmpty()) {
-            builder.append(TSVariableType.formatGenericParam(symbolVariables, declaration));
-        }
-        builder.append(" = ")
-            .append(type.line(declaration, typeFormat))
-            .append(";");
+        builder.append(TSVariableType.formatGenericParam(symbolVariables, declaration));
+        builder.append(" = ").append(type.line(declaration, typeFormat)).append(";");
+
         return Collections.singletonList(builder.toString());
     }
 

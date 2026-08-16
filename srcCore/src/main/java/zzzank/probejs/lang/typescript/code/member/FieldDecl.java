@@ -35,18 +35,19 @@ public class FieldDecl extends CommentableCode {
 
     @Override
     public List<String> formatRaw(Declaration declaration) {
-        val head = new ArrayList<String>();
+        // [static] [readonly] "name": ReturnType;
+        var builder = new StringBuilder();
+
         if (isStatic) {
-            head.add("static");
+            builder.append("static ");
         }
         if (isFinal) {
-            head.add("readonly");
+            builder.append("readonly ");
         }
-        head.add(ProbeJS.GSON.toJson(name));
+        builder.append(ProbeJS.GSON.toJson(name));
+        builder.append(": ").append(type.line(declaration, BaseType.FormatType.RETURN));
+        builder.append(";");
 
-        return Collections.singletonList(String.format("%s: %s",
-            String.join(" ", head),
-            type.line(declaration, BaseType.FormatType.RETURN)
-        ));
+        return Collections.singletonList(builder.toString());
     }
 }
