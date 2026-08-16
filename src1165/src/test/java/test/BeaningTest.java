@@ -47,9 +47,6 @@ public class BeaningTest {
         var classDecl = files.get(ClassPath.ofJava(type))
             .asNative()
             .nativeClass;
-        if (classDecl instanceof InterfaceDecl interfaceDecl) {
-            classDecl = interfaceDecl.getStaticClass();
-        }
 
         var hasMatchingBean = false;
 

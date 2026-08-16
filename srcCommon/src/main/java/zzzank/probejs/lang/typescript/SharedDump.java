@@ -5,7 +5,6 @@ import zzzank.probejs.api.dump.TSFilesDump;
 import zzzank.probejs.lang.java.ClassRegistry;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.transpiler.Transpiler;
-import zzzank.probejs.lang.typescript.code.member.InterfaceDecl;
 import zzzank.probejs.util.BuiltinDocHelper;
 
 import java.io.IOException;
@@ -43,11 +42,7 @@ public class SharedDump extends TSFilesDump implements ProbeNamedDump {
 
             boolean convertField = ProbeConfig.fieldAsBeaning.get();
             if (file instanceof NativeClassFile nativeFile) {
-                var classDecl = nativeFile.nativeClass;
-                if (classDecl instanceof InterfaceDecl interfaceDecl) {
-                    classDecl = interfaceDecl.getStaticClass();
-                }
-                BuiltinDocHelper.injectBeaning(classDecl, convertField);
+                BuiltinDocHelper.injectBeaning(nativeFile.nativeClass, convertField);
             }
         }
         super.open();
