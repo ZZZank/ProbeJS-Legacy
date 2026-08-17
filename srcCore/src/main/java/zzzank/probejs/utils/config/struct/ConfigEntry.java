@@ -15,9 +15,6 @@ import java.util.stream.Stream;
  * @author ZZZank
  */
 public interface ConfigEntry<T> {
-
-    /// basic action
-
     /// The name of this config entry. For [ConfigRoot], it will always return an empty string
     ///
     /// For complete path of this config entry, use [#path()]
@@ -63,6 +60,10 @@ public interface ConfigEntry<T> {
 
     default <P> Optional<P> getProp(ConfigProperty<P> property) {
         return properties().get(property);
+    }
+
+    default <P> P getPropOrDefault(ConfigProperty<P> property) {
+        return properties().getOrDefault(property);
     }
 
     /// The parent config category holding this config entry
@@ -112,5 +113,7 @@ public interface ConfigEntry<T> {
     default String path() {
         return parent().path() + '.' + name();
     }
+
+    Stream<ConfigEntry<?>> streamEntries();
 }
 

@@ -125,6 +125,8 @@ public interface ReflectUtils {
                 return Boolean.class;
             } else if (type == char.class) {
                 return Character.class;
+            } else if (type == void.class) {
+                return Void.class;
             }
         }
         return type;

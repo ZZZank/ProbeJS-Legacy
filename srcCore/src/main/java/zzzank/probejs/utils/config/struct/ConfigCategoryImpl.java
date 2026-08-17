@@ -9,6 +9,7 @@ import zzzank.probejs.utils.config.prop.ConfigProperties;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -40,6 +41,11 @@ class ConfigCategoryImpl extends ConfigEntryImpl<Map<String, ConfigEntry<?>>> im
         );
         structure.put(entry.name(), entry);
         return entry;
+    }
+
+    @Override
+    public Stream<ConfigEntry<?>> streamEntries() {
+        return this.structure.values().stream().flatMap(ConfigEntry::streamEntries);
     }
 
     static final class CategoryBinding extends ReadOnlyBinding<Map<String, ConfigEntry<?>>> {

@@ -7,6 +7,7 @@ import zzzank.probejs.utils.config.binding.ConfigBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author ZZZank
@@ -36,6 +37,11 @@ class ConfigEntryImpl<T> implements ConfigEntry<T> {
                 ConfigCategory.PATH_SPLITTER_CHAR
             )
         );
+    }
+
+    @Override
+    public Stream<ConfigEntry<?>> streamEntries() {
+        return Stream.of(this);
     }
 
     @Override

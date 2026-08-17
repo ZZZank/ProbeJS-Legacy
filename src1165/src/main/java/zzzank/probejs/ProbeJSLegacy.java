@@ -2,9 +2,12 @@ package zzzank.probejs;
 
 import me.shedaniel.architectury.platform.forge.EventBuses;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import zzzank.probejs.features.forge_scan.BuiltinScanners;
+import zzzank.probejs.features.minecraft.ProbeJSConfigScreen;
 import zzzank.probejs.utils.ProbeText;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
 import zzzank.probejs.utils.config.struct.ConfigRootImpl;
@@ -34,6 +37,10 @@ public class ProbeJSLegacy {
             ProbeConfig.INSTANCE.read();
         } catch (IOException ignored) {
         }
+
+        ModLoadingContext.get().registerExtensionPoint(
+            ExtensionPoint.CONFIGGUIFACTORY,
+            () -> (mc, lastScreen) -> new ProbeJSConfigScreen(lastScreen));
     }
 
     public static ProbeText refreshConfig() {

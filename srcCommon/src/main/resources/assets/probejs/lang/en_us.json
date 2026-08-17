@@ -28,5 +28,9 @@
   "probejs.performance": "You installed %s mods! You might want to disable some typing using '/probejs complete' command and config (.probe/probe-settings.json) for performance.",
   "probejs.decompile": "ProbeJS will decompile mod sources at next dump, decompilation will also trigger when mod list changed.",
   "probejs.no_decompile": "ProbeJS will not decompile mod sources now.",
-  "probejs.config_refreshed": "ProbeJS config (.probe/probe-settings.json) refreshed!"
+  "probejs.config_refreshed": "ProbeJS config (.probe/probe-settings.json) refreshed!",
+
+  "probejs.option.on": "On",
+  "probejs.option.off": "Off",
+  "probejs.option.edit": "Edit"
 }
