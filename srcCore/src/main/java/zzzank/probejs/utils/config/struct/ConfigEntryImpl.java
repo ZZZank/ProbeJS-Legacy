@@ -6,6 +6,8 @@ import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.config.binding.ConfigBinding;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 
+import java.util.Objects;
+
 /**
  * @author ZZZank
  */
@@ -34,5 +36,17 @@ class ConfigEntryImpl<T> implements ConfigEntry<T> {
                 ConfigCategory.PATH_SPLITTER_CHAR
             )
         );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ConfigEntry<?> other
+            && Objects.equals(parent, other.parent())
+            && this.name.equals(other.name());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parent, name);
     }
 }
