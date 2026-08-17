@@ -323,7 +323,7 @@ class SchemaJsonConfigIOTest {
         io.registerSerdeFactory(new GsonSerdeFactory(gson));
 
         var root = new ConfigRootImpl(io, configPath);
-        var network = root.subCategory("network");
+        var network = root.defineSubCategory("network");
         network.define("port").bindDefault(8080).build();
         network.define("timeout").bindDefault(5000L).build();
 
