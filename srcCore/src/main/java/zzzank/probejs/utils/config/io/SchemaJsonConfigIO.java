@@ -1,10 +1,8 @@
 package zzzank.probejs.utils.config.io;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.JsonUtils;
@@ -277,5 +275,20 @@ public class SchemaJsonConfigIO extends SerdeHolder<JsonElement> implements Conf
         }
 
         return schemaEntry;
+    }
+
+    @Override
+    public <T> ConfigSerde<String, T> xmapToString(ConfigSerde<JsonElement, T> serde) {
+        return new ConfigSerde<>() {
+            @Override
+            public @NotNull String serialize(@NotNull T value) {
+                return serde.serialize(value).toString();
+            }
+
+            @Override
+            public @NotNull T deserialize(@NotNull String intermediate) {
+                return serde.deserialize(new JsonParser().parse(intermediate));
+            }
+        };
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.JsonUtils;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
@@ -123,5 +124,20 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
         entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(entry.binding().getDefault()));
         entryJson.add(VALUE_KEY, serde.serialize(entry.get()));
         return entryJson;
+    }
+
+    @Override
+    public <T> ConfigSerde<String, T> xmapToString(ConfigSerde<JsonElement, T> serde) {
+        return new ConfigSerde<>() {
+            @Override
+            public @NotNull String serialize(@NotNull T value) {
+                return gson.toJson(serde.serialize(value));
+            }
+
+            @Override
+            public @NotNull T deserialize(@NotNull String intermediate) {
+                return serde.deserialize(gson.fromJson(intermediate, JsonElement.class));
+            }
+        };
     }
 }

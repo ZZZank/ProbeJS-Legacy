@@ -75,4 +75,6 @@ public abstract class SerdeHolder<I> {
         }
         return got;
     }
+
+    public abstract <T> ConfigSerde<String, T> xmapToString(ConfigSerde<I, T> serde);
 }

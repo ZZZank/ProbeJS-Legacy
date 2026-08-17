@@ -111,4 +111,9 @@ public class PropertiesConfigIO extends SerdeHolder<String> implements ConfigIO 
             return value.toString();
         }
     }
+
+    @Override
+    public <T> ConfigSerde<String, T> xmapToString(ConfigSerde<String, T> serde) {
+        return serde;
+    }
 }
