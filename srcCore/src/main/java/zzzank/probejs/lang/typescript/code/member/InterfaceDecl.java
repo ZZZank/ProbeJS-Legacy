@@ -29,9 +29,19 @@ public class InterfaceDecl extends ClassDecl {
 
     public ClassDecl getStaticClass() {
         if (staticClass == null) {
-            var classDecl = new InterfaceStaticClassDecl();
+            var classDecl = new ClassDecl(
+                name,
+                null,
+                Collections.singletonList(Types.primitive(ImportType.STATIC.fmt(name))
+                    .withPossibleParams(variableTypes)),
+                variableTypes
+            );
 
+            classDecl.methods.addAll(methods);
+            classDecl.fields.addAll(fields);
+            classDecl.bodyCode.addAll(bodyCode);
             classDecl.isAbstract = true;
+            classDecl.nativeClazz = this.nativeClazz;
             staticClass = classDecl;
         }
         return staticClass;
@@ -65,27 +75,5 @@ public class InterfaceDecl extends ClassDecl {
         lines.add("}");
 
         return lines;
-    }
-
-    private class InterfaceStaticClassDecl extends ClassDecl {
-        public InterfaceStaticClassDecl() {
-            super(
-                InterfaceDecl.this.name,
-                null,
-                Collections.singletonList(Types.primitive(ImportType.STATIC.fmt(InterfaceDecl.this.name))
-                    .withPossibleParams(InterfaceDecl.this.variableTypes)
-                    .contextShield(BaseType.FormatType.INTERFACE)),
-                InterfaceDecl.this.variableTypes
-            );
-        }
-
-        @Override
-        public List<String> formatRaw(Declaration declaration) {
-            methods.addAll(InterfaceDecl.this.methods);
-            fields.addAll(InterfaceDecl.this.fields);
-            bodyCode.addAll(InterfaceDecl.this.bodyCode);
-
-            return super.formatRaw(declaration);
-        }
     }
 }

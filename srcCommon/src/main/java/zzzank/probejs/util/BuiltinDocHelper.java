@@ -2,14 +2,20 @@ package zzzank.probejs.util;
 
 import lombok.val;
 import zzzank.probejs.lang.typescript.TypeScriptFile;
-import zzzank.probejs.lang.typescript.code.member.*;
+import zzzank.probejs.lang.typescript.code.member.BeanDecl;
+import zzzank.probejs.lang.typescript.code.member.BeanFormattedFieldDecl;
+import zzzank.probejs.lang.typescript.code.member.ClassDecl;
+import zzzank.probejs.lang.typescript.code.member.TypeDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.refer.ImportType;
 import zzzank.probejs.utils.NameUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author ZZZank

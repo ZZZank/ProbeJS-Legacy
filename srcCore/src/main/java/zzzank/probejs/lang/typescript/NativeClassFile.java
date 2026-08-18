@@ -18,10 +18,13 @@ public class NativeClassFile extends TypeScriptFile {
         if (decl.nativeClazz == null) {
             throw new IllegalArgumentException("provided ClassDecl does not have `nativeClazz`");
         }
-        nativeClass = decl;
-        addCode(nativeClass);
-        if (nativeClass instanceof InterfaceDecl interfaceDecl && interfaceDecl.withStatic) {
-            addCode(interfaceDecl.getStaticClass());
+        if (decl instanceof InterfaceDecl interfaceDecl && interfaceDecl.withStatic) {
+            nativeClass = interfaceDecl.getStaticClass();
+            addCode(nativeClass);
+            addCode(interfaceDecl);
+        } else {
+            nativeClass = decl;
+            addCode(nativeClass);
         }
     }
 }
