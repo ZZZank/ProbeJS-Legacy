@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 plugins {
     id("idea")
@@ -13,3 +13,7 @@ println("Gradle running on Java: ${sysProps["java.version"]} | JVM: ${sysProps["
 
 version = propertyString("mod_version")
 group = propertyString("maven_group")
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 21
+}

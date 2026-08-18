@@ -21,6 +21,10 @@ dependencies {
     testImplementation("org.ow2.asm:asm:9.6")
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 21
+}
+
 tasks.test {
     useJUnitPlatform()
 }

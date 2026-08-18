@@ -24,7 +24,7 @@ version = propertyString("mod_version")
 group = propertyString("maven_group")
 
 if (!propertyBool("use_jvmdowngrader")) {
-    tasks.withType<JavaCompile> {
+    tasks.withType<JavaCompile>().configureEach {
         options.release = javaTarget.majorVersion.toInt()
     }
 }
@@ -47,20 +47,24 @@ loom {
             logger.error("Configured AccessWidener not found")
         }
         accessWidenerPath = f
-    }
 
-    forge {
-        if (propertyBool("use_mixin")) {
-            mixinConfigs.set(propertyStringList("mixin_configs").map { "${it}.json" })
-        }
-
-        if (propertyBool("use_access_widener")) {
+        forge {
             convertAccessWideners = true
         }
     }
 
-    mixin {
-        useLegacyMixinAp = true
+    if (propertyBool("use_mixin")) {
+        forge {
+            mixinConfigs.set(propertyStringList("mixin_configs").map { "${it}.json" })
+        }
+
+        mixin {
+            useLegacyMixinAp = true
+        }
+    }
+
+    interfaceInjection {
+        getIsEnabled().set(false)
     }
 }
 
@@ -74,7 +78,9 @@ dependencies {
 
     forge("net.minecraftforge:forge:${propertyString("mc_version")}-${propertyString("forge_version")}")
 
-    modCompileOnly("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
+    modApi("curse.maven:rhino-416294:6186971")
+    modApi("curse.maven:architectury-api-419699:5137938")
+    modApi("curse.maven:kubejs-238086:8020595")
 
     val localLibsDir = file("./local_libs")
     if (localLibsDir.exists()) {
@@ -82,6 +88,22 @@ dependencies {
             ?.filter { it.isFile && it.name.endsWith(".jar") }
             ?.forEach { modImplementation(files(rootProject.relativePath(it))) }
     }
+}
+
+// Only for `runClient` task
+// Forge's ModuleClassLoader isolates each mod to its own module.
+// Since srcCore and srcCommon are `shade` dependencies (bundled into the final jar via ShadowJar),
+// their classes are NOT part of the mod's module in dev mode, causing ClassNotFoundException.
+// This task copies their compiled classes into src1201's classes directory so they're accessible.
+val copyShadedClasses by tasks.registering(Copy::class) {
+    dependsOn(":srcCore:classes", ":srcCommon:classes")
+    from(project(":srcCore").sourceSets.main.get().output.classesDirs)
+    from(project(":srcCommon").sourceSets.main.get().output.classesDirs)
+    into(project.layout.buildDirectory.dir("classes/java/main"))
+}
+
+tasks.named("classes") {
+    dependsOn(copyShadedClasses)
 }
 
 tasks.processResources {
@@ -111,6 +133,10 @@ tasks.processResources {
             )
         )
     }
+}
+
+tasks.withType(net.fabricmc.loom.task.RunGameTask::class).configureEach {
+    jvmArgs("-Xmx1g")
 }
 
 tasks.named("remapJar", RemapJarTask::class.java) {

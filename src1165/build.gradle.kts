@@ -24,7 +24,7 @@ version = propertyString("mod_version")
 group = propertyString("maven_group")
 
 if (!propertyBool("use_jvmdowngrader")) {
-    tasks.withType<JavaCompile> {
+    tasks.withType<JavaCompile>().configureEach {
         options.release = javaTarget.majorVersion.toInt()
     }
 }
@@ -47,20 +47,24 @@ loom {
             logger.error("Configured AccessWidener not found")
         }
         accessWidenerPath = f
-    }
 
-    forge {
-        if (propertyBool("use_mixin")) {
-            mixinConfigs.set(propertyStringList("mixin_configs").map { "${it}.json" })
-        }
-
-        if (propertyBool("use_access_widener")) {
+        forge {
             convertAccessWideners = true
         }
     }
 
-    mixin {
-        useLegacyMixinAp = true
+    if (propertyBool("use_mixin")) {
+        forge {
+            mixinConfigs.set(propertyStringList("mixin_configs").map { "${it}.json" })
+        }
+
+        mixin {
+            useLegacyMixinAp = true
+        }
+    }
+
+    interfaceInjection {
+        getIsEnabled().set(false)
     }
 }
 
@@ -78,6 +82,14 @@ dependencies {
 
     forge("net.minecraftforge:forge:${propertyString("mc_version")}-${propertyString("forge_version")}")
 
+    // only for development `runClient` task
+    // MixinServiceLaunchWrapper (registered by mixin-patched jar via ServiceLoader) references
+    // LaunchClassLoader, which isn't on the classpath for 1.16.5 ModLauncher-based Forge.
+    // Adding it here prevents the ServiceLoader from throwing ClassNotFoundException at init.
+    runtimeOnly("net.minecraft:launchwrapper:1.12") {
+        isTransitive = false
+    }
+
     // 3.6.5
     modApi("curse.maven:rhizo-1003287:6354880")
     modApi("me.shedaniel:architectury-forge:1.32.68")
@@ -91,6 +103,10 @@ dependencies {
             ?.filter { it.isFile && it.name.endsWith(".jar") }
             ?.forEach { modImplementation(files(rootProject.relativePath(it))) }
     }
+}
+
+tasks.withType(net.fabricmc.loom.task.RunGameTask::class).configureEach {
+    jvmArgs("-Xmx1g")
 }
 
 tasks.processResources {

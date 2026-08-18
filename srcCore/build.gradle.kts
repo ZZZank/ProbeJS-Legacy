@@ -13,3 +13,7 @@ dependencies {
     compileOnlyApi("com.google.code.gson:gson:2.8.0")
     compileOnlyApi("org.apache.logging.log4j:log4j-api:2.15.0")
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 21
+}

@@ -15,14 +15,15 @@ dependencies {
     implementation(project(":srcCore"))
     implementation(project(":srcParchment"))
 
-    // choose 0.8.4 because in 1.16.5 Forge: https://github.com/MinecraftForge/MinecraftForge/blob/b3426008d3c3a256fcfaf9d780682c45ab1d1fdb/build.gradle#L528
-    // https://mvnrepository.com/artifact/org.spongepowered/mixin
-    compileOnly("org.spongepowered:mixin:0.8.4")
     compileOnly("org.ow2.asm:asm:9.6")
     compileOnly("org.ow2.asm:asm-commons:9.6")
     compileOnly("org.ow2.asm:asm-tree:9.6")
 
     compileOnly("net.minecraftforge:forgespi:3.2.0")
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 21
 }
 
 tasks.test {
