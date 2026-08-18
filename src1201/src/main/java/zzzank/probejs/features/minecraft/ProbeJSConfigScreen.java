@@ -27,10 +27,9 @@ public class ProbeJSConfigScreen extends Screen {
         this.optionList = new OptionList(this, this.minecraft, ProbeConfig.INSTANCE);
         this.optionList.setScrollAmount(lastScrollAmount);
 
-        this.addWidget(this.optionList);
         this.wikiButton = Button.builder(
-                Component.literal("Wiki"),
-                (arg) -> Util.getPlatform().openUri("https://kubejs.com/wiki/addons/third-party/probejs"))
+                Component.literal("ProbeJS Legacy GitHub"),
+                (arg) -> Util.getPlatform().openUri("https://github.com/ZZZank/ProbeJS-Legacy"))
             .bounds(this.width / 2 - 155, this.height - 29, 150, 20)
             .build();
         this.doneButton = Button.builder(
@@ -50,7 +49,7 @@ public class ProbeJSConfigScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 8, 16777215);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 8, 0xffffff);
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }

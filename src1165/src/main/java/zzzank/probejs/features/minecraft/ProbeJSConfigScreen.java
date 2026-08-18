@@ -4,7 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.ProbeConfig;
 
@@ -26,14 +28,13 @@ public class ProbeJSConfigScreen extends Screen {
         this.optionList = new OptionList(this, this.minecraft, ProbeConfig.INSTANCE);
         this.optionList.setScrollAmount(lastScrollAmount);
 
-        this.children.add(this.optionList);
         this.wikiButton = new Button(
             this.width / 2 - 155,
             this.height - 29,
             150,
             20,
-            new TextComponent("Wiki"),
-            (arg) -> Util.getPlatform().openUri("https://kubejs.com/wiki/addons/third-party/probejs")
+            new TextComponent("ProbeJS Legacy GitHub"),
+            (arg) -> Util.getPlatform().openUri("https://github.com/ZZZank/ProbeJS-Legacy")
         );
         this.doneButton = new Button(
             this.width / 2 - 155 + 160, this.height - 29, 150, 20, CommonComponents.GUI_DONE, (arg) -> {
