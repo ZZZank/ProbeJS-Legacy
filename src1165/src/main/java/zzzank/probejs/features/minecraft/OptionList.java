@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import zzzank.probejs.utils.ProbeText;
 import zzzank.probejs.utils.ReflectUtils;
@@ -31,6 +32,7 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
 
     private final ProbeJSConfigScreen parent;
     private int maxNameWidth = 0;
+    private Style currentHover = null;
 
     public OptionList(ProbeJSConfigScreen parent, Minecraft mc, ConfigCategory config) {
         super(mc,parent.width + 45, parent.height, 43, parent.height - 32, 20);
@@ -74,6 +76,16 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
         return 320;
     }
 
+    @Override
+    protected void renderDecorations(PoseStack poseStack, int mouseX, int mouseY) {
+        if (currentHover != null) {
+            parent.renderComponentHoverEffect(poseStack, currentHover, mouseX, mouseY);
+            currentHover = null;
+        }
+
+        super.renderDecorations(poseStack, mouseX, mouseY);
+    }
+
     public abstract class Entry extends ContainerObjectSelectionList.Entry<Entry> {
         protected final Component title;
         protected final int titleWidth;
@@ -105,7 +117,7 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
                 && mouseY >= y
                 && mouseX <= (x + this.titleWidth)
                 && mouseY <= (y + font.lineHeight)) {
-                OptionList.this.parent.renderComponentHoverEffect(matrixStack, this.title.getStyle(), mouseX, mouseY);
+                currentHover = this.title.getStyle();
             }
         }
     }

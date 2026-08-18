@@ -10,6 +10,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.ProbeText;
 import zzzank.probejs.utils.ReflectUtils;
@@ -32,6 +33,7 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
 
     private final ProbeJSConfigScreen parent;
     private int maxNameWidth = 0;
+    private Style currentHover = null;
 
     public OptionList(ProbeJSConfigScreen parent, Minecraft mc, ConfigCategory config) {
         super(mc, parent.width + 45, parent.height, 43, parent.height - 32, 20);
@@ -75,6 +77,16 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
         return 320;
     }
 
+    @Override
+    protected void renderDecorations(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (currentHover != null) {
+            guiGraphics.renderComponentHoverEffect(minecraft.font, currentHover, mouseX, mouseY);
+            currentHover = null;
+        }
+
+        super.renderDecorations(guiGraphics, mouseX, mouseY);
+    }
+
     public abstract class Entry extends ContainerObjectSelectionList.Entry<Entry> {
         protected final Component title;
         protected final int titleWidth;
@@ -106,7 +118,7 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
                 && mouseY >= y
                 && mouseX <= (x + this.titleWidth)
                 && mouseY <= (y + font.lineHeight)) {
-                guiGraphics.renderComponentHoverEffect(font, this.title.getStyle(), mouseX, mouseY);
+                currentHover = this.title.getStyle();
             }
         }
     }
@@ -154,7 +166,6 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
                     button.setMessage(getOptionMessage(this.entry));
                 })
                 .bounds(0, 0, 55, 20)
-                .createNarration(supplier -> Component.literal(""))
                 .build();
             if (onPress == null) {
                 this.editButton.active = false;
