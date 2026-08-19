@@ -1,5 +1,6 @@
 package zzzank.probejs.utils;
 
+import com.demonwav.mcdev.annotations.Translatable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
@@ -22,15 +23,15 @@ public final class ProbeText {
         return of(Component.literal(literal));
     }
 
-    public static ProbeText translatable(String key, Object... args) {
+    public static ProbeText translatable(@Translatable String key, Object... args) {
         return of(Component.translatable(key, args));
     }
 
-    public static ProbeText pjs(String key, Object... args) {
+    public static ProbeText pjs(@Translatable(prefix = "probejs.") String key, Object... args) {
         return translatable("probejs." + key, args);
     }
 
-    public static ProbeText pjs(String key) {
+    public static ProbeText pjs(@Translatable(prefix = "probejs.") String key) {
         return pjs(key, EMPTY_ARGS);
     }
 
