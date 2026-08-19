@@ -27,7 +27,9 @@ public class ProbeJSLegacy {
         .build();
 
     public ProbeJSLegacy() {
-        EventBuses.registerModEventBus(ProbeJS.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+        @SuppressWarnings("removal")
+        var fmlJavaModLoadingContext = FMLJavaModLoadingContext.get();
+        EventBuses.registerModEventBus(ProbeJS.MOD_ID, fmlJavaModLoadingContext.getModEventBus());
 
         BuiltinScanners.PREDEFINED_BASECLASS.add(Event.class.getName());
 
@@ -38,7 +40,9 @@ public class ProbeJSLegacy {
         } catch (IOException ignored) {
         }
 
-        ModLoadingContext.get().registerExtensionPoint(
+        @SuppressWarnings("removal")
+        var modLoadingContext = ModLoadingContext.get();
+        modLoadingContext.registerExtensionPoint(
             ConfigScreenHandler.ConfigScreenFactory.class,
             () -> new ConfigScreenHandler.ConfigScreenFactory((mc, lastScreen) -> new ProbeJSConfigScreen(lastScreen))
         );

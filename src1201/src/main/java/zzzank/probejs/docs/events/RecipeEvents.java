@@ -10,16 +10,15 @@ import dev.latvian.mods.kubejs.script.ScriptType;
 import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import zzzank.probejs.features.kubejs.TypeDescAdapter;
+import zzzank.probejs.lang.java.clazz.ClassPath;
+import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.typescript.RequestAwareFiles;
 import zzzank.probejs.lang.typescript.ScriptDump;
-import zzzank.probejs.lang.java.clazz.ClassPath;
-import zzzank.probejs.lang.typescript.refer.ImportInfo;
-import zzzank.probejs.plugin.ProbeJSPlugin;
-import zzzank.probejs.lang.transpiler.TypeConverter;
 import zzzank.probejs.lang.typescript.code.member.ClassDecl;
 import zzzank.probejs.lang.typescript.code.ts.Statements;
 import zzzank.probejs.lang.typescript.code.type.Types;
 import zzzank.probejs.lang.typescript.code.type.js.JSLambdaType;
+import zzzank.probejs.plugin.ProbeJSPlugin;
 import zzzank.probejs.utils.NameUtils;
 
 import java.util.HashMap;
@@ -32,16 +31,21 @@ public class RecipeEvents implements ProbeJSPlugin {
     public static final ClassPath DOCUMENTED_RECIPES =
         ClassPath.ofArtificial("zzzank.probejs.generated.DocumentedRecipes");
 
+    @SuppressWarnings("removal")
+    private static ResourceLocation rl(String namespace, String path) {
+        return new ResourceLocation(namespace, path);
+    }
+
     static {
-        SHORTCUTS.put("shaped", new ResourceLocation("kubejs", "shaped"));
-        SHORTCUTS.put("shapeless", new ResourceLocation("kubejs", "shapeless"));
-        SHORTCUTS.put("smelting", new ResourceLocation("minecraft", "smelting"));
-        SHORTCUTS.put("blasting", new ResourceLocation("minecraft", "blasting"));
-        SHORTCUTS.put("smoking", new ResourceLocation("minecraft", "smoking"));
-        SHORTCUTS.put("campfireCooking", new ResourceLocation("minecraft", "campfire_cooking"));
-        SHORTCUTS.put("stonecutting", new ResourceLocation("minecraft", "stonecutting"));
-        SHORTCUTS.put("smithing", new ResourceLocation("minecraft", "smithing_transform"));
-        SHORTCUTS.put("smithingTrim", new ResourceLocation("minecraft", "smithing_trim"));
+        SHORTCUTS.put("shaped", rl("kubejs", "shaped"));
+        SHORTCUTS.put("shapeless", rl("kubejs", "shapeless"));
+        SHORTCUTS.put("smelting", rl("minecraft", "smelting"));
+        SHORTCUTS.put("blasting", rl("minecraft", "blasting"));
+        SHORTCUTS.put("smoking", rl("minecraft", "smoking"));
+        SHORTCUTS.put("campfireCooking", rl("minecraft", "campfire_cooking"));
+        SHORTCUTS.put("stonecutting", rl("minecraft", "stonecutting"));
+        SHORTCUTS.put("smithing", rl("minecraft", "smithing_transform"));
+        SHORTCUTS.put("smithingTrim", rl("minecraft", "smithing_trim"));
     }
 
     @Override
