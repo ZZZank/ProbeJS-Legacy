@@ -69,7 +69,6 @@ loom {
 }
 
 dependencies {
-    shade(project(":srcCore"))
     shade(project(":srcCommon"))
 
     minecraft("com.mojang:minecraft:${propertyString("mc_version")}")
@@ -82,11 +81,12 @@ dependencies {
     modApi("curse.maven:architectury-api-419699:5137938")
     modApi("curse.maven:kubejs-238086:8020595")
 
-    val localLibsDir = file("./local_libs")
-    if (localLibsDir.exists()) {
-        localLibsDir.listFiles()
-            ?.filter { it.isFile && it.name.endsWith(".jar") }
-            ?.forEach { modImplementation(files(rootProject.relativePath(it))) }
+    // for dev test only
+    modRuntimeOnly("curse.maven:modernfix-790626:8664181")
+    runtimeOnly("io.github.llamalad7:mixinextras-forge:0.5.4")
+
+    if (file("./local_libs").exists()) {
+        modImplementation(fileTree("./local_libs") { include("*.jar") })
     }
 }
 

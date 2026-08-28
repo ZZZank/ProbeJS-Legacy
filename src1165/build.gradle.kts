@@ -30,6 +30,11 @@ if (!propertyBool("use_jvmdowngrader")) {
 }
 
 java {
+    toolchain {
+        // other version of Java, e.g. Java 25, will cause 'runClient' to be completely unusable
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+
     if (propertyBool("generate_sources_jar")) {
         withSourcesJar()
     }
@@ -69,7 +74,6 @@ loom {
 }
 
 dependencies {
-    shade(project(":srcCore"))
     shade(project(":srcCommon"))
     testImplementation(testFixtures(project(":srcCore")))
 
@@ -82,14 +86,6 @@ dependencies {
 
     forge("net.minecraftforge:forge:${propertyString("mc_version")}-${propertyString("forge_version")}")
 
-    // only for development `runClient` task
-    // MixinServiceLaunchWrapper (registered by mixin-patched jar via ServiceLoader) references
-    // LaunchClassLoader, which isn't on the classpath for 1.16.5 ModLauncher-based Forge.
-    // Adding it here prevents the ServiceLoader from throwing ClassNotFoundException at init.
-    runtimeOnly("net.minecraft:launchwrapper:1.12") {
-        isTransitive = false
-    }
-
     // 3.6.5
     modApi("curse.maven:rhizo-1003287:6354880")
     modApi("me.shedaniel:architectury-forge:1.32.68")
@@ -97,11 +93,8 @@ dependencies {
         exclude(mapOf("group" to "dev.latvian.mods", "module" to "rhino-forge"))
     }
 
-    val localLibsDir = file("./local_libs")
-    if (localLibsDir.exists()) {
-        localLibsDir.listFiles()
-            ?.filter { it.isFile && it.name.endsWith(".jar") }
-            ?.forEach { modImplementation(files(rootProject.relativePath(it))) }
+    if (file("./local_libs").exists()) {
+        modImplementation(fileTree("./local_libs") { include("*.jar") })
     }
 }
 

@@ -36,5 +36,12 @@ repositories {
         }
     }
 
+    maven("https://repo.spongepowered.org/repository/maven-public/") {
+        name = "SpongePowered"
+        content {
+            includeGroup("org.spongepowered")
+        }
+    }
+
     mavenLocal()
 }

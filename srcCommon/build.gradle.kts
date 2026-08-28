@@ -1,19 +1,18 @@
 plugins {
-    java
+    `java-library`
+    `repo-conventions`
     `project-common`
 }
 
 repositories {
-    mavenCentral()
-    maven {
+    maven("https://repo.spongepowered.org/repository/maven-public/") {
         name = "SpongePowered"
-        url = uri("https://repo.spongepowered.org/repository/maven-public/")
     }
 }
 
 dependencies {
-    implementation(project(":srcCore"))
-    implementation(project(":srcParchment"))
+    api(project(":srcCore"))
+    api(project(":srcParchment"))
 
     compileOnly("org.ow2.asm:asm:9.6")
     compileOnly("org.ow2.asm:asm-commons:9.6")
