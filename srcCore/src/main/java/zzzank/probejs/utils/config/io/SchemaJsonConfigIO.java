@@ -243,9 +243,9 @@ public class SchemaJsonConfigIO extends SerdeHolder<JsonElement> implements Conf
         schemaEntry.add("default", serde.serialize(entry.getDefault()));
 
         // description
-        val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
+        val comments = entry.getPropOrDefault(ConfigProperty.COMMENTS);
         if (!comments.isEmpty()) {
-            schemaEntry.addProperty("description", String.join("\n", comments));
+            schemaEntry.addProperty("description", comments);
         }
 
         // enums from property (overrides enum from schema base for runtime refinement)

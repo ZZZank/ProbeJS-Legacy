@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 
 import java.util.*;
@@ -20,10 +21,11 @@ public final class ConfigProperty<T> {
     private static final Map<String, ConfigProperty<?>> NAMED = new HashMap<>();
     private static final List<ConfigProperty<?>> INDEXED = new ArrayList<>();
 
-    public static final ConfigProperty<List<String>> COMMENTS = register("comments", Collections.emptyList());
+    public static final ConfigProperty<@NotNull String> COMMENTS = register("comments", "");
     public static final ConfigProperty<Collection<String>> ENUMS = register("enums", Collections.emptyList());
     public static final ConfigProperty<String> EXAMPLE = register("example", null);
     public static final ConfigProperty<Boolean> AUTO_SAVE = register("auto_save", false);
+    public static final ConfigProperty<Boolean> INTERNAL = register("internal", false);
 
     public static synchronized <T> ConfigProperty<T> register(String name, T defaultValue) {
         Asser.tNotNull(name, "name");

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -73,9 +73,7 @@ public class PropertiesConfigIO extends SerdeHolder<String> implements ConfigIO 
 
             comments.add("");
             comments.add(String.format("%s -> %s (default)", entry.path(), serde.serialize(Cast.to(defaultValue))));
-            entry.getProp(ConfigProperty.COMMENTS)
-                .orElse(Collections.emptyList())
-                .stream()
+            Arrays.stream(entry.getPropOrDefault(ConfigProperty.COMMENTS).split("\n"))
                 .map(s -> '\t' + s)
                 .forEach(comments::add);
 

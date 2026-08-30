@@ -8,8 +8,6 @@ import zzzank.probejs.utils.config.binding.*;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -93,21 +91,8 @@ public class ConfigEntryBuilder<T> {
         return this;
     }
 
-    public ConfigEntryBuilder<T> setComments(List<String> comments) {
-        return setProperty(ConfigProperty.COMMENTS, comments);
-    }
-
     public ConfigEntryBuilder<T> comment(String... comments) {
-        this.properties.merge(
-            ConfigProperty.COMMENTS,
-            Arrays.stream(comments)
-                .flatMap(String::lines)
-                .toList(),
-            (a, b) -> {
-                a.addAll(b);
-                return a;
-            }
-        );
+        this.properties.merge(ConfigProperty.COMMENTS, String.join("\n", comments), String::concat);
         return this;
     }
 

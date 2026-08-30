@@ -102,7 +102,7 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
                     ProbeText.literal("")
                         .append(ProbeText.literal(configEntry.name()))
                         .append("\n\n")
-                        .append(String.join("\n", configEntry.getPropOrDefault(ConfigProperty.COMMENTS)))
+                        .append(configEntry.getPropOrDefault(ConfigProperty.COMMENTS))
                         .unwrap()
                 )
                 .unwrap());

@@ -16,7 +16,6 @@ import zzzank.probejs.utils.config.struct.ConfigRoot;
 
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Collections;
 
 /// ```json
 /// // config-file.json
@@ -114,11 +113,11 @@ public class JsonConfigIO extends SerdeHolder<JsonElement> implements ConfigIO {
 
         val entryJson = new JsonObject();
 
-        val comments = entry.getProp(ConfigProperty.COMMENTS).orElse(Collections.emptyList());
-        switch (comments.size()) {
+        val comments = entry.getPropOrDefault(ConfigProperty.COMMENTS).split("\n");
+        switch (comments.length) {
             case 0 -> {
             }
-            case 1 -> entryJson.add(COMMENTS_KEY, new JsonPrimitive(comments.get(0)));
+            case 1 -> entryJson.add(COMMENTS_KEY, new JsonPrimitive(comments[0]));
             default -> entryJson.add(COMMENTS_KEY, JsonUtils.parseObject(comments));
         }
         entryJson.add(DEFAULT_VALUE_KEY, serde.serialize(entry.binding().getDefault()));

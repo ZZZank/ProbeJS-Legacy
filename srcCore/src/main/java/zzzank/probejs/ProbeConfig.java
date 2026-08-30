@@ -46,6 +46,7 @@ public interface ProbeConfig {
         .comment("""
             Welcome to ProbeJS Legacy config file
             Use '/probejs refresh_config' to refresh your config after changing config values""")
+        .setProperty(ConfigProperty.INTERNAL, true)
         .build();
     ConfigEntry<Boolean> enabled = INSTANCE.define("enabled")
         .bindDefault(true)
