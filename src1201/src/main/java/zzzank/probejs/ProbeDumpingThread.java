@@ -1,8 +1,9 @@
 package zzzank.probejs;
 
 import dev.latvian.mods.kubejs.KubeJS;
-import lombok.val;
+import lombok.Setter;
 import net.minecraft.network.chat.ClickEvent;
+import zzzank.probejs.features.minecraft.DumpMessageList;
 import zzzank.probejs.features.rhizo.RhizoClazzRemapper;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.java.remap.RemapperBridge;
@@ -13,6 +14,7 @@ import zzzank.probejs.utils.ProbeText;
 import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author ZZZank
@@ -22,22 +24,36 @@ public class ProbeDumpingThread extends Thread {
     public static ProbeDumpingThread INSTANCE;
 
     public final Consumer<ProbeText> messageSender;
+    public final boolean cleanOldDumps;
+    public final Function<ProbeText, DumpMessageList.MessageEntry> toEntry;
+    @Setter
+    private Runnable onComplete;
 
     public static boolean exists() {
         return INSTANCE != null && INSTANCE.isAlive();
     }
 
-    public static ProbeDumpingThread create(final Consumer<ProbeText> messageSender) {
+    public static ProbeDumpingThread create(
+        Consumer<ProbeText> messageSender,
+        Function<ProbeText, DumpMessageList.MessageEntry> toEntry,
+        boolean cleanOldDumps
+    ) {
         if (exists()) {
             throw new IllegalStateException("There's already a thread running");
         }
-        INSTANCE = new ProbeDumpingThread(messageSender);
+        INSTANCE = new ProbeDumpingThread(messageSender, toEntry, cleanOldDumps);
         return INSTANCE;
     }
 
-    private ProbeDumpingThread(final Consumer<ProbeText> messageSender) {
+    private ProbeDumpingThread(
+        Consumer<ProbeText> messageSender,
+        Function<ProbeText, DumpMessageList.MessageEntry> toEntry,
+        boolean cleanOldDumps
+    ) {
         super("ProbeDumpingThread");
         this.messageSender = messageSender;
+        this.toEntry = toEntry;
+        this.cleanOldDumps = cleanOldDumps;
     }
 
     @Override
@@ -62,16 +78,22 @@ public class ProbeDumpingThread extends Thread {
         RemapperBridge.set(RhizoState.REMAPPER ? new RhizoClazzRemapper(KubeJS.getClientScriptManager().context) : new RhinoDefault());
         RegistryInfos.refresh();
 
-        val probeDump = new ProbeDump(messageSender);
+        var probeDump = new ProbeDump(messageSender, cleanOldDumps);
         probeDump.addScript(ScriptDump.CLIENT_DUMP.apply(probeDump.sharedDump));
         probeDump.addScript(ScriptDump.SERVER_DUMP.apply(probeDump.sharedDump));
         probeDump.addScript(ScriptDump.STARTUP_DUMP.apply(probeDump.sharedDump));
         try {
-            probeDump.trigger();
+            probeDump.trigger(toEntry);
         } catch (Throwable e) {
+            var errorEntry = toEntry.apply(ProbeText.literal("ERROR").red());
+            errorEntry.provideBody(ProbeText.literal(e.toString()));
             messageSender.accept(ProbeText.pjs("error").red());
             messageSender.accept(ProbeText.literal(e.toString()).red());
             GameUtils.logThrowable(e);
+        }
+
+        if (onComplete != null) {
+            onComplete.run();
         }
     }
 }

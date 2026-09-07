@@ -1,7 +1,7 @@
 package zzzank.probejs;
 
-import dev.latvian.mods.kubejs.util.UtilsJS;
 import dev.architectury.platform.Platform;
+import dev.latvian.mods.kubejs.util.UtilsJS;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +15,7 @@ public class ProbePaths {
     public static final Path VSCODE_JSON = WORKSPACE_SETTINGS.resolve("settings.json");
     public static final Path GIT_IGNORE = GAMEDIR.resolve(".gitignore");
     public static final Path DECOMPILED = PROBE.resolve("decompiled");
+    public static final Path EXTERNAL = PROBE.resolve("external");
 
     public static void init() {
         if (Files.notExists(PROBE)) {
@@ -25,6 +26,9 @@ public class ProbePaths {
         }
         if (Files.notExists(ProbePaths.DECOMPILED)) {
             UtilsJS.tryIO(() -> Files.createDirectories(ProbePaths.DECOMPILED));
+        }
+        if (Files.notExists(ProbePaths.EXTERNAL)) {
+            UtilsJS.tryIO(() -> Files.createDirectories(ProbePaths.EXTERNAL));
         }
     }
 

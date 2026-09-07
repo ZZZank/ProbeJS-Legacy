@@ -12,7 +12,6 @@ repositories {
 
 dependencies {
     api(project(":srcCore"))
-    api(project(":srcParchment"))
 
     compileOnly("org.ow2.asm:asm:9.6")
     compileOnly("org.ow2.asm:asm-commons:9.6")

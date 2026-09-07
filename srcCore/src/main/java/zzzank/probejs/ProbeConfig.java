@@ -54,16 +54,6 @@ public interface ProbeConfig {
             enable or disable ProbeJS Legacy
             note that `require()` function in script are always available""")
         .build();
-    ConfigEntry<Long> modHash = INSTANCE.define("modHash")
-        .bindDefault(-1L)
-        .comment("""
-            internal config, used for tracking mod update and modlist change""")
-        .build();
-    ConfigEntry<Long> registryHash = INSTANCE.define("registryHash")
-        .bindDefault(-1L)
-        .comment("""
-            internal config, used for tracking registry change""")
-        .build();
     ConfigEntry<Boolean> isolatedScopes = INSTANCE.define("isolatedScopes")
         .bindDefault(true)
         .comment("""

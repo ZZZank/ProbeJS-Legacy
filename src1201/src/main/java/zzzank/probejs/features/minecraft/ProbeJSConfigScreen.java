@@ -37,6 +37,7 @@ public class ProbeJSConfigScreen extends Screen {
                 (arg) -> this.onClose())
             .bounds(this.width / 2 - 155 + 160, this.height - 29, 150, 20)
             .build();
+        this.addRenderableWidget(this.optionList);
         this.addRenderableWidget(this.wikiButton);
         this.addRenderableWidget(this.doneButton);
     }
@@ -48,7 +49,6 @@ public class ProbeJSConfigScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.optionList.render(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 8, 0xffffff);
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);

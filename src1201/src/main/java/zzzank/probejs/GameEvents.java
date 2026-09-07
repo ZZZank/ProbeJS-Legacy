@@ -2,12 +2,10 @@ package zzzank.probejs;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import dev.latvian.mods.kubejs.KubeJS;
-import lombok.val;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -15,14 +13,14 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import zzzank.probejs.features.minecraft.ProbeJSConfigScreen;
+import zzzank.probejs.features.minecraft.ProbeJSDumpScreen;
+import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.linter.Linter;
-import zzzank.probejs.utils.GameUtils;
 import zzzank.probejs.utils.ProbeText;
-import zzzank.probejs.utils.registry.RegistryInfos;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class GameEvents {
@@ -30,143 +28,68 @@ public class GameEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void playerJoined(ClientPlayerNetworkEvent.LoggingIn event) {
-        val player = event.getPlayer();
         if (!ProbeConfig.enabled.get()) {
             return;
         }
 
-        val sendMsg = (Consumer<ProbeText>) msg -> player.sendSystemMessage(msg.unwrap());
-        RegistryInfos.refresh();
+        var player = event.getPlayer();
+        Consumer<ProbeText> sendMsg = msg -> player.sendSystemMessage(msg.unwrap());
 
-        if (ProbeConfig.modHash.get() == -1) {
-            sendMsg.accept(ProbeText.pjs("hello").gold());
-        }
-        if (GameUtils.registryHash() != ProbeConfig.registryHash.get()) {
-            if (!ProbeDumpingThread.exists()) {
-                ProbeDumpingThread.create(sendMsg).start();
-            }
-        } else {
-
-            sendMsg.accept(
-                ProbeText
-                    .pjs("enabled_warning")
-                    .append(ProbeText.literal("/probejs disable")
-                        .click(ClickEvent.Action.SUGGEST_COMMAND, "/probejs disable")
-                        .aqua()
-                    )
-            );
-            if (ModList.get().size() >= MOD_LIMIT) {
-                if (ProbeConfig.complete.get()) {
-                    sendMsg.accept(
-                        ProbeText.pjs("performance", ModList.get().size())
-                    );
-                }
-            }
-        }
-        sendMsg.accept(
-            ProbeText.pjs("wiki")
-                .append(ProbeText.literal("Wiki Page")
+        if (!RhizoState.MOD.get()) {
+            sendMsg.accept(ProbeText.pjs("rhizo_missing"));
+            sendMsg.accept(ProbeText
+                .pjs("download_rhizo_help")
+                .append(ProbeText.literal("CurseForge")
                     .aqua()
                     .underlined(true)
-                    .click(
-                        ClickEvent.Action.OPEN_URL,
-                        "https://kubejs.com/wiki/addons/third-party/probejs"
-                    )
-                    .hover(
-                        HoverEvent.Action.SHOW_TEXT,
-                        ProbeText.literal("https://kubejs.com/wiki/addons/third-party/probejs").unwrap()
-                    )
+                    .click(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/rhizo/files"))
+                .append(" / ")
+                .append(ProbeText.literal("Github")
+                    .aqua()
+                    .underlined(true)
+                    .click(ClickEvent.Action.OPEN_URL, "https://github.com/ZZZank/Rhizo/releases/latest"))
+            );
+        }
+
+        sendMsg.accept(
+            ProbeText
+                .pjs("enabled_warning")
+                .append(ProbeText.literal("/probejs config")
+                    .click(ClickEvent.Action.SUGGEST_COMMAND, "/probejs config")
+                    .aqua()
                 )
         );
+
+        if (ModList.get().size() >= MOD_LIMIT) {
+            if (ProbeConfig.complete.get()) {
+                sendMsg.accept(ProbeText.pjs("performance", ModList.get().size()));
+            }
+        }
     }
 
     @SubscribeEvent
     public static void registerCommand(RegisterCommandsEvent event) {
-        val spOrOp = (Predicate<CommandSourceStack>)
-            (source) -> source.hasPermission(2) || source.getServer().isSingleplayer();
-        val pjsEnabled = (Predicate<CommandSourceStack>)
-            (source) -> ProbeConfig.enabled.get();
-        val sendMsg = (BiConsumer<CommandContext<CommandSourceStack>, ProbeText>)
+        BiConsumer<CommandContext<CommandSourceStack>, ProbeText> sendMsg =
             (context, text) -> context.getSource().sendSuccess(text::unwrap, true);
 
         event.getDispatcher().register(
             Commands.literal("probejs")
-                .then(Commands.literal("dump")
-                    .requires(pjsEnabled.and(spOrOp))
-                    .executes(context -> {
-                        if (ProbeDumpingThread.exists()) {
-                            sendMsg.accept(
-                                context,
-                                ProbeText.pjs("already_running").red()
-                            );
-                            return Command.SINGLE_SUCCESS;
-                        }
-                        KubeJS.PROXY.reloadClientInternal();
-                        ProbeDumpingThread.create(msg -> sendMsg.accept(context, msg)).start();
-                        return Command.SINGLE_SUCCESS;
-                    })
-                )
-                .then(Commands.literal("disable")
-                    .requires(pjsEnabled.and(spOrOp))
-                    .executes(context -> {
-                        ProbeConfig.enabled.set(false);
-                        sendMsg.accept(
-                            context,
-                            ProbeText.pjs("bye_bye").gold()
-                        );
-                        return Command.SINGLE_SUCCESS;
-                    })
-                )
-                .then(Commands.literal("enable")
-                    .requires(spOrOp)
-                    .executes(context -> {
-                        ProbeConfig.enabled.set(true);
-                        sendMsg.accept(
-                            context,
-                            ProbeText.pjs("hello_again").aqua()
-                        );
-                        return Command.SINGLE_SUCCESS;
-                    })
-                )
-                .then(Commands.literal("refresh_config")
-                    .requires(pjsEnabled.and(spOrOp))
-                    .executes(context -> {
-                        sendMsg.accept(context, ProbeJSLegacy.refreshConfig());
-                        return Command.SINGLE_SUCCESS;
-                    })
-                )
-                .then(Commands.literal("scope_isolation")
-                    .requires(pjsEnabled.and(spOrOp))
-                    .executes(context -> {
-                        boolean flag = !ProbeConfig.isolatedScopes.get();
-                        ProbeConfig.isolatedScopes.set(flag);
-                        sendMsg.accept(
-                            context,
-                            ProbeText.pjs(flag ? "isolation" : "no_isolation").aqua()
-                        );
-                        return Command.SINGLE_SUCCESS;
-                    })
-                )
+                .requires(source -> source.getServer().isSingleplayer())
+                .executes(context -> {
+                    Minecraft.getInstance().setScreen(new ProbeJSDumpScreen());
+                    return Command.SINGLE_SUCCESS;
+                })
                 .then(Commands.literal("lint")
-                    .requires(pjsEnabled.and(spOrOp))
                     .executes(context -> {
                         Linter.defaultLint(msg -> sendMsg.accept(context, msg));
                         return Command.SINGLE_SUCCESS;
                     })
                 )
-                .then(Commands.literal("complete_dump")
-                    .requires(pjsEnabled.and(spOrOp))
-                    .executes(context -> {
-                        boolean flag = !ProbeConfig.complete.get();
-                        ProbeConfig.complete.set(flag);
-                        sendMsg.accept(
-                            context,
-                            ProbeText.pjs(flag ? "complete" : "no_complete")
-                        );
+                .then(Commands.literal("config")
+                    .executes(cx -> {
+                        Minecraft.getInstance().setScreen(new ProbeJSConfigScreen(null));
                         return Command.SINGLE_SUCCESS;
-                    })
-                )
+                    }))
         );
     }
 }
-

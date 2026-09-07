@@ -14,6 +14,16 @@ import java.util.function.Predicate;
 public interface ReflectUtils {
     String CLASS_SUFFIX = ".class";
 
+    static int getSlotSize(Class<?> c) {
+        if (c == void.class) {
+            return 0;
+        }
+        if (c == long.class || c == double.class) {
+            return 2;
+        }
+        return 1;
+    }
+
     static Constructor<?>[] constructorsSafe(Class<?> c) {
         try {
             return c.getConstructors();

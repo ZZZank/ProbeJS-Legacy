@@ -18,4 +18,4 @@ buildscript {
     }
 }
 
-include("srcCore", "srcCommon", "src1165", "src1201", "srcParchment")
+include("srcCore", "srcCommon", "src1165", "src1201")

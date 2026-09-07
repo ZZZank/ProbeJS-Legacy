@@ -47,6 +47,9 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
             }
 
             for (var entry : entries) {
+                if (entry.getPropOrDefault(ConfigProperty.INTERNAL)) {
+                    continue;
+                }
                 int w = this.minecraft.font.width(entry.name()) + DEPTH_OFFSET * depth(entry);
                 this.maxNameWidth = Math.max(w, this.maxNameWidth);
                 this.addEntry(new OptionEntry(entry));
