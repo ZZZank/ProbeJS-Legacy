@@ -1,7 +1,6 @@
 package zzzank.probejs.features.kubejs;
 
 import com.google.common.collect.Maps;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import dev.latvian.kubejs.script.ScriptType;
 import lombok.val;
@@ -34,19 +33,18 @@ public final class EventJSInfos {
     }
 
     public static Set<Class<?>> provideClasses() {
-        return KNOWN.values().stream().map((EventJSInfo info) -> info.clazz).collect(Collectors.toSet());
+        return KNOWN.values().stream().map(info -> info.clazz).collect(Collectors.toSet());
     }
 
     public static void loadFrom(Path path) {
-        if (!path.toFile().exists()) {
+        if (!Files.exists(path)) {
             return;
         }
         try (val reader = Files.newBufferedReader(path)) {
-            val obj = ProbeJS.GSON.fromJson(reader, JsonObject.class);
-            if (obj == null) {
+            Map<String, EventJSInfo> decoded = ProbeJS.GSON.fromJson(reader, TYPE_TOKEN.getType());
+            if (decoded == null) {
                 return;
             }
-            Map<String, EventJSInfo> decoded = ProbeJS.GSON.fromJson(reader, TYPE_TOKEN.getType());
             KNOWN.putAll(Maps.filterValues(decoded, Objects::nonNull));
         } catch (Exception e) {
             ProbeJS.LOGGER.error("Error when reading EventJS infos", e);
