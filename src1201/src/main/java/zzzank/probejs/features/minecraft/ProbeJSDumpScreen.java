@@ -95,7 +95,7 @@ public class ProbeJSDumpScreen extends Screen {
         this.addRenderableWidget(dumpButton);
         this.addRenderableWidget(configButton);
         this.addRenderableWidget(doneButton);
-        this.list = this.addWidget(list);
+        this.list = this.addRenderableWidget(list);
     }
 
     @Override
@@ -103,8 +103,6 @@ public class ProbeJSDumpScreen extends Screen {
         renderBackground(guiGraphics);
 
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 8, 0xFFFFFF);
-
-        this.list.render(guiGraphics, mouseX, mouseY, partialTicks);
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }

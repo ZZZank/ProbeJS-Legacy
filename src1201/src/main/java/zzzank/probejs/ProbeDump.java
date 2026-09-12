@@ -63,7 +63,7 @@ public class ProbeDump {
 
             parchmentEntry.provideBody(ProbeText.literal("Downloading parchment mapping"));
             try {
-                path = ParchmentMappingLoader.downloadMapping("1.20.2", "2023.09.03", ProbePaths.EXTERNAL);
+                path = ParchmentMappingLoader.downloadMapping("1.20.1", "2023.09.03", ProbePaths.EXTERNAL);
                 parchmentEntry.provideBody(ProbeText.literal("Parchment mapping downloaded"));
             } catch (IOException e) {
                 parchmentEntry.provideBody(ProbeText.literal("Error when downloading mapping: " + e));
