@@ -30,14 +30,9 @@ public class TSVariableType extends BaseType {
 
     @Override
     public ImportInfos getImportInfos(@NotNull FormatType type) {
-        val imports = ImportInfos.of();
-        if (extend != null) {
-            imports.addAll(extend.getImportInfos(type));
-        }
-        if (defaultTo != null) {
-            imports.addAll(defaultTo.getImportInfos(type));
-        }
-        return imports;
+        return ImportInfos.of()
+            .fromCode(extend, type)
+            .fromCode(defaultTo, type);
     }
 
     @Override

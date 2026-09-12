@@ -1,6 +1,5 @@
 package zzzank.probejs.lang.typescript.code.ts;
 
-import lombok.val;
 import zzzank.probejs.lang.typescript.Declaration;
 import zzzank.probejs.lang.typescript.code.CommentableCode;
 import zzzank.probejs.lang.typescript.code.DeclarationCode;
@@ -27,13 +26,10 @@ public class FunctionDeclaration extends CommentableCode implements DeclarationC
 
     @Override
     public ImportInfos getImportInfos() {
-        val infos = ImportInfos.of()
-            .addAll(returnType.getImportInfos(BaseType.FormatType.RETURN))
-            .fromCodes(variableTypes, BaseType.FormatType.VARIABLE);
-        for (val param : params) {
-            infos.addAll(param.type.getImportInfos(BaseType.FormatType.INPUT));
-        }
-        return infos;
+        return ImportInfos.of()
+            .fromCode(returnType, BaseType.FormatType.RETURN)
+            .fromCodes(variableTypes, BaseType.FormatType.VARIABLE)
+            .fromCodes(params.stream().map(p -> p.type), BaseType.FormatType.INPUT);
     }
 
     @Override

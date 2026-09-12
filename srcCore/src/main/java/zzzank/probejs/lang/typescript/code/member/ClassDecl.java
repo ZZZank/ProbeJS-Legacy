@@ -54,17 +54,14 @@ public class ClassDecl extends CommentableCode implements DeclarationCode {
 
     @Override
     public ImportInfos getImportInfos() {
-        val infos = ImportInfos.of()
+        return ImportInfos.of()
             .fromCodes(fields)
             .fromCodes(constructors)
             .fromCodes(methods)
             .fromCodes(interfaces)
             .fromCodes(variableTypes)
-            .fromCodes(bodyCode);
-        if (superClass != null) {
-            infos.addAll(superClass.getImportInfos(BaseType.FormatType.RETURN));
-        }
-        return infos;
+            .fromCodes(bodyCode)
+            .fromCode(superClass, BaseType.FormatType.RETURN);
     }
 
     @Override

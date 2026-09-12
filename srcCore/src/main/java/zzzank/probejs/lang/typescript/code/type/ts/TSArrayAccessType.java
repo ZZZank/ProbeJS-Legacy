@@ -19,7 +19,7 @@ public class TSArrayAccessType extends BaseType {
 
     @Override
     public ImportInfos getImportInfos(@NotNull FormatType type) {
-        return array.getImportInfos(type).addAll(index.getImportInfos(type));
+        return array.getImportInfos(type).fromCode(index, type);
     }
 
     @Override
