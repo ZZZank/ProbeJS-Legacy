@@ -51,13 +51,13 @@ fun Project.setDefaultProperty(propertyName: String, warn: Boolean, defaultValue
     }
 }
 
-fun Project.assertEnvironmentVariable(propertyName: String) {
-    val property = System.getenv(propertyName)
+fun Project.assertEnvironmentVariable(key: String) {
+    val property = System.getenv(key)
     if (property == null) {
-        throw GradleException("System Environment Variable $propertyName is not defined!")
+        throw GradleException("System Environment Variable $key is not defined!")
     }
     if (property.isEmpty()) {
-        throw GradleException("Property $propertyName is empty!")
+        throw GradleException("Property $key is empty!")
     }
 }
 

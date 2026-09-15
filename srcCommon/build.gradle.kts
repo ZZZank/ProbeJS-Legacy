@@ -2,6 +2,7 @@ plugins {
     `java-library`
     `repo-conventions`
     `project-common`
+    id("dev.architectury.loom-companion") version "1.17-SNAPSHOT"
 }
 
 repositories {

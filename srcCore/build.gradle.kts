@@ -2,6 +2,7 @@ plugins {
     `java-library`
     `project-common`
     id("java-test-fixtures")
+    id("dev.architectury.loom-companion") version "1.17-SNAPSHOT"
 }
 
 repositories {

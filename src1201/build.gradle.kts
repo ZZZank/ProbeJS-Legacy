@@ -66,6 +66,18 @@ loom {
     interfaceInjection {
         getIsEnabled().set(false)
     }
+
+    mods {
+        named("main") {
+            // requires "dev.architectury.loom-companion" on them btw
+            sourceSet("main", ":srcCore")
+            sourceSet("main", ":srcCommon")
+        }
+    }
+
+    runs.configureEach {
+        jvmArguments.add("-Xmx1g")
+    }
 }
 
 dependencies {
@@ -88,22 +100,6 @@ dependencies {
     if (file("./local_libs").exists()) {
         modImplementation(fileTree("./local_libs") { include("*.jar") })
     }
-}
-
-// Only for `runClient` task
-// Forge's ModuleClassLoader isolates each mod to its own module.
-// Since srcCore and srcCommon are `shade` dependencies (bundled into the final jar via ShadowJar),
-// their classes are NOT part of the mod's module in dev mode, causing ClassNotFoundException.
-// This task copies their compiled classes into src1201's classes directory so they're accessible.
-val copyShadedClasses by tasks.registering(Copy::class) {
-    dependsOn(":srcCore:classes", ":srcCommon:classes")
-    from(project(":srcCore").sourceSets.main.get().output.classesDirs)
-    from(project(":srcCommon").sourceSets.main.get().output.classesDirs)
-    into(project.layout.buildDirectory.dir("classes/java/main"))
-}
-
-tasks.named("classes") {
-    dependsOn(copyShadedClasses)
 }
 
 tasks.processResources {
@@ -133,10 +129,6 @@ tasks.processResources {
             )
         )
     }
-}
-
-tasks.withType(net.fabricmc.loom.task.RunGameTask::class).configureEach {
-    jvmArgs("-Xmx1g")
 }
 
 tasks.named("remapJar", RemapJarTask::class.java) {

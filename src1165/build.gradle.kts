@@ -71,11 +71,25 @@ loom {
     interfaceInjection {
         getIsEnabled().set(false)
     }
+
+    mods {
+        named("main") {
+            // requires "dev.architectury.loom-companion" btw
+            sourceSet("main", ":srcCore")
+            sourceSet("main", ":srcCommon")
+        }
+    }
+
+    runs.configureEach {
+        jvmArguments.add("-Xmx1g")
+    }
 }
 
 dependencies {
     shade(project(":srcCommon"))
+
     testImplementation(testFixtures(project(":srcCore")))
+    testImplementation(project(":srcCommon"))
 
     minecraft("com.mojang:minecraft:${propertyString("mc_version")}")
 
@@ -96,10 +110,6 @@ dependencies {
     if (file("./local_libs").exists()) {
         modImplementation(fileTree("./local_libs") { include("*.jar") })
     }
-}
-
-tasks.withType(net.fabricmc.loom.task.RunGameTask::class).configureEach {
-    jvmArgs("-Xmx1g")
 }
 
 tasks.processResources {

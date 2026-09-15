@@ -10,7 +10,7 @@ plugins {
 
 configurations {
     val shade = create("shade")
-    implementation.get().extendsFrom(shade)
+    compileOnly.get().extendsFrom(shade)
 }
 
 tasks.named("assemble") {
