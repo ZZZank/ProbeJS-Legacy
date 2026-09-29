@@ -3,7 +3,7 @@ package zzzank.probejs;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.api.output.TSFileWriter;
-import zzzank.probejs.features.forge_scan.ClassScanner;
+import zzzank.probejs.features.forge_scan.ForgeScanSupport;
 import zzzank.probejs.features.minecraft.DumpMessageList;
 import zzzank.probejs.features.parchment.ParchmentMappingLoader;
 import zzzank.probejs.lang.java.ClassRegistry;
@@ -108,8 +108,13 @@ public class ProbeDump {
         var classEntry = addEntry.apply(ProbeText.literal("CLASS"));
         classEntry.provideBody(() -> ProbeText.pjs("dump.walking_classes", classRegistry.foundClasses.size()));
 
-        classRegistry.addClasses(ClassScanner.scanForge());
-        classRegistry.addClasses(ClassScanner.scanMods(ProbeConfig.fullScanMods.get()));
+        {
+            var forgeScanSupport = ServiceLoader.load(ForgeScanSupport.class)
+                .findFirst()
+                .orElseThrow();
+            classRegistry.addClasses(forgeScanSupport.scanForge(ProbeJSLegacy.CONFIG_CLASS_SCANNER.get()));
+            classRegistry.addClasses(forgeScanSupport.scanMods(ProbeConfig.fullScanMods.get()));
+        }
         for (ScriptDump scriptDump : scriptDumps) {
             classRegistry.addClasses(scriptDump.retrieveClasses());
         }

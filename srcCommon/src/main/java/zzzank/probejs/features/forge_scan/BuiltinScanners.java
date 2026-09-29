@@ -3,7 +3,10 @@ package zzzank.probejs.features.forge_scan;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,31 +16,31 @@ import java.util.stream.Stream;
 public enum BuiltinScanners {
     NONE {
         @Override
-        public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
+        public Stream<String> scan(ForgeScanSupport support, Stream<ModFileScanData.ClassData> dataStream) {
             return Stream.empty();
         }
     },
     FULL {
         @Override
-        public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
-            return dataStream.map(AccessClassData::clazz).map(Type::getClassName);
+        public Stream<String> scan(ForgeScanSupport support, Stream<ModFileScanData.ClassData> dataStream) {
+            return dataStream.map(support::getClazz).map(Type::getClassName);
         }
     },
     EVENTS {
         @Override
-        public Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream) {
+        public Stream<String> scan(ForgeScanSupport support, Stream<ModFileScanData.ClassData> dataStream) {
             var names = new HashSet<String>();
 
             var queue = PREDEFINED_BASECLASS.stream()
                 .map(name -> Type.getObjectType(name.replace('.', '/')))
                 .collect(Collectors.toCollection(ArrayDeque::new));
-            var byParent = dataStream.collect(Collectors.groupingBy(AccessClassData::parentNullWrapped));
+            var byParent = dataStream.collect(Collectors.groupingBy(support::getParentOrVoid));
 
             while (!queue.isEmpty()) {
                 var parentType = queue.pop();
                 names.add(parentType.getClassName());
                 for (var subClass : byParent.getOrDefault(parentType, List.of())) {
-                    queue.add(AccessClassData.clazz(subClass));
+                    queue.add(support.getClazz(subClass));
                 }
             }
 
@@ -53,5 +56,5 @@ public enum BuiltinScanners {
     /**
      * stream of class data -> class name
      */
-    public abstract Stream<String> scan(Stream<ModFileScanData.ClassData> dataStream);
+    public abstract Stream<String> scan(ForgeScanSupport support, Stream<ModFileScanData.ClassData> dataStream);
 }
