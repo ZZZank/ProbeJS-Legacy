@@ -59,7 +59,7 @@ public final class ImportInfo {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof ImportInfo info && path.equals(info.path);
+        return obj instanceof ImportInfo info && path.equals(info.path) && imports == info.imports;
     }
 
     @Override

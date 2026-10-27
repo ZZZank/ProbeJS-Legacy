@@ -2,6 +2,7 @@ package zzzank.probejs.lang.typescript.refer;
 
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.lang.java.clazz.ClassPath;
 import zzzank.probejs.lang.typescript.code.Code;
 import zzzank.probejs.lang.typescript.code.type.BaseType;
@@ -75,7 +76,7 @@ public class ImportInfos implements Iterable<ImportInfo> {
         return code == null ? this : addAll(code.getImportInfos());
     }
 
-    public ImportInfos fromCode(BaseType code, BaseType.FormatType type) {
+    public ImportInfos fromCode(@Nullable BaseType code, BaseType.FormatType type) {
         return code == null ? this : addAll(code.getImportInfos(type));
     }
 

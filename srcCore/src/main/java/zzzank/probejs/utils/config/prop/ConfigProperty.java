@@ -43,6 +43,11 @@ public final class ConfigProperty<T> {
     private final T defaultValue;
 
     @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ConfigProperty<?> other && index == other.index;
+    }
+
+    @Override
     public int hashCode() {
         return index;
     }

@@ -4,11 +4,11 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.Asser;
 import zzzank.probejs.utils.Cast;
+import zzzank.probejs.utils.CollectUtils;
 import zzzank.probejs.utils.config.binding.*;
 import zzzank.probejs.utils.config.prop.ConfigProperties;
 import zzzank.probejs.utils.config.prop.ConfigProperty;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -99,13 +99,13 @@ public class ConfigEntryBuilder<T> {
     public ConfigEntry<T> build() {
         var entry = new ConfigEntryImpl<>(name, binding, properties, this.parent);
         if (!entry.properties().has(ConfigProperty.AUTO_SAVE)) {
-            entry.walkParents()
-                .map(cfg -> cfg.properties().get(ConfigProperty.AUTO_SAVE))
-                .filter(Optional::isPresent)
-                .findFirst()
-                .ifPresent(optional -> {
-                    entry.properties().put(ConfigProperty.AUTO_SAVE, optional.get());
-                });
+            for (var category : CollectUtils.iterate(entry.walkParents())) {
+                var autoSaveProp = category.getProp(ConfigProperty.AUTO_SAVE);
+                if (autoSaveProp.isPresent()) {
+                    entry.properties().put(ConfigProperty.AUTO_SAVE, autoSaveProp.get());
+                    break;
+                }
+            }
         }
         return this.parent.register(entry);
     }

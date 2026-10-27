@@ -1,5 +1,6 @@
 package zzzank.probejs.features.parchment;
 
+import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.ProbeJS;
 import zzzank.probejs.features.parchment.data.ParchmentData;
 import zzzank.probejs.lang.transpiler.transformation.ClassTransformer;
@@ -30,7 +31,7 @@ public abstract class ParchmentMappingLoader {
      * @param zipPath Path to the zip file
      * @throws IOException if reading fails
      */
-    public static synchronized InjectParchment getOrInitTransformer(Path zipPath) throws IOException {
+    public static synchronized InjectParchment getOrInitTransformer(@NotNull Path zipPath) throws IOException {
         if (TRANSFORMER != null) {
             return TRANSFORMER;
         }
