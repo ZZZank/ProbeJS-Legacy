@@ -59,7 +59,7 @@ public class ProbeDump {
         if (ParchmentMappingLoader.ENABLED) {
             var parchmentEntry = addEntry.apply(ProbeText.literal("PARCHMENT"));
 
-            Path path = null;
+            Path path;
 
             parchmentEntry.provideBody(ProbeText.literal("Downloading parchment mapping"));
             try {
@@ -67,6 +67,7 @@ public class ProbeDump {
                 parchmentEntry.provideBody(ProbeText.literal("Parchment mapping downloaded"));
             } catch (IOException e) {
                 parchmentEntry.provideBody(ProbeText.literal("Error when downloading mapping: " + e));
+                throw e;
             }
 
             parchmentEntry.provideBody(ProbeText.literal("Loading parchment mapping"));
@@ -75,6 +76,7 @@ public class ProbeDump {
                 parchmentEntry.provideBody(ProbeText.literal("Parchment mapping loaded"));
             } catch (IOException e) {
                 parchmentEntry.provideBody(ProbeText.literal("Error when loading mapping: " + e));
+                throw e;
             }
         }
 
