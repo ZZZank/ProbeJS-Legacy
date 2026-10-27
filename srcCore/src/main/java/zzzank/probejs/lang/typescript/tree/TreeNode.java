@@ -34,12 +34,11 @@ public record TreeNode(
         var root = new TreeNode(null, rootSelf);
 
         for (var tsFile : files) {
-            var classPath = tsFile.path;
-            if (classPath == null) {
+            if (tsFile.codes.isEmpty() || tsFile.path == null) {
                 continue;
             }
 
-            var packagePath = ClassPath.ofArtificial(classPath.getFirstValidPackage());
+            var packagePath = ClassPath.ofArtificial(tsFile.path.getFirstValidPackage());
             var parts = packagePath.viewParts();
 
             var current = root;
