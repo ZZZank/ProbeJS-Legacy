@@ -5,7 +5,7 @@ import dev.latvian.mods.rhino.util.ClassWrapper;
 import lombok.val;
 import zzzank.probejs.features.rhizo.RhizoState;
 import zzzank.probejs.lang.transpiler.TypeConverter;
-import zzzank.probejs.lang.transpiler.redirect.ClassRedirect;
+import zzzank.probejs.lang.transpiler.redirect.RedirectClassToTypeOf;
 import zzzank.probejs.lang.transpiler.redirect.RhizoGenericRedirect;
 import zzzank.probejs.lang.transpiler.redirect.SimpleClassRedirect;
 import zzzank.probejs.plugin.ProbeJSPlugin;
@@ -37,7 +37,7 @@ public class TypeRedirecting implements ProbeJSPlugin {
         if (!CLASS_CONVERTIBLES.isEmpty()) {
             val targets = ImmutableSet.copyOf(CLASS_CONVERTIBLES);
             converter.addTypeRedirect(new SimpleClassRedirect(targets, (c) -> GlobalClasses.J_CLASS));
-            converter.addTypeRedirect(new ClassRedirect(targets));
+            converter.addTypeRedirect(new RedirectClassToTypeOf(targets));
         }
     }
 }
