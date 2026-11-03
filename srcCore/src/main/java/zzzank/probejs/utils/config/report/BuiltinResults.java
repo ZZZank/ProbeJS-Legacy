@@ -15,7 +15,7 @@ public class BuiltinResults {
     static final AccessResult<?> NONE = good(null);
 
     public <T> AccessResult<T> good(T value) {
-        return new AccessResultImpl<>(value, ResultType.GOOD, () -> null);
+        return new GoodAccessResult<>(value);
     }
 
     public <T> AccessResult<T> info(T value, Supplier<String> message) {
