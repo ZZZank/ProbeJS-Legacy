@@ -6,7 +6,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import zzzank.probejs.utils.config.report.AccessResult;
 import zzzank.probejs.utils.config.serde.ConfigSerde;
 import zzzank.probejs.utils.config.struct.ConfigEntry;
@@ -22,7 +21,7 @@ class OptionEditScreen<T> extends Screen {
     private String errorMessage;
 
     OptionEditScreen(Screen lastScreen, ConfigEntry<T> configEntry, ConfigSerde<String, T> serde) {
-        super(new TranslatableComponent("probejs.option.edit"));
+        super(new TextComponent(configEntry.name()));
         this.lastScreen = lastScreen;
         this.configEntry = configEntry;
         this.serde = serde;

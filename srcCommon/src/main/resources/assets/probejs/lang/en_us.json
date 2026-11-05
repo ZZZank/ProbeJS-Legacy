@@ -37,5 +37,9 @@
 
   "probejs.option.on": "On",
   "probejs.option.off": "Off",
-  "probejs.option.edit": "Edit"
+  "probejs.option.edit": "Edit",
+  "probejs.option.edit_hint": "Click to edit",
+  "probejs.option.unsupported": "N/A",
+  "probejs.option.more_values": "... (%s more values)",
+  "probejs.option.read_only": "read-only"
 }

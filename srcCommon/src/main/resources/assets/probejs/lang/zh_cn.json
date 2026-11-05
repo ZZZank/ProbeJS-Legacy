@@ -26,5 +26,12 @@
   "probejs.lint_passed": "恭喜你，你的代码经受住了考验。",
   "probejs.parchment.downloading": "正在下载parchment映射...",
   "probejs.parchment.loaded": "parchment映射已成功加载。",
-  "probejs.parchment.skipped": "用户已禁用parchment映射。"
+  "probejs.parchment.skipped": "用户已禁用parchment映射。",
+  "probejs.option.on": "开",
+  "probejs.option.off": "关",
+  "probejs.option.edit": "编辑",
+  "probejs.option.edit_hint": "点击编辑",
+  "probejs.option.unsupported": "不支持",
+  "probejs.option.more_values": "……（另有 %s 个值）",
+  "probejs.option.read_only": "只读"
 }

@@ -16,11 +16,20 @@ public class ProbeJSConfigScreen extends Screen {
     private OptionList optionList;
     private Button doneButton;
     private Button wikiButton;
-    double lastScrollAmount = 0;
+    private double lastScrollAmount = 0;
 
     public ProbeJSConfigScreen(Screen lastScreen) {
         super(new TextComponent("ProbeJS Config"));
         this.lastScreen = lastScreen;
+    }
+
+    /// Switch to a child screen (e.g. [OptionEditScreen]) while remembering the current
+    /// scroll position of the option list, so that it can be restored when coming back.
+    void openChild(Screen child) {
+        if (this.optionList != null) {
+            this.lastScrollAmount = this.optionList.getScrollAmount();
+        }
+        this.minecraft.setScreen(child);
     }
 
     @Override
@@ -37,9 +46,12 @@ public class ProbeJSConfigScreen extends Screen {
             (arg) -> Util.getPlatform().openUri("https://github.com/ZZZank/ProbeJS-Legacy")
         );
         this.doneButton = new Button(
-            this.width / 2 - 155 + 160, this.height - 29, 150, 20, CommonComponents.GUI_DONE, (arg) -> {
-            this.onClose();
-        }
+            this.width / 2 - 155 + 160,
+            this.height - 29,
+            150,
+            20,
+            CommonComponents.GUI_DONE,
+            (arg) -> this.onClose()
         );
         this.addButton(this.wikiButton);
         this.addButton(this.doneButton);
