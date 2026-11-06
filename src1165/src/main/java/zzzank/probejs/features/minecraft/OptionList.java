@@ -133,7 +133,7 @@ public class OptionList extends ContainerObjectSelectionList<OptionList.Entry> {
             boolean isMouseOver,
             float partialTicks
         ) {
-            int x = parent.width / 2 - this.titleWidth / 2;
+            int x = parent.width / 2;
             int y = top + height - 10;
             drawCenteredString(matrixStack, minecraft.font, title, x, y, 0xffffff);
         }

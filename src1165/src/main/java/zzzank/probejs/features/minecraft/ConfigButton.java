@@ -45,6 +45,9 @@ import java.util.List;
 /// without a string serde) fall back to [UnsupportedConfigButton]: it is disabled, but
 /// its tooltip still explains why.
 ///
+/// The button itself renders no tooltip: [OptionList] collects lines through
+/// [#appendTooltipLines(List)] / [#appendResultLines(List)] and draws them.
+///
 /// Use `ConfigButton.of(...)` to create the correct subtype for a config entry, and
 /// `ConfigButton.preferredWidth(...)` to lay out a column of them.
 public abstract class ConfigButton extends Button {

@@ -22,7 +22,7 @@ class OptionEditScreen<T> extends Screen {
     private String errorMessage;
 
     OptionEditScreen(Screen lastScreen, ConfigEntry<T> configEntry, ConfigSerde<String, T> serde) {
-        super(Component.translatable("probejs.option.edit"));
+        super(Component.literal(configEntry.name()));
         this.lastScreen = lastScreen;
         this.configEntry = configEntry;
         this.serde = serde;
