@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.network.chat.HoverEvent;
 import org.jetbrains.annotations.NotNull;
 import zzzank.probejs.utils.ProbeText;
 
@@ -16,6 +17,8 @@ import java.util.function.Supplier;
  * @author ZZZank
  */
 public class DumpMessageList extends ContainerObjectSelectionList<DumpMessageList.MessageEntry> {
+    private static final int LIST_HORIZONTAL_PADDING = 10;
+
     public final ProbeJSDumpScreen screen;
     private int headWidth;
 
@@ -28,6 +31,11 @@ public class DumpMessageList extends ContainerObjectSelectionList<DumpMessageLis
     public int getRowWidth() {
         // 155 * 2 + 10, 2 buttons + padding
         return 310;
+    }
+
+    @Override
+    protected int getScrollbarPosition() {
+        return width - LIST_HORIZONTAL_PADDING;
     }
 
     public MessageEntry addEntry(ProbeText text) {
@@ -77,8 +85,8 @@ public class DumpMessageList extends ContainerObjectSelectionList<DumpMessageLis
             var font = minecraft.font;
             var resolvedBody = resolveBody();
 
-            guiGraphics.drawString(font, head.unwrap(), left, top, 0xffffff, false);
-            guiGraphics.drawString(font, resolvedBody.unwrap(), left + headWidth, top, 0xffffff, false);
+            guiGraphics.drawString(font, head.unwrap(), LIST_HORIZONTAL_PADDING, top, 0xffffff, false);
+            guiGraphics.drawString(font, resolvedBody.unwrap(), LIST_HORIZONTAL_PADDING + headWidth, top, 0xffffff, false);
 
             if (isMouseOver) {
                 guiGraphics.renderComponentHoverEffect(font, resolvedBody.getStyle(), mouseX, mouseY);
@@ -91,6 +99,7 @@ public class DumpMessageList extends ContainerObjectSelectionList<DumpMessageLis
          */
         public void provideBody(Supplier<ProbeText> supplier) {
             this.bodySupplier = supplier;
+            this.body = null;
         }
 
         /**
@@ -98,14 +107,22 @@ public class DumpMessageList extends ContainerObjectSelectionList<DumpMessageLis
          */
         public void provideBody(ProbeText text) {
             this.bodySupplier = null;
-            this.body = text;
+            this.body = installOptionalHover(text);
         }
 
         private ProbeText resolveBody() {
             if (bodySupplier != null) {
-                return bodySupplier.get();
+                body = installOptionalHover(bodySupplier.get());
             }
             return body;
+        }
+
+        /// add "display self on hover" if there's no existed hover
+        private static ProbeText installOptionalHover(ProbeText text) {
+            if (text.getStyle().getHoverEvent() == null) {
+                text = text.hover(HoverEvent.Action.SHOW_TEXT, text.unwrap());
+            }
+            return text;
         }
 
         public ProbeText getBody() {

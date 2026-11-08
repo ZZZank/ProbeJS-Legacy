@@ -3,6 +3,7 @@ package zzzank.probejs.features.minecraft;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.network.chat.HoverEvent;
 import zzzank.probejs.utils.ProbeText;
 
 import java.util.Collection;
@@ -12,6 +13,8 @@ import java.util.function.Supplier;
  * @author ZZZank
  */
 public class DumpMessageList extends AbstractSelectionList<DumpMessageList.MessageEntry> {
+    private static final int LIST_HORIZONTAL_PADDING = 10;
+
     public final ProbeJSDumpScreen screen;
     private int headWidth;
 
@@ -24,6 +27,11 @@ public class DumpMessageList extends AbstractSelectionList<DumpMessageList.Messa
     public int getRowWidth() {
         // 155 * 2 + 10, 2 buttons + padding
         return 310;
+    }
+
+    @Override
+    protected int getScrollbarPosition() {
+        return width - LIST_HORIZONTAL_PADDING;
     }
 
     public MessageEntry addEntry(ProbeText text) {
@@ -73,8 +81,8 @@ public class DumpMessageList extends AbstractSelectionList<DumpMessageList.Messa
             var font = minecraft.font;
             var resolvedBody = resolveBody();
 
-            font.draw(matrixStack, head.unwrap(), left, top, 0xffffff);
-            font.draw(matrixStack, resolvedBody.unwrap(), left + headWidth, top, 0xffffff);
+            font.draw(matrixStack, head.unwrap(), LIST_HORIZONTAL_PADDING, top, 0xffffff);
+            font.draw(matrixStack, resolvedBody.unwrap(), LIST_HORIZONTAL_PADDING + headWidth, top, 0xffffff);
 
             if (isMouseOver) {
                 screen.renderComponentHoverEffect(matrixStack, resolvedBody.getStyle(), mouseX, mouseY);
@@ -87,6 +95,7 @@ public class DumpMessageList extends AbstractSelectionList<DumpMessageList.Messa
          */
         public void provideBody(Supplier<ProbeText> supplier) {
             this.bodySupplier = supplier;
+            this.body = null;
         }
 
         /**
@@ -94,14 +103,22 @@ public class DumpMessageList extends AbstractSelectionList<DumpMessageList.Messa
          */
         public void provideBody(ProbeText text) {
             this.bodySupplier = null;
-            this.body = text;
+            this.body = installOptionalHover(text);
         }
 
         private ProbeText resolveBody() {
             if (bodySupplier != null) {
-                return bodySupplier.get();
+                body = installOptionalHover(bodySupplier.get());
             }
             return body;
+        }
+
+        /// add "display self on hover" if there's no existed hover
+        private static ProbeText installOptionalHover(ProbeText text) {
+            if (text.getStyle().getHoverEvent() == null) {
+                text = text.hover(HoverEvent.Action.SHOW_TEXT, text.unwrap());
+            }
+            return text;
         }
 
         public ProbeText getBody() {
