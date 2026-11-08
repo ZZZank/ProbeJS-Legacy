@@ -83,7 +83,7 @@ public class ProbeJSDumpScreen extends Screen {
             150,
             20,
             CommonComponents.GUI_DONE,
-            button -> this.onClose()
+            button -> this.minecraft.setScreen(null)
         );
 
         var list = new DumpMessageList(

@@ -43,17 +43,12 @@ public class ProbeJSConfigScreen extends Screen {
             .build();
         this.doneButton = Button.builder(
                 CommonComponents.GUI_DONE,
-                (arg) -> this.onClose())
+                (arg) -> this.minecraft.setScreen(lastScreen))
             .bounds(this.width / 2 - 155 + 160, this.height - 29, 150, 20)
             .build();
         this.addRenderableWidget(this.optionList);
         this.addRenderableWidget(this.wikiButton);
         this.addRenderableWidget(this.doneButton);
-    }
-
-    @Override
-    public void onClose() {
-        this.minecraft.setScreen(lastScreen);
     }
 
     @Override

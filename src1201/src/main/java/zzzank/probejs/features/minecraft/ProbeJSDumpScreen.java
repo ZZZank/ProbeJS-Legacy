@@ -66,14 +66,13 @@ public class ProbeJSDumpScreen extends Screen {
 
         var configButton = Button.builder(
                 Component.literal("Config"),
-                button -> this.minecraft.setScreen(new ProbeJSConfigScreen(this))
-            )
+                button -> this.minecraft.setScreen(new ProbeJSConfigScreen(this)))
             .bounds(centerX + 5, this.height - 52, 150, 20)
             .build();
 
         var doneButton = Button.builder(
                 CommonComponents.GUI_DONE,
-                button -> this.onClose())
+                button -> this.minecraft.setScreen(null))
             .bounds(centerX + 5, this.height - 28, 150, 20)
             .build();
 
