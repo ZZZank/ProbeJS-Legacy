@@ -79,13 +79,15 @@ public class DumpMessageList extends AbstractSelectionList<DumpMessageList.Messa
             float partialTicks
         ) {
             var font = minecraft.font;
-            var resolvedBody = resolveBody();
 
             font.draw(matrixStack, head.unwrap(), LIST_HORIZONTAL_PADDING, top, 0xffffff);
-            font.draw(matrixStack, resolvedBody.unwrap(), LIST_HORIZONTAL_PADDING + headWidth, top, 0xffffff);
 
-            if (isMouseOver) {
-                screen.renderComponentHoverEffect(matrixStack, resolvedBody.getStyle(), mouseX, mouseY);
+            if (body != null) {
+                font.draw(matrixStack, body.unwrap(), LIST_HORIZONTAL_PADDING + headWidth, top, 0xffffff);
+
+                if (isMouseOver) {
+                    screen.renderComponentHoverEffect(matrixStack, body.getStyle(), mouseX, mouseY);
+                }
             }
         }
 
@@ -106,11 +108,10 @@ public class DumpMessageList extends AbstractSelectionList<DumpMessageList.Messa
             this.body = installOptionalHover(text);
         }
 
-        private ProbeText resolveBody() {
+        public void tick() {
             if (bodySupplier != null) {
                 body = installOptionalHover(bodySupplier.get());
             }
-            return body;
         }
 
         /// add "display self on hover" if there's no existed hover

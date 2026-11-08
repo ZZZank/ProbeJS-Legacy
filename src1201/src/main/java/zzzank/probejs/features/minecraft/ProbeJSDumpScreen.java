@@ -99,6 +99,15 @@ public class ProbeJSDumpScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        if (this.list != null) {
+            for (var entry : this.list.children()) {
+                entry.tick();
+            }
+        }
+    }
+
+    @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         renderBackground(guiGraphics);
 
