@@ -72,12 +72,15 @@ public class GameEvents {
 
     @SubscribeEvent
     public static void registerCommand(RegisterCommandsEvent event) {
+        if (event.getEnvironment() != Commands.CommandSelection.INTEGRATED) {
+            return;
+        }
+
         val sendMsg = (BiConsumer<CommandContext<CommandSourceStack>, ProbeText>)
             (context, text) -> context.getSource().sendSuccess(text.unwrap(), true);
 
         event.getDispatcher().register(
             Commands.literal("probejs")
-                .requires(source -> source.getServer().isSingleplayer())
                 .executes(context -> {
                     Minecraft.getInstance().setScreen(new ProbeJSDumpScreen());
                     return Command.SINGLE_SUCCESS;

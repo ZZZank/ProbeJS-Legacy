@@ -8,7 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -35,7 +35,7 @@ public class GameEvents {
         var player = event.getPlayer();
         Consumer<ProbeText> sendMsg = msg -> player.sendSystemMessage(msg.unwrap());
 
-        if (!RhizoState.MOD.get()) {
+        if (!RhizoState.MOD.get()) { // always off as of 1.20
             sendMsg.accept(ProbeText.pjs("rhizo_missing"));
             sendMsg.accept(ProbeText
                 .pjs("download_rhizo_help")
@@ -68,13 +68,12 @@ public class GameEvents {
     }
 
     @SubscribeEvent
-    public static void registerCommand(RegisterCommandsEvent event) {
+    public static void registerCommand(RegisterClientCommandsEvent event) {
         BiConsumer<CommandContext<CommandSourceStack>, ProbeText> sendMsg =
             (context, text) -> context.getSource().sendSuccess(text::unwrap, true);
 
         event.getDispatcher().register(
             Commands.literal("probejs")
-                .requires(source -> source.getServer().isSingleplayer())
                 .executes(context -> {
                     Minecraft.getInstance().setScreen(new ProbeJSDumpScreen());
                     return Command.SINGLE_SUCCESS;
