@@ -124,7 +124,9 @@ public class ProbeJSDumpScreen extends Screen {
 
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 8, 0xFFFFFF);
 
-        this.list.render(poseStack, mouseX, mouseY, partialTicks);
+        if (this.list != null) { // for some reason this happens in dev environment
+            this.list.render(poseStack, mouseX, mouseY, partialTicks);
+        }
 
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }
