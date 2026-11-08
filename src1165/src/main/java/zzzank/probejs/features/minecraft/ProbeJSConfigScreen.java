@@ -11,14 +11,13 @@ import org.jetbrains.annotations.Nullable;
 import zzzank.probejs.ProbeConfig;
 
 public class ProbeJSConfigScreen extends Screen {
+    @Nullable
     private final Screen lastScreen;
 
     private OptionList optionList;
-    private Button doneButton;
-    private Button wikiButton;
     private double lastScrollAmount = 0;
 
-    public ProbeJSConfigScreen(Screen lastScreen) {
+    public ProbeJSConfigScreen(@Nullable Screen lastScreen) {
         super(new TextComponent("ProbeJS Config"));
         this.lastScreen = lastScreen;
     }
@@ -37,7 +36,7 @@ public class ProbeJSConfigScreen extends Screen {
         this.optionList = new OptionList(this, this.minecraft, ProbeConfig.INSTANCE);
         this.optionList.setScrollAmount(lastScrollAmount);
 
-        this.wikiButton = new Button(
+        var wikiButton = new Button(
             this.width / 2 - 155,
             this.height - 29,
             150,
@@ -45,7 +44,7 @@ public class ProbeJSConfigScreen extends Screen {
             new TextComponent("ProbeJS Legacy GitHub"),
             (arg) -> Util.getPlatform().openUri("https://github.com/ZZZank/ProbeJS-Legacy")
         );
-        this.doneButton = new Button(
+        var doneButton = new Button(
             this.width / 2 - 155 + 160,
             this.height - 29,
             150,
@@ -53,8 +52,8 @@ public class ProbeJSConfigScreen extends Screen {
             CommonComponents.GUI_DONE,
             (arg) -> this.minecraft.setScreen(lastScreen)
         );
-        this.addButton(this.wikiButton);
-        this.addButton(this.doneButton);
+        this.addButton(wikiButton);
+        this.addButton(doneButton);
         this.addWidget(this.optionList);
     }
 

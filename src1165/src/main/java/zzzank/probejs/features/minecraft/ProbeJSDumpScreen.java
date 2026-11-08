@@ -108,16 +108,6 @@ public class ProbeJSDumpScreen extends Screen {
         this.list = this.addWidget(list);
     }
 
-    protected Button addButton(int x, int y, int width, int height, ProbeText text, Button.OnPress onPress, Button.OnTooltip onTooltip) {
-        if (onPress == null) {
-            onPress = (button) -> {};
-        }
-        if (onTooltip == null) {
-            onTooltip = (button, poseStack, mouseX, mouseY) -> {};
-        }
-        return this.addButton(new Button(x, y, width, height, text.unwrap(), onPress, onTooltip));
-    }
-
     @Override
     public void tick() {
         if (this.list != null) {
