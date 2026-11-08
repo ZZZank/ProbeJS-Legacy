@@ -89,6 +89,7 @@ public class ProbeJSDumpScreen extends Screen {
             list.replaceEntries(this.list.children());
         }
         list.setRenderBackground(false);
+        list.setRenderTopAndBottom(false);
 
         this.addRenderableWidget(cleanOldDumpsCheckbox);
         this.addRenderableWidget(enableParchmentCheckbox);
