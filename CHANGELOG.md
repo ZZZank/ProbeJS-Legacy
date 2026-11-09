@@ -1,15 +1,22 @@
-# ProbeJS Legacy 6.1.0 -> 6.2.0
+# ProbeJS Legacy 6.2.0 -> 6.3.0
 
-- Parchment mapping support!
-  - Parchment is an open community-sourced modloader-neutral set of mappings of parameter names and javadocs, to augment the official names released by Mojang.
-  - In short, Parchment provides better parameter name (`x, y, z` instead of `int2, int3, int4`) and builtin document for common classes
-  - ProbeJS Legacy bundles a reprocessed mapping JSON file to provide Parchment mapping with no extra network requirement and minimum mod jar size increase
-- fix null `ClassData.parent` causing NPE in dumping process
-- generic param for class (e.g. `$FoodBuilder` in `$Consumer<$FoodBuilder>`) will now always be formatted as exact type
-- fix recursive declaration of generic default value
-- remove VSCode config addition, there's no need for it now
-- fix convertible type not generated for those with no `.assignType()`
-- AutoParamRename is now always on
-- `Types.and()` for nothing now provides `any`
+## New
+
+- Parchment mapping is now optional, and can be downloaded on demand
+- Config screen for editing options in-game.
+  - Commands for toggling options have been removed, use `/probejs config` to open config screen
+- New screen for visualizing dump progress
+  - You can now start a dump by opening dump screen using `/probejs`
+  - Dump progress will now be displayed as a list of entries, each visualizing one step
+- Convertible type for interface now uses TS interface type, improving `JavaAdapter` support
+- `$XXX$$Static` renamed to `$XXX$$Interface`
+
+## Fix
+
+- Field to bean conversion might break doc modifiers targeting field
+- Optional fields in some recipe types having optional markers inside their names. E.g. `mod?` instead of `mod`
+- `[x in K]: V` for map has been removed due to it being buggy
+- [1.16.5] events cache not used
+- `@Generics` on non-parameterized types gets ignored
 
 ---
